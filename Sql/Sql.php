@@ -21,6 +21,8 @@ abstract class Sql
         'having'=>NULL,
         'order'=>NULL,
         'limit'=>NULL,
+        'keys'=>NULL,
+        'values'=>NULL,
     );
 
 	/**
@@ -179,8 +181,8 @@ abstract class Sql
 	    if($number)
 	    {
 	        // 偏移量和个数都存在
-	        $this->values[':limit_offset'] = $offset;
-	        $this->values[':limit_number'] = $number;
+	        $this->sql['values'][':limit_offset'] = $offset;
+	        $this->sql['values'][':limit_number'] = $number;
 	        $this->sql["limit"] = "LIMIT :limit_offset, :limit_number";
 	    }
 	    else

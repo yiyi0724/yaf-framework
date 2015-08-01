@@ -91,14 +91,11 @@ class Model
                 $this->db->$method();
                 break;
             case 'insert':
-                $args[1] = empty($args[1]) ? self::RESULT_ID : self::RESULT_ROW;
             case 'delete':
             case 'update':
-                isset($args[0]) OR ($args[0]=self::FETCH_ALL);
-            case 'select':
+            case 'select':                
             case 'replace':
-                array_unshift($args, $this->createObject($method));
-                return call_user_func_array(array($this, 'curd'), $args);
+                return call_user_func_array(array($this, 'curd'), $this->setPrepare($method,$args));
             default:
                 throw new \Exception("Call to undefined method Model::{$method}()");
         }
@@ -129,13 +126,14 @@ class Model
         // 清空附加条件
         $this->resetCondition();
         // 结果返回类型
-        switch($class)
+        switch(TRUE)
         {
-            case 'Insert':
-            case 'Select':
+            case $object instanceof Insert:
+            case $object instanceof Select:
+            case $object instanceof Replace:
                 return $this->db->$type();
-            case 'Update':
-            case 'Delete':
+            case $object instanceof Update:
+            case $object instanceof Delete:
                 // 返回影响行数
                 return $this->db->rowCount();
         }
@@ -168,7 +166,7 @@ class Model
         foreach($data as $key=>$placeholder)
         {
             // 字符串加上引号
-            !is_string($placeholder) OR ($placeholder = "'{$placeholder}'");
+            is_string($placeholder) AND ($placeholder = "'{$placeholder}'");
             // 替换
             $start = strpos($sql, $key);
             $end = strlen($key);
@@ -213,20 +211,32 @@ class Model
      * @param string $method
      * @return \Sql\Insert|\ Sql\Delete|\Sql\Update|\Sql\Select|\Sql\Replace
      */
-    protected function createObject($method)
+    protected function setPrepare($method, $args)
     {
+        $data = array();
         switch($method)
         {
             case 'insert':
-                return new Insert($this->table);
+                $data[] = new Insert($this->table);
+                $data[] = $args[0];
+                $data[] = empty($args[1]) ? self::RESULT_ID : self::RESULT_ROW;
+                break;            
             case 'delete':
-                return new Delete($this->table);
+                $data[] = new Delete($this->table);
+                break;                
             case 'update':
-                return new Update($this->table);
+                $data[] = new Update($this->table);
+                break;
             case 'select':
-                return new Select($this->table);
+                $data[] = new Select($this->table);
+                $data[] = array();
+                $data[] = isset($args[0]) ? $args[0] : self::FETCH_ALL;
+                break;
+                
             case 'replace':
-                return new Replace($this->table);
+                $data[] = new Replace($this->table);
         }
+        
+        return $data;
     }
 }
