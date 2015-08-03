@@ -5,14 +5,8 @@
  */
 namespace Driver;
 
-class Mysql
+class Mysql extends Driver
 {
-    /**
-     * 数据库连接池
-     * @var array
-     */
-    private static $instance;
-
     /**
      * 当前的pdo对象
      * @var \PDO
@@ -30,7 +24,7 @@ class Mysql
      * @param array 数组配置
      * @return void
      */
-    private final function __construct($driver)
+    protected function __construct($driver)
     {
         // 数据库连接信息
         $dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";
@@ -43,30 +37,7 @@ class Mysql
         // 创建数据库驱动对象
         $this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
     }
-
-    /**
-     * 禁止克隆对象
-     * @return void
-     */
-    private final function __clone()
-    {
-    }
-
-    /**
-     * 单例模式创建数据库连接池对象
-     * @param array 数组配置,包含的key必须有 host,port,dbname,charset,username,password
-     * @return \Driver\Mysql
-     */
-    public static function getInstance(array $driver)
-    {
-        // 计算hash值
-        $key = crc32(implode(':', $driver));
-        // 是否已经创建过单例对象
-        empty(self::$instance[$key]) and (self::$instance[$key] = new self($driver));
-        // 返回对象
-        return self::$instance[$key];
-    }
-
+    
     /**
      * 执行sql语句
      * @param string sql语句
