@@ -37,9 +37,9 @@ class Mysql
 		$dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";
 		// 驱动选项
 		$options = array(
-				\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,// 如果出现错误抛出错误警告
-				\PDO::ATTR_ORACLE_NULLS=>\PDO::NULL_TO_STRING,// 把所有的NULL改成""
-				\PDO::ATTR_TIMEOUT=>30 // 超时时间
+            \PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,// 如果出现错误抛出错误警告
+            \PDO::ATTR_ORACLE_NULLS=>\PDO::NULL_TO_STRING,// 把所有的NULL改成""
+            \PDO::ATTR_TIMEOUT=>30 // 超时时间
 		);
 		// 创建数据库驱动对象
 		$this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
@@ -62,8 +62,8 @@ class Mysql
 	    $key = crc32(implode(':', $driver));	    
 	    // 是否已经创建过单例对象
 	    empty(self::$instance[$key]) AND (self::$instance[$key] = new self($driver));
-		// 返回对象
-        return self::$instance[$key];
+	    // 返回对象
+	    return self::$instance[$key];
 	}
 
 	/**
@@ -74,12 +74,12 @@ class Mysql
 	 */
 	public function query($sql, $params=array())
 	{
-		// 预处理语句
-		$this->stmt = $this->pdo->prepare($sql);
-		// 参数绑定
-		$params AND $this->bindValue($params);
-        // sql语句执行
-		return $this->stmt->execute();
+	    // 预处理语句
+	    $this->stmt = $this->pdo->prepare($sql);
+	    // 参数绑定
+	    $params AND $this->bindValue($params);
+	    // sql语句执行
+	    return $this->stmt->execute();
 	}
 
 	/**
@@ -89,19 +89,19 @@ class Mysql
 	 */
 	private function bindValue($params)
 	{
-		foreach($params as $key=>$value)
-		{
-			switch(TRUE)
-			{
-				case is_numeric($value):
-					$type = \PDO::PARAM_INT; 
-					break;
-				case is_bool($value):
-					$type = \PDO::PARAM_BOOL; 
-					break;
-				case is_null($value):
-					$type = \PDO::PARAM_NULL; 
-					break;
+	    foreach($params as $key=>$value)
+	    {
+	        switch(TRUE)
+	        {
+	            case is_numeric($value):
+	                $type = \PDO::PARAM_INT;
+	                break;
+                case is_bool($value):
+				    $type = \PDO::PARAM_BOOL;
+				    break;
+                case is_null($value):
+				    $type = \PDO::PARAM_NULL;
+				    break;
 				default:
 					$type = \PDO::PARAM_STR; 
 			}
