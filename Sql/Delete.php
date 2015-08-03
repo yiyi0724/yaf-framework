@@ -9,14 +9,17 @@ namespace Sql;
 class Delete extends Sql
 {
     /**
-     * 执行删除
-     * @return int 删除的行数
+     * 获取预处理删除语句
+     * @return array sql语句,预处理值数组
      */
     public final function prepare()
     {
-        return array($this->concat(), $this->sql['values']);
+        return array( 
+            $this->concat(),
+            $this->sql['values']
+        );
     }
-    
+
     /**
      * 拼接sql语句
      * @return string

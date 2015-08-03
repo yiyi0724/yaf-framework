@@ -14,15 +14,18 @@ class Replace extends Sql
     public final function prepare(array $data)
     {
         // 数据整理
-        $data = $this->arrange($data);        
+        $data = $this->arrange($data);
         // 设置插入的键
-        $this->setKeys($data);        
+        $this->setKeys($data);
         // 设置插入的值
         $values = $this->setValues($data);
         // 结果返回
-        return array($this->concat(), $values);
+        return array( 
+            $this->concat(),
+            $values
+        );
     }
-    
+
     /**
      * 拼接sql语句
      * @return string

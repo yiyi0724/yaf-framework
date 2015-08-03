@@ -1,7 +1,10 @@
 <?php
-
+/**
+ * 模型类
+ */
 namespace Mvc;
 
+use \Driver\Driver;
 use \Driver\Mysql;
 use \Sql\Insert;
 use \Sql\Delete;
@@ -16,25 +19,25 @@ class Model
      * @var string
      */
     const FETCH_ALL = 'fetchAll';
-
+    
     /**
      * 解析一行
      * @var string
      */
     const FECTH_ROW = 'fetch';
-
+    
     /**
      * 解析一个值
      * @var string
      */
     const FECTH_ONE = 'fetchColumn';
-
+    
     /**
      * 获取影响的行数
      * @var string
      */
     const RESULT_ROW = 'rowCount';
-
+    
     /**
      * 获取上次插入的id
      * @var string
@@ -58,7 +61,7 @@ class Model
      * @param string $table
      * @param array $config
      */
-    public function __construct($table, $config)
+    public function __construct($table, array $config)
     {
         $this->table = $table;
         $this->connect($config);
@@ -72,7 +75,7 @@ class Model
      */
     public final function __call($method, $args)
     {
-        switch($method)
+        switch ($method)
         {
             case 'where':
             case 'having':
@@ -93,13 +96,16 @@ class Model
             case 'insert':
             case 'delete':
             case 'update':
-            case 'select':                
+            case 'select':
             case 'replace':
-                return call_user_func_array(array($this, 'curd'), $this->setPrepare($method,$args));
+                return call_user_func_array(array( 
+                    $this,
+                    'curd'
+                ), $this->setPrepare($method, $args));
             default:
                 throw new \Exception("Call to undefined method Model::{$method}()");
         }
-
+        
         return $this;
     }
 
@@ -111,11 +117,11 @@ class Model
         // 读取配置的操作
         $this->db = Mysql::getInstance($config);
     }
-    
+
     /**
      * 增删改查替换操作
      */
-    protected function curd($object, $data, $type=NULL)
+    protected function curd($object, $data, $type = NULL)
     {
         // 设置查询条件
         $this->setCondition($object);
@@ -126,7 +132,7 @@ class Model
         // 清空附加条件
         $this->resetCondition();
         // 结果返回类型
-        switch(TRUE)
+        switch (TRUE)
         {
             case $object instanceof Insert:
             case $object instanceof Select:
@@ -138,23 +144,21 @@ class Model
                 return $this->db->rowCount();
         }
     }
-    
+
     /**
      * 统计
      */
     public function count()
     {
-    
     }
-    
+
     /**
      * 求和
      */
     public function sum()
     {
-    
     }
-    
+
     /**
      * 输出预绑定sql和参数列表
      * @param string 预处理sql语句
@@ -163,19 +167,19 @@ class Model
      */
     public function debug($sql, $data)
     {
-        foreach($data as $key=>$placeholder)
+        foreach ($data as $key => $placeholder)
         {
             // 字符串加上引号
-            is_string($placeholder) AND ($placeholder = "'{$placeholder}'");
+            is_string($placeholder) and ($placeholder = "'{$placeholder}'");
             // 替换
             $start = strpos($sql, $key);
             $end = strlen($key);
             $sql = substr_replace($sql, $placeholder, $start, $end);
         }
-
+        
         exit($sql);
     }
-    
+
     /**
      * 重置查询条件
      * @return void
@@ -184,15 +188,15 @@ class Model
     {
         $this->condition = array();
     }
-    
+
     /**
      * 原生sql执行
      */
-    public function query($sql, $values)
+    public function query($sql, $values=array())
     {
         return $this->db->query($sql, $values);
     }
-    
+
     /**
      * 设置条件
      * @param \Sql $object
@@ -200,12 +204,15 @@ class Model
     protected function setCondition($object)
     {
         // 设置附加条件
-        foreach($this->condition as $method=>$condition)
+        foreach ($this->condition as $method => $condition)
         {
-            call_user_func_array(array($object, $method), $condition);
+            call_user_func_array(array( 
+                $object,
+                $method
+            ), $condition);
         }
     }
-    
+
     /**
      * 创建增删改查对象
      * @param string $method
@@ -214,16 +221,16 @@ class Model
     protected function setPrepare($method, $args)
     {
         $data = array();
-        switch($method)
+        switch ($method)
         {
             case 'insert':
                 $data[] = new Insert($this->table);
                 $data[] = $args[0];
                 $data[] = empty($args[1]) ? self::RESULT_ID : self::RESULT_ROW;
-                break;            
+                break;
             case 'delete':
                 $data[] = new Delete($this->table);
-                break;                
+                break;
             case 'update':
                 $data[] = new Update($this->table);
                 break;
@@ -232,7 +239,7 @@ class Model
                 $data[] = array();
                 $data[] = isset($args[0]) ? $args[0] : self::FETCH_ALL;
                 break;
-                
+            
             case 'replace':
                 $data[] = new Replace($this->table);
         }
