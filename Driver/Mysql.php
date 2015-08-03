@@ -7,7 +7,6 @@ namespace Driver;
 
 class Mysql
 {
-
     /**
      * 数据库连接池
      * @var array
@@ -39,9 +38,8 @@ class Mysql
         $options = array( 
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, // 如果出现错误抛出错误警告
             \PDO::ATTR_ORACLE_NULLS => \PDO::NULL_TO_STRING, // 把所有的NULL改成""
-            \PDO::ATTR_TIMEOUT => 30
-        ); // 超时时间
-           
+            \PDO::ATTR_TIMEOUT => 30 // 超时时间
+        );
         // 创建数据库驱动对象
         $this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
     }
