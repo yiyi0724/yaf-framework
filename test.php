@@ -1,5 +1,6 @@
 <?php
 
+
 function __autoload($class)
 {
     $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
@@ -7,20 +8,10 @@ function __autoload($class)
 }
 
 
-
 $controller = new \Mvc\Controller();
 
 $goodsModel = $controller->getModel('goods');
+//echo $goodsModel->insert(array(array('goods_name'=>'linxiaohua','type'=>24), array('goods_name'=>'chenxiaobo', 'type'=>26)), \Driver\Sql::RESULT_ROW);
+//echo '<pre>';print_r( $goodsModel->where(['goods_id >'=>1])->select() );
 
-//echo $goodsModel->insert(array(array('goods_name'=>'chenlu'), array('goods_name'=>'chenxiaobo')));
- echo '<pre>';
-print_r(
-    $goodsModel->field('goods_id, goods_name')
-    ->order('goods_id DESC')
-    ->limit(0,2)
-    ->select(\Mvc\Model::FECTH_ROW)
-    ); 
-
-//echo $goodsModel->where(['goods_id'=>3])->limit(1)->delete();
-
-//echo $goodsModel->replace(['goods_id'=>8,'goods_name'=>'chenxiaobo', 'type'=>2]);
+echo $goodsModel->where(['goods_id'=>4])->delete();

@@ -11,7 +11,7 @@ class Redis extends Driver
      * 当前的redis对象
      * @var \Redis
      */
-    private $redis;
+    protected $redis;
     
     /**
      * 
