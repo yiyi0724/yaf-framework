@@ -65,45 +65,63 @@ class Sql extends Driver
      */
     protected function __construct(array $config)
     {
+        // 设置表名
         $this->table = $config['table'];
+        // 删除表名
+        unset($config['table']);
         // 读取配置的操作
         $this->db = Mysql::getInstance($config);
     }
-
-    /**
-     * 条件回调方法, 设计原则,只字数最少的方式
-     * @param string 方法名 field|where|group|having|order|limit|beginTransaction|inTransaction|commit|rollback
-     * @param array 参数列表
-     * @return \Mvc\Model
-     */
-    public final function __call($method, $args)
-    {
-        switch ($method)
-        {
-            case 'beginTransaction':
-            case 'inTransaction':
-            case 'commit':
-            case 'rollback':
-                // 事务
-                $this->db->$method();
-                break;
-            default:
-                throw new \Exception("Call to undefined method Model::{$method}()");
-        }
-        
-        return $this;
-    }    
     
     /**
-     * 设置字段
+     * 开启事务
+     * @return boolean
+     */
+    public function beginTransaction()
+    {
+        return $this->db->beginTransaction();
+    }
+    
+    /**
+     * 检查是否在一个事务内
+     * @return boolean
+     */
+    public function inTransaction()
+    {
+        return $this->db->inTransaction();
+    }
+    
+    /**
+     * 提交一个事务
+     * @return boolean
+     */
+    public function commit()
+    {
+        return $this->db->commit();
+    }
+    
+    /**
+     * 回滚一个事务
+     * @return boolean
+     */
+    public function rollback()
+    {
+        return $this->db->rollback();
+    }
+    
+    /**
+     * 设置要查询的字段
+     * @return \Driver\Sql;
      */
     public function field($args)
     {
         $this->sql['field'] = $args;
+        return $this;
     }
     
     /**
-     * where子句
+     * 拼接where子句
+     * @return \Driver\Sql;
      */
     public function where($args)
     {
@@ -112,7 +130,8 @@ class Sql extends Driver
     }
     
     /**
-     * having子句
+     * 拼接having子句
+     * @return \Driver\Sql;
      */
     public function having($args)
     {
@@ -187,7 +206,8 @@ class Sql extends Driver
                 if ((strpos($option, "%") !== FALSE) || (strpos($option, '?') !== FALSE))
                 {
                     // like
-                    $where[] = "{$key} LIKE :{$field}{$interval}";
+                    $operation = strpos($key, " n") ? "NOT LIKE" : "LIKE";
+                    $where[] = "{$key} {$operation} :{$field}{$interval}";
                     $this->sql['values'][":{$field}{$interval}"] = $option;
                 }
                 else
@@ -212,7 +232,7 @@ class Sql extends Driver
     
     /**
      * order子句
-     * @return Sql
+     * @return \Driver\Sql;
      */
     public function order($args)
     {
@@ -222,7 +242,7 @@ class Sql extends Driver
     
     /**
      * group子句
-     * @return Sql
+     * @return \Driver\Sql;
      */
     public function group($args)
     {
@@ -234,7 +254,7 @@ class Sql extends Driver
      * limit子句
      * @param int 偏移量或者个数
      * @param int 个数
-     * @return Sql
+     * @return \Driver\Sql;
      */
     public function limit($offset, $number = NULL)
     {
@@ -286,7 +306,7 @@ class Sql extends Driver
         // 插入语句
         $sql = "INSERT INTO {$this->table}{$preKeys} VALUES {$preValues}";
         // 执行sql语句
-        $this->db->query($sql, $this->sql['values']);
+        $this->query($sql, $this->sql['values']);
         // 结果返回
         return $returnType==self::RESULT_ID ? $this->db->lastInsertId() : $this->db->rowCount();
     }
@@ -297,8 +317,11 @@ class Sql extends Driver
      */
     public final function delete()
     {
+        // 拼接sql语句
         $sql = "DELETE FROM {$this->table} {$this->sql['where']} {$this->sql['limit']}";
-        $this->db->query($sql, $this->sql['values']);
+        // 执行sql语句
+        $this->query($sql, $this->sql['values']);
+        // 返回结果
         return $this->db->rowCount();
     }
     
@@ -311,7 +334,7 @@ class Sql extends Driver
         // 拼接sql语句
         $sql = "SELECT {$this->sql['field']} FROM {$this->table} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
         // 执行sql语句
-        $this->db->query($sql, $this->sql['values']);
+        $this->query($sql, $this->sql['values']);
         // 返回类型
         switch($returnType)
         {
@@ -345,28 +368,67 @@ class Sql extends Driver
                         break;
                     }
                 }
-                $set[] = "{$key}={$temp[0]}{$opeartion}:UPDATE{$key}";
-                $this->values[":UPDATE{$key}"] = $temp[1];
+                $set[] = "{$key}={$temp[0]}{$opeartion}:{$key}";
+                $this->sql['values'][":{$key}"] = $temp[1];
             }
             else
             {
                 // 普通赋值
-                $set[] = "{$key}=:UPDATE{$key}";
-                $this->values[":UPDATE{$key}"] = $val;
+                $set[] = "{$key}=:{$key}";
+                $this->sql['values'][":{$key}"] = $val;
             }
         }
         // set语句
         $set = implode(',', $set);
-        // 释放变量
-        extract($this->condition);
         // sql语句
-        $sql = "UPDATE {$this->table} SET {$set} {$where} {$order} {$limit}";
-        // 执行更新
-        $this->db->query($sql, $this->values);
-        // 清空条件子句
-        $this->setNull();
+        $sql = "UPDATE {$this->table} SET {$set} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
+        // 执行sql语句
+        $this->query($sql, $this->sql['values']);
         // 返回影响行数
-        return $this->db->affectRow();
+        return $this->db->rowCount();
+    }
+    
+    /**
+     * 执行sql语句
+     * @param unknown $sql
+     * @throws \PDOException
+     */
+    public function query($sql, $data)
+    {
+        if(defined('DEBUG_SQL'))
+        {
+            // 输出调试的sql语句
+            $this->debug($sql, $data);
+        }
+        else if(!$this->db->query($sql, $data))
+        {
+            // 报错
+            throw new \PDOException('Could not execute sql');
+        }
+        else
+        {
+            // 清空条件子句
+            $this->resetSql();
+        }
+    }
+    
+    /**
+     * 重置条件查询
+     * @return void
+     */
+    protected function resetSql()
+    {
+        $this->sql = array( 
+            'field' => '*',
+            'where' => NULL,
+            'group' => NULL,
+            'having' => NULL,
+            'order' => NULL,
+            'limit' => NULL,
+            'prepare'=>NULL,
+            'keys' => NULL,
+            'values' => NULL
+        );
     }
 
     /**
@@ -377,6 +439,10 @@ class Sql extends Driver
      */
     public function debug($sql, $data)
     {
+        echo '<pre>';
+        echo "placeholder sql: $sql<br/>";
+        print_r($data);
+        
         foreach ($data as $key => $placeholder)
         {
             // 字符串加上引号
@@ -387,6 +453,33 @@ class Sql extends Driver
             $sql = substr_replace($sql, $placeholder, $start, $end);
         }
         
-        exit($sql);
+        echo '<hr/> origin sql: ',$sql,'</pre>';
+        exit;
     }
 }
+
+
+/**
+ * 使用说明:
+ * 1. 配置说明: $driver = ['host'=>'127.0.0.1', port=>3306, dbname=>'test', 'charset'=>'utf8', 'username'=>'root', 'password'=>123456, 'table'=>'tableName'];
+ * 2. 单例获取表对象: $model = \Driver\Sql::getInstance($driver);
+ * 3. 函数说明:
+ * 3.0 连贯操作: $model->field()->where()->group()->order()->limit()->method();
+ * 3.0.1 filed函数, 一般用于select中,输入要查询的字符串, 如 'a,b,c' 或者用 'count(a)'也是支持的
+ * 3.0.2 where函数,输入一个数组
+ * 3.0.2.1 ['a'=>1]      ===> a = 1
+ * 3.0.2.2 ['a'=>[1,2]] ===> a in (1, 2)
+ * 3.0.2.3 ['a n'=>[1,2]]  ===> a not in (1, 2);
+ * 3.0.2.4 ['a b'=>[1,2]]  ===> a between 1 and 2
+ * 3.0.2.5 ['a >'=>1] ===> a > 1, 其他符号类似,记住空格不能少
+ * 3.0.2.6 ['a'=>'%a%'] ===> a like '%a%', 同理 ['a n'=>'?a?'] ===> a not like '?a?'
+ * 3.0.2.7 [['a'=>1, 'b'=>'2']] ===> a = 1 or b = 2
+ * 3.1 插入: $model->insert(array('columnName'=>'value'), 返回值|返回影响结果);
+ * 3.1.1 第二个参数说明: RESULT_ID | RESULT_ROW
+ * 3.2 删除: $model->delete(); 执行delete之前可以先用连贯操作限制条件
+ * 3.3 更新: $model->update(); 执行update之前可以先用连贯操作限制条件
+ * 3.4 查询: $model->field()->where()->group()->having()->order()->limit()->select();
+ * 3.4.1 select()方法参数: FETCH_ALL | FETCH_ROW | FETCH_ONE
+ * 3.5 原生sql使用: $model->query($sql, $data);
+ * 3.6 输出调试语句, 定义一个常量 define('DEBUG_SQL', TRUE);则不执行,只输出sql语句
+ */

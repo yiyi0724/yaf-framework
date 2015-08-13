@@ -11,6 +11,7 @@ class Controller
     
     /**
      * 单例获取模型对象
+     * @return \Driver\Sql;
      */
     public function getModel($table, $config = 'default')
     {

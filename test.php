@@ -11,7 +11,9 @@ function __autoload($class)
 $controller = new \Mvc\Controller();
 
 $goodsModel = $controller->getModel('goods');
-//echo $goodsModel->insert(array(array('goods_name'=>'linxiaohua','type'=>24), array('goods_name'=>'chenxiaobo', 'type'=>26)), \Driver\Sql::RESULT_ROW);
-//echo '<pre>';print_r( $goodsModel->where(['goods_id >'=>1])->select() );
 
-echo $goodsModel->where(['goods_id'=>4])->delete();
+$result = $goodsModel->where([['goods_id'=>1,'type'=>'5'], 'goods_name'=>'test'])->select();
+
+echo '<pre>';
+print_r($result);
+exit;

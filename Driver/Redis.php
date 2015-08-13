@@ -14,7 +14,7 @@ class Redis extends Driver
     protected $redis;
     
     /**
-     * 
+     * 创建对象
      * @param array $driver
      * @throws \RedisException
      */
