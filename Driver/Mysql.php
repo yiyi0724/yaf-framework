@@ -7,7 +7,6 @@ namespace Driver;
 
 class Mysql extends Driver
 {
-
     /**
      * 附加的查询条件
      * @var array
@@ -57,87 +56,24 @@ class Mysql extends Driver
         $this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
     }
 
-    /**
-     * 参数与数据类型绑定
-     * @param array 预处理值数组
-     * @return void
-     */
-    private function bindValue($params)
-    {
-        foreach ($params as $key => $value)
-        {
-            switch (TRUE)
-            {
-                case is_numeric($value):
-                    $type = \PDO::PARAM_INT;
-                    break;
-                case is_bool($value):
-                    $type = \PDO::PARAM_BOOL;
-                    break;
-                case is_null($value):
-                    $type = \PDO::PARAM_NULL;
-                    break;
-                default:
-                    $type = \PDO::PARAM_STR;
-            }
-            // 参数绑定
-            $this->stmt->bindValue($key, $value, $type);
-        }
-    }
-
-    /**
-     * 简单回调pdo对象方法
-     * @param string 函数名
-     * @param array 参数数组
-     * @return mixed
-     */
-    public function __call($method, $args)
-    {
-        switch ($method)
-        {
-            case 'beginTransaction':
-            case 'inTransaction':
-            case 'commit':
-            case 'rollback':
-            case 'lastInsertId':
-                $result = $this->pdo->$method();
-                break;
-            case 'fetchAll':
-            case 'fetch':
-            case 'fetchColumn':
-                $this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
-            case 'rowCount':
-                $result = $this->stmt->$method();
-                break;
-            default:
-                throw new \PDOException("Call to undefined method Mysql::{$method}()");
-        }
-        // 删除结果集
-        $this->resetStmt();
-        // 返回结果
-        return $result;
-    }
-
-    /**
-     * 清空stmt对象
-     * @return void
-     */
-    protected function resetStmt()
-    {
-        $this->stmt = NULL;
-    }
 
     /**
      * 设置要查询的字段
-     * @return \Driver\Sql;
+     * @param string 查询字符串列表
+     * @return \Driver\Mysql
      */
-    public function field($args)
+    public function field($field)
     {
-        $this->sql['field'] = $args;
+        $this->sql['field'] = $field;
         return $this;
     }
 
-    public function from($table)
+    /**
+     * 设置表名
+     * @param string 表名
+     * @return \Driver\Mysql
+     */
+    public function table($table)
     {
         $this->sql['table'] = $table;
         return $this;
@@ -145,22 +81,22 @@ class Mysql extends Driver
 
     /**
      * 拼接where子句
-     * @return \Driver\Sql;
+     * @return \Driver\Mysql
      */
-    public function where($args)
+    public function where($condition)
     {
-        $condition = $this->comCondition($args, 'where');
+        $condition = $this->comCondition($condition, 'where');
         $this->sql['where'] = "WHERE " . implode(' AND ', $condition);
         return $this;
     }
 
     /**
      * 拼接having子句
-     * @return \Driver\Sql;
+     * @return \Driver\Mysql
      */
-    public function having($args)
+    public function having($condition)
     {
-        $condition = $this->comCondition($args, 'having');
+        $condition = $this->comCondition($condition, 'having');
         $this->sql['having'] = "HAVING " . implode(' AND ', $condition);
         return $this;
     }
@@ -168,7 +104,7 @@ class Mysql extends Driver
     /**
      * 拼接条件子句
      * @param array 键值对数组
-     * @param array where或者having
+     * @param string where或者having
      * @return array
      */
     private final function comCondition($condition, $field)
@@ -176,9 +112,7 @@ class Mysql extends Driver
         if (is_string($condition))
         {
             // 防止注入
-            return array( 
-                addslashes($condition)
-            );
+            return array(addslashes($condition));
         }
         
         // 循环支持, 防止占位符冲突
@@ -258,21 +192,21 @@ class Mysql extends Driver
 
     /**
      * order子句
-     * @return \Driver\Sql;
+     * @return \Driver\Mysql
      */
-    public function order($args)
+    public function order($order)
     {
-        $this->sql['order'] = "ORDER BY {$args}";
+        $this->sql['order'] = "ORDER BY {$order}";
         return $this;
     }
 
     /**
      * group子句
-     * @return \Driver\Sql;
+     * @return \Driver\Mysql
      */
-    public function group($args)
+    public function group($group)
     {
-        $this->sql['group'] = "GROUP BY {$args}";
+        $this->sql['group'] = "GROUP BY {$group}";
         return $this;
     }
 
@@ -280,7 +214,7 @@ class Mysql extends Driver
      * limit子句
      * @param int 偏移量或者个数
      * @param int 个数
-     * @return \Driver\Sql;
+     * @return \Driver\Mysql
      */
     public function limit($offset, $number = NULL)
     {
@@ -302,17 +236,14 @@ class Mysql extends Driver
     }
 
     /**
-     * 拼接一条插入的sql语句
+     * 执行插入
      * @param array 待插入的数据
-     * @param const 返回类型
-     * @return void
+     * @return \Driver\Mysql
      */
     public function insert(array $data)
     {
         // 数据整理
-        $data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array( 
-            $data
-        );
+        $data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
         // 设置插入的键
         $this->sql['keys'] = array_keys($data[0]);
         // 设置插入的值
@@ -340,8 +271,8 @@ class Mysql extends Driver
     }
 
     /**
-     * 获取预处理删除语句
-     * @return array sql语句,预处理值数组
+     * 执行删除
+     * @return \Driver\Mysql;
      */
     public final function delete()
     {
@@ -354,8 +285,8 @@ class Mysql extends Driver
     }
 
     /**
-     * 拼接sql语句
-     * @return string
+     * 执行查询
+     * @return \Driver\Mysql
      */
     public function select()
     {
@@ -370,8 +301,7 @@ class Mysql extends Driver
     /**
      * 执行更新
      * @param array 键值对数组
-     * @param boolean 是否输出调试语句
-     * @return int 影响行数
+     * @return \Driver\Mysql;
      */
     public final function update(array $update)
     {
@@ -380,16 +310,7 @@ class Mysql extends Driver
             // 自增等系列处理
             if (stripos($val, $key) !== FALSE)
             {
-                foreach (array( 
-                    '+',
-                    '-',
-                    '*',
-                    '/',
-                    '^',
-                    '&',
-                    '|',
-                    '!'
-                ) as $opeartion)
+                foreach (array('+','-','*','/','^','&','|','!') as $opeartion)
                 {
                     if (strpos($val, $opeartion))
                     {
@@ -443,6 +364,76 @@ class Mysql extends Driver
             // 返回结果
             return $result;
         }
+    }
+    
+    /**
+     * 参数与数据类型绑定
+     * @param array 预处理值数组
+     * @return void
+     */
+    private function bindValue($params)
+    {
+        foreach ($params as $key => $value)
+        {
+            switch (TRUE)
+            {
+                case is_numeric($value):
+                    $type = \PDO::PARAM_INT;
+                    break;
+                case is_bool($value):
+                    $type = \PDO::PARAM_BOOL;
+                    break;
+                case is_null($value):
+                    $type = \PDO::PARAM_NULL;
+                    break;
+                default:
+                    $type = \PDO::PARAM_STR;
+            }
+            // 参数绑定
+            $this->stmt->bindValue($key, $value, $type);
+        }
+    }
+    
+    /**
+     * 简单回调pdo对象方法
+     * @param string 函数名
+     * @param array 参数数组
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        switch ($method)
+        {
+            case 'beginTransaction':
+            case 'inTransaction':
+            case 'commit':
+            case 'rollback':
+            case 'lastInsertId':
+                $result = $this->pdo->$method();
+                break;
+            case 'fetchAll':
+            case 'fetch':
+            case 'fetchColumn':
+                $this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
+            case 'rowCount':
+                $result = $this->stmt->$method();
+                break;
+            default:
+                throw new \PDOException("Call to undefined method Mysql::{$method}()");
+        }
+        // 删除结果集
+        $this->resetStmt();
+        // 返回结果
+        return $result;
+    }
+    
+    /**
+     * 清空stmt对象
+     * @return void
+     */
+    protected function resetStmt()
+    {
+        $this->stmt = NULL;
     }
 
     /**
