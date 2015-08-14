@@ -1,19 +1,16 @@
 <?php
-namespace Mvc;
 
-use \Driver\Mysql as Model;
+namespace Core;
 
-class Controller
+use \Driver\Mysql as Model; // 引入数据库
+
+class Logic
 {
-    /**
-     * 数据库配置
-     */
-    
     /**
      * 单例获取模型对象
      * @return \Driver\Sql;
      */
-    public function getMy5755Db($config = 'default')
+    protected function getMy5755Db()
     {
         $conf['host'] = "127.0.0.1";
         $conf['port'] = "3306";
@@ -24,7 +21,7 @@ class Controller
         return Model::getInstance($conf);
     }
     
-    public function getPlatformDb()
+    protected function getPlatformDb()
     {
         $conf['host'] = "127.0.0.1";
         $conf['port'] = "3306";
@@ -36,17 +33,9 @@ class Controller
     }
     
     /**
-     * 分页
-     */
-    public function getList()
-    {
-        
-    }
-    
-    /**
      * 获取指定的key数组
      */
-    public function getFileds($result, $field)
+    protected function getFileds($result, $field)
     {
         $list = array();
         foreach($result as $value)
@@ -56,7 +45,22 @@ class Controller
                 $list[] = $value[$field];
             }
         }
-        
+    
         return $list;
+    }
+    
+    protected function auxiliary($origin, $auxiliary, $map)
+    {
+        foreach($auxiliary as $key=>$val)
+        {
+            foreach($origin as $k=>$v)
+            {
+                if($v[$map[0]] == $val[$map[1]])
+                {
+                    
+                    $mybets[$k][] = $val['bet'];
+                }
+            }
+        }
     }
 }

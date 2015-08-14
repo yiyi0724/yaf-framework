@@ -228,7 +228,7 @@ class Mysql extends Driver
         else
         {
             // 没有偏移量只有个数
-            $this->values[':limit_number'] = $offset;
+            $this->sql['values'][':limit_number'] = $offset;
             $this->sql["limit"] = "LIMIT :limit_number";
         }
         
