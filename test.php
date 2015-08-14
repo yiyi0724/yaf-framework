@@ -10,10 +10,11 @@ function __autoload($class)
 
 $controller = new \Mvc\Controller();
 
-$goodsModel = $controller->getModel('goods');
+$model = $controller->getModel();
 
-$result = $goodsModel->where([['goods_id'=>1,'type'=>'5'], 'goods_name'=>'test'])->select();
+//define('DEBUG_SQL', TRUE);
 
+$result = $model->from('goods')->select()->fetchAll();
+header('Content-Type:text/html;charset=UTF-8');
 echo '<pre>';
 print_r($result);
-exit;

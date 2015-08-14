@@ -1,7 +1,7 @@
 <?php
 namespace Mvc;
 
-use \Driver\Sql as Model;
+use \Driver\Mysql as Model;
 
 class Controller
 {
