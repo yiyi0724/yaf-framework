@@ -5,37 +5,7 @@
 namespace Driver;
 
 class Sql extends Driver
-{    
-    /**
-     * 解析所有
-     * @var string
-     */
-    const FETCH_ALL = 'fetchAll';
-    
-    /**
-     * 解析一行
-     * @var string
-     */
-    const FETCH_ROW = 'fetch';
-    
-    /**
-     * 解析一个值
-     * @var string
-     */
-    const FETCH_ONE = 'fetchColumn';
-    
-    /**
-     * 获取影响的行数
-     * @var string
-     */
-    const RESULT_ROW = 'rowCount';
-    
-    /**
-     * 获取上次插入的id
-     * @var string
-     */
-    const RESULT_ID = "lastInsertId";
-
+{
     /**
      * 附加的查询条件
      * @var array
@@ -110,7 +80,7 @@ class Sql extends Driver
     }
     
     /**
-     * 设置要查询的字段
+     * 设置要查询的字段, 只支持一个参数,就是字符串
      * @return \Driver\Sql;
      */
     public function field($args)
@@ -125,7 +95,8 @@ class Sql extends Driver
      */
     public function where($args)
     {
-        $this->comCondition($args, 'where');    
+        $condition = $this->comCondition($args, 'where');
+        $this->sql['where'] = "WHERE " . implode(' AND ', $condition);
         return $this;
     }
     
@@ -135,20 +106,29 @@ class Sql extends Driver
      */
     public function having($args)
     {
-        $this->comCondition($args, 'having');    
+        $condition = $this->comCondition($args, 'having');
+        $this->sql['having'] = "HAVING " . implode(' AND ', $condition);
         return $this;
     }
     
     /**
      * 拼接条件子句
      * @param array 键值对数组
+     * @param array where或者having
      * @return array
      */
-    private final function comCondition($condition, $field, $return = FALSE)
+    private final function comCondition($condition, $field)
     {
+        if(is_string($condition))
+        {
+            // 防止注入
+            return array(addslashes($condition));
+        }
+        
+        // 循环支持, 防止占位符冲突
         static $interval = 0;
     
-        $where = $data = array();
+        $where = array();
         foreach ($condition as $key => $option)
         {
             // false null array() "" 的时候全部过滤
@@ -176,7 +156,7 @@ class Sql extends Driver
                         $o = array(
                             $k => $o
                         );
-                        list($or[]) = $this->comCondition($o, $field, TRUE);
+                        list($or[]) = $this->comCondition($o, $field);
                     }
                     $where[] = "(" . implode(" OR ", $or) . ")";
                     continue;
@@ -194,7 +174,14 @@ class Sql extends Driver
                     $where[] = "{$key} {$operation}(" . implode(',', $temp) . ")";
                 }
             }
-            else if ($lan = strpos($key, " "))
+            else if ((strpos($option, "%") !== FALSE) || (strpos($option, '?') !== FALSE))
+            {
+                // like 
+                $operation = strpos($key, " n") ? "NOT LIKE" : "LIKE";
+                $where[] = "{$key} {$operation} :{$field}{$interval}";
+                $this->sql['values'][":{$field}{$interval}"] = $option;
+            }
+            else if (($lan = strpos($key, " ")) !== FALSE)
             {
                 // > >= < <= !=
                 $subkey = substr($key, 0, $lan);
@@ -203,31 +190,14 @@ class Sql extends Driver
             }
             else
             {
-                if ((strpos($option, "%") !== FALSE) || (strpos($option, '?') !== FALSE))
-                {
-                    // like
-                    $operation = strpos($key, " n") ? "NOT LIKE" : "LIKE";
-                    $where[] = "{$key} {$operation} :{$field}{$interval}";
-                    $this->sql['values'][":{$field}{$interval}"] = $option;
-                }
-                else
-                {
-                    // =
-                    $where[] = "{$key}=:{$key}{$interval}";
-                    $this->sql['values'][":{$key}{$interval}"] = $option;
-                }
+                // =
+                $where[] = "{$key}=:{$key}{$interval}";
+                $this->sql['values'][":{$key}{$interval}"] = $option;
             }
             $interval ++;
         }
     
-        if ($return)
-        {
-            return $where;
-        }
-        else
-        {
-            $this->sql[$field] = strtoupper($field) . " " . implode(' AND ', $where);
-        }
+        return $where;
     }
     
     /**
@@ -281,7 +251,7 @@ class Sql extends Driver
      * @param const 返回类型
      * @return void
      */
-    public function insert(array $data, $returnType=self::RESULT_ID)
+    public function insert(array $data)
     {
         // 数据整理
         $data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
@@ -308,7 +278,7 @@ class Sql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 结果返回
-        return $returnType==self::RESULT_ID ? $this->db->lastInsertId() : $this->db->rowCount();
+        return $this;
     }
     
     /**
@@ -322,29 +292,21 @@ class Sql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回结果
-        return $this->db->rowCount();
+        return $this;
     }
     
     /**
      * 拼接sql语句
      * @return string
      */
-    public function select($returnType=self::FETCH_ALL)
+    public function select()
     {
         // 拼接sql语句
         $sql = "SELECT {$this->sql['field']} FROM {$this->table} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回类型
-        switch($returnType)
-        {
-            case self::FETCH_ALL:
-                return $this->db->fetchAll();
-            case self::FETCH_ROW:
-                return $this->db->fetch();
-            case self::FETCH_ONE:
-                return $this->db->fetchColumn();
-        }
+        return $this;
     }
     
     /**
@@ -385,7 +347,7 @@ class Sql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回影响行数
-        return $this->db->rowCount();
+        return $this;
     }
     
     /**
@@ -410,6 +372,52 @@ class Sql extends Driver
             // 清空条件子句
             $this->resetSql();
         }
+    }
+    
+    /**
+     * 获取所有
+     * @return array
+     */
+    public function fetchAll()
+    {
+        $result = $this->db->fetchAll();
+        return $result ? : array();
+    }
+    
+    /**
+     * 获取一行
+     * @return array
+     */
+    public function fetchRow()
+    {
+        $result = $this->db->fetch();
+        return $result ? : array();
+    }
+    
+    /**
+     * 获取一个值
+     * @return mixed
+     */
+    public function fetchOne()
+    {
+        $result = $this->db->fetchColumn();
+        return $result ? : NULL;
+    }
+    
+    /**
+     * 返回上次插入的id
+     */
+    public function lastInsertId()
+    {
+        return $this->db->lastInsertId();
+    }
+    
+    /**
+     * 影响行数
+     */
+    public function affectRow()
+    {
+        return $this->db->rowCount();
     }
     
     /**
