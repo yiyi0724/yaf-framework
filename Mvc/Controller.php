@@ -13,10 +13,9 @@ class Controller
      * 单例获取模型对象
      * @return \Driver\Sql;
      */
-    public function getModel($table, $config = 'default')
+    public function getModel($config = 'default')
     {
         $conf = $this->getConfig();
-        $conf['table'] = $table;
         
         return Model::getInstance($conf);
     }
