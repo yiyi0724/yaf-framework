@@ -203,7 +203,7 @@ class Mysql extends Driver
                 $conds[] = "(".implode(" OR ", $or).")";
                 continue;
             }
-            else if($from == 3 || is_array($value))
+            else if(is_array($value))
             {
                 // in | not in
                 $expression = $from == 3 ? 'NOT IN' : 'IN';
