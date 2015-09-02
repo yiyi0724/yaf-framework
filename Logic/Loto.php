@@ -22,18 +22,23 @@ class Loto extends Logic
         // 我的信息
         $mybets = $my5755->table('loto_userbets')->limit(5)->where($where)->select()->fetchAll();
         
+        echo '<pre>';
+        print_r($mybets);
+        exit;
+        
+        /* 
         if($bids = $this->getFileds($mybets, 'bid'))
         {
             // 插入bet
             if($bets = $platform->field('id, bet')->table('loto_bets')->where(['id'=>$bids])->select()->fetchAll())
             {
-                $this->auxiliary($mybets, $bets, ['bid'=>'id']);
+                //$this->auxiliary($mybets, $bets, ['bid'=>'id']);
             }
         }
         
         echo '<pre>';
         print_r($mybets);
-        exit;
+        exit; */
         
         return $mybets;
     }
