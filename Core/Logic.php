@@ -21,6 +21,9 @@ class Logic
         return Model::getInstance($conf);
     }
     
+    /**
+     * 获取platform数据库对象
+     */
     protected function getPlatformDb()
     {
         $conf['host'] = "127.0.0.1";
@@ -30,37 +33,5 @@ class Logic
         $conf['username'] = "root";
         $conf['password'] = "123456";
         return Model::getInstance($conf);
-    }
-    
-    /**
-     * 获取指定的key数组
-     */
-    protected function getFileds($result, $field)
-    {
-        $list = array();
-        foreach($result as $value)
-        {
-            if(!in_array($value[$field], $list))
-            {
-                $list[] = $value[$field];
-            }
-        }
-    
-        return $list;
-    }
-    
-    protected function auxiliary($origin, $auxiliary, $map)
-    {
-        foreach($auxiliary as $key=>$val)
-        {
-            foreach($origin as $k=>$v)
-            {
-                if($v[$map[0]] == $val[$map[1]])
-                {
-                    
-                    $mybets[$k][] = $val['bet'];
-                }
-            }
-        }
     }
 }

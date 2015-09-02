@@ -44,7 +44,13 @@ class Redis extends Driver
      */
     public function __call($method, $args)
     {
-        // 执行回调函数
-        return call_user_func_array(array($this->redis, $method), $args);
+        try
+        {
+            return call_user_func_array(array($this->redis, $method), $args);
+        } 
+        catch(\RedisException $e)
+        {
+            return FALSE;
+        }
     }
 }

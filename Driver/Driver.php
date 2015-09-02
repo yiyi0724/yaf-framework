@@ -31,7 +31,7 @@ class Driver
     /**
      * 单例模式创建连接池对象
      * @param array 数组配置
-     * @return \Driver\Mysql
+     * @return \Driver
      */
     public static function getInstance(array $driver)
     {

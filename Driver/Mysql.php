@@ -8,10 +8,22 @@ namespace Driver;
 class Mysql extends Driver
 {
     /**
+     * 当前的pdo对象
+     * @var \PDO
+     */
+    private $pdo;
+
+    /**
+     * 预处理对象
+     * @var \PDOStatement
+     */
+    private $stmt;
+
+    /**
      * 附加的查询条件
      * @var array
      */
-    protected $sql = array( 
+    protected $sql = array(
         'field' => '*',
         'table' => NULL,
         'where' => NULL,
@@ -25,19 +37,7 @@ class Mysql extends Driver
     );
 
     /**
-     * 当前的pdo对象
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
-     * 预处理对象
-     * @var \PDOStatement
-     */
-    private $stmt;
-
-    /**
-     * 禁止直接new对象
+     * 禁止直接new对象,保证单例模式
      * @param array 数组配置
      * @return void
      */
@@ -45,17 +45,17 @@ class Mysql extends Driver
     {
         // 数据库连接信息
         $dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";
+
         // 驱动选项
         $options = array( 
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, // 如果出现错误抛出错误警告
             \PDO::ATTR_ORACLE_NULLS => \PDO::NULL_TO_STRING, // 把所有的NULL改成""
-            \PDO::ATTR_TIMEOUT => 30
-        ) // 超时时间
-;
+            \PDO::ATTR_TIMEOUT => 30 // 超时时间
+        );
+
         // 创建数据库驱动对象
         $this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
     }
-
 
     /**
      * 设置要查询的字段
@@ -102,95 +102,6 @@ class Mysql extends Driver
     }
 
     /**
-     * 拼接条件子句
-     * @param array 键值对数组
-     * @param string where或者having
-     * @return array
-     */
-    private final function comCondition($condition, $field)
-    {
-        if (is_string($condition))
-        {
-            // 防止注入
-            return array(addslashes($condition));
-        }
-        
-        // 循环支持, 防止占位符冲突
-        static $interval = 0;
-        
-        $where = array();
-        foreach ($condition as $key => $option)
-        {
-            // false null array() "" 的时候全部过滤
-            if (! $option && ! is_int($option))
-            {
-                continue;
-            }
-            
-            if (is_array($option))
-            {
-                if ($lan = strpos($key, " b"))
-                {
-                    // between...and...
-                    $key = trim(substr($key, 0, $lan));
-                    $where[] = "{$key} BETWEEN :{$key}{$interval}_1 AND :{$key}{$interval}_2";
-                    $this->sql['values'][":{$key}{$interval}_1"] = $option[0];
-                    $this->sql['values'][":{$key}{$interval}_2"] = $option[1];
-                }
-                elseif (is_string(key($option)))
-                {
-                    // or
-                    $or = array();
-                    foreach ($option as $k => $o)
-                    {
-                        $o = array( 
-                            $k => $o
-                        );
-                        list($or[]) = $this->comCondition($o, $field);
-                    }
-                    $where[] = "(" . implode(" OR ", $or) . ")";
-                    continue;
-                }
-                else
-                {
-                    // in not in
-                    $operation = strpos($key, " n") ? "NOT IN" : "IN";
-                    $key = strpos($key, " n") ? trim(substr($key, 0, count($key) + 1)) : $key;
-                    foreach ($option as $k => $val)
-                    {
-                        $temp[] = ":{$key}{$interval}_{$k}";
-                        $this->sql['values'][":{$key}{$interval}_{$k}"] = $val;
-                    }
-                    $where[] = "{$key} {$operation}(" . implode(',', $temp) . ")";
-                }
-            }
-            else if ((strpos($option, "%") !== FALSE) || (strpos($option, '?') !== FALSE))
-            {
-                // like
-                $operation = strpos($key, " n") ? "NOT LIKE" : "LIKE";
-                $where[] = "{$key} {$operation} :{$field}{$interval}";
-                $this->sql['values'][":{$field}{$interval}"] = $option;
-            }
-            else if (($lan = strpos($key, " ")) !== FALSE)
-            {
-                // > >= < <= !=
-                $subkey = substr($key, 0, $lan);
-                $where[] = "{$key} :{$field}{$interval}";
-                $this->sql['values'][":{$field}{$interval}"] = $option;
-            }
-            else
-            {
-                // =
-                $where[] = "{$key}=:{$key}{$interval}";
-                $this->sql['values'][":{$key}{$interval}"] = $option;
-            }
-            $interval ++;
-        }
-        
-        return $where;
-    }
-
-    /**
      * order子句
      * @return \Driver\Mysql
      */
@@ -231,8 +142,102 @@ class Mysql extends Driver
             $this->sql['values'][':limit_number'] = $offset;
             $this->sql["limit"] = "LIMIT :limit_number";
         }
-        
+
         return $this;
+    }
+
+    /**
+     * 拼接条件子句
+     * @param array 键值对数组
+     * @param string where或者having
+     * @return array
+     */
+    private final function comCondition($condition, $field)
+    {
+        if (is_string($condition))
+        {
+            return array(addslashes($condition));
+        }
+        
+        static $interval = 0;
+        
+        $conds = array();
+        foreach ($condition as $key => $value)
+        {
+            // false null array() "" 的时候全部过滤,0不过滤
+            if (!$value && !is_numeric($value))
+            {
+                continue;
+            }
+
+            // 去掉两边的空格
+            $key = trim($key);
+            
+            // 操作类型
+            foreach(array(' B', ' NL', ' L', ' N', ' >', ' <', ' =', ' !', ' &', ' ^', ' |', NULL) as $from=>$action)
+            {
+                if($location=strpos($key, $action))
+                {
+                    $origin = $key;
+                    $key = substr($key, 0, $location);
+                    break;
+                }
+            }
+            
+            if($from==0) 
+            {
+                // between...and
+                $conds[] = "{$key} BETWEEN :{$key}from{$interval} AND :{$key}to{$interval}";
+                $this->sql['values'][":{$key}from{$interval}"] = $value[0];
+                $this->sql['values'][":{$key}to{$interval}"] = $value[1];
+            }
+            else if($key == 'OR')
+            {                
+                // or
+                $or = array();
+                foreach ($value as $k => $o)
+                {
+                    $o = array($k => $o);
+                    list($or[]) = $this->comCondition($o, $field);
+                }
+                $conds[] = "(".implode(" OR ", $or).")";
+                continue;
+            }
+            else if($from == 3 || is_array($value))
+            {
+                // in | not in
+                $expression = $from == 1 ? 'NOT IN' : 'IN';
+                foreach ($value as $k => $val)
+                {
+                    $temp[] = ":{$key}{$interval}_{$k}";
+                    $this->sql['values'][":{$key}{$interval}_{$k}"] = $val;
+                }
+                $conds[] = "{$key} {$expression}(" . implode(',', $temp) . ")";
+            }
+            else if (in_array($from, array(1, 2)))
+            {
+                // like
+                $expression = $from == 2 ? 'LIKE' : 'NOT LIKE';
+                $conds[] = "{$key} {$expression} :{$field}{$interval}";
+                $this->sql['values'][":{$field}{$interval}"] = $value;
+            }
+            else if (in_array($from, array(4, 5, 6, 7, 8, 9, 10)))
+            {
+                // > >= < <= != & ^ |
+                $conds[] = "{$origin} :{$key}{$interval}";
+                $this->sql['values'][":{$key}{$interval}"] = $value;
+            }
+            else
+            {
+                // =
+                $conds[] = "{$key}=:{$key}{$interval}";
+                $this->sql['values'][":{$key}{$interval}"] = $value;
+            }
+            
+            $interval ++;
+        }
+        
+        return $conds;
     }
 
     /**
