@@ -206,7 +206,7 @@ class Mysql extends Driver
             else if($from == 3 || is_array($value))
             {
                 // in | not in
-                $expression = $from == 1 ? 'NOT IN' : 'IN';
+                $expression = $from == 3 ? 'NOT IN' : 'IN';
                 foreach ($value as $k => $val)
                 {
                     $temp[] = ":{$key}{$interval}_{$k}";
