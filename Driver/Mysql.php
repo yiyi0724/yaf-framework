@@ -38,7 +38,7 @@ class Mysql extends Driver
 
     /**
      * 禁止直接new对象,保证单例模式
-     * @param array 数组配置
+     * @param array 数组配置, host | port | dbname | charset | username | password
      * @return void
      */
     protected function __construct($driver)
@@ -49,7 +49,6 @@ class Mysql extends Driver
         // 驱动选项
         $options = array( 
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, // 如果出现错误抛出错误警告
-            \PDO::ATTR_ORACLE_NULLS => \PDO::NULL_TO_STRING, // 把所有的NULL改成""
             \PDO::ATTR_TIMEOUT => 30 // 超时时间
         );
 
@@ -123,26 +122,15 @@ class Mysql extends Driver
 
     /**
      * limit子句
-     * @param int 偏移量或者个数
+     * @param int 偏移量
      * @param int 个数
      * @return \Driver\Mysql
      */
-    public function limit($offset, $number = NULL)
+    public function limit($offset, $number)
     {
-        if ($number)
-        {
-            // 偏移量和个数都存在
-            $this->sql['values'][':limit_offset'] = $offset;
-            $this->sql['values'][':limit_number'] = $number;
-            $this->sql["limit"] = "LIMIT :limit_offset, :limit_number";
-        }
-        else
-        {
-            // 没有偏移量只有个数
-            $this->sql['values'][':limit_number'] = $offset;
-            $this->sql["limit"] = "LIMIT :limit_number";
-        }
-
+        $this->sql['values'][':limit_offset'] = $offset;
+        $this->sql['values'][':limit_number'] = $number;
+        $this->sql["limit"] = "LIMIT :limit_offset, :limit_number";
         return $this;
     }
 
@@ -339,7 +327,7 @@ class Mysql extends Driver
         $sql = "UPDATE {$this->sql['table']} SET {$set} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
-        // 返回影响行数
+        // 返回当前对象
         return $this;
     }
 
@@ -484,50 +472,6 @@ class Mysql extends Driver
         }
         
         echo '<hr/> origin sql: ', $sql, '</pre>';
-        exit();
+        exit;
     }
 }
-
-/**
- * 使用说明:
- * 1. 配置说明: $driver = ['host'=>'127.0.0.1', port=>3306, dbname=>'test', 'charset'=>'utf8', 'username'=>'root', 'password'=>123456];
- * 2. 获取对象: $mysql = Mysql::getInstance($driver);
- * 3. 函数说明:
- * 3.1 执行sql语句: $mysql->query(string $sql, array $values=array());
- * 3.2 关于事务的函数
- * 3.2.1 开启事务: $mysql->beginTransaction();
- * 3.2.2 提交事务: $mysql->commit();
- * 3.2.3 回滚事务: $mysql->rollback();
- * 3.2.4 判断是否在一个事务中: $mysql->inTransaction();
- * 3.3 关于执行结果获取的函数
- * 3.3.1 获取上次插入的id: $mysql->lastInsertId();
- * 3.3.2 获取影响的行数: $mysql->rowCount();
- * 3.3.3 获取所有的查询结果: $mysql->fetchAll();
- * 3.3.4 获取一行查询结果: $mysql->fetch();
- * 3.3.5 获取一个查询结果的值: $mysql->fetchColumn();
- */
-
-/**
- * 使用说明:
- * 1. 配置说明: $driver = ['host'=>'127.0.0.1', port=>3306, dbname=>'test', 'charset'=>'utf8', 'username'=>'root', 'password'=>123456, 'table'=>'tableName'];
- * 2. 单例获取表对象: $model = \Driver\Sql::getInstance($driver);
- * 3. 函数说明:
- * 3.0 连贯操作: $model->field()->where()->group()->order()->limit()->method();
- * 3.0.1 filed函数, 一般用于select中,输入要查询的字符串, 如 'a,b,c' 或者用 'count(a)'也是支持的
- * 3.0.2 where函数,输入一个数组
- * 3.0.2.1 ['a'=>1]      ===> a = 1
- * 3.0.2.2 ['a'=>[1,2]] ===> a in (1, 2)
- * 3.0.2.3 ['a n'=>[1,2]]  ===> a not in (1, 2);
- * 3.0.2.4 ['a b'=>[1,2]]  ===> a between 1 and 2
- * 3.0.2.5 ['a >'=>1] ===> a > 1, 其他符号类似,记住空格不能少
- * 3.0.2.6 ['a'=>'%a%'] ===> a like '%a%', 同理 ['a n'=>'?a?'] ===> a not like '?a?'
- * 3.0.2.7 [['a'=>1, 'b'=>'2']] ===> a = 1 or b = 2
- * 3.1 插入: $model->insert(array('columnName'=>'value'), 返回值|返回影响结果);
- * 3.1.1 第二个参数说明: RESULT_ID | RESULT_ROW
- * 3.2 删除: $model->delete(); 执行delete之前可以先用连贯操作限制条件
- * 3.3 更新: $model->update(); 执行update之前可以先用连贯操作限制条件
- * 3.4 查询: $model->field()->where()->group()->having()->order()->limit()->select();
- * 3.4.1 select()方法参数: FETCH_ALL | FETCH_ROW | FETCH_ONE
- * 3.5 原生sql使用: $model->query($sql, $data);
- * 3.6 输出调试语句, 定义一个常量 define('DEBUG_SQL', TRUE);则不执行,只输出sql语句
- */

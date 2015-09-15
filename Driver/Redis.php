@@ -15,7 +15,7 @@ class Redis extends Driver
     
     /**
      * 创建对象
-     * @param array $driver
+     * @param array 配置数组 host | port | timeout | auth | db
      * @throws \RedisException
      */
     protected function __construct($driver)
