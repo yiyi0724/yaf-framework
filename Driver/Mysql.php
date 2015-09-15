@@ -475,3 +475,39 @@ class Mysql extends Driver
         exit;
     }
 }
+
+/**
+ * 使用说明(按照下面步骤即可):
+ * 1. 获取某一个数据库的对象: $mysql = \Driver\Mysql::getInstance($config);  // $config数组包含: host port dbname charset username password 6个key,必须都有
+ * 2. 内置函数
+ * 2.1 开启事务: $mysql->beginTransaction();
+ * 2.2 检查是否在一个事务内: $mysql->inTransaction();
+ * 2.3 事务回滚: $mysql->rollback();
+ * 2.4 事务提交: $mysql->commit();
+ * 2.5 获得上次插入的id: $mysql->lastInsertId();
+ * 2.6 从结果集中获取所有内容: $mysql->fetchAll();
+ * 2.7 从结果集中获取一行内容: $mysql->fetch();
+ * 2.8 从结果集中获取一个内容: $mysql->fetchColumn();
+ * 2.9 获得影响行数: $mysql->rowCount();
+ * 
+ * 3. 连贯操作函数:
+ * 3.1 $mysql->field('用,隔开的字符串')->table('表名')->where('数组或者字符串')->group('字符串')->order('字符串')->having('同where')->limit('偏移量', '个数')
+ * 3.2 where和having函数的使用说明:
+ * 3.2.1 如果传入的是字符串,则直接拼字符串
+ * 3.2.2 数组说明:
+ * 3.2.2.1 ['id'=>1] 拼接成 id = 1
+ * 3.2.2.2 ['id >'=>1] 拼接成 id > 1, 同理其他比较运算符一致
+ * 3.2.2.3 ['id'=>[1,2,3]] 拼接成 id IN(1,2,3), 同理['id N'=>[1,2,3]] 拼接成 id NOT IN(1,2,3)
+ * 3.2.2.4 ['id B'=>[1,5]] 拼接成 id BETWEEN 1 AND 5
+ * 3.2.2.5 ['OR'=>['id'=>1, 'other'=>2]] 拼接成 id = 1 OR other = 2
+ * 3.2.2.6 ['id L'=>'%chen%'] 拼接成 id LIKE '%chen%' 同理['id NL'=>'%chen%'] 拼接成 id NOT LIKE '%chen%'
+ * 
+ * 4. 连贯操作函数2,可配置上面的函数一起使用
+ * 4.1 $mysql->select()->fetch();  进行select
+ * 4.2 $mysql->insert()->lastInsertId(); 进行insert
+ * 4.3 $mysql->update()->rowCount(); 进行update
+ * 4.4 $mysql->delete()->rowCount(); 进行delete
+ *  
+ *  5. 原生sql操作
+ *  5.1 $mysql->query($sql, $params);
+ */
