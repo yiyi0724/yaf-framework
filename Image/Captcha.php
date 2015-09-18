@@ -4,13 +4,19 @@ namespace Image;
 
 class Captcha
 {
+    protected static $fonts = array(
+        'telefono.ttf',
+        'brokenrecords_33.ttf',
+        'brokenrecords_45.ttf',
+    );
+    
     /**
      * 输出验证码
      * @param int 长度
      * @param int 宽度
      * @param string 字体
      */
-    public static function draw($width, $height, $font)
+    public static function draw($width, $height, $font=NULL)
     {
         // 随机码
         $randomCode = self::randomCode();
@@ -24,7 +30,7 @@ class Captcha
   		for($i=0; $i<4; $i++)
   		{
   		    $color = imagecolorallocate($image, mt_rand(0,156), mt_rand(0,156), mt_rand(0,156));
-  		    imagettftext($image, $height*0.5, mt_rand(-30,30), $width/4*$i+mt_rand(1,5), $height/1.4, $color , $font, $randomCode[$i]);
+  		    imagettftext($image, $height*0.5, mt_rand(-30,30), $width/5*$i+mt_rand(1,5)+$width/8, $height/1.4, $color , self::font($font), $randomCode[$i]);
   		}
   		$_SESSION['captcha'] = $randomCode;
   		//线条
@@ -41,7 +47,7 @@ class Captcha
         imagestring($image, mt_rand(1,5), mt_rand(0,$width), mt_rand(0,$height), '*', $color);
         }
         // 输出
-        header("Content-type: image/png");
+        header('Content-type: image/png');
         imagepng($image);
         // 销毁
     	imagedestroy($image);
@@ -53,6 +59,14 @@ class Captcha
      */
     protected static function randomCode()
     {
-        return substr(str_shuffle("abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789"), 0, mt_rand(4, 6));
+        return substr(str_shuffle("abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789"), 0, 6);
+    }
+    
+    /**
+     * 
+     * @param unknown $font
+     */
+    protected static function font($font) {    
+        return $font ? : __DIR__.'/Fonts/'.self::$fonts[mt_rand(0, count(self::$fonts)-1)];
     }
 }

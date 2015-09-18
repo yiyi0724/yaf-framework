@@ -3,8 +3,8 @@
  * HTTP头信息
  * @author enychen
  */
-namespace Network
-;
+namespace Network;
+
 class Header
 {
 	/**
@@ -15,6 +15,7 @@ class Header
 	{
 		header('P3P: CP="CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR"');
 	}
+	
 	/**
 	 * 缓存控制
 	 * @return void
