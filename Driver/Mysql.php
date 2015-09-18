@@ -183,10 +183,11 @@ class Mysql extends Driver
             {                
                 // or
                 $or = array();
-                foreach ($value as $k => $o)
-                {
-                    $o = array($k => $o);
-                    list($or[]) = $this->comCondition($o, $field);
+                foreach ($value as $orKey=>$orValue)
+                {                    
+                    $temp = is_array($orValue) ? $orValue : array($orKey => $orValue);
+                    $temp = $this->comCondition($temp, $field);
+                    $or[] = implode(' AND ', $temp);
                 }
                 $conds[] = "(".implode(" OR ", $or).")";
                 continue;
@@ -499,8 +500,9 @@ class Mysql extends Driver
  * 3.2.2.2 ['id >'=>1] 拼接成 id > 1, 同理其他比较运算符一致
  * 3.2.2.3 ['id'=>[1,2,3]] 拼接成 id IN(1,2,3), 同理['id N'=>[1,2,3]] 拼接成 id NOT IN(1,2,3)
  * 3.2.2.4 ['id B'=>[1,5]] 拼接成 id BETWEEN 1 AND 5
- * 3.2.2.5 ['OR'=>['id'=>1, 'other'=>2]] 拼接成 id = 1 OR other = 2
+ * 3.2.2.5 ['OR'=>['id'=>1, 'other'=>1, ['other2'=>2, 'other3'=>3]]] 拼接成 id = 1 OR other = 1 OR other2 = 2 AND other3 = 3
  * 3.2.2.6 ['id L'=>'%chen%'] 拼接成 id LIKE '%chen%' 同理['id NL'=>'%chen%'] 拼接成 id NOT LIKE '%chen%'
+ * 3.3 现在连贯操作的结束操作的函数是 fetch | fetchAll | fetchColumn | rowCount | lastInsertId, 并非是selcect | update | detele | insert, 这点和网上的有点不太一样
  * 
  * 4. 连贯操作函数2,可配置上面的函数一起使用
  * 4.1 $mysql->select()->fetch();  进行select
@@ -510,4 +512,7 @@ class Mysql extends Driver
  *  
  *  5. 原生sql操作
  *  5.1 $mysql->query($sql, $params);
+ *  
+ *  6. 调试
+ *  6.1 define('DEBUG_SQL', TRUE); 后,不执行sql语句,输出预处理sql语句，值数组，可执行的完整sql语句 3种书u
  */
