@@ -514,5 +514,5 @@ class Mysql extends Driver
  *  5.1 $mysql->query($sql, $params);
  *  
  *  6. 调试
- *  6.1 define('DEBUG_SQL', TRUE); 后,不执行sql语句,输出预处理sql语句，值数组，可执行的完整sql语句 3种书u
+ *  6.1 define('DEBUG_SQL', TRUE); 后,不执行sql语句,输出预处理sql语句，值数组，可执行的完整sql语句
  */
