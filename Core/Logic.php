@@ -48,4 +48,12 @@ class Logic
         $conf['timeout'] = 30;
         return Redis::getInstance($conf);
     }
+    
+    /**
+     * 获取分页的信息
+     */
+    public function pageList()
+    {
+    	
+    }
 }

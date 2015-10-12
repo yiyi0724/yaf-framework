@@ -63,8 +63,8 @@ class Captcha
     }
     
     /**
-     * 
-     * @param unknown $font
+     * 选择何种字体
+     * @param string 字体路径 $font
      */
     protected static function font($font) {    
         return $font ? : __DIR__.'/Fonts/'.self::$fonts[mt_rand(0, count(self::$fonts)-1)];

@@ -13,6 +13,7 @@ class Controller
     {
         // 定义UID
         define('UID', FALSE);
+        define('IP', FALSE);
     }
     
     /**
