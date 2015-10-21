@@ -24,4 +24,14 @@ class Header
 	{
 		header('Cache-Control:private, max-age=0, no-cache, must-revalidate, no-cache=Set-Cookie, proxy-revalidate');
 	}
+	
+	/**
+	 * 访问控制
+	 */
+	public static function AccessControl($httpHost)
+	{
+		$httpHost = is_array($httpHost) ? implode(', ', $httpHost) : $httpHost;
+		header("Access-Control-Allow-Origin: {$httpHost}");
+		//header('Access-Control-Allow-Headers: X-Requested-With,X_Requested_With'); //设置允许的跨域header
+	}
 }

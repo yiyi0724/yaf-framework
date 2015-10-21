@@ -162,7 +162,7 @@ class Mysql extends Driver
             $key = trim($key);
             
             // 操作类型
-            foreach(array(' B', ' NL', ' L', ' N', ' >', ' <', ' =', ' !', ' &', ' ^', ' |', NULL) as $from=>$action)
+            foreach(array(' B', ' NL', ' L', ' N', ' <>', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL) as $from=>$action)
             {
                 if($location=strpos($key, $action))
                 {
@@ -210,7 +210,7 @@ class Mysql extends Driver
                 $conds[] = "{$key} {$expression} :{$field}{$interval}";
                 $this->sql['values'][":{$field}{$interval}"] = $value;
             }
-            else if (in_array($from, array(4, 5, 6, 7, 8, 9, 10)))
+            else if (in_array($from, array(4, 5, 6, 7, 8, 9, 10, 11)))
             {
                 // > >= < <= != & ^ |
                 $conds[] = "{$origin} :{$key}{$interval}";

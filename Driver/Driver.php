@@ -36,7 +36,7 @@ class Driver
     public static function getInstance(array $driver)
     {
         // 计算hash值
-        $key = crc32(implode(':', $driver));
+        $key = sprintf("%u", crc32(implode(':', $driver)));
         // 是否已经创建过单例对象
         empty(static::$instance[$key]) AND (static::$instance[$key] = new static($driver));
         // 返回对象

@@ -1,5 +1,7 @@
 <?php
 
+namespace Network;
+
 class Ip
 {
     /**
@@ -8,7 +10,7 @@ class Ip
      * @return int|string
      */
     public static function get($ip2long=false)
-    {
+    {    	
     	if (getenv('HTTP_X_REAL_IP'))
 		{
 			$ip = getenv('HTTP_X_REAL_IP');
@@ -29,3 +31,8 @@ class Ip
         return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
     }
 }
+
+/**
+ * 使用方法
+ * Network\Ip::get(boolean 是否转成整数);
+ */
