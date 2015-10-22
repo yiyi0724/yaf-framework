@@ -50,10 +50,21 @@ class Logic
     }
     
     /**
-     * 获取分页的信息
+     * 把二维数组转换成一维数组
+     * @param
      */
-    public function pageList()
+    public function merge(array $source, $implode=false, $key='id')
     {
+    	$destination = array();
+
+    	foreach($source as $key=>$val)
+    	{
+    		if(isset($val[$key]))
+    		{
+    			$destination[] = $val[$key];
+    		}
+    	}
     	
+    	return $implode ? implode($implode, $news) : $news;
     }
 }
