@@ -47,7 +47,7 @@ class Redis extends Driver
         try
         {
             return call_user_func_array(array($this->redis, $method), $args);
-        } 
+        }
         catch(\RedisException $e)
         {
             return FALSE;

@@ -9,17 +9,17 @@ class Ip
      * @param boolean $ip2long 是否转换成为整形
      * @return int|string
      */
-    public static function get($ip2long=false)
+    public static function get($ip2long=true)
     {    	
-    	if (getenv('HTTP_X_REAL_IP'))
+    	if(getenv('HTTP_X_REAL_IP'))
 		{
 			$ip = getenv('HTTP_X_REAL_IP');
 		}
-		else if (getenv('HTTP_X_FORWARDED_FOR'))
+		else if(getenv('HTTP_X_FORWARDED_FOR'))
 		{
 			$ip = array_pop(explode(',', getenv('HTTP_X_FORWARDED_FOR')));
 		}
-		elseif (getenv('HTTP_CLIENT_IP'))
+		elseif(getenv('HTTP_CLIENT_IP'))
 		{
 			$ip = getenv('HTTP_CLIENT_IP');
 		}

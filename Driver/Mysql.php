@@ -48,7 +48,7 @@ class Mysql extends Driver
 
         // 驱动选项
         $options = array( 
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, // 如果出现错误抛出错误警告
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, // 如果出现错误抛出异常
             \PDO::ATTR_TIMEOUT => 30 // 超时时间
         );
 
@@ -336,9 +336,10 @@ class Mysql extends Driver
      * 执行sql语句
      * @param string sql语句
      * @param array 值数组
+     * @param mixed 发生错误后的回调函数
      * @throws \PDOException
      */
-    public function query($sql, $params = array())
+    public function query($sql, $params = array(), $callback=null)
     {
         if (defined('DEBUG_SQL'))
         {
@@ -347,16 +348,24 @@ class Mysql extends Driver
         }
         else
         {
-            // 预处理语句
-            $this->stmt = $this->pdo->prepare($sql);
-            // 参数绑定
-            $params and $this->bindValue($params);
-            // sql语句执行
-            $result = $this->stmt->execute();
-            // 清空条件子句
-            $this->resetSql();
-            // 返回结果
-            return $result;
+        	try
+        	{
+        		// 预处理语句
+        		$this->stmt = $this->pdo->prepare($sql);
+        		// 参数绑定
+        		$params and $this->bindValue($params);
+        		// sql语句执行
+        		$result = $this->stmt->execute();
+        		// 清空条件子句
+        		$this->resetSql();
+        		// 返回结果
+        		return $result;
+        	}
+        	catch(\PDOException $e)
+        	{
+        		$this->pdo->inTransaction() AND $this->pdo->rollback();
+        		return FALSE;
+        	}
         }
     }
     
