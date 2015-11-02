@@ -14,6 +14,12 @@ class Driver
     protected static $instance;
     
     /**
+     * 错误信息
+     * @var \Exception
+     */
+    protected $error;
+    
+    /**
      * 禁止创建对象
      */
     protected function __construct()
@@ -26,6 +32,24 @@ class Driver
      */
     protected final function __clone()
     {
+    }
+    
+    /**
+     * 设置错误信息
+     * @param \Exception $e
+     */
+    protected function setError(\Exception $e)
+    {
+    	$this->error = $e;
+    }
+    
+    /**
+     * 获取异常信息
+     * @return Exception
+     */
+    protected function getError()
+    {
+    	return $this->error;
     }
     
     /**

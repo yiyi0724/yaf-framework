@@ -7,6 +7,12 @@ namespace Driver;
 
 class Mysql extends Driver
 {
+	const FETCH_ALL = 'fetchAll';
+	const FETCH_ROW = 'fetch';
+	const FETCH_ONE = 'fetchColumn';
+	const AFFECT_ROW = 'rowCount';
+	const LAST_ID = 'lastInsertId';
+	
     /**
      * 当前的pdo对象
      * @var \PDO
@@ -234,7 +240,7 @@ class Mysql extends Driver
      * @param array 待插入的数据
      * @return \Driver\Mysql
      */
-    public function insert(array $data)
+    public function insert(array $data, $method=static::LAST_ID)
     {
         // 数据整理
         $data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
@@ -261,7 +267,7 @@ class Mysql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 结果返回
-        return $this;
+        return $this->$method();
     }
 
     /**
@@ -275,21 +281,21 @@ class Mysql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回结果
-        return $this;
+        return $this->rowCount();
     }
 
     /**
      * 执行查询
      * @return \Driver\Mysql
      */
-    public function select()
+    public function select($method=static::FETCH_ALL)
     {
         // 拼接sql语句
         $sql = "SELECT {$this->sql['field']} FROM {$this->sql['table']} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回类型
-        return $this;
+        return $this->$method();
     }
 
     /**
@@ -329,17 +335,16 @@ class Mysql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回当前对象
-        return $this;
+        return $this->rowCount();
     }
 
     /**
      * 执行sql语句
      * @param string sql语句
      * @param array 值数组
-     * @param mixed 发生错误后的回调函数
      * @throws \PDOException
      */
-    public function query($sql, $params = array(), $callback=null)
+    public function query($sql, $params = array())
     {
         if (defined('DEBUG_SQL'))
         {
@@ -363,6 +368,7 @@ class Mysql extends Driver
         	}
         	catch(\PDOException $e)
         	{
+        		$this->setError($e);
         		$this->pdo->inTransaction() AND $this->pdo->rollback();
         		return FALSE;
         	}
@@ -516,8 +522,8 @@ class Mysql extends Driver
  * 4. 连贯操作函数2,可配置上面的函数一起使用
  * 4.1 $mysql->select()->fetch();  进行select
  * 4.2 $mysql->insert()->lastInsertId(); 进行insert
- * 4.3 $mysql->update()->rowCount(); 进行update
- * 4.4 $mysql->delete()->rowCount(); 进行delete
+ * 4.3 $mysql->update(); 进行update
+ * 4.4 $mysql->delete(); 进行delete
  *  
  *  5. 原生sql操作
  *  5.1 $mysql->query($sql, $params);

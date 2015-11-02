@@ -8,6 +8,16 @@ namespace Network;
 class Header
 {
 	/**
+	 * 设置字符集头信息
+	 * @param string $content
+	 */
+	public static function contentType($content,$charset='CHARSET=UTF-8')
+	{
+		$charset = $charset ? ";{$charset}" : null;
+		header("Content-Type:{$content}{$charset}");
+	}
+	
+	/**
 	 * 允许跨域设置cookie
 	 * @return void
 	 */

@@ -21,7 +21,7 @@ class Redis extends Driver
     protected function __construct($driver)
     {
         // 创建redis对象
-        $this->redis = new \Redis();
+        $this->redis = new \Redis();        
         // 连接redis
         if($this->redis->connect($driver['host'], $driver['port'], $driver['timeout']))
         {
@@ -50,6 +50,7 @@ class Redis extends Driver
         }
         catch(\RedisException $e)
         {
+            $this->setError($e);
             return FALSE;
         }
     }
