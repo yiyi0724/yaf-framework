@@ -4,11 +4,40 @@ namespace Image;
 
 class Captcha
 {
-    protected static $fonts = array(
+    protected $fonts = array(
         'telefono.ttf',
         'brokenrecords_33.ttf',
         'brokenrecords_45.ttf',
     );
+    
+    /**
+     * 选项
+     * @var array
+     */
+    protected $options = array();
+    
+    /**
+     * 写入$_SESSION的key
+     * @param string 键名
+     * @return \Image\Captcha
+     */
+    public function setKey($key)
+    {
+    	$this->options['key'] = $key;
+    	return $this;
+    }
+    
+    public function setWidth($width)
+    {
+    	$this->options['width'] = $witdh;
+    	return $this;
+    }
+    
+    public function setHeight($height)
+    {
+    	$this->options['height'] = $height;
+    	return $this;
+    }
     
     /**
      * 输出验证码
@@ -16,7 +45,7 @@ class Captcha
      * @param int 宽度
      * @param string 字体
      */
-    public static function draw($width, $height, $font=NULL)
+    public  function draw($width, $height, $font=NULL)
     {
         // 随机码
         $randomCode = self::randomCode();

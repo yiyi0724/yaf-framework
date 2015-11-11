@@ -6,13 +6,7 @@
 namespace Driver;
 
 class Mysql extends Driver
-{
-	const FETCH_ALL = 'fetchAll';
-	const FETCH_ROW = 'fetch';
-	const FETCH_ONE = 'fetchColumn';
-	const AFFECT_ROW = 'rowCount';
-	const LAST_ID = 'lastInsertId';
-	
+{	
     /**
      * 当前的pdo对象
      * @var \PDO
@@ -24,7 +18,7 @@ class Mysql extends Driver
      * @var \PDOStatement
      */
     private $stmt;
-
+    
     /**
      * 附加的查询条件
      * @var array
@@ -60,6 +54,13 @@ class Mysql extends Driver
 
         // 创建数据库驱动对象
         $this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
+    }
+    
+    /**
+     * 设置缓存模式
+     */
+    public function setCache() {
+    	
     }
 
     /**
@@ -229,7 +230,7 @@ class Mysql extends Driver
                 $this->sql['values'][":{$key}{$interval}"] = $value;
             }
             
-            $interval ++;
+            $interval++;
         }
         
         return $conds;
@@ -240,7 +241,7 @@ class Mysql extends Driver
      * @param array 待插入的数据
      * @return \Driver\Mysql
      */
-    public function insert(array $data, $method=static::LAST_ID)
+    public function insert(array $data)
     {
         // 数据整理
         $data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
@@ -267,7 +268,7 @@ class Mysql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 结果返回
-        return $this->$method();
+        return $this;
     }
 
     /**
@@ -281,21 +282,21 @@ class Mysql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回结果
-        return $this->rowCount();
+        return $this;
     }
 
     /**
      * 执行查询
      * @return \Driver\Mysql
      */
-    public function select($method=static::FETCH_ALL)
+    public function select()
     {
         // 拼接sql语句
         $sql = "SELECT {$this->sql['field']} FROM {$this->sql['table']} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回类型
-        return $this->$method();
+        return $this;
     }
 
     /**
@@ -335,7 +336,7 @@ class Mysql extends Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回当前对象
-        return $this->rowCount();
+        return $this;
     }
 
     /**
@@ -353,25 +354,16 @@ class Mysql extends Driver
         }
         else
         {
-        	try
-        	{
-        		// 预处理语句
-        		$this->stmt = $this->pdo->prepare($sql);
-        		// 参数绑定
-        		$params and $this->bindValue($params);
-        		// sql语句执行
-        		$result = $this->stmt->execute();
-        		// 清空条件子句
-        		$this->resetSql();
-        		// 返回结果
-        		return $result;
-        	}
-        	catch(\PDOException $e)
-        	{
-        		$this->setError($e);
-        		$this->pdo->inTransaction() AND $this->pdo->rollback();
-        		return FALSE;
-        	}
+			// 预处理语句
+			$this->stmt = $this->pdo->prepare($sql);
+			// 参数绑定
+			$params and $this->bindValue($params);
+			// sql语句执行
+			$result = $this->stmt->execute();
+			// 清空条件子句
+			$this->resetSql();
+			// 返回结果
+			return $result;
         }
     }
     
@@ -522,8 +514,8 @@ class Mysql extends Driver
  * 4. 连贯操作函数2,可配置上面的函数一起使用
  * 4.1 $mysql->select()->fetch();  进行select
  * 4.2 $mysql->insert()->lastInsertId(); 进行insert
- * 4.3 $mysql->update(); 进行update
- * 4.4 $mysql->delete(); 进行delete
+ * 4.3 $mysql->update()->rowCount(); 进行update
+ * 4.4 $mysql->delete()->rowCount(); 进行delete
  *  
  *  5. 原生sql操作
  *  5.1 $mysql->query($sql, $params);

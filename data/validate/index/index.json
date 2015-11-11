@@ -1,0 +1,18 @@
+[
+{
+"name": "name",
+"from": "_GET",
+"require": "1",
+"prompt": "姓名长度3-10",
+"rule": "string",
+"ruleRemark": "3,10"
+},
+{
+"name": "id",
+"from": "_GET",
+"require": "1",
+"prompt": "id有误",
+"rule": "int",
+"ruleRemark": "1,9999"
+}
+]
