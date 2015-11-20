@@ -3,84 +3,80 @@
 use Yaf\Controller_Abstract;
 use Yaf\Dispatcher;
 use Yaf\Registry;
-use Security\Input;
-use Network\Header;
+use Security\Validate;
 
 abstract class BaseController extends Controller_Abstract
-{
-	/**
-	 * 请求对象
-	 * @var Yaf\Request_Abstract
-	 */
-	protected $request;
-	
+{	
 	/**
 	 * 初始化内容
 	 */
 	public function init()
 	{
-		// 获取用户id
-		define('UID', isset($_SESSION['user']['uid']) ? $_SESSION['user']['uid'] : NULL);
+		// 定义UID常量
+		$this->initUid();
 		
-		// 初始化静态文件url
-	}
-	
-	protected function validate()
-	{
-		// 数据检查
-		$request = $this->getRequest();
-		
-		// 数据检查
-		$controller = $request->getControllerName();
-		$action = $request->getActionName();
-		$validatePath = $this->getConfig('validate.directory');
-		$filename = strtolower("{$validatePath}{$controller}/{$action}.php");
-		Validate::process($filename);
+		// 来源检查
+		$this->validate();
 	}
 	
 	/**
-	 * 获取配置信息
-	 * @param array $key
-	 * @return mixed
+	 * 定义UID
 	 */
-	protected function getConfig($key)
+	protected function initUid()
 	{
-		return Registry::get('config')->get($key);
+		// 获取用户id
+		define('UID', isset($_SESSION['user']['uid']) ? $_SESSION['user']['uid'] : NULL);
 	}
 	
-	protected function jsonp($data=array(), $status=200, $message=null, $callback=null)
+	/**
+	 * 数据检查
+	 */
+	protected function validate()
 	{
-		// 关闭视图
-		$this->disableView();
+		// 数据校验文件名
+		$request = $this->getRequest();
+		$controller = $request->getControllerName();
+		$action = $request->getActionName();
+		$fileName = APPLICATION_PATH.'/data/validate'.strtolower("/{$controller}/$action.json");
 		
+		// 数据校验
+		$validate = new Validate($fileName);
+		$validate->check();
+		if($error = $validate->getError())
+		{
+			$this->jsonp($error, false, '数据校验失败');
+		}
+	}
+	
+	/**
+	 * 输出json或者jsonp
+	 * @param array $data
+	 * @param boolean $status
+	 * @param string $message
+	 * @param string $callback
+	 */
+	protected function jsonp($data=array(), $status=true, $message=null, $callback=null)
+	{
 		// 输出数据
 		$jsonArr = array();
 		$jsonArr['status'] = $status;
-		$jsonArr['message'] = $errmsg;
+		$jsonArr['message'] = $message;
 		$jsonArr['data'] = $data;
-		$jsonArr = json_encode($jsonArr);
-		
-		// 为了安全 callback 只允许 字母+数字+_ 的组合
-		if(!preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback)) {
-			$callback = null;
-		}
-		
-		if($callback)
+		$response = json_encode($jsonArr);
+		$header = 'application/json';
+
+		// jsonp输出
+		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback))
 		{
-			// 输出文件头信息
-			Header::contentType('text/javascript');
-			// 输出JSONP
-			echo "<script type=\"text/javascript\">{$callback}({$jsonArr});</script>";
-		} 
-		else
-		{
-			// 输出文件头信息
-			Header::contentType('application/json');
-			// 输出JSON
-			$this->getResponse()->setBody($jsonArr);
+			$header = 'text/javascript';
+			$response = "<script type=\"text/javascript\">{$callback}({$jsonArr});</script>";
 		}
+
+		// 输出
+		header("Content-Type:{$header};charset=UTF-8");
+		echo $response;
 		
-		return true;
+		exit;
 	}
 	
 	/**
@@ -90,13 +86,5 @@ abstract class BaseController extends Controller_Abstract
 	protected function disableView()
 	{
 		Dispatcher::getInstance()->disableView();
-	}
-	
-	/**
-	 * js获取验证规则
-	 */
-	public function getRuleAction()
-	{
-		
 	}
 }

@@ -1,30 +1,44 @@
 <?php
 
-namespace Core;
+namespace Module;
 
 use \Driver\Mysql as Mysql;
 use \Driver\Redis as Redis;
+use \Yaf\Application;
 
-class Module
+abstract class Module
 {
+	/**
+	 * 配置对象
+	 * @var int
+	 */
+	protected $config;
+	
+	public function __construct()
+	{
+		// 配置对象
+		$this->Config = Application::App()->getConfig();
+	}
+	
     /**
      * 单例获取模型对象
      * @return \Driver\Sql;
      */
     protected function getMy5755DbMaster()
     {
-    	try {
-	        $conf['host'] = "127.0.0.1";
-	        $conf['port'] = "3306";
-	        $conf['dbname'] = "my5755";
-	        $conf['charset'] = "utf8";
-	        $conf['username'] = "root";
-	        $conf['password'] = "123456";
-	        return Mysql::getInstance($conf);
-    	} catch(\PDOException $e) {
-    		header('404 NOT FOUND');
-    		exit;
+    	static $mysql;
+    	if(!$mysql)
+    	{
+    		try
+    		{
+    			$mysql = Mysql::getInstance($conf);
+    		} catch(\PDOException $e) {
+    			header('Status: 404 NOT FOUND');
+    			exit;
+    		}
     	}
+    	
+    	return $mysql;
     }
     
     /**
@@ -32,18 +46,18 @@ class Module
      */
     protected function getPlatformDbMaster()
     {
-    	try {
-    		$conf['host'] = "127.0.0.1";
-    		$conf['port'] = "3306";
-    		$conf['dbname'] = "platform";
-    		$conf['charset'] = "utf8";
-    		$conf['username'] = "root";
-    		$conf['password'] = "123456";
-    		return Mysql::getInstance($conf);
-    	} catch (\PDOException $e) {
-    		header('404 NOT FOUND');
-    		exit;
+    	static $mysql;
+    	if(!$mysql)
+    	{
+    		try {
+    			$mysql = Mysql::getInstance($conf);
+    		} catch(\PDOException $e) {
+    			header('Status: 404 NOT FOUND');
+    			exit;
+    		}
     	}
+    	 
+    	return $mysql;
     }
     
     /**
@@ -59,7 +73,7 @@ class Module
     		$conf['timeout'] = 30;
     		return Redis::getInstance($conf);
     	}catch(\RedisException $e) {
-    		header('404 NOT FOUND');
+    		header('Status: 404 NOT FOUND');
     		exit;
     	}
     }

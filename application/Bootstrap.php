@@ -7,18 +7,16 @@ use Yaf\Session;
 
 class Bootstrap extends Bootstrap_Abstract
 {
-	/**
-	 * 注册全局变量
-	 */
-	public function _initRegistry()
+	public function _initHeader()
 	{
-		// 全局注册配置对象
-		$config = Application::App()->getConfig();
-		Registry::set('config', $config);
-				
-		// 全局session对象
-		$session = Session::getInstance();
-		Registry::set('session', $session);
-		$session->start();
+		header('Content-Type:text/html;charset=UTF-8');
+	}
+	
+	/**
+	 * 开启session
+	 */
+	public function _initSession()
+	{
+		session_start();
 	}
 }

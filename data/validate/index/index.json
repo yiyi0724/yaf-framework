@@ -5,14 +5,16 @@
 "require": "1",
 "prompt": "姓名长度3-10",
 "rule": "string",
-"ruleRemark": "3,10"
+"remark": "3,10"
 },
 {
 "name": "id",
 "from": "_GET",
-"require": "1",
+"require": "0",
 "prompt": "id有误",
 "rule": "int",
-"ruleRemark": "1,9999"
+"remark": "1,9999",
+"default":100,
+"alias":"id >"
 }
 ]
