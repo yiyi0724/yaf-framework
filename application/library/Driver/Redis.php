@@ -5,8 +5,10 @@
  */
 namespace Driver;
 
-class Redis extends Driver
+class Redis
 {
+	use \Base\Singleton;
+	
     /**
      * 当前的redis对象
      * @var \Redis
@@ -50,7 +52,6 @@ class Redis extends Driver
         }
         catch(\RedisException $e)
         {
-            $this->setError($e);
             return FALSE;
         }
     }

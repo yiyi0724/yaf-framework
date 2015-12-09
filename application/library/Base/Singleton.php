@@ -1,23 +1,25 @@
 <?php
 /**
- * 驱动基类
+ * 单例模式
  * @author chenxb
  */
-namespace Driver;
+namespace Base;
 
-class Driver
+trait Singleton
 {
     /**
-     * 连接池
+     * 对象池
      * @var array
      */
     protected static $instance;
-        
+    
     /**
-     * 禁止创建对象
+     * 请注意实现此trait的时候
+     * 需要把__construct也设置成protected或者private
+     * 请使用的时候自行处理
      */
-    protected function __construct()
-    {
+    protected function __construct($driver) {
+    	$this->create($driver);
     }
     
     /**
@@ -38,7 +40,10 @@ class Driver
         // 计算hash值
         $key = sprintf("%u", crc32(implode(':', $driver)));
         // 是否已经创建过单例对象
-        empty(static::$instance[$key]) AND (static::$instance[$key] = new static($driver));
+        if(empty(static::$instance[$key]))
+        {
+        	static::$instance[$key] = new static($driver);
+        }
         // 返回对象
         return static::$instance[$key];
     }

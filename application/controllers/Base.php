@@ -16,7 +16,7 @@ abstract class BaseController extends Controller_Abstract
 		$this->initUid();
 		
 		// 来源检查
-		$this->validate();
+		//$this->validate();
 	}
 	
 	/**

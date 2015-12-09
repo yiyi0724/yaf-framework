@@ -8,6 +8,41 @@ namespace Network;
 
 class Http
 {
+	public function __construct()
+	{
+		
+	}
+	
+	public function post()
+	{
+		
+	}
+	
+	public function get()
+	{
+		
+	}
+	
+	public function setUrl()
+	{
+		
+	}
+	
+	public function setData()
+	{
+		
+	}
+	
+	public function setCookie()
+	{
+		
+	}
+	
+	public function setHeader()
+	{
+		
+	}
+	
 	/**
 	 * GET请求
 	 * @var string

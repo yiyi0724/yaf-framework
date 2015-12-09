@@ -1,7 +1,5 @@
 <?php
 
-namespace Module;
-
 use \Driver\Mysql as Mysql;
 use \Driver\Redis as Redis;
 use \Yaf\Application;

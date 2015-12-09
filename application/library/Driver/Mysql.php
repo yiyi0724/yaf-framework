@@ -5,19 +5,30 @@
  */
 namespace Driver;
 
-class Mysql extends Driver
+class Mysql implements Driver
 {	
+	/**
+	 * 加载单例模式
+	 */
+	use \Base\Singleton;
+	
     /**
-     * 当前的pdo对象
-     * @var \PDO
+     * pdo对象
+     * @var \Pdo
      */
-    private $pdo;
+    protected $pdo;
 
     /**
      * 预处理对象
      * @var \PDOStatement
      */
-    private $stmt;
+    protected $stmt;
+    
+    /**
+     * 缓存对象
+     * @var \Driver
+     */
+    protected $cache;
     
     /**
      * 附加的查询条件
@@ -35,19 +46,25 @@ class Mysql extends Driver
         'keys' => NULL,
         'values' => array()
     );
+    
+    /**
+     * 迭代器
+     * @var unknown
+     */
+    protected $interval = 0;
 
     /**
      * 禁止直接new对象,保证单例模式
      * @param array 数组配置, host | port | dbname | charset | username | password
      * @return void
      */
-    protected function __construct($driver)
+    protected function create($driver)
     {
         // 数据库连接信息
         $dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";
 
         // 驱动选项
-        $options = array( 
+        $options = array(
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, // 如果出现错误抛出异常
             \PDO::ATTR_TIMEOUT => 30 // 超时时间
         );
@@ -56,13 +73,6 @@ class Mysql extends Driver
         $this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
     }
     
-    /**
-     * 设置缓存模式
-     */
-    public function setCache() {
-    	
-    }
-
     /**
      * 设置要查询的字段
      * @param string 查询字符串列表
@@ -154,8 +164,6 @@ class Mysql extends Driver
             return array(addslashes($condition));
         }
         
-        static $interval = 0;
-        
         $conds = array();
         foreach ($condition as $key => $value)
         {
@@ -182,9 +190,9 @@ class Mysql extends Driver
             if($from==0) 
             {
                 // between...and
-                $conds[] = "{$key} BETWEEN :{$key}from{$interval} AND :{$key}to{$interval}";
-                $this->sql['values'][":{$key}from{$interval}"] = $value[0];
-                $this->sql['values'][":{$key}to{$interval}"] = $value[1];
+                $conds[] = "{$key} BETWEEN :{$key}from{$this->interval} AND :{$key}to{$this->interval}";
+                $this->sql['values'][":{$key}from{$this->interval}"] = $value[0];
+                $this->sql['values'][":{$key}to{$this->interval}"] = $value[1];
             }
             else if($key == 'OR')
             {                
@@ -205,8 +213,8 @@ class Mysql extends Driver
                 $expression = $from == 3 ? 'NOT IN' : 'IN';
                 foreach ($value as $k => $val)
                 {
-                    $temp[] = ":{$key}{$interval}_{$k}";
-                    $this->sql['values'][":{$key}{$interval}_{$k}"] = $val;
+                    $temp[] = ":{$key}{$this->interval}_{$k}";
+                    $this->sql['values'][":{$key}{$this->interval}_{$k}"] = $val;
                 }
                 $conds[] = "{$key} {$expression}(" . implode(',', $temp) . ")";
             }
@@ -214,23 +222,23 @@ class Mysql extends Driver
             {
                 // like
                 $expression = $from == 2 ? 'LIKE' : 'NOT LIKE';
-                $conds[] = "{$key} {$expression} :{$field}{$interval}";
-                $this->sql['values'][":{$field}{$interval}"] = $value;
+                $conds[] = "{$key} {$expression} :{$field}{$this->interval}";
+                $this->sql['values'][":{$field}{$this->interval}"] = $value;
             }
             else if (in_array($from, array(4, 5, 6, 7, 8, 9, 10, 11)))
             {
                 // > >= < <= != & ^ |
-                $conds[] = "{$origin} :{$key}{$interval}";
-                $this->sql['values'][":{$key}{$interval}"] = $value;
+                $conds[] = "{$origin} :{$key}{$this->interval}";
+                $this->sql['values'][":{$key}{$this->interval}"] = $value;
             }
             else
             {
                 // =
-                $conds[] = "{$key}=:{$key}{$interval}";
-                $this->sql['values'][":{$key}{$interval}"] = $value;
+                $conds[] = "{$key}=:{$key}{$this->interval}";
+                $this->sql['values'][":{$key}{$this->interval}"] = $value;
             }
             
-            $interval++;
+            $this->interval++;
         }
         
         return $conds;
@@ -260,7 +268,7 @@ class Mysql extends Driver
             $this->sql['prepare'][] = sprintf("(%s)", implode(',', $prepare));
         }
         // 预处理sql语句
-        $preKeys = sprintf("(%s)", implode(',', $this->sql['keys']));
+        $preKeys = sprintf("(`%s`)", implode('`,`', $this->sql['keys']));
         // 插入对应的预处理值
         $preValues = implode(',', $this->sql['prepare']);
         // 插入语句
