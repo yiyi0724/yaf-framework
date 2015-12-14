@@ -5,10 +5,11 @@
  */
 namespace Driver;
 
-class Mysql implements Driver
+class Mysql
 {	
 	/**
 	 * 加载单例模式
+	 * @var \Base\Traits
 	 */
 	use \Base\Singleton;
 	
@@ -26,7 +27,7 @@ class Mysql implements Driver
     
     /**
      * 缓存对象
-     * @var \Driver
+     * @var \Cache
      */
     protected $cache;
     
@@ -49,12 +50,12 @@ class Mysql implements Driver
     
     /**
      * 迭代器
-     * @var unknown
+     * @var int
      */
     protected $interval = 0;
 
     /**
-     * 禁止直接new对象,保证单例模式
+     * 创建PDO对象
      * @param array 数组配置, host | port | dbname | charset | username | password
      * @return void
      */
@@ -159,6 +160,7 @@ class Mysql implements Driver
      */
     private final function comCondition($condition, $field)
     {
+    	// 字符串转义一下
         if (is_string($condition))
         {
             return array(addslashes($condition));
@@ -177,7 +179,8 @@ class Mysql implements Driver
             $key = trim($key);
             
             // 操作类型
-            foreach(array(' B', ' NL', ' L', ' N', ' <>', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL) as $from=>$action)
+            $operations = array(' B', ' NL', ' L', ' N', ' <>', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL);
+            foreach($operations as $from=>$action)
             {
                 if($location=strpos($key, $action))
                 {
@@ -190,7 +193,7 @@ class Mysql implements Driver
             if($from==0) 
             {
                 // between...and
-                $conds[] = "{$key} BETWEEN :{$key}from{$this->interval} AND :{$key}to{$this->interval}";
+                $conds[] = "`{$key}` BETWEEN :{$key}from{$this->interval} AND :{$key}to{$this->interval}";
                 $this->sql['values'][":{$key}from{$this->interval}"] = $value[0];
                 $this->sql['values'][":{$key}to{$this->interval}"] = $value[1];
             }
@@ -213,28 +216,28 @@ class Mysql implements Driver
                 $expression = $from == 3 ? 'NOT IN' : 'IN';
                 foreach ($value as $k => $val)
                 {
-                    $temp[] = ":{$key}{$this->interval}_{$k}";
+                    $temp[] = ":`{$key}`{$this->interval}_{$k}";
                     $this->sql['values'][":{$key}{$this->interval}_{$k}"] = $val;
                 }
-                $conds[] = "{$key} {$expression}(" . implode(',', $temp) . ")";
+                $conds[] = "`{$key}` {$expression}(" . implode(',', $temp) . ")";
             }
             else if (in_array($from, array(1, 2)))
             {
                 // like
                 $expression = $from == 2 ? 'LIKE' : 'NOT LIKE';
-                $conds[] = "{$key} {$expression} :{$field}{$this->interval}";
+                $conds[] = "`{$key}` {$expression} :{$field}{$this->interval}";
                 $this->sql['values'][":{$field}{$this->interval}"] = $value;
             }
             else if (in_array($from, array(4, 5, 6, 7, 8, 9, 10, 11)))
             {
                 // > >= < <= != & ^ |
-                $conds[] = "{$origin} :{$key}{$this->interval}";
+                $conds[] = "`{$key}`{$operations[$from]} :{$key}{$this->interval}";
                 $this->sql['values'][":{$key}{$this->interval}"] = $value;
             }
             else
             {
                 // =
-                $conds[] = "{$key}=:{$key}{$this->interval}";
+                $conds[] = "`{$key}`=:{$key}{$this->interval}";
                 $this->sql['values'][":{$key}{$this->interval}"] = $value;
             }
             
@@ -249,7 +252,7 @@ class Mysql implements Driver
      * @param array 待插入的数据
      * @return \Driver\Mysql
      */
-    public function insert(array $data)
+    public function insert(array $data, $method='lastInertId')
     {
         // 数据整理
         $data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
@@ -276,7 +279,7 @@ class Mysql implements Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 结果返回
-        return $this;
+        return $this->$method();
     }
 
     /**
@@ -290,21 +293,21 @@ class Mysql implements Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回结果
-        return $this;
+        return $this->rowCount();
     }
 
     /**
      * 执行查询
      * @return \Driver\Mysql
      */
-    public function select()
+    public function select($method='fetchAll')
     {
         // 拼接sql语句
         $sql = "SELECT {$this->sql['field']} FROM {$this->sql['table']} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回类型
-        return $this;
+        return $this->$method();
     }
 
     /**
@@ -327,13 +330,13 @@ class Mysql implements Driver
                         break;
                     }
                 }
-                $set[] = "{$key}={$temp[0]}{$opeartion}:{$key}";
+                $set[] = "`{$key}`={$temp[0]}{$opeartion}:{$key}";
                 $this->sql['values'][":{$key}"] = $temp[1];
             }
             else
             {
                 // 普通赋值
-                $set[] = "{$key}=:{$key}";
+                $set[] = "`{$key}`=:{$key}";
                 $this->sql['values'][":{$key}"] = $val;
             }
         }
@@ -344,7 +347,7 @@ class Mysql implements Driver
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回当前对象
-        return $this;
+        return $this->rowCount();
     }
 
     /**
@@ -474,7 +477,7 @@ class Mysql implements Driver
     public function debug($sql, $data)
     {
         echo '<pre>';
-        echo "placeholder sql: $sql<br/>";
+        echo "placeholder sql: $sql<hr/>";
         print_r($data);
         
         foreach ($data as $key => $placeholder)

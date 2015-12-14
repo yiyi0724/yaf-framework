@@ -1,137 +1,158 @@
 <?php
 /**
- * HTTP请求类
- * @author enychen
+ * Http请求类
+ * @author chenxb
  */
 
 namespace Network;
 
 class Http
 {
-	public function __construct()
-	{
-		
-	}
-	
-	public function post()
-	{
-		
-	}
-	
-	public function get()
-	{
-		
-	}
-	
-	public function setUrl()
-	{
-		
-	}
-	
-	public function setData()
-	{
-		
-	}
-	
-	public function setCookie()
-	{
-		
-	}
-	
-	public function setHeader()
-	{
-		
-	}
-	
 	/**
-	 * GET请求
+	 * 请求地址
 	 * @var string
 	 */
-	const GET = "GET";
+	protected $action = null;
 	
 	/**
-	 * POST请求
+	 * 传递的参数
 	 * @var string
 	 */
-	const POST = "POST";
+	protected $fields = null;
 	
 	/**
-	 * 使用file_get_contents执行请求，目前只支持GET和POST请求
-	 * @param string 请求地址
-	 * @param array  附加参数
-	 * @param string 执行方法
-	 * @param array  附加头信息,需要自己写完整的头部信息
-	 * @return string 获得的信息
+	 * 连接资源
+	 * @var resource
 	 */
-	public static function fgcRequest($url, $data=array(), $method='GET', array $header=array())
+	protected $curl = null;
+	
+	/**
+	 * 请求是否有误
+	 * @var string
+	 */
+	protected $error = null;
+	
+	/**
+	 * 请求的结果
+	 * @var string
+	 */
+	protected $result = null;
+	
+	/**
+	 * 构造函数
+	 */
+	public function __construct($action)
 	{
-		// 选项设置
-		$options = array(
-			'http'=>array(
-				'method'=>strtoupper($method),
-			),
-		);
-		// 选项设置
-		switch(TRUE)
-		{
-			case !empty($header):
-				// 头信息设置
-				$options['http']['header'] = implode("\r\n", $header);
-			case !strcasecmp($method, 'POST'):
-				// POST参数设置
-				$options['http']['content'] = $data;
-				break;
-			case !strcasecmp($method, 'GET'):
-				// GET完整路径拼接
-				$url = $data ? "{$url}?".http_build_query($data) : $url;
-				break;
-		}
-		// 创建上下文
-		$context = stream_context_create($options);
-		// 执行请求
-		return file_get_contents("http://{$url}",false, $context);
+		// 请求地址
+		$this->action = $action;
+		
+		// 创建连接资源
+		$this->curl = curl_init();
+		
+		// 设置选项,不输出头信息和结果返回
+		curl_setopt($this->curl, CURLOPT_HEADER, 0);
+		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
 	}
 	
 	/**
-	 * 使用curl执行请求
-	 * @param string 请求地址
-	 * @param array  附加参数
-	 * @param string 执行方法
-	 * @param array  附加头信息,参照curl_setopt进行键值对设置
-	 * @return string 获得的信息
+	 * 
+	 * @param 请求方法 $method get|post|put|delete
+	 * @param 附加参数 $args 无用
 	 */
-	public static function curlRequest($url, $data=array(), $method='GET', array $header=array())
+	public function __call($method, $args)
 	{
-		// curl创建
-		$ch = curl_init();
-		// 选项设置
-		switch(TRUE)
+		switch($method)
 		{
-			case !strcasecmp($method, 'POST'):
-				// POST参数设置
-				curl_setopt($ch, CURLOPT_POST, 1);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+			case 'get':
+				$this->fields AND 
+					($this->action = "{$this->action}?{$this->fields}");
 				break;
-			case !strcasecmp($method, 'GET'):
-				// GET完整路径拼接
-				$url = $data ? "{$url}?".http_build_query($data) : $url;
+			case 'post':				
+			case 'put':
+			case 'delete':
+				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+      			curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: '.mb_strlen($this->fields))); 
+      			curl_setopt($this->curl, CURLOPT_POSTFIELDS, $this->fields);
 				break;
+			case 'upload':
+				break;
+			default:
+				throw new \Exception("NOT FOUND METHOD Http::{$mthod}()");
 		}
-		// 默认设置头信息
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_USERAGENT);
-		$_COOKIE and curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $_COOKIE));
-		// 自定义头信息
-		foreach($header as $key=>$val)
+		
+		try
 		{
-			curl_setopt($ch, constant($key), $val);
+			// 设置请求的地址
+			curl_setopt($this->curl, CURLOPT_URL, $this->action);
+			// 执行请求
+			$this->result = curl_exec($this->curl);
+			// 返回的结果状态
+			$status = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+			// 判断状态
+			if(!in_array($status, array(200, 201, 202, 203, 204, 205)))
+			{
+				throw new \Exception('CURL NETWORK TIMEOUT');
+			}
 		}
-		// curl执行
-		$result = curl_exec($ch);
-		// 关闭curl
-		curl_close($ch);
-		return $result;
+		catch(\Exception $e)
+		{
+			$this->result = null;
+			$this->error = $e->getMessage();
+		}
+		
+		// 关闭连接
+		curl_close($this->curl);
+		
+		// 返回错误
+		return $this->error;
+	}
+	
+	/**
+	 * 请求的data数据
+	 * @param array $fields 要传递的参数
+	 */
+	public function setFields(array $fields)
+	{
+		$this->fields = http_build_query($fields);
+	}
+	
+	/**
+	 * 设置头信息
+	 * @param array $header 头信息数组
+	 */
+	public function setHeader(array $headers)
+	{
+		curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
+	}
+	
+	/**
+	 * 设置cookie
+	 * @param string $cookie
+	 */
+	public function setCookie($cookie)
+	{
+		curl_setopt($this->curl, CURLOPT_COOKIE, $cookie);
+	}
+		
+	/**
+	 * 结果输出
+	 */
+	public function enableOutput()
+	{
+		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 0);
+	}
+		
+	/**
+	 * 获取结果
+	 * @return mixed
+	 */
+	public function getResult()
+	{
+		return $this->result;
 	}
 }
+
+$http = new \Network\Http('http://www.test.com/api.php');
+$http->enableOutput();
+$http->setFields(array('upload'=>'@/tmp/ip.php', 'name'=>'age'));
+$http->post();
