@@ -11,12 +11,4 @@ class Bootstrap extends Bootstrap_Abstract
 	{
 		header('Content-Type:text/html;charset=UTF-8');
 	}
-	
-	/**
-	 * 开启session
-	 */
-	public function _initSession()
-	{
-		session_start();
-	}
 }

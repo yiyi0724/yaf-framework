@@ -31,7 +31,7 @@ class Http
 	 * @var string
 	 */
 	protected $result = null;
-	
+		
 	/**
 	 * 结果进行json解析
 	 * @var bool
@@ -109,7 +109,7 @@ class Http
 		curl_close($this->curl);
 		
 		// 返回错误
-		return $this->error;
+		return !$this->error;
 	}
 	
 	/**
@@ -150,14 +150,6 @@ class Http
 	public function setCookie($cookie)
 	{
 		curl_setopt($this->curl, CURLOPT_COOKIE, $cookie);
-	}
-		
-	/**
-	 * 结果输出
-	 */
-	public function setOutput()
-	{
-		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 0);
 	}
 	
 	/**
