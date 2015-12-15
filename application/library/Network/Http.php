@@ -15,12 +15,6 @@ class Http
 	protected $action = null;
 	
 	/**
-	 * 传递的参数
-	 * @var string
-	 */
-	protected $fields = null;
-	
-	/**
 	 * 连接资源
 	 * @var resource
 	 */
@@ -39,12 +33,19 @@ class Http
 	protected $result = null;
 	
 	/**
+	 * 结果进行json解析
+	 * @var bool
+	 */
+	protected $jsonDecode = true;
+	
+	/**
 	 * 构造函数
 	 */
 	public function __construct($action)
 	{
 		// 请求地址
 		$this->action = $action;
+
 		
 		// 创建连接资源
 		$this->curl = curl_init();
@@ -55,26 +56,30 @@ class Http
 	}
 	
 	/**
-	 * 
+	 * 执行请求
 	 * @param 请求方法 $method get|post|put|delete
 	 * @param 附加参数 $args 无用
 	 */
-	public function __call($method, $args)
-	{
+	public function __call($method, $fields)
+	{		
 		switch($method)
 		{
 			case 'get':
-				$this->fields AND 
-					($this->action = "{$this->action}?{$this->fields}");
+				$fields = $this->setFields($fields);
+				$fields AND ($this->action = "{$this->action}?{$fields}");
 				break;
 			case 'post':				
 			case 'put':
 			case 'delete':
+				$fields = $this->setFields($fields);
 				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-      			curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: '.mb_strlen($this->fields))); 
-      			curl_setopt($this->curl, CURLOPT_POSTFIELDS, $this->fields);
+				curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: '.mb_strlen($fields))); 
+				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
 				break;
 			case 'upload':
+				$fields = $this->setFields($fields, false);
+				curl_setopt($this->curl, CURLOPT_POST, true);
+				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
 				break;
 			default:
 				throw new \Exception("NOT FOUND METHOD Http::{$mthod}()");
@@ -86,13 +91,13 @@ class Http
 			curl_setopt($this->curl, CURLOPT_URL, $this->action);
 			// 执行请求
 			$this->result = curl_exec($this->curl);
-			// 返回的结果状态
-			$status = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-			// 判断状态
-			if(!in_array($status, array(200, 201, 202, 203, 204, 205)))
+			// 返回的结果状态判断状态
+			if(!in_array(curl_getinfo($this->curl, CURLINFO_HTTP_CODE), array(200, 201, 202, 203, 204, 205)))
 			{
 				throw new \Exception('CURL NETWORK TIMEOUT');
-			}
+			}			
+			// 进行json解析
+			$this->decodeJson AND $this->dealResult($this->result);
 		}
 		catch(\Exception $e)
 		{
@@ -108,12 +113,25 @@ class Http
 	}
 	
 	/**
-	 * 请求的data数据
-	 * @param array $fields 要传递的参数
+	 * 处理参数
+	 * @param array $fields
 	 */
-	public function setFields(array $fields)
+	protected function setFields($fields, $httpBuild=true)
 	{
-		$this->fields = http_build_query($fields);
+		isset($fields[0]) AND ($fields =  $fields[0]);
+		return $httpBuild ? http_build_query($fields) : $fields;
+	}
+	
+	/**
+	 * 结果处理
+	 */
+	protected function dealResult($result)
+	{
+		$this->result = json_decode($this->result, true);
+		if(json_last_error())
+		{
+			throw new \Exception("JSON DECODE ERROR, ORIGIN DATA:{$result}");
+		}
 	}
 	
 	/**
@@ -137,9 +155,17 @@ class Http
 	/**
 	 * 结果输出
 	 */
-	public function enableOutput()
+	public function setOutput()
 	{
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 0);
+	}
+	
+	/**
+	 * 关闭对结果的json解析
+	 */
+	public function setUnJson()
+	{
+		$this->jsonDecode = false;
 	}
 		
 	/**
@@ -150,9 +176,14 @@ class Http
 	{
 		return $this->result;
 	}
+	
+	/**
+	 * 获取文件的方式
+	 * @param string $path 文件的绝对路径
+	 * @return mixed
+	 */
+	public function getFile($path)
+	{
+		return class_exists('\CURLFile') ?  new \CURLFile($path) : "@{$path}";
+	}
 }
-
-$http = new \Network\Http('http://www.test.com/api.php');
-$http->enableOutput();
-$http->setFields(array('upload'=>'@/tmp/ip.php', 'name'=>'age'));
-$http->post();
