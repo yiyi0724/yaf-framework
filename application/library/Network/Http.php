@@ -10,6 +10,7 @@
  * 1. 默认会进行json解析,可以取消: $http->setUnJson();
  * 2. 设置要发送的cookie信息: $http->setCookie(string $cookie); cookie信息必须是key=value; key=value的形式
  * 3. 设置要发送的header信息: $http->setHeader(array $headers); header就是一个个头信息的数组
+ * 4. 如果要上传文件,请使用: $data['upload'] = $http->setFile(string 文件名); 由于php版本的问题,我封装了这个解决方法
  * 
  * if($http->$method(array 要传递的参数)) {	// $method 可选值: get | post | put | delete | upload
  * 		// 执行成功
