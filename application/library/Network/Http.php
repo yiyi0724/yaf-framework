@@ -2,6 +2,22 @@
 /**
  * Http请求类
  * @author chenxb
+ *
+ * @example
+ * $http = new Http($url);
+ * $http->$method(array 要传递的参数); $method 可选值: get | post | put | delete | upload
+ * if($http->get($data)) {
+ * 		// 执行成功
+ * 		$result = $this->getResult();
+ * } else {
+ * 		// 执行失败
+ * 		$error = $this->getError();
+ * }
+ *
+ * 其他在进行get|post等请求方法之前可选的方法:
+ * 1. 默认会进行json解析,可以取消: $http->setUnJson();
+ * 2. 设置要发送的cookie信息: $http->setCookie(string $cookie); cookie信息必须是key=value; key=value的形式
+ * 3. 设置要发送的header信息: $http->setHeader(array $headers); header就是一个个头信息的数组
  */
 
 namespace Network;
@@ -40,6 +56,7 @@ class Http
 	
 	/**
 	 * 构造函数
+	 * @param string $action 请求地址
 	 */
 	public function __construct($action)
 	{
@@ -56,8 +73,9 @@ class Http
 	
 	/**
 	 * 执行请求
-	 * @param 请求方法 $method get|post|put|delete
-	 * @param 附加参数 $args 无用
+	 * @param string $method 请求方法,get|post|put|delete|upload
+	 * @param array $fields 要传递的参数
+	 * @return bool 请求成功或失败
 	 */
 	public function __call($method, $fields)
 	{		
@@ -81,7 +99,7 @@ class Http
 				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
 				break;
 			default:
-				throw new \Exception("NOT FOUND METHOD Http::{$mthod}()");
+				exit("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
 		}
 		
 		try
@@ -94,7 +112,7 @@ class Http
 			if(!in_array(curl_getinfo($this->curl, CURLINFO_HTTP_CODE), array(200, 201, 202, 203, 204, 205)))
 			{
 				throw new \Exception('CURL NETWORK TIMEOUT');
-			}			
+			}
 			// 进行json解析
 			$this->decodeJson AND $this->dealResult($this->result);
 		}
@@ -113,7 +131,8 @@ class Http
 	
 	/**
 	 * 处理参数
-	 * @param array $fields
+	 * @param array $fields 参数
+	 * @param bool $httpBuild 是否数组转换
 	 */
 	protected function setFields($fields, $httpBuild=true)
 	{
@@ -123,6 +142,7 @@ class Http
 	
 	/**
 	 * 结果处理
+	 * @param string $result 结果数组
 	 */
 	protected function dealResult($result)
 	{
@@ -144,7 +164,7 @@ class Http
 	
 	/**
 	 * 设置cookie
-	 * @param string $cookie
+	 * @param string $cookie cookie的信息
 	 */
 	public function setCookie($cookie)
 	{
@@ -158,6 +178,15 @@ class Http
 	{
 		$this->jsonDecode = false;
 	}
+
+	/**
+	 * 获取错误
+	 * @return string
+	 */
+	public function getError()
+	{
+		return $this->error;
+	}
 		
 	/**
 	 * 获取结果
@@ -167,7 +196,7 @@ class Http
 	{
 		return $this->result;
 	}
-	
+
 	/**
 	 * 获取文件的方式
 	 * @param string $path 文件的绝对路径
