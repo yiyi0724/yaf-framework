@@ -69,7 +69,7 @@ class Download
 		header('Pragma: public');
 		header('Content-Disposition: attachment; filename='.$this->option['downloadName']);
 		header('Content-Length: ' . strlen($data));
-		foreach($headers as $header)
+		foreach($this->option['headers'] as $header)
 		{
 			header($header);
 		}
