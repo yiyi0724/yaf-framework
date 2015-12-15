@@ -32,11 +32,9 @@ class IndexController extends BaseController
 	}
 	
 	public function sendmailAction()
-	{
-		
-		$mail = new \Mail\PHPMailer();			// 创建一个邮件对象
-		
-		$mail->isHTML(true);                        // 内容使用html的方式
+	{		
+		$mail = new \Network\Mail();			// 创建一个邮件对象
+
 		$mail->isSMTP(); 							// 使用SMPT验证
 		$mail->Host = 'smtp.163.com';				// smtp服务器
 		$mail->SMTPAuth = true;                    	// 是否验证
@@ -52,6 +50,8 @@ class IndexController extends BaseController
 		$mail->Subject = '我在测试发送邮件';			// 邮件的标题
 		$mail->Body    = '甩卖妹子一枚, <b>yyq!</b>';	// 邮件的内容
 		$mail->AltBody = '为了两块钱我也是拼啊';		// 邮件的备注
+		
+		$mail->isHTML(true);                        // 内容使用html的方式
 
 		if(!$mail->send()) {
 			echo '发送失败: ' . $mail->ErrorInfo;
