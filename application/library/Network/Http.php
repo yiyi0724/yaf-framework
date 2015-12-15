@@ -5,19 +5,19 @@
  *
  * @example
  * $http = new Http($url);
- * $http->$method(array 要传递的参数); $method 可选值: get | post | put | delete | upload
- * if($http->get($data)) {
+ * 
+ * 可选的方法:
+ * 1. 默认会进行json解析,可以取消: $http->setUnJson();
+ * 2. 设置要发送的cookie信息: $http->setCookie(string $cookie); cookie信息必须是key=value; key=value的形式
+ * 3. 设置要发送的header信息: $http->setHeader(array $headers); header就是一个个头信息的数组
+ * 
+ * if($http->$method(array 要传递的参数)) {	// $method 可选值: get | post | put | delete | upload
  * 		// 执行成功
  * 		$result = $this->getResult();
  * } else {
  * 		// 执行失败
  * 		$error = $this->getError();
  * }
- *
- * 其他在进行get|post等请求方法之前可选的方法:
- * 1. 默认会进行json解析,可以取消: $http->setUnJson();
- * 2. 设置要发送的cookie信息: $http->setCookie(string $cookie); cookie信息必须是key=value; key=value的形式
- * 3. 设置要发送的header信息: $http->setHeader(array $headers); header就是一个个头信息的数组
  */
 
 namespace Network;

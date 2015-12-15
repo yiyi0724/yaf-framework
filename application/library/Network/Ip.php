@@ -1,4 +1,11 @@
 <?php
+/**
+ * 获取ip地址类
+ * @author chenxb
+ * 
+ * @example
+ * Network\Ip::get(bool 是否转成整数);
+ */
 
 namespace Network;
 
@@ -31,8 +38,3 @@ class Ip
         return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
     }
 }
-
-/**
- * 使用方法
- * Network\Ip::get(boolean 是否转成整数);
- */
