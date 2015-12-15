@@ -45,7 +45,6 @@ class Http
 	{
 		// 请求地址
 		$this->action = $action;
-
 		
 		// 创建连接资源
 		$this->curl = curl_init();
