@@ -2,17 +2,21 @@
 /**
  * Http请求类
  * @author chenxb
+ * @version 1.1
  *
  * @example
- * $http = new Http($url);
+ * $http = new Http();
+ * $http->setAction($url);
  * 
  * 可选的方法:
- * 1. 默认会进行json解析,可以取消: $http->setUnJson();
+ * 1. 结果自动json解析: $http->setJsonDecode();
  * 2. 设置要发送的cookie信息: $http->setCookie(string $cookie); cookie信息必须是key=value; key=value的形式
  * 3. 设置要发送的header信息: $http->setHeader(array $headers); header就是一个个头信息的数组
- * 4. 如果要上传文件,请使用: $data['upload'] = $http->setFile(string 文件名); 由于php版本的问题,我封装了这个解决方法
+ * 4. 如果要上传文件,请使用: $data['upload'] = $http->getFile(string 文件名); 由于php版本的问题,我封装了这个解决方法
+ * 5. 设置CURLOPT选项: $http->setCurlOpt(CURLOPT_*, $value);
  * 
- * if($http->$method(array 要传递的参数)) {	// $method 可选值: get | post | put | delete | upload
+ * $mthod可以使用的方法: get | post | put | delete | upload
+ * if($http->$method(array 要传递的参数)) {
  * 		// 执行成功
  * 		$result = $this->getResult();
  * } else {
@@ -38,32 +42,28 @@ class Http
 	protected $curl = null;
 	
 	/**
-	 * 请求是否有误
+	 * 错误信息
 	 * @var string
 	 */
 	protected $error = null;
 	
 	/**
-	 * 请求的结果
+	 * 请求结果
 	 * @var string
 	 */
 	protected $result = null;
 		
 	/**
-	 * 结果进行json解析
+	 * json解析
 	 * @var bool
 	 */
-	protected $jsonDecode = true;
+	protected $jsonDecode = false;
 	
 	/**
 	 * 构造函数
-	 * @param string $action 请求地址
 	 */
-	public function __construct($action)
+	public function __construct()
 	{
-		// 请求地址
-		$this->action = $action;
-		
 		// 创建连接资源
 		$this->curl = curl_init();
 		
@@ -79,30 +79,28 @@ class Http
 	 * @return bool 请求成功或失败
 	 */
 	public function __call($method, $fields)
-	{		
+	{
+		$fields = $this->setFields($fields, $method != 'upload');
 		switch($method)
 		{
-			case 'get':
-				$fields = $this->setFields($fields);
+			case 'get':				
 				$fields AND ($this->action = "{$this->action}?{$fields}");
 				break;
 			case 'post':				
 			case 'put':
 			case 'delete':
-				$fields = $this->setFields($fields);
 				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
 				curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: '.mb_strlen($fields))); 
 				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
 				break;
 			case 'upload':
-				$fields = $this->setFields($fields, false);
 				curl_setopt($this->curl, CURLOPT_POST, true);
 				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
 				break;
 			default:
-				exit("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
+				trigger_error("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
 		}
-		
+
 		try
 		{
 			// 设置请求的地址
@@ -110,21 +108,15 @@ class Http
 			// 执行请求
 			$this->result = curl_exec($this->curl);
 			// 返回的结果状态判断状态
-			if(!in_array(curl_getinfo($this->curl, CURLINFO_HTTP_CODE), array(200, 201, 202, 203, 204, 205)))
-			{
-				throw new \Exception('CURL NETWORK TIMEOUT');
-			}
+			$this->checkStatus();
 			// 进行json解析
-			$this->decodeJson AND $this->dealResult($this->result);
+			$this->decodeJson AND $this->result AND $this->dealResult($this->result);
 		}
 		catch(\Exception $e)
 		{
 			$this->result = null;
 			$this->error = $e->getMessage();
 		}
-		
-		// 关闭连接
-		curl_close($this->curl);
 		
 		// 返回错误
 		return !$this->error;
@@ -134,16 +126,18 @@ class Http
 	 * 处理参数
 	 * @param array $fields 参数
 	 * @param bool $httpBuild 是否数组转换
+	 * @return array|string
 	 */
 	protected function setFields($fields, $httpBuild=true)
 	{
-		isset($fields[0]) AND ($fields =  $fields[0]);
+		isset($fields[0]) AND ($fields = $fields[0]);
 		return $httpBuild ? http_build_query($fields) : $fields;
 	}
 	
 	/**
 	 * 结果处理
-	 * @param string $result 结果数组
+	 * @param string $result curl的返回结果
+	 * @throws \Exception
 	 */
 	protected function dealResult($result)
 	{
@@ -152,6 +146,27 @@ class Http
 		{
 			throw new \Exception("JSON DECODE ERROR, ORIGIN DATA:{$result}");
 		}
+	}
+	
+	/**
+	 * 响应状态码检查
+	 * @throws \Exception
+	 */
+	protected function checkStatus()
+	{
+		if(!in_array(curl_getinfo($this->curl, CURLINFO_HTTP_CODE), array(200, 201, 202, 203, 204, 205)))
+		{
+			throw new \Exception('CURL TIMEOUT');
+		}
+	}
+	
+	/**
+	 * 设置url地址
+	 * @param string $action url地址
+	 */
+	public function setAction($action)
+	{
+		$this->action = $action;
 	}
 	
 	/**
@@ -165,7 +180,7 @@ class Http
 	
 	/**
 	 * 设置cookie
-	 * @param string $cookie cookie的信息
+	 * @param string $cookie cookie信息
 	 */
 	public function setCookie($cookie)
 	{
@@ -173,11 +188,21 @@ class Http
 	}
 	
 	/**
-	 * 关闭对结果的json解析
+	 * 设置curlopt的设置
+	 * @param string $key CURLOPT_*设置选项
+	 * @param mixed $value 值
 	 */
-	public function setUnJson()
+	public function setCurlopt($key, $value)
 	{
-		$this->jsonDecode = false;
+		curl_setopt($this->curl, $key, $value);
+	}
+	
+	/**
+	 * 开启json解析
+	 */
+	public function setJsonDecode()
+	{
+		$this->jsonDecode = true;
 	}
 
 	/**
@@ -199,12 +224,20 @@ class Http
 	}
 
 	/**
-	 * 获取文件的方式
+	 * 上传文件的创建方式
 	 * @param string $path 文件的绝对路径
 	 * @return mixed
 	 */
 	public function getFile($path)
 	{
 		return class_exists('\CURLFile') ?  new \CURLFile($path) : "@{$path}";
+	}
+	
+	/**
+	 * 关闭连接
+	 */
+	public function close()
+	{
+		curl_close($this->curl);
 	}
 }

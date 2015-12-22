@@ -20,6 +20,12 @@ class Upload
 	);
 	
 	/**
+	 * 错误提示
+	 * @var array
+	 */
+	protected $errstr = array();
+	
+	/**
 	 * 构造函数
 	 * @param string $_FILES的key $key
 	 * @param string 支持的格式,多个用,隔开 $ext
@@ -32,6 +38,14 @@ class Upload
 		$this->option['ext'] = implode(',', $ext);
 		$this->option['size'] = $size;
 		$this->option['filename'] = $filename;
+	}
+	
+	/**
+	 *
+	 */
+	public function setErrstr()
+	{
+		
 	}
     
     /**

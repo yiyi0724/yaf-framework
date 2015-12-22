@@ -1,7 +1,8 @@
 <?php
 /**
- * 获取ip地址类
+ * 获取ip地址
  * @author chenxb
+ * @version 1.0
  * 
  * @example
  * Network\Ip::get(bool 是否转成整数);

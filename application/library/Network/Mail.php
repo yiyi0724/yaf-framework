@@ -2,6 +2,7 @@
 /**
  * 邮件发送类,只是整理了PHPMailer类,不是我自己写的
  * @author chenxb
+ * @version 1.0
  * 
  * @example
  * $mail = new \Network\Mail(); // 创建一个邮件对象
@@ -77,13 +78,13 @@ class Mail
      * The From email address for the message.
      * @var string
      */
-    public $From = 'root@localhost';
+    public $From = '';
 
     /**
      * The From name of the message.
      * @var string
      */
-    public $FromName = 'Root User';
+    public $FromName = '';
 
     /**
      * The Sender email (Return-Path) of the message.
