@@ -103,7 +103,7 @@ class Mysql
     public function where($condition)
     {
         $condition = $this->comCondition($condition, 'where');
-        $this->sql['where'] = "WHERE " . implode(' AND ', $condition);
+        $this->sql['where'] = 'WHERE ' . implode(' AND ', $condition);
         return $this;
     }
 
@@ -114,7 +114,7 @@ class Mysql
     public function having($condition)
     {
         $condition = $this->comCondition($condition, 'having');
-        $this->sql['having'] = "HAVING " . implode(' AND ', $condition);
+        $this->sql['having'] = 'HAVING ' . implode(' AND ', $condition);
         return $this;
     }
 
@@ -250,9 +250,10 @@ class Mysql
     /**
      * 执行插入
      * @param array 待插入的数据
+     * @param bool 多行返回插入的行数
      * @return \Driver\Mysql
      */
-    public function insert(array $data, $method='lastInertId')
+    public function insert(array $data, $rowCount=FALSE)
     {
         // 数据整理
         $data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
@@ -279,7 +280,7 @@ class Mysql
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 结果返回
-        return $this->$method();
+        return $rowCount ? $this->rowCount() : $this->lastInsertId();
     }
 
     /**
@@ -300,14 +301,14 @@ class Mysql
      * 执行查询
      * @return \Driver\Mysql
      */
-    public function select($method='fetchAll')
+    public function select()
     {
         // 拼接sql语句
         $sql = "SELECT {$this->sql['field']} FROM {$this->sql['table']} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
         // 执行sql语句
         $this->query($sql, $this->sql['values']);
         // 返回类型
-        return $this->$method();
+        return $this;
     }
 
     /**
@@ -520,13 +521,12 @@ class Mysql
  * 3.2.2.4 ['id B'=>[1,5]] 拼接成 id BETWEEN 1 AND 5
  * 3.2.2.5 ['OR'=>['id'=>1, 'other'=>1, ['other2'=>2, 'other3'=>3]]] 拼接成 id = 1 OR other = 1 OR other2 = 2 AND other3 = 3
  * 3.2.2.6 ['id L'=>'%chen%'] 拼接成 id LIKE '%chen%' 同理['id NL'=>'%chen%'] 拼接成 id NOT LIKE '%chen%'
- * 3.3 现在连贯操作的结束操作的函数是 fetch | fetchAll | fetchColumn | rowCount | lastInsertId, 并非是selcect | update | detele | insert, 这点和网上的有点不太一样
  * 
  * 4. 连贯操作函数2,可配置上面的函数一起使用
- * 4.1 $mysql->select()->fetch();  进行select
- * 4.2 $mysql->insert()->lastInsertId(); 进行insert
- * 4.3 $mysql->update()->rowCount(); 进行update
- * 4.4 $mysql->delete()->rowCount(); 进行delete
+ * 4.1 $mysql->select()->fetch();  进行select,select不是结尾,以fetch | fetchAll | fetchColumn进行的结尾
+ * 4.2 $mysql->insert(array $data, $rowCount); 进行insert,第二个参数用于表示多个插入的时候,返回影响行数的操作
+ * 4.3 $mysql->update(); 进行update
+ * 4.4 $mysql->delete(); 进行delete
  *  
  *  5. 原生sql操作
  *  5.1 $mysql->query($sql, $params);
