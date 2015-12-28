@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 文件上传类
  * @author enychen
@@ -39,14 +38,6 @@ class Upload
 		$this->option['size'] = $size;
 		$this->option['filename'] = $filename;
 	}
-	
-	/**
-	 *
-	 */
-	public function setErrstr()
-	{
-		
-	}
     
     /**
     * 文件检查
@@ -73,10 +64,10 @@ class Upload
     	switch($file['error'])
     	{
     		case 0:
-    			return null;
+    			break;
     		default:
-    			return '2000'.$file['error'];
-    			// 1-上传的文件超过了 php.ini 中 upload_max_filesize 选项限制的值  			
+    			return "2000{$file['error']}";
+    			// 1-上传的文件超过了 php.ini 中 upload_max_filesize 选项限制的值
     			// 2-上传文件的大小超过了 HTML 表单中 MAX_FILE_SIZE 选项指定的值
     			// 3-文件只有部分被上传
     			// 4-文件没有被上传
@@ -101,8 +92,7 @@ class Upload
     		return 20010;
     	}
 
-    	// 未知错误
-    	return 20011;
+    	return Null;
     }
     
     /**
@@ -162,12 +152,13 @@ class Upload
  *			case 20010:
  *				// 文件大小超过设置值
  *				break;
- *			case 20011:
- *				// 未知错误
- *				break;
  * 		}	
+ * 	} 
+ * 	else
+ * 	{
+ * 		// 文件移动
+ * 		$upload->move();
  * 	}
  * 
- * 	// 文件移动
- * 	$upload->move();
+ * 	
  */

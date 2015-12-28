@@ -67,14 +67,13 @@ class Download
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
-		header('Content-Disposition: attachment; filename='.$this->option['downloadName']);
+		header("Content-Disposition: attachment; filename={$this->option['downloadName']}");
 		header('Content-Length: ' . strlen($data));
 		foreach($this->option['headers'] as $header)
 		{
 			header($header);
-		}
-		
-		echo $data;
+		}		
+		exit($data);
 	}
 }
 
@@ -87,7 +86,7 @@ class Download
  *	$download->setData(string $data) 或者 $download->setDataFromFile(string $filename);
  * 	// 设置下载的名称
  * 	$download->setDownloadName(string $downloadName);
- * 	// 设置附加输出的相应头,例如微软的excel, 其它头信息请自行选择
+ * 	// 设置附加输出的相应头,例如微软的excel, 其它头信息请自行选择,公共头信息已经封装在内部
  * 	$download->setHeader(array("Content-type:application/vnd.ms-excel"));
  *	// 输出
  *	$download->output();
