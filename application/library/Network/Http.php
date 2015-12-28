@@ -110,7 +110,7 @@ class Http
 			// 返回的结果状态判断状态
 			$this->checkStatus();
 			// 进行json解析
-			$this->decodeJson AND $this->result AND $this->dealResult($this->result);
+			$this->decodeJson AND $this->dealResult($this->result);
 		}
 		catch(\Exception $e)
 		{
