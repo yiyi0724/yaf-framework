@@ -1,5 +1,5 @@
 
-require('Alipay/Alipay.php');
+require('Alipay/Alipay.php');<br/>
 $apliay = new Alipay\Alipay('合作者身份ID', '签名密钥');	// 两个参数都在alipay官方网站获取
 
 1. 即时到账:<br/>
