@@ -4,51 +4,7 @@ namespace Alipay;
 
 /**
  * 支付宝接口
- * @author eny
- * 
- * @example
- * require('Alipay/Alipay.php');
- * $apliay = new Alipay\Alipay('合作者身份ID', '签名密钥');	// 两个参数都在alipay官方网站获取
- ******************************************************************************************************************************
- *
- * 1. 即时到账: 
- * 1.1 echo $apliay->transferAccount(array $data); // $data请参照transferAccount方法的参数列表
- * 1.2 回调操作方式如下
- * try
- * {
- * 		$result = $apliay->verify($cacert密钥文件地址);	// 检查数据来源是否合法
- * 		$status = isset($_REQUEST['trade_status']) ? $_REQUEST['trade_status'] : Null;	// 检查是否支付宝已经交易成功
- * 		if($result && in_array($status, array('TRADE_FINISHED', 'TRADE_SUCCESS')))
- * 		{
- * 			// 其他回传参数请自行查看: print_r($_REQUEST);
- * 			echo '操作成功!';
- * 		}
- * 		else
- * 		{
- * 			echo '操作失败';
- * 		}
- * }
- * catch(\Exception $e)
- * {
- * 		// 请求支付宝接口进行验证失败,,请自行解决业务逻辑
- * }
- * 
- ******************************************************************************************************************************
- * 
- * 2. 批量付款到支付宝账户
- * 2.1 echo $alipay->batchPayment(array $data); // $data请参照batchPayment方法的参数列表
- * 2.2 回调操作方式如下
- * try
- * {
- * 		$result = $apliay->verify($cacert密钥文件地址);	// 检查数据来源是否合法
- * 		// 其他回传参数请自行查看: print_r($_REQUEST);
- * }
- * catch(\Exception $e)
- * {
- * 		// 请求支付宝接口进行验证失败,,请自行解决业务逻辑
- * }
- * 
- ******************************************************************************************************************************
+ * @author enychen
  */
 class Alipay
 {
@@ -104,24 +60,23 @@ class Alipay
 	/**
 	 * 即时到账的接口(用户向我司付钱)
 	 * @param array 包含列表如下
-	 * 	order 		必须	订单号
+	 *  order 		必须	订单号
 	 *  name  		必须	商品名称
 	 *  price 		必须	商品价格或单价,如果存在quantity,则表示单价,否则表示总价
 	 *  syncUrl		必须	商品购买同步回调URL地址
-	 *  asyncUrl	必须	商品购买异步回调URL地址
-	 *  errorUrl	可选	请求出错时的通知页面URL地址,错误码参照:http://doc.open.alipay.com/doc2/detail?treeId=62&articleId=103749&docType=1
-	 *  quantity	可选	商品数量
+	 *  asyncUrl		必须	商品购买异步回调URL地址
+	 *  errorUrl		可选	请求出错时的通知页面URL地址,错误码参照:http://doc.open.alipay.com/doc2/detail?treeId=62&articleId=103749&docType=1
+	 *  quantity		可选	商品数量
 	 *  showUrl		可选	商品显示URL地址
 	 *  desc		可选	商品描述
-	 *  type		可选	交易类型 1-商品购买, 4-捐赠, 47-电子卡券, 默认是1
-	 * 	bank		可选	使用什么银行支付,不设置默认使用支付宝余额支付
-	 * 						银行简码——混合渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103763&docType=1
-	 * 						银行简码——纯借记卡渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103764&docType=1
-	 *	other		可选	其他参数,传递给支付宝后支付宝再回传
+	 *  type		可选	交易类型 1-商品购买, 4-捐赠, 47-电子卡券, 默认是1\
+	 *  bank		可选	使用什么银行支付,不设置默认使用支付宝余额支付
+	 * 				银行简码——混合渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103763&docType=1
+	 * 				银行简码——纯借记卡渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103764&docType=1
+	 *  other		可选	其他参数,传递给支付宝后支付宝再回传
 	 */
 	public function transferAccount(array $origin)
 	{
-		// 数据整理
 		$data['service'] = 'create_direct_pay_by_user';
 		$data['seller_id'] = $this->options['partner'];
 		$data['out_trade_no'] = $origin['order'];
@@ -143,8 +98,8 @@ class Alipay
 	/**
 	 * 批量付款接口(我司向用户付钱)
 	 * @param array 包含列表如下
-	 * 	mail		必须	付款账号
-	 * 	asyncUrl	必须	回调地址
+	 *  mail		必须	付款账号
+	 *  asyncUrl		必须	回调地址
 	 *  account		必须	付款账户名
 	 *  order		必须	格式：当天日期[8位]+序列号[3至16位]，如：201512201211
 	 *  price		必须	付款总金额
@@ -167,7 +122,8 @@ class Alipay
 	
 	/**
 	 * 同异步验证
-	 * @param string 证书的地址
+	 * @param string $cacert 证书的地址
+	 * @return bool 数据来源的合法性
 	 */
 	public function verify($cacert)
 	{
@@ -206,7 +162,7 @@ class Alipay
 
 	/**
 	 * 生成请求表单
-	 * @param unknown $data
+	 * @param array $data 参数列表
 	 * @return string
 	 */
 	protected function buildForm($data)
@@ -234,7 +190,7 @@ class Alipay
 		
 	/**
 	 * 整理数据,生成签名和签名方式
-	 * @param array $data
+	 * @param array $data 参数列表
 	 * @return array
 	 */
 	protected function filterData($data)
@@ -255,7 +211,7 @@ class Alipay
 	
 	/**
 	 * 数据进行签名
-	 * @param array $data
+	 * @param array $data 参数列表
 	 * @return string
 	 */
 	protected function sign($data)
