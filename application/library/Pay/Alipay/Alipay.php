@@ -54,7 +54,7 @@ class Alipay
 		// 防钓鱼时间戳
 		$this->options['phishingKey'] = $phishingKey;
 		// 防钓鱼客户端机器ip
-		$this->options['clientIp'] = $clentIp;
+		$this->options['clientIp'] = $clentIp;		
 	}
 	
 	/**
@@ -122,11 +122,14 @@ class Alipay
 	
 	/**
 	 * 同异步验证
-	 * @param string $cacert 证书的地址
+	 * @param string $cacert 证书文件路径,默认在文件路径下查找
 	 * @return bool 数据来源的合法性
 	 */
-	public function verify($cacert)
+	public function verify($cacert=Null)
 	{
+		// 公钥
+		$cacert = $cacert ? : __DIR__.'/cacert.pem';
+
 		// 空参数传递
 		if(empty($_REQUEST) || empty($_REQUEST['sign']))
 		{

@@ -7,7 +7,7 @@ $apliay = new Alipay\Alipay('合作者身份ID', '签名密钥');	// 两个参�
 1.2 回调操作方式如下<br/>
 try<br/>
 {<br/>
-	$result = $apliay->verify($cacert密钥文件地址);	// 检查数据来源是否合法<br/>
+	$result = $apliay->verify();	// 检查数据来源是否合法<br/>
 	$status = isset($_REQUEST['trade_status']) ? $_REQUEST['trade_status'] : Null;	// 检查是否支付宝已经交易成功<br/>
 	if($result && in_array($status, array('TRADE_FINISHED', 'TRADE_SUCCESS')))<br/>
 	{<br/>
@@ -31,7 +31,7 @@ catch(\Exception $e)<br/>
 2.2 回调操作方式如下<br/>
 try<br/>
 {<br/>
-	$result = $apliay->verify($cacert密钥文件地址);	// 检查数据来源是否合法<br/>
+	$result = $apliay->verify();	// 检查数据来源是否合法<br/>
 	// 其他回传参数请自行查看: print_r($_REQUEST);<br/>
 }<br/>
 catch(\Exception $e)<br/>
