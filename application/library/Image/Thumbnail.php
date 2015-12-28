@@ -17,6 +17,11 @@ namespace Image;
 
 class Thumbnail
 {	
+	public function setPath() 
+	{
+		
+	}
+	
 	/**
 	 * 源图片载入
 	 * @param string $src 源文件
@@ -27,7 +32,7 @@ class Thumbnail
 		$imageInfo = getimagesize($src);
 		$this->srcWidth = $imageInfo[0];
 		$this->srcHeight = $imageInfo[1];
-		$method = 'imagecreatefrom'.$srcMethod[$imageInfo[2]];
+		$method = "imagecreatefrom{$srcMethod[$imageInfo[2]]}";
 		$this->srcImage = $method($src);
 		return $this;
 	}
