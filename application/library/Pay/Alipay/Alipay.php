@@ -68,7 +68,7 @@ class Alipay {
 	 *  quantity		可选	商品数量
 	 *  showUrl		可选	商品显示URL地址
 	 *  desc		可选	商品描述
-	 *  type		可选	交易类型 1-商品购买, 4-捐赠, 47-电子卡券, 默认是1\
+	 *  type		可选	交易类型 1-商品购买, 4-捐赠, 47-电子卡券, 默认是1
 	 *  bank		可选	使用什么银行支付,不设置默认使用支付宝余额支付
 	 * 				银行简码——混合渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103763&docType=1
 	 * 				银行简码——纯借记卡渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103764&docType=1
