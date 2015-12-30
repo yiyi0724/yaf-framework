@@ -45,7 +45,7 @@ class Captcha
      * @param int 宽度
      * @param string 字体
      */
-    public  function draw($width, $height, $font=NULL)
+    public static function draw($width, $height, $font=NULL)
     {
         // 随机码
         $randomCode = self::randomCode();
