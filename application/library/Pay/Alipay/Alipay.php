@@ -143,7 +143,7 @@ class Alipay {
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_HEADER, 0); // 过滤HTTP头
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 显示输出结果
-			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true); // SSL证书认证
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, True); // SSL证书认证
 			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // 严格认证
 			curl_setopt($curl, CURLOPT_CAINFO, $cacert); // 证书地址
 			$responseText = curl_exec($curl);
@@ -206,7 +206,6 @@ class Alipay {
 	 * @return string
 	 */
 	protected function sign($data){
-		// 加密签名
 		switch($this->options['signType']){
 			case "MD5":
 				$sign = md5(urldecode(http_build_query($data)) . $this->options['signKey']);
