@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Alipay;
 
 /**
@@ -73,6 +74,8 @@ class Alipay {
 	 * 				银行简码——混合渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103763&docType=1
 	 * 				银行简码——纯借记卡渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103764&docType=1
 	 *  other		可选	其他参数,传递给支付宝后支付宝再回传
+	 *  
+	 * @return string html表单
 	 */
 	public function transferAccount(array $origin){
 		$data['service'] = 'create_direct_pay_by_user';
@@ -99,10 +102,12 @@ class Alipay {
 	 *  mail		必须	付款账号
 	 *  asyncUrl		必须	回调地址
 	 *  account		必须	付款账户名
-	 *  order		必须	格式：当天日期[8位]+序列号[3至16位]，如：201512201211
+	 *  order		必须	批次号, 格式：当天日期[8位]+序列号[3至16位]，如：201512201211
 	 *  price		必须	付款总金额
 	 *  number		必须	付款笔数
 	 *  data		必须	付款详细数据, 格式：流水号1^收款方帐号1^真实姓名^付款金额1^备注说明1|流水号2^收款方帐号2^真实姓名^付款金额2^备注说明2
+	 *  
+	 * @return string html表单
 	 */
 	public function batchPayment(array $origin){
 		$data['service'] = 'batch_trans_notify';
