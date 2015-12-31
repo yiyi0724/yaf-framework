@@ -3,7 +3,7 @@
 /**
  * Http请求类
  * @author chenxb
- * @version 1.2
+ * @version 1.3
  *
  * @example
  * $http = new Http($url);
@@ -16,12 +16,11 @@
  * 5. 设置CURLOPT选项: $http->setCurlOpt(CURLOPT_*, $value);
  * 
  * $mthod可以使用的方法: get | post | put | delete | upload
- * if($http->$method(array 要传递的参数)) {
- * 		// 执行成功
- * 		$result = $this->getResult();
- * } else {
+ * list($result, $error) = $http->$method(array 要传递的参数);
+ * if($error) {
  * 		// 执行失败
- * 		$error = $this->getError();
+ * } else { 		
+ * 		// 执行成功
  * }
  */
 namespace Network;
@@ -112,8 +111,8 @@ class Http {
 			$this->error = $e->getMessage();
 		}
 		
-		// 返回错误
-		return !$this->error;
+		// 返回结果和错误
+		return array($this->result, $this->error);
 	}
 
 	/**
@@ -195,22 +194,6 @@ class Http {
 	 */
 	public function setDecode($type){
 		$this->decodeType = $type;
-	}
-
-	/**
-	 * 获取错误
-	 * @return string
-	 */
-	public function getError(){
-		return $this->error;
-	}
-
-	/**
-	 * 获取结果
-	 * @return mixed
-	 */
-	public function getResult(){
-		return $this->result;
 	}
 
 	/**
