@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Alipay;
+namespace Pay\Alipay;
 
 /**
  * 支付宝接口
@@ -99,7 +99,7 @@ class Alipay {
 	/**
 	 * 批量付款接口(我司向用户付钱)
 	 * @param array 包含列表如下
-	 *  mail		必须	付款账号
+	 *  email		必须	付款账号
 	 *  asyncUrl		必须	回调地址
 	 *  account		必须	付款账户名
 	 *  order		必须	批次号, 格式：当天日期[8位]+序列号[3至16位]，如：201512201211
