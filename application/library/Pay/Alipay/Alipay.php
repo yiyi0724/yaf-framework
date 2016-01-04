@@ -123,7 +123,7 @@ class Alipay {
 	}
 
 	/**
-	 * 同异步验证
+	 * 同异步验证,只验证来源地址是否正确,不验证业务逻辑是否正确
 	 * @param string $cacert 证书文件路径,默认在文件路径下查找
 	 * @return bool 数据来源的合法性
 	 */
@@ -156,6 +156,11 @@ class Alipay {
 			if(!preg_match("/true$/i", $responseText)){
 				return False;
 			}
+		}
+		
+		// 是否是post请求
+		if($_SERVER['REQUEST_METHOD'] == 'POST') {
+			echo 'SUCCESS';
 		}
 		
 		return True;
