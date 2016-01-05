@@ -3,7 +3,6 @@
 /**
  * 邮件发送类,只是整理了PHPMailer类,不是我自己写的
  * @author chenxb
- * @version 1.0
  * 
  * @example
  * $mail = new \Network\Mail(); // 创建一个邮件对象

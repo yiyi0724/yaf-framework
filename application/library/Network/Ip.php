@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 获取ip地址
  * @author chenxb
@@ -7,19 +8,19 @@
  * @example
  * Network\Ip::get(bool 是否转成整数);
  */
-
 namespace Network;
 
 class Ip
 {
-    /**
-     * 获取客户端的IP
-     * @param boolean $ip2long 是否转换成为整形
-     * @return int|string
-     */
-    public static function get($ip2long=true)
-    {    	
-    	if(getenv('HTTP_X_REAL_IP'))
+
+	/**
+	 * 获取客户端的IP
+	 * @param boolean $ip2long 是否转换成为整形
+	 * @return int|string
+	 */
+	public static function get($ip2long = TRUE)
+	{
+		if(getenv('HTTP_X_REAL_IP'))
 		{
 			$ip = getenv('HTTP_X_REAL_IP');
 		}
@@ -35,7 +36,7 @@ class Ip
 		{
 			$ip = getenv('REMOTE_ADDR');
 		}
-    
-        return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
-    }
+		
+		return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
+	}
 }

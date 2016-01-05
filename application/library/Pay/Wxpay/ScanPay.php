@@ -92,11 +92,11 @@ class ScanPay extends PayBase {
 	$data['expiretime'] = date('YmdHis', time() + 3600);
 	$data['target'] = 'test';
 	$data['other'] = 'one';	
-	list($url, $error) = $wxPay->unifiedOrder($data);
+	list($info, $error) = $wxPay->unifiedOrder($data);
 	if($error) {
 		exit($error);
-	}
-	\Image\QRcode::png($url, false, QR_ECLEVEL_L, 6);
+	}	
+	\Image\QRcode::png($info, false, QR_ECLEVEL_L, 6);
 	
 	---------------------------------------------------------------------
 	
