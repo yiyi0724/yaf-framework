@@ -8,7 +8,7 @@
  * @example
  * $thumbnail = new \Image\Thumbnail();
  * 
- * 1. 载入原图:			$thumbnail->loadSrc('/home/eny/Downloads/iphone6s.jpg');
+ * 1. 载入原图:			$result = $thumbnail->loadSrc('/home/eny/Downloads/iphone6s.jpg');	// 返回是否支持图像生成
  * 2. 设置缩略图大小: 	$thumbnail->setDistSize(205, 190);
  * 3. 设置缩略图格式:	$thumbnail->setDistType($type); //格式只支持上面列出,不设置默认和原图相同格式,注意jpg请写成jpeg
  * 3. 生成缩略图:		$thumbnail->create('/home/eny/Downloads/iphone6s_205.jpg');
@@ -37,12 +37,19 @@ class Thumbnail
 	 */
 	public function loadSrc($src)
 	{
-		$imageInfo = getimagesize($src);
-		$this->info['srcWidth'] = $imageInfo[0];
-		$this->info['srcHeight'] = $imageInfo[1];
+		// 图像分析
+		$imageInfo = getimagesize($src);		
+		if(!in_array($imageInfo[2], $this->types)) {
+			return FALSE;
+		}
+		// 图像信息
+		$this->info['srcWidth'] = $this->info['distWidth']  = $imageInfo[0];
+		$this->info['srcHeight'] = $this->info['distHeight'] = $imageInfo[1];
 		$method = "imagecreatefrom{$this->types[$imageInfo[2]]}";
 		$this->info['srcImage'] = $method($src);
 		$this->info['saveMethod'] = "image{$this->types[$imageInfo[2]]}";
+		
+		return TRUE;
 	}
 
 	/**

@@ -14,9 +14,8 @@ trait Singleton
     protected static $instance;
     
     /**
-     * 请注意实现此trait的时候
-     * 需要把__construct也设置成protected或者private
-     * 请使用的时候自行处理
+     * 禁止直接创建构造函数
+     * @param array $driver
      */
     protected function __construct($driver) {
     	$this->create($driver);

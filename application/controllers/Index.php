@@ -2,9 +2,10 @@
 
 class indexController extends BaseController
 {
+	//protected $loginAction = '*';
+	
 	public function indexAction()
 	{
-		echo 'hello world';
 	}
 	
 	public function alipayAction()
