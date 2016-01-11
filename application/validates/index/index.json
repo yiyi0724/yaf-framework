@@ -1,0 +1,35 @@
+[
+	{
+		"key":"id",
+		"from":"post",
+		"type":"Int",
+		"require":1,
+		"error":"id有误",
+		"min":1,
+		"max":9999999,
+		"alias":"id >="
+	},
+	{
+		"key":"page",
+		"from":"get",
+		"type":"Int",
+		"error":"分页有误,你妈逼乱扔",
+		"default":1,
+		"min":1
+	},
+	{
+		"key":"in",
+		"from":"get",
+		"require":1,
+		"type":"in",
+		"range":"1,2,3,4,5",
+		"error":"让你在这个区间你为什么要任性"
+	},
+	{
+		"key":"email",
+		"from":"get",
+		"require":1,
+		"type":"email",
+		"error":"邮箱有误"
+	}
+]

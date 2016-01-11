@@ -2,8 +2,8 @@
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 use \Yaf\Session;
-use \Yaf\Loader;
-class BaseController extends Controller_Abstract
+use \Security\Validate;
+abstract class BaseController extends Controller_Abstract
 {
 
 	/**
@@ -13,9 +13,10 @@ class BaseController extends Controller_Abstract
 	protected $loginAction = array();
 
 	/**
-	 * 控制器对象
+	 * 传递的参数
+	 * @var array
 	 */
-	protected $modules = array();
+	protected $params = array();
 
 	/**
 	 * 控制器初始化
@@ -30,9 +31,6 @@ class BaseController extends Controller_Abstract
 		
 		// 控制器登录检查
 		$this->needLogin();
-		
-		// 数据和发现检查
-		$this->validate();
 	}
 
 	/**
@@ -63,7 +61,7 @@ class BaseController extends Controller_Abstract
 	protected function location($url)
 	{
 		parent::redirect($url);
-		exit;
+		exit();
 	}
 
 	/**
@@ -71,39 +69,36 @@ class BaseController extends Controller_Abstract
 	 */
 	protected function validate()
 	{
-	}
-
-	/**
-	 * 获取某一个模块对象
-	 * @param $array $class 模块名称
-	 * @param \Module 某一个模块对象
-	 */
-	protected function getModule($class)
-	{
-		if(empty($this->modules[$class]))
-		{
-			$directory = $this->getConfig('application.directory');
-			Loader::import($directory.'modules'.str_replace('\\', '/', $class).'.php');
-			$class = "{$class}Module";
-			$this->modules[$class] = new $class($this);
-		}
+		$request = $this->getRequest();
 		
-		return $this->modules[$class];
-	}
-
-	/**
-	 * 读取application.ini配置文件的信息
-	 * @param string $key
-	 */
-	protected function getConfig($key)
-	{
-		$result = Application::app()->getConfig()->get($key);
-		return is_string($result) ?  : $result->toArray();
+		// 读取校验文件
+		$path = Application::app()->getConfig()->get('application.directory');
+		$controller = $request->getControllerName();
+		$action = $request->getActionName();
+		$file = strtolower("{$path}validates/{$controller}/{$action}.json");
+		
+		// 数据检查
+		list($data, $error) = Validate::validity($file);
+		echo '<pre>';
+		print_r($data);
+		exit;
+		if($error)
+		{
+			if($request->isXmlHttpRequest())
+			{
+				$this->json(FALSE, '表单参数有误', array(), $data);
+			}
+			else
+			{
+				$this->view($data, 'common/error');
+			}
+			exit();
+		}
 	}
 
 	/**
 	 * 关闭视图
-	 * @param string $view 用新页面
+	 * @param string $view
 	 */
 	protected function disView()
 	{
@@ -113,51 +108,63 @@ class BaseController extends Controller_Abstract
 	/**
 	 * 加载视图,绑定语法
 	 * @param array $data 输出到页面的数据, 格式: array('key'=>'value')
-	 * @param string $template 自定义模板,会取消默认的模板
+	 * @param string $template 自定义模板
 	 */
 	protected function view(array $data, $template = NULL)
 	{
-		// 如果自定义视图,则关闭默认视图
-		$template and $this->disView();
 		// 数据绑定
-		$viewObject = $this->getView();
+		$view = $this->getView();
 		foreach($data as $key=>$value)
 		{
-			$viewObject->assign($key, $value);
+			$view->assign($key, $value);
+		}
+		
+		// 如果自定义视图,则关闭默认视图并加载自定义视图
+		if($template)
+		{
+			$this->disView();
+			$this->display($template);
 		}
 	}
 
 	/**
-	 * 输出json数据
+	 * 输出json或者jsonp数据
+	 * @param bool $status 结果状态
+	 * @param string $notify　提示信息
+	 * @param array　$data 参数列表
 	 */
-	protected function json($status = FALSE, $notify = NULL, array $success = array(), $failed = array())
+	protected function json($status = FALSE, $notify = NULL, array $success = array(), $error = array())
 	{
 		// 关闭视图
 		$this->disView();
 		
-		$json['status'] = $status;
-		$json['success'] = $success;
-		$json['failed'] = $failed;
-		$json['notify'] = $notify;
+		// 数据
+		// $output['action'] =
+		$output['status'] = $status;
+		$output['notify'] = $notify;
+		$output['success'] = $success;
+		$output['error'] = $error;
 		
-		// 为了安全 callback 只允许 字母+数字+_ 的组合
-		if(!preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback))
+		// jsonp回调函数, 检查函数名
+		$jsonp = $this->getRequest()->get('jsonp', NULL);
+		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp))
 		{
-			$callback = null;
+			$jsonp = NULL;
 		}
 		
-		// 是否有 callback, 如果没有, 那么直接输出JSON
-		if($callback)
+		// 格式化json
+		$output = json_encode($output);
+		$header = 'application/json';
+		
+		// 如果是jsonp
+		if($jsonp)
 		{
-			// 输出JSONP			
-			echo '<script type="text/javascript">' . $callback . '(' . json_encode($jsonArr) . ');</script>';
+			$header = 'application/javascript';
+			$output = "<script type='text/javascript'>{$jsonp}({$json});</script>";
 		}
-		else
-		{
-			// 输出文件头信息
-			header('Content-type: application/json; charset=utf-8');
-			// 输出JSON
-			echo json_encode($jsonArr);
-		}
+		
+		// 结果输出
+		header("Content-type: {$header}; charset=UTF-8");
+		echo $output;
 	}
 }

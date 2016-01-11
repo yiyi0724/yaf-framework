@@ -23,7 +23,7 @@ class Enctype
 	 */
 	public static function encode($string, $skey)
 	{
-		$strArr = 	(base64_encode($string));
+		$strArr = (base64_encode($string));
 		$strCount = count($strArr);
 		foreach(str_split($skey) as $key=>$value)
 		{

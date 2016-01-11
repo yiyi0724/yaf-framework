@@ -6,6 +6,7 @@ class indexController extends BaseController
 	
 	public function indexAction()
 	{
+		$this->validate();
 	}
 	
 	public function alipayAction()

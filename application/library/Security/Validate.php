@@ -1,149 +1,117 @@
 <?php
 
 /**
- * Validate类
+ * 数据检查类
  * @author enychen
  */
 namespace Security;
 
-class Validate {
+class Validate
+{
 
 	/**
-	 * 待检查的内容
+	 * 检查通过的参数
+	 * @static
 	 * @var array
 	 */
-	protected $rules = array();
+	protected static $data = array();
 
 	/**
 	 * 错误内容
+	 * @static
 	 * @var array
 	 */
-	protected $error = array();
+	protected static $error = array();
 
 	/**
-	 * 构造函数,初始化规则
-	 * @param string 文件名
+	 * 加载规则
+	 * @param string $file
+	 * @return array 规则数组
 	 */
-	public function __construct($filename){
-		if(is_file($filename)){
-			$this->rules = json_decode(file_get_contents($filename), TRUE);
+	protected static function load($file)
+	{
+		// 文件加载
+		$rules = json_decode(file_get_contents($file), TRUE);
+		if(json_last_error())
+		{
+			throw new \Exception(json_last_error_msg(), 10000);
 		}
-	}
-
-	public function check(){
-		// 数据校验通过后
-		if($this->filter()){
-			// 格式化数据
-			$this->format();
-			
-			// 影响全局变量
-			$this->globalData();
+		
+		// 值目前支持GET和POST,PUT和DELETE稍后支持
+		foreach($rules as $key=>$rule)
+		{
+			list($from, $name) = array('_' . strtoupper($rule['from']), $rule['key']);
+			$rules[$key]['value'] = NULL;
+			if(isset($GLOBALS[$from][$name]))
+			{
+				$rules[$key]['value'] = $GLOBALS[$from][$name];
+			}
 		}
+		
+		return $rules;
 	}
 
 	/**
 	 * 检查数据
+	 * @param array $rules 数据规则数组
 	 * @return void
 	 */
-	public function filter(){
-		$flag = true;
+	public static function validity($file)
+	{
+		// 数据文件加载
+		$rules = static::load($file);
 		
-		foreach($this->rules as $key=>$rule){
-			// 原始值
-			$rule['origin'] = $this->setOrigin($rule);
-			
-			// 是否必须传递
-			if(Filter::isRequire($rule)){
-				$this->setError($rule);
+		foreach($rules as $key=>$rule)
+		{
+			// 是否必须
+			if(Rule::notExists($rule))
+			{
+				static::setError($rule);
 				continue;
 			}
 			
-			if($rule['origin']){
-				$rule['origin'] = $this->explodeOrigin($rule['origin']);
-				
-				// 循环遍历检查数组
-				for($i = 0, $len = count($rule['origin']); $i < $len; $i++){
-					// 设置当前要检查的值
-					$rule['value'] = $rule['origin'][$i];
-					// 检查值
-					$method = $rule['rule'];
-					if(!Filter::$method($rule)){
-						$flag = false;
-						$this->setError($rule);
-						continue;
-					}
-					
-					$rule['origin'][$i] = trim($rule['value']);
-				}
+			// 对应数据类型检查
+			$method = $rule['type'];
+			if($rule['value'] !== NULL && !Rule::$method($rule))
+			{
+				static::setError($rule);
+				continue;
 			}
 			
-			$this->rules[$key] = $this->setValue($rule);
+			// 设置合法值
+			static::setData($rule);
 		}
 		
-		return $flag;
-	}
-
-	protected function format(){
-		foreach($this->rules as $key=>$rule){
-			// 别名
-			if(isset($rule['alias'])){
-				$rule['name'] = $rule['alias'];
-			}
-			
-			// 数据格式
-			if(isset($rule['format'])){
-				$rule['value'] = Format::replace($rule);
-			}
-			
-			// 默认值
-			if(isset($rule['default'])){
-				$rule['value'] = Format::defaultValue($rule);
-			}
-			
-			$this->rules[$key] = $rule;
-		}
+		
+		// 结果返回
+		$data = static::$error ? : static::$data;
+		return array($data, count(static::$error));
 	}
 
 	/**
-	 * 过滤查询后设置值
-	 * @param object 检查后的规则对象
-	 * @return void
+	 * 通过检查的值进行设置
+	 * @param array $rule
 	 */
-	private static function set($rule){
-		// 数据格式化
-		$rule = $this->dataFormat($rule);
-		// 设置值
-		if(isset($rule->aggregate)){
-			foreach(explode(',', $rule->aggregate) as $key){
-				self::$valid[$rule->from][$key][$rule->name] = $rule->value;
+	private static function setData($rule)
+	{
+		// 键
+		$key = isset($rule['alias']) ? $rule['alias'] : $rule['key'];
+		// 值
+		$value = $rule['value'];
+		if(is_null($value))
+		{
+			switch(TRUE)
+			{
+				case empty($rule['default']):
+					return;
+				case in_array($rule['default'], array('time', 'date', 'mktime', 'strtotime')):
+				// $value = call_user_func_array($rule['default'], explode(',', $rule['']))
+				default:
+					$value = $rule['default'];
 			}
 		}
-		else{
-			self::$valid[$rule->from][$rule->name] = $rule->value;
-		}
-	}
-
-	/**
-	 * 初始值
-	 * @return NULL
-	 */
-	protected function setOrigin($rule){
-		return empty($GLOBALS[$rule['from']][$rule['name']]) ? null : $GLOBALS[$rule['from']][$rule['name']];
-	}
-
-	protected function explodeOrigin($origin){
-		return is_array($origin) ? $origin : explode(',', $origin);
-	}
-
-	protected function setValue($rule){
-		// 单个值还是一整个数组
-		$rule['value'] = count($rule['origin']) == 1 ? implode(',', $rule['origin']) : $rule['origin'][0];
 		
-		return $rule;
-	}
-
-	public function getError(){
-		return $this->error;
+		static::$data[$key] = $value;
 	}
 
 	/**
@@ -152,78 +120,98 @@ class Validate {
 	 * @param string 错误信息
 	 * @return void
 	 */
-	private function setError($rule){
-		if(empty($this->error[$rule['name']])){
-			$this->error[$rule['name']] = $rule['prompt'];
-		}
+	private static function setError($rule)
+	{
+		static::$error[$rule['key']] = $rule["error"];
 	}
 }
-class Filter {
+
+/**
+ * 各种数据检查
+ * @author eny
+ *
+ */
+class Rule
+{
 
 	/**
-	 * 是否必须
+	 * 是否必须传递
+	 * @static
+	 * @param array 规则数组
+	 * @param array 规则
 	 */
-	public static function isRequire($rule){
-		return $rule['require'] && !$rule['origin'];
+	public static function notExists($rule)
+	{
+		return isset($rule['require']) && is_null($rule['value']);
+	}
+
+	/**
+	 * 整数检查
+	 * @static
+	 * @param array 规则数组
+	 * @return void
+	 */
+	public static function int($rule)
+	{
+		// 是否是数字
+		$flag = is_numeric($rule['value']);
+		
+		// 最小值检查
+		if($flag && isset($rule['min']))
+		{
+			$flag = $rule['value'] >= $rule['min'];
+		}
+		
+		// 最大值检查
+		if($flag && isset($rule['max']))
+		{
+			$flag = $rule['value'] <= $rule['max'];
+		}
+		
+		return $flag;
 	}
 
 	/**
 	 * 字符串|数字相等匹配
+	 * @static
 	 * @param object 规则对象
 	 * @return int|string
 	 */
-	public static function in($rule){
-		return in_array($rule['value'], explode(',', $rule['ruleRemark']));
-	}
-
-	/**
-	 * 过滤整数数据,可设置区间
-	 * @param object 规则对象
-	 * @return void
-	 */
-	public static function int($rule){
-		// 是否是数字
-		$flag = is_numeric($rule);
-		// 包含区间
-		if($flag && $rule['ruleRemark']){
-			$range = explode(',', $rule['ruleRemark']);
-			$maxFlag = $minFlag = TRUE;
-			// 最小值检查
-			(is_numeric($range[0])) and ($minFlag = $rule['value'] >= $range[0]);
-			// 最大值检查
-			(is_numeric($range[1])) and ($maxFlag = $rule['value'] <= $range[1]);
-			// 综合结果
-			$flag = $maxFlag && $minFlag;
-		}
-		return $flag;
+	public static function in($rule)
+	{
+		return in_array($rule['value'], explode(',', $rule['range']));
 	}
 
 	/**
 	 * 验证Email
 	 */
-	public static function email($rule){
+	public static function email($rule)
+	{
 		return filter_var($rule['value'], FILTER_VALIDATE_EMAIL);
 	}
 
 	/**
 	 * 验证url地址
 	 */
-	public static function url($rule){
+	public static function url($rule)
+	{
 		return filter_var($rule['value'], FILTER_VALIDATE_URL);
 	}
 
 	/**
 	 * 验证ip
 	 */
-	public static function ip($rule){
+	public static function ip($rule)
+	{
 		return filter_var($rule['value'], FILTER_VALIDATE_IP);
 	}
 
 	/**
 	 * 验证正则表达式
 	 */
-	public static function regexp(){
-		return preg_match($rule['ruleRemark'], $rule['value']);
+	public static function regexp($rule)
+	{
+		return preg_match($rule['pattern'], $rule['value']);
 	}
 
 	/**
@@ -231,22 +219,28 @@ class Filter {
 	 * @param object 规则对象
 	 * @return void
 	 */
-	public static function string($rule){
+	public static function string($rule)
+	{
 		// xss注入攻击
 		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', 
 			$rule['value']);
+		
 		// 字符串长度
-		if($flag && isset($rule['ruleRemark'])){
+		if(isset($rule['length']))
+		{
 			$length = mb_strlen($rule['value']);
-			$range = explode(',', $rule['ruleRemark']);
-			// 默认值
-			$maxFlag = $minFlag = TRUE;
-			// 最小长度检查
-			(is_numeric($range[0])) and ($minFlag = $length >= $range[0]);
-			// 最大长度检查
-			(is_numeric($range[1])) and ($maxFlag = $length <= $range[1]);
-			// 综合结果
-			$flag = $maxFlag && $minFlag;
+			
+			// 最小值检查
+			if($flag && isset($rule['min']))
+			{
+				$flag = $rule['value'] >= $rule['min'];
+			}
+			
+			// 最大值检查
+			if($flag && isset($rule['max']))
+			{
+				$flag = $rule['value'] <= $rule['max'];
+			}
 		}
 		return $flag;
 	}
@@ -254,47 +248,15 @@ class Filter {
 	/**
 	 * 验证手机|电话号码
 	 */
-	public static function phone($rule){
-		foreach(["/(\d{3}-)(\d{8})$|(\d{4}-)(\d{7,8})$/", "/^1(3|4|5|7|8)[0-9]{9}$/"] as $pattern){
-			if($flag = preg_match($pattern, $rule['value'])){
+	public static function phone($rule)
+	{
+		foreach(["/(\d{3}-)(\d{8})$|(\d{4}-)(\d{7,8})$/", "/^1(3|4|5|7|8)[0-9]{9}$/"] as $pattern)
+		{
+			if($flag = preg_match($pattern, $rule['value']))
+			{
 				break;
 			}
 		}
 		return $flag;
 	}
 }
-class Format {
-
-	/**
-	 * 数据格式化
-	 * @param object
-	 */
-	public static function replace($rule){
-		return str_replace(":{$rule['name']}", $rule['format'], $rule['value']);
-	}
-
-	/**
-	 * 设置默认值
-	 */
-	public static function defaultValue($rule){
-		switch($rule['default']){
-			case 'timestamp':
-				return time();
-			case 'date':
-				return date('Y-m-d');
-			case 'datetime':
-				return date('Y-m-d H:i:s');
-			default:
-				return $rule['default'];
-		}
-	}
-}
-
-
-/**
- * 用法
- * $filter = new \Security\Validate($filename);
- * if($error = $this->validate()) {
- * 		echo $error;
- * }
- */

@@ -6,6 +6,11 @@ use Yaf\Config\Ini;
 
 class Bootstrap extends Bootstrap_Abstract
 {	
+	public function _initConst()
+	{
+		
+	}
+	
     /**
      * 修改路由信息
      * @param \Yaf\Dispatcher $dispatcher
