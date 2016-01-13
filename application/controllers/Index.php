@@ -1,12 +1,14 @@
 <?php
 
-class indexController extends BaseController
+class indexController extends \Base\BaseController
 {
 	//protected $loginAction = '*';
 	
 	public function indexAction()
 	{
 		$this->validate();
+		
+		//
 	}
 	
 	public function alipayAction()

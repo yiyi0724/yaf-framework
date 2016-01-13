@@ -5,7 +5,7 @@
  * @author enychen
  *
  */
-class MemberController extends BaseController
+class MemberController extends \Base\BaseController
 {
 	/**
 	 * 用户登录

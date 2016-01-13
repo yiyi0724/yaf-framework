@@ -1,8 +1,15 @@
 <?php
+
+/**
+ * 控制基类
+ */
+namespace Base;
+
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 use \Yaf\Session;
 use \Security\Validate;
+
 abstract class BaseController extends Controller_Abstract
 {
 
@@ -29,7 +36,7 @@ abstract class BaseController extends Controller_Abstract
 		// 初始化静态地址url
 		$this->staticUrl();
 		
-		// 控制器登录检查
+		// 登录检查
 		$this->needLogin();
 	}
 
@@ -38,10 +45,13 @@ abstract class BaseController extends Controller_Abstract
 	 */
 	protected function staticUrl()
 	{
+		define('URL_STYLE', '/style/');
+		define('URL_IMAGE', '/image/');
+		define('URL_SCRIPT', '/script/');
 	}
 
 	/**
-	 * 需要先登录再操作的控制器
+	 * 登录检查
 	 */
 	protected function needLogin()
 	{
@@ -50,18 +60,17 @@ abstract class BaseController extends Controller_Abstract
 		// 是否需要优先登录
 		if(!UID && (in_array($action, $this->loginAction) || $this->loginAction == '*'))
 		{
-			$this->location('/member/login');
+			$url = '/member/login';
+			if($request->isXmlHttpRequest())
+			{
+				$this->json(FALSE, array('alert'=>'请先登录', 'location'=>$url), 'alert-location');
+				exit();
+			}
+			else
+			{
+				$this->location($url);
+			}
 		}
-	}
-
-	/**
-	 * 地址跳转
-	 * @param string $url 跳转地址
-	 */
-	protected function location($url)
-	{
-		parent::redirect($url);
-		exit();
 	}
 
 	/**
@@ -72,16 +81,13 @@ abstract class BaseController extends Controller_Abstract
 		$request = $this->getRequest();
 		
 		// 读取校验文件
-		$path = Application::app()->getConfig()->get('application.directory');
+		$path = $this->getConfig('application.directory');
 		$controller = $request->getControllerName();
 		$action = $request->getActionName();
 		$file = strtolower("{$path}validates/{$controller}/{$action}.json");
 		
 		// 数据检查
 		list($data, $error) = Validate::validity($file);
-		echo '<pre>';
-		print_r($data);
-		exit;
 		if($error)
 		{
 			if($request->isXmlHttpRequest())
@@ -90,60 +96,44 @@ abstract class BaseController extends Controller_Abstract
 			}
 			else
 			{
-				$this->view($data, 'common/error');
+				$this->getView()->display('common/error.phtml', $data);
 			}
 			exit();
 		}
 	}
 
 	/**
-	 * 关闭视图
-	 * @param string $view
-	 */
-	protected function disView()
-	{
-		Application::app()->getDispatcher()->disableView();
-	}
-
-	/**
-	 * 加载视图,绑定语法
+	 * 加载本控制器下的视图
 	 * @param array $data 输出到页面的数据, 格式: array('key'=>'value')
 	 * @param string $template 自定义模板
 	 */
-	protected function view(array $data, $template = NULL)
+	protected function view(array $vars, $tpl = NULL)
 	{
 		// 数据绑定
 		$view = $this->getView();
-		foreach($data as $key=>$value)
+		foreach($vars as $key=>$value)
 		{
 			$view->assign($key, $value);
 		}
 		
-		// 如果自定义视图,则关闭默认视图并加载自定义视图
-		if($template)
-		{
-			$this->disView();
-			$this->display($template);
-		}
+		// 加载自定义视图
+		$tpl and $this->disView() and $this->display($tpl);
 	}
 
 	/**
 	 * 输出json或者jsonp数据
 	 * @param bool $status 结果状态
-	 * @param string $notify　提示信息
-	 * @param array　$data 参数列表
+	 * @param string $notify　提示信息或者跳转
+	 * @param string $action 前端处理方式 append-数据dom操作 | alert-输出$notify提示 | location-输出提示后跳转 | form-参数有误 | alert-location
 	 */
-	protected function json($status = FALSE, $notify = NULL, array $success = array(), $error = array())
+	protected function json($status = FALSE, $notify = NULL, $action = 'alert')
 	{
 		// 关闭视图
 		$this->disView();
 		
 		// 数据
-		// $output['action'] =
 		$output['status'] = $status;
-		$output['notify'] = $notify;
-		$output['success'] = $success;
-		$output['error'] = $error;
+		$output[$action] = $notify;
 		
 		// jsonp回调函数, 检查函数名
 		$jsonp = $this->getRequest()->get('jsonp', NULL);
@@ -159,12 +149,41 @@ abstract class BaseController extends Controller_Abstract
 		// 如果是jsonp
 		if($jsonp)
 		{
-			$header = 'application/javascript';
+			$header = 'text/javascript';
 			$output = "<script type='text/javascript'>{$jsonp}({$json});</script>";
 		}
 		
 		// 结果输出
 		header("Content-type: {$header}; charset=UTF-8");
 		echo $output;
+	}
+
+	/**
+	 * 地址跳转
+	 * @param string $url 跳转地址
+	 */
+	protected function location($url)
+	{
+		parent::redirect($url);
+		exit();
+	}
+
+	/**
+	 * 读取配置
+	 * @param string $key 键名
+	 * @return string | array
+	 */
+	protected function getConfig($key)
+	{
+		$config = Application::app()->getConfig()->get($key);
+		return is_string($config) ? $config : $config->toArray();
+	}
+
+	/**
+	 * 关闭默认视图
+	 */
+	protected function disView()
+	{
+		return Application::app()->getDispatcher()->disableView();
 	}
 }
