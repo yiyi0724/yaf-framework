@@ -20,12 +20,6 @@ abstract class BaseController extends Controller_Abstract
 	protected $loginAction = array();
 
 	/**
-	 * 传递的参数
-	 * @var array
-	 */
-	protected $params = array();
-
-	/**
 	 * 控制器初始化
 	 */
 	public function init()
@@ -34,20 +28,22 @@ abstract class BaseController extends Controller_Abstract
 		define('UID', Session::getInstance()->get('user.uid'));
 		
 		// 初始化静态地址url
-		$this->staticUrl();
+		$this->resource();
 		
 		// 登录检查
 		$this->needLogin();
 	}
 
 	/**
-	 * 初始化url地址
+	 * 静态资源常量定义
 	 */
-	protected function staticUrl()
+	protected function resource()
 	{
-		define('URL_STYLE', '/style/');
-		define('URL_IMAGE', '/image/');
-		define('URL_SCRIPT', '/script/');
+		foreach($this->getConfig('resource') as $key=>$resource)
+		{
+			$key = 'URL_' . strtoupper($key);
+			define($key, $resource);
+		}
 	}
 
 	/**
@@ -55,16 +51,17 @@ abstract class BaseController extends Controller_Abstract
 	 */
 	protected function needLogin()
 	{
+		$request = $this->getRequest();
+		
 		// 读取方法名
-		$action = $this->getRequest()->getActionName();
+		$action = $request->getActionName();
 		// 是否需要优先登录
-		if(!UID && (in_array($action, $this->loginAction) || $this->loginAction == '*'))
+		if(!UID && ($this->loginAction == '*' || in_array($action, $this->loginAction)))
 		{
 			$url = '/member/login';
 			if($request->isXmlHttpRequest())
 			{
 				$this->json(FALSE, array('alert'=>'请先登录', 'location'=>$url), 'alert-location');
-				exit();
 			}
 			else
 			{
@@ -97,8 +94,8 @@ abstract class BaseController extends Controller_Abstract
 			else
 			{
 				$this->getView()->display('common/error.phtml', $data);
+				exit();
 			}
-			exit();
 		}
 	}
 
@@ -155,17 +152,17 @@ abstract class BaseController extends Controller_Abstract
 		
 		// 结果输出
 		header("Content-type: {$header}; charset=UTF-8");
-		echo $output;
+		exit($output);
 	}
 
 	/**
 	 * 地址跳转
 	 * @param string $url 跳转地址
+	 * @param int $time 等待几秒后跳转
 	 */
-	protected function location($url)
+	protected function location($url, $time = 0)
 	{
-		parent::redirect($url);
-		exit();
+		exit("<meta http-equiv=\"refresh\" content=\"{$time};url={$url}\">");
 	}
 
 	/**

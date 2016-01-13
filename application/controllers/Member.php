@@ -12,7 +12,8 @@ class MemberController extends \Base\BaseController
 	 */
 	public function loginAction()
 	{
-		echo __FUNCTION__;
+		echo '<pre>';
+		print_r($_SERVER);
 		exit;
 	}
 	
