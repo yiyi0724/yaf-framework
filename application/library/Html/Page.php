@@ -1,87 +1,106 @@
 <?php
+
 /**
  * 分页类
  * @author enychen
  */
+namespace Html;
 
-namespace Network;
+class Page
+{
 
-class Page {
-	
 	/**
-	 * 待输出的信息
-	 * @var array
+	 * 初始化分页信息
+	 * @static
+	 * @param int $number 每页显示的条数
+	 * @param int $count 总共有几条
+	 * @param int $button 一共要显示几页的按钮,默认10个
 	 */
-	protected $output = array();
-	
-	/**
-	 * 构建的信息
-	 * @var array
-	 */
-	protected $build = array('page'=>1);
-	
-	/**
-	 * 构造函数
-	 */
-	public function __construct($count, $number, $button)
-	{		
+	protected static function init($limit, $count, $button = 10)
+	{
+		// 初始化参数
+		$build = array('page'=>1);
+		
 		// 查询的参数
-		parse_str($_SERVER['QUERY_STRING'], $query);	
-					
+		parse_str($_SERVER['QUERY_STRING'], $query);
+		
 		// 当前第几页
-		if(isset($query['page'])) {
-			$this->build['page'] = $query['page'];
+		if(isset($query['page']))
+		{
+			$build['page'] = $query['page'];
 			unset($query['page']);
 		}
 		$operation = count($query) ? '&' : '';
 		$query = http_build_query($query);
-
+		
 		// 固定的url
-		$this->build['url'] = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}{$_SERVER['PATH_INFO']}?{$query}{$operation}";
+		$build['url'] = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}{$_SERVER['PATH_INFO']}?{$query}{$operation}page=";
 		
 		// 总共几条
-		$this->build['count'] = $count;
-
+		$build['count'] = $count;
+		
 		// 每页显示的条数
-		$this->build['number'] = $number;
+		$build['limit'] = $limit;
 		
 		// 一共有几页
-		$this->build['total'] = ceil($count/$number);
+		$build['pageTotal'] = ceil($count / $limit);
 		
 		// 一共几个按钮
-		$this->build['button'] = $btnNumber;;
+		$build['button'] = $button;
+		
+		// 是否超过
+		$build['over'] = $build['page'] > $build['pageTotal'];
+		
+		return $build;
 	}
-	
+
 	/**
+	 * 模式一:居中显示前后的分页
 	 * 生成分页的链接
 	 */
-	public function create()
+	public static function showCenter($limit, $count, $button = 10)
 	{
-		// 释放变量
-		extract($this->build);
+		// 初始化参数
+		$build = static::init($limit, $count, $button);
 		
-		// 上一页和首页
-		if($page > 1) {
-			$this->html['first'] = $this->page-1;
-		}
-		
-		// 中间的几页
-		$end = $this->page + $this->btnNumber;
-		$end = $end > $this->totalPage ? $this->totalPage+1 : $end;
-		$start = $end - $this->btnNumber;
-		
-		for(;$start<$end; $start++) {
-			if($start == $this->page) {
-				$this->html[] = "<span>{$start}</span>";
-			} else {
-				$this->html[] = "<a href='{$this->originUrl}{$this->op}page={$start}'>$start</a>";
+		// 是否超过
+		if(!$build['over'])
+		{
+			// 首页和上一页
+			if($build['page'] > 1)
+			{
+				$build['first'] = 1;
+				$build['prev'] = $build['page'] - 1;
 			}
 			
+			// 中间的几页
+			$step = floor($build['button'] / 2);
+			switch(TRUE)
+			{
+				case $build['page'] <= $step:
+					// 前几页
+					$build['start'] = 1;
+					$build['end'] = $build['start'] + $build['button'];
+					break;
+				case $build['page'] + $step > $build['pageTotal']:
+					// 超出末页
+					$build['start'] = $build['pageTotal'] - $build['button'] + 1;
+					$build['end'] = $build['pageTotal'] + 1;
+					break;
+				default:
+					// 默认算法
+					$build['start'] = $build['page'] - $step;
+					$build['end'] = ($build['button'] % 2 == 0) ? $build['page'] + $step : $build['page'] + $step + 1;
+			}
+			
+			// 下一页和末页
+			if($build['page'] < $build['pageTotal'])
+			{
+				$build['next'] = $build['page'] + 1;
+				$build['last'] = $build['pageTotal'];
+			}
 		}
-		
-		// 下一页和末页
-		if($page < $total) {
-			$this->html['last'] = $this->page + 1;
-		}
+
+		return $build;
 	}
 }

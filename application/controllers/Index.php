@@ -6,7 +6,12 @@ class indexController extends \Base\BaseController
 	
 	public function indexAction()
 	{
-		//$this->validate();
+		$page = \Html\Page::showCenter(10, 205, 8);
+/*   		echo '<pre>';
+		print_r($page);
+		exit; 
+		 */
+		$this->view(array('page'=>$page));
 	}
 	
 	public function alipayAction()

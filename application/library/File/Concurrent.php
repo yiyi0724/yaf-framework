@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 文件锁机制类
  * @author enychen
@@ -6,19 +7,20 @@
 namespace File;
 
 class Concurrent
-{	
+{
+
 	/**
 	 * 加锁的文件
 	 * @var string
 	 */
-	protected $filename;
-	
+	protected static $filename;
+
 	/**
 	 * 加锁文件资源
 	 * @var Resource
 	 */
-	private static $fp;
-	
+	protected static $fp;
+
 	/**
 	 * 加锁
 	 * @param string 文件名
@@ -30,19 +32,20 @@ class Concurrent
 		// 打开文件,不存在的时候则尝试创建
 		self::$fp = fopen(self::$filename, 'w+');
 		// 文件加锁
-		flock(self::$fp, LOCK_EX);
+		@flock(self::$fp, LOCK_EX);
 	}
+
 	/**
 	 * 解锁
 	 * @param boolean 是否删除锁文件
 	 */
-	public static function unlock($delete=TRUE)
+	public static function unlock($delete = TRUE)
 	{
 		// 解锁
-		flock(self::$fp, LOCK_UN);
+		@flock(self::$fp, LOCK_UN);
 		// 关闭文件
 		fclose(self::$fp);
 		// 是否删除文件
-		$delete AND @unlink(self::$filename);
+		$delete and @unlink(self::$filename);
 	}
 }
