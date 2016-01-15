@@ -7,10 +7,6 @@ class indexController extends \Base\BaseController
 	public function indexAction()
 	{
 		$page = \Html\Page::showCenter(10, 205, 8);
-/*   		echo '<pre>';
-		print_r($page);
-		exit; 
-		 */
 		$this->view(array('page'=>$page));
 	}
 	

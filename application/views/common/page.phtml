@@ -41,7 +41,7 @@ a {
 <!-- 首页 -->
 <!-- 上一页 -->
 <?php if(isset($page['prev'])):?>
-<a href="<?php echo $page['url'],$page['prev']?>">上一页</a>
+<a href="<?php echo $page['url'],$page['prev']?>"><<</a>
 <?php endif;?>
 <!-- 上一页 -->
 <!-- 中间区间页数 -->
@@ -55,7 +55,7 @@ a {
 <!-- 中间区间页数 -->
 <!-- 下一页 -->
 <?php if(isset($page['next'])):?>
-<a href="<?php echo $page['url'],$page['next']?>">下一页</a>
+<a href="<?php echo $page['url'],$page['next']?>">>></a>
 <?php endif;?>
 <!-- 下一页 -->
 <!-- 末页 -->
@@ -63,5 +63,6 @@ a {
 <a href="<?php echo $page['url'],$page['last']?>">末页</a>
 <?php endif;?>
 <!-- 末页 -->
+<label>&nbsp;&nbsp;&nbsp;共<?php echo $page['count']?>条,<?php echo $page['limit']?>条/页, 当前第<?php echo $page['page']?>页, 共<?php echo $page['pageTotal']?>页</label>
 </div>
 <?php endif;?>
