@@ -7,7 +7,9 @@
  * @example
  * 模式一: $pageInfo = \Html\Page::showCenter(每页几条, 共几条, 按钮个数);
  * 
- * 返回的数据需要执行拼接页面,数据参数解释如下:
+ * 说明:
+ * 1. page作为当前页面的参数,会自动解析,无需传入
+ * 2. $build数组解释:
  * 	[page] => 2										// 当前第几页
 	[url] => http://www.library.com/?page=			// url前缀,拼接page使用
 	[count] => 205									// 总条数
@@ -22,7 +24,7 @@
 	[next] => 3										// 存在则表示有下一页
 	[last] => 21									// 存在则表示有末页
 	
-	具体参考 \view\common\page.phtml页面.是一个完整的案例
+	3. 具体参考 \view\common\page.phtml页面.是一个完整的案例
  */
 namespace Html;
 
