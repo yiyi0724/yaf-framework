@@ -18,7 +18,7 @@ class TestController extends \Base\BaseController
 		echo $alipay->send($origin);
 		exit();
 	}
-
+	
 	/**
 	 * 支付宝回调测试
 	 */
@@ -36,6 +36,22 @@ class TestController extends \Base\BaseController
 			echo $e->getMessage();
 			exit();
 		}
+	}
+	
+	/**
+	 * redis测试
+	 */
+	public function redisAction() {
+		$page = $this->getRequest()->get('page', 1);
+		$userSelect = new \User\SelectModel();
+		$views['page'] = $userSelect->getPage(['field'=>'id,mark', 'table'=>'one_product', 'page'=>$page, 'limit'=>20]);
+		$views['page']['lists'] = $userSelect->getPicture($views['page']['lists']);
+		
+		echo '<pre>';
+		print_r($views);
+		exit;
+		
+		$this->view($views);
 	}
 
 	/**

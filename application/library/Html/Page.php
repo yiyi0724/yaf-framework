@@ -40,6 +40,9 @@ class Page
 	 */
 	protected static function init($limit, $count, $button = 10)
 	{
+		// 初始化参数
+		$build['page'] = 1;
+		
 		// 查询的参数
 		parse_str($_SERVER['QUERY_STRING'], $query);
 		
@@ -100,6 +103,7 @@ class Page
 					// 前几页
 					$build['start'] = 1;
 					$build['end'] = $build['start'] + $build['button'];
+					$build['end'] = $build['end'] > $build['pageTotal'] ? $build['pageTotal']+1 : $build['end'];
 					break;
 				case $build['page'] + $step > $build['pageTotal']:
 					// 超出末页

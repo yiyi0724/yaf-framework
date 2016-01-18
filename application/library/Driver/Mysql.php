@@ -216,7 +216,7 @@ class Mysql
                 $expression = $from == 3 ? 'NOT IN' : 'IN';
                 foreach ($value as $k => $val)
                 {
-                    $temp[] = ":`{$key}`{$this->interval}_{$k}";
+                    $temp[] = ":{$key}{$this->interval}_{$k}";
                     $this->sql['values'][":{$key}{$this->interval}_{$k}"] = $val;
                 }
                 $conds[] = "`{$key}` {$expression}(" . implode(',', $temp) . ")";
@@ -414,14 +414,16 @@ class Mysql
      * @return mixed
      */
     public function __call($method, $args)
-    {
+    {    	
         switch ($method)
         {
             case 'beginTransaction':
-            case 'inTransaction':
+            case 'inTransaction':            
+            	$this->pdo->$method();
+            	return;
             case 'commit':
             case 'rollback':
-            case 'lastInsertId':
+            case 'lastInsertId':            
                 $result = $this->pdo->$method();
                 break;
             case 'fetchAll':
@@ -435,7 +437,7 @@ class Mysql
                 throw new \PDOException("Call to undefined method Mysql::{$method}()");
         }
         // 删除结果集
-        $this->resetStmt();
+       	$this->resetStmt();
         // 返回结果
         return $result;
     }
