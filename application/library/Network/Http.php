@@ -201,6 +201,7 @@ class Http
 		$cookie = $origin;
 		if(is_array($origin))
 		{
+			$cookie = array();
 			foreach($origin as $key=>$val)
 			{
 				$cookie[] = "{$key}={$val}";
