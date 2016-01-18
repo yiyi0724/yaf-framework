@@ -83,9 +83,11 @@ abstract class BaseController extends Controller_Abstract
 		$action = $request->getActionName();
 		$file = strtolower("{$path}validates/{$controller}/{$action}.json");
 		
-		// 数据检查
-		list($data, $error) = Validate::validity($file);
-		if($error)
+		try
+		{
+			$data = Validate::validity($file);
+		}
+		catch(\Exception $e)
 		{
 			if($request->isXmlHttpRequest())
 			{

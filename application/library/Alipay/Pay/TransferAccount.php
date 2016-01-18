@@ -60,9 +60,7 @@ class TransferAccount extends Base
 		// 交易是否成功
 		if(!in_array($_REQUEST['trade_status'], array('TRADE_FINISHED', 'TRADE_SUCCESS')))
 		{
-			return '支付宝方交易失败';
+			throw new \Exception('Alipay Trans Status Error');
 		}
-		
-		return NULL;
 	}
 }

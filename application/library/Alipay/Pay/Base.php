@@ -60,20 +60,21 @@ abstract class Base
 
 	/**
 	 * 同异步验证
-	 * @return string 验证失败的信息,如果验证成功则返回NULL
+	 * @throw \Exception
+	 * @return array 验证通过后返回支付宝返回的信息
 	 */
-	protected function verify()
+	public function verify()
 	{		
 		// 空参数传递
 		if(empty($_REQUEST) || empty($_REQUEST['sign']))
 		{
-			return 'Alipay Notify Data Illegal';
+			throw new \Exception('Alipay Notify Data Illegal');
 		}
 		
 		// 签名结果检查
 		if($_REQUEST['sign'] != $this->sign($this->filterData($_REQUEST)))
 		{
-			return 'Sign Illegal';
+			throw new \Exception('Sign Illegal');
 		}
 		
 		// 回调支付宝的验证地址
@@ -91,7 +92,7 @@ abstract class Base
 			curl_close($curl);
 			if(!preg_match("/true$/i", $responseText))
 			{
-				return 'Alipay Notify ID Illegal';
+				throw new \Exception('Alipay Notify ID Illegal');
 			}
 		}
 		
@@ -102,18 +103,15 @@ abstract class Base
 		}
 		
 		// 具体业务验证
-		if($error = $this->verifyDetail())
-		{
-			return $error;
-		}
+		$this->verifyDetail();
 		
 		// 是否是post请求
-		if($_SERVER['REQUEST_METHOD'] == 'POST')
+		if(isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
 		{
 			echo 'SUCCESS';
 		}
 		
-		return NULL;
+		return $_REQUEST;
 	}
 
 	/**

@@ -11,20 +11,20 @@
  * 1. page作为当前页面的参数,会自动解析,无需传入
  * 2. $build数组解释:
  * 	[page] => 2										// 当前第几页
-	[url] => http://www.library.com/?page=			// url前缀,拼接page使用
-	[count] => 205									// 总条数
-	[limit] => 10									// 每页几条
-	[pageTotal] => 21								// 共几页
-	[button] => 8									// 按钮显示个数,不包括上下页和首页个数
-	[over] => 										// 判断是否超过最大页数,比如pageTotal=21,page=22的时候则表示超过页数,不显示分页
-	[first] => 1									// 存在则表示有首页
-	[prev] => 1										// 存在则表示有上一页
-	[start] => 1									// 按钮的起始值
-	[end] => 9										// 按钮的结束值,在for的时候是<end 而不是 <= end 请注意
-	[next] => 3										// 存在则表示有下一页
-	[last] => 21									// 存在则表示有末页
-	
-	3. 具体参考 \view\common\page.phtml页面.是一个完整的案例
+ 	[url] => http://www.library.com/?page=			// url前缀,拼接page使用
+ 	[count] => 205									// 总条数
+ 	[limit] => 10									// 每页几条
+ 	[pageTotal] => 21								// 共几页
+ 	[button] => 8									// 按钮显示个数,不包括上下页和首页个数
+ 	[over] => 										// 判断是否超过最大页数,比如pageTotal=21,page=22的时候则表示超过页数,不显示分页
+ 	[first] => 1									// 存在则表示有首页
+ 	[prev] => 1										// 存在则表示有上一页
+ 	[start] => 1									// 按钮的起始值
+ 	[end] => 9										// 按钮的结束值,在for的时候是<end 而不是 <= end 请注意
+ 	[next] => 3										// 存在则表示有下一页
+ 	[last] => 21									// 存在则表示有末页
+ 
+ 	3. 具体参考 \view\common\page.phtml页面.是一个完整的案例
  */
 namespace Html;
 
@@ -40,9 +40,6 @@ class Page
 	 */
 	protected static function init($limit, $count, $button = 10)
 	{
-		// 初始化参数
-		$build = array('page'=>1);
-		
 		// 查询的参数
 		parse_str($_SERVER['QUERY_STRING'], $query);
 		
@@ -122,7 +119,7 @@ class Page
 				$build['last'] = $build['pageTotal'];
 			}
 		}
-
+		
 		return $build;
 	}
 }

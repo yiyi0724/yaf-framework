@@ -31,16 +31,30 @@ class Validate
 	protected static function load($file)
 	{
 		// 文件加载
+		if(!is_file($file))
+		{
+			throw new \Exception("VALIDATE FILE Not Found");
+		}
+		
+		// 文件加载
 		$rules = json_decode(file_get_contents($file), TRUE);
 		if(json_last_error())
 		{
-			throw new \Exception(json_last_error_msg(), 10000);
+			throw new \Exception(json_last_error_msg());
 		}
 		
-		// 值目前支持GET和POST,PUT和DELETE稍后支持
+		// PUT和DETELE方法支持
+		if(in_array($_SERVER['REQUEST_METHOD'], array('PUT', 'DELETE')))
+		{
+			parse_str(file_get_contents('php://input'), $from);
+			$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $from;
+		}
+		
+		// 读取参数
 		foreach($rules as $key=>$rule)
 		{
-			list($from, $name) = array('_' . strtoupper($rule['from']), $rule['key']);
+			$from = '_' . strtoupper($rule['from']);
+			$name = $rule['key'];
 			$rules[$key]['value'] = NULL;
 			if(isset($GLOBALS[$from][$name]))
 			{
@@ -66,26 +80,22 @@ class Validate
 			// 是否必须
 			if(Rule::notExists($rule))
 			{
-				static::setError($rule);
-				continue;
+				throw new \Exception($rule["notify"]);
 			}
 			
 			// 对应数据类型检查
 			$method = $rule['type'];
 			if($rule['value'] !== NULL && !Rule::$method($rule))
 			{
-				static::setError($rule);
-				continue;
+				throw new \Exception($rule["notify"]);
 			}
 			
 			// 设置合法值
 			static::setData($rule);
 		}
 		
-		
 		// 结果返回
-		$data = static::$error ? : static::$data;
-		return array($data, count(static::$error));
+		return $data;
 	}
 
 	/**
@@ -112,17 +122,6 @@ class Validate
 		}
 		
 		static::$data[$key] = $value;
-	}
-
-	/**
-	 * 错误记录
-	 * @param
-	 * @param string 错误信息
-	 * @return void
-	 */
-	private static function setError($rule)
-	{
-		static::$error[$rule['key']] = $rule["error"];
 	}
 }
 
