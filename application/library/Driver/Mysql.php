@@ -9,9 +9,9 @@ class Mysql
 {	
 	/**
 	 * 加载单例模式
-	 * @var \Base\Traits
+	 * @var \Traits\Traits
 	 */
-	use \Base\Singleton;
+	use \Traits\Singleton;
 	
     /**
      * pdo对象

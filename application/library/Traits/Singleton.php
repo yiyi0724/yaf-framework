@@ -3,7 +3,7 @@
  * 单例模式
  * @author chenxb
  */
-namespace Base;
+namespace Traits;
 
 trait Singleton
 {

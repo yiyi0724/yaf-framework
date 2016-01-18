@@ -8,7 +8,11 @@ namespace Driver;
 
 class Redis
 {
-	use \Base\Singleton;
+	/**
+	 * 加载单例模式
+	 * @var \Traits\Traits
+	 */
+	use \Traits\Singleton;
 
 	/**
 	 * 当前的redis对象

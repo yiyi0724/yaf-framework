@@ -8,16 +8,16 @@
  * @example
  * $http = new Http($url, $decode, $return, $header);
  * 1. $url		要请求的url地址
- * 2. $decode	是否对结果进行解析, 需要解析请传递xml或者json, 默认不传递不解析
+ * 2. $decode	是否对结果进行解析, json: \Network\Http::DECODE_JSON, xml: \Network\Http::DECODE_XML
  * 3. $return	结果是否返回, 默认返回
  * 4. $header	启用时会将头信息作为数据流输出, 默认禁用
  * 
+ * 
  * 可选的方法:
- * 1. 结果自动解析: 			$http->setDecode(string $type); // $type的可选值: json 或者 xml
- * 2. 设置要发送的cookie信息: 	$http->setCookie($cookie); $cookie的形式: key=value; key=value 或者 array('key'=>'value')
- * 3. 设置要发送的header信息: 	$http->setHeader($headers); $headers 是一个字符串 或者 array('xxx', 'xxx')的格式
- * 4. 如果要上传文件,请使用: 	$data['upload'] = $http->getFile(string 文件名); 由于php版本的问题,我封装了这个解决方法
- * 5. 设置CURLOPT选项: 			$http->setCurlOpt(CURLOPT_*, $value);
+ * 1. 设置要发送的cookie信息: 	$http->setCookie($cookie); $cookie的形式: key=value; key=value 或者 array('key'=>'value')
+ * 2. 设置要发送的header信息: 	$http->setHeader($headers); $headers 是一个字符串 或者 array('xxx', 'xxx')的格式
+ * 3. 如果要上传文件,请使用: 	$data['upload'] = $http->getFile(string 文件名); 由于php版本的问题,我封装了这个解决方法
+ * 4. 设置CURLOPT选项: 			$http->setCurlOpt(CURLOPT_*, $value);
  * 
  * $mthod可以使用的方法: get | post | put | delete | upload
  * list($result, $error) = $http->$method(array 要传递的参数);
@@ -26,13 +26,22 @@
  * } else { 		
  * 		// 执行成功
  * }
- * 
- * $http->close();
  */
 namespace Network;
 
 class Http
 {
+	/**
+	 * json解析
+	 * @var const
+	 */
+	const DECODE_JSON = 1;
+	
+	/**
+	 * xml解析
+	 * @var const
+	 */
+	const DECODE_XML = 2;
 
 	/**
 	 * 请求地址
@@ -81,7 +90,7 @@ class Http
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, $return);
 		curl_setopt($this->curl, CURLOPT_HEADER, $header);
 		// 结果是否要解析,如果需要返回或者需要输出头信息,则不进行解析,因为解析一定失败
-		$this->decode = (!($return && $header)) && $decode ? $decode : NULL;
+		$this->decode = (!($return && $header)) && $decode ? strtolower($decode) : NULL;
 	}
 
 	/**
@@ -120,13 +129,16 @@ class Http
 			// 执行请求
 			$this->result = curl_exec($this->curl);
 			// 进行解析
-			$this->decode and $this->decode($this->result);
+			in_array($this->decode, array(static::DECODE_JSON, static::DECODE_XML)) and $this->decode($this->result);
 		}
 		catch(\Exception $e)
 		{
 			$this->result = null;
 			$this->error = $e->getMessage();
 		}
+		
+		// 关闭连接
+		curl_close($this->curl);
 		
 		// 返回结果和错误
 		return array($this->result, $this->error);
@@ -152,7 +164,7 @@ class Http
 	protected function decode($result)
 	{
 		// xml解析
-		if($this->decodeType == 'xml')
+		if($this->decode == static::DECODE_XML)
 		{
 			$this->result = @simplexml_load_string($this->result, 'SimpleXMLElement', LIBXML_NOCDATA);
 			if(!$this->result)
@@ -187,7 +199,6 @@ class Http
 	public function setCookie($origin)
 	{
 		$cookie = $origin;
-		// 数组转成字符串
 		if(is_array($origin))
 		{
 			foreach($origin as $key=>$val)
@@ -217,13 +228,5 @@ class Http
 	public function getFile($path)
 	{
 		return class_exists('\CURLFile') ? new \CURLFile($path) : "@{$path}";
-	}
-
-	/**
-	 * 关闭连接
-	 */
-	public function close()
-	{
-		curl_close($this->curl);
 	}
 }
