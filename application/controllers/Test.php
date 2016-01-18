@@ -47,10 +47,6 @@ class TestController extends \Base\BaseController
 		$views['page'] = $userSelect->getPage(['field'=>'id,mark', 'table'=>'one_product', 'page'=>$page, 'limit'=>20]);
 		$views['page']['lists'] = $userSelect->getPicture($views['page']['lists']);
 		
-		echo '<pre>';
-		print_r($views);
-		exit;
-		
 		$this->view($views);
 	}
 
