@@ -15,7 +15,7 @@ class Ip
 
 	/**
 	 * 获取客户端的IP
-	 * @param boolean $ip2long 是否转换成为整形
+	 * @param boolean $ip2long 是否转换成为整形, 默认是
 	 * @return int|string
 	 */
 	public static function get($ip2long = TRUE)

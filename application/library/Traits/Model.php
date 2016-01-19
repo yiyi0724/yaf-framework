@@ -1,16 +1,21 @@
 <?php
 
-namespace Base;
+namespace Traits;
 
 use \Yaf\Application;
 use \Yaf\Config\Ini;
 use \Driver\Mysql;
 use \Driver\Redis;
 use \Html\Page;
-use Html\Html;
 
-abstract class BaseModel
+abstract class Model
 {
+
+	/**
+	 * 表名
+	 * @var string
+	 */
+	protected $table;
 
 	/**
 	 * 读取配置文件
@@ -19,37 +24,40 @@ abstract class BaseModel
 	protected $driver = array();
 
 	/**
-	 * 数据库对象
-	 * @var \Driver\Mysql
-	 */
-	protected $mysql = NULL;
-
-	/**
-	 * redis对象
-	 * @var \Driver\Redis
-	 */
-	protected $redis = NULL;
-
-	/**
 	 * 构造函数,加载配置
 	 */
-	public function __construct($mysql = 'master', $redis = 'master')
+	public function __construct()
 	{
 		// 读取配置文件
 		$this->driver = new Ini(CONF_PATH . 'driver.ini', Application::app()->environ());
 		$this->driver = $this->driver->toArray();
-		
-		// 获取mysql对象
-		$mysql and ($this->mysql = Mysql::getInstance($this->driver['mysql'][$mysql]));
-		
-		// 获取redis对象
-		$redis and ($this->redis = Redis::getInstance($this->driver['redis'][$redis]));
+	}
+
+	/**
+	 * 获取mysql
+	 * @param string $key
+	 * @return \Driver\Mysql
+	 */
+	protected function mysql($key = 'master')
+	{
+		return Mysql::getInstance($this->driver['mysql'][$key])->table($this->table);
+	}
+
+	/**
+	 * 获取redis
+	 * @param string $key
+	 */
+	protected function redis($key = 'master', $db = 0)
+	{
+		$driver = $this->driver['redis'][$redis];
+		$driver['db'] = $db;
+		return Redis::getInstance($this->driver['redis'][$redis]);
 	}
 
 	/**
 	 * 读取配置信息
-	 * @param unknown $key
-	 * @return unknown
+	 * @param array $key
+	 * @return array
 	 */
 	protected function getConfig($key)
 	{
@@ -88,7 +96,7 @@ abstract class BaseModel
 		
 		return $page;
 	}
-	
+
 	/**
 	 * 获取补充的信息
 	 * @param unknown $lists
@@ -103,7 +111,7 @@ abstract class BaseModel
 			{
 				$recurse = $condition[0];
 				$where = $condition[1];
-		
+				
 				// 获取补充信息
 				$this->mysql->table($table);
 				isset($condition[2]) and ($this->mysql->field($condition[2]));

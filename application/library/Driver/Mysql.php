@@ -371,9 +371,7 @@ class Mysql
 			// 参数绑定
 			$params and $this->bindValue($params);
 			// sql语句执行
-			$result = $this->stmt->execute();
-			// 清空条件子句
-			$this->resetSql();
+			$result = $this->stmt->execute();			
 			// 返回结果
 			return $result;
         }
@@ -436,6 +434,9 @@ class Mysql
             default:
                 throw new \PDOException("Call to undefined method Mysql::{$method}()");
         }
+        
+        // 清空条件子句
+        $this->resetSql();
         // 删除结果集
        	$this->resetStmt();
         // 返回结果

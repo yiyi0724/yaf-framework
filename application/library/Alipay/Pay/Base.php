@@ -28,42 +28,32 @@ abstract class Base
 	protected $httpVerifyApi = 'http://notify.alipay.com/trade/notify_query.do?';
 
 	/**
-	 * 初始化选项
+	 * 初始化选项,请记得修改此处配置
 	 * @var string
+	 * 	partner 合作者身份ID
+	 *  email 账号,用于付款
+	 * 	signKey 签名密钥
+	 * 	signType 签名加密方式,默认使用MD5
+	 * 	charset 字符编码, 默认utf-8
+	 * 	phishingKey 通过时间戳查询接口获取的加密支付宝系统时间戳, 如果已申请开通防钓鱼时间戳验证，则此字段必填
+	 * 	clentIp 用户在创建交易时，该用户当前所使用机器的IP, 如果商户申请后台开通防钓鱼IP地址检查选项，此字段必填，校验用
 	 */
-	protected $options;
-
-	/**
-	 * 构造函数
-	 * @param string $partner 合作者身份ID
-	 * @param string $signKey 签名密钥
-	 * @param string $signType 签名加密方式,默认使用MD5
-	 * @param string $charset 字符编码, 默认utf-8
-	 * @param string $phishingKey 通过时间戳查询接口获取的加密支付宝系统时间戳, 如果已申请开通防钓鱼时间戳验证，则此字段必填
-	 * @param string $clentIp 用户在创建交易时，该用户当前所使用机器的IP, 如果商户申请后台开通防钓鱼IP地址检查选项，此字段必填，校验用
-	 */
-	public function __construct($partner, $signKey, $chaset = 'utf-8', $signType = 'MD5', $phishingKey = NULL, $clentIp = NULL)
-	{
-		// 合作者身份ID
-		$this->options['partner'] = $partner;
-		// 签名密钥
-		$this->options['signKey'] = $signKey;
-		// 签名加密方式
-		$this->options['signType'] = strtoupper($signType);
-		// 默认的字符编码
-		$this->options['charset'] = strtolower($chaset);
-		// 防钓鱼时间戳
-		$this->options['phishingKey'] = $phishingKey;
-		// 防钓鱼客户端机器ip
-		$this->options['clientIp'] = $clentIp;
-	}
+	protected $options = array(
+		'partner'=>'',
+		'email'=>'',
+		'signKey'=>'',
+		'charset'=>'utf-8',
+		'signType'=>'MD5',
+		'phishingKey'=>NULL,
+		'clientIp'=>NULL
+	);
 
 	/**
 	 * 同异步验证
 	 * @throw \Exception
 	 * @return array 验证通过后返回支付宝返回的信息
 	 */
-	public function verify()
+	public function verify($callback=NULL)
 	{		
 		// 空参数传递
 		if(empty($_REQUEST) || empty($_REQUEST['sign']))
@@ -99,7 +89,7 @@ abstract class Base
 		// 交易是否成功
 		if(!in_array($_REQUEST['trade_status'], array('TRADE_FINISHED', 'TRADE_SUCCESS')))
 		{
-			return '支付宝方交易失败';
+			throw new \Exception('Alipay Trans Error');
 		}
 		
 		// 具体业务验证
@@ -110,8 +100,6 @@ abstract class Base
 		{
 			echo 'SUCCESS';
 		}
-		
-		return $_REQUEST;
 	}
 
 	/**

@@ -76,7 +76,7 @@ class Http
 	/**
 	 * 构造函数
 	 * @param string $action 要请求的url地址
-	 * @param string $decode 是否要解析，只支持xml或者json解析方式
+	 * @param int $decode 是否要解析，只支持xml或者json解析方式, json: \Network\Http::DECODE_JSON, xml: \Network\Http::DECODE_XML
 	 * @param bool $return 结果是否返回，如果不返回则直接输出，默认返回不输出
 	 * @param bool $header　启用时会将头文件的信息作为数据流输出, 默认不输出
 	 */
@@ -90,7 +90,7 @@ class Http
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, $return);
 		curl_setopt($this->curl, CURLOPT_HEADER, $header);
 		// 结果是否要解析,如果需要返回或者需要输出头信息,则不进行解析,因为解析一定失败
-		$this->decode = (!($return && $header)) && $decode ? strtolower($decode) : NULL;
+		$this->decode = (!($return && $header)) && $decode ? $decode : NULL;
 	}
 
 	/**

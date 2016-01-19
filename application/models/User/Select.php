@@ -6,7 +6,6 @@ use \Base\BaseModel;
 
 class SelectModel extends BaseModel
 {
-
 	public function getProduct()
 	{
 		$product = $this->mysql->table('one_product')->limit(0, 20)->order('id DESC')->select()->fetchAll();

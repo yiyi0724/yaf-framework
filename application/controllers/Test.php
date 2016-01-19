@@ -1,5 +1,5 @@
 <?php
-class TestController extends \Base\BaseController
+class TestController extends \Tratis\Controller
 {
 
 	/**

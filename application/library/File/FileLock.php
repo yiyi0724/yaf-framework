@@ -6,7 +6,7 @@
  */
 namespace File;
 
-class Concurrent
+class FileLock
 {
 
 	/**
@@ -30,7 +30,7 @@ class Concurrent
 		// 完整文件名
 		self::$filename = $filename;
 		// 打开文件,不存在的时候则尝试创建
-		self::$fp = fopen(self::$filename, 'w+');
+		self::$fp = @fopen(self::$filename, 'w+');
 		// 文件加锁
 		@flock(self::$fp, LOCK_EX);
 	}
@@ -44,7 +44,7 @@ class Concurrent
 		// 解锁
 		@flock(self::$fp, LOCK_UN);
 		// 关闭文件
-		fclose(self::$fp);
+		@fclose(self::$fp);
 		// 是否删除文件
 		$delete and @unlink(self::$filename);
 	}

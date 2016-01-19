@@ -3,14 +3,14 @@
 /**
  * 控制基类
  */
-namespace Base;
+namespace Traits;
 
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 use \Yaf\Session;
 use \Security\Validate;
 
-abstract class BaseController extends Controller_Abstract
+abstract class Controller extends Controller_Abstract
 {
 
 	/**
