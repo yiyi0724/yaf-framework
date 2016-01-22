@@ -10,7 +10,7 @@ class Redis
 {
 	/**
 	 * 加载单例模式
-	 * @var \Traits\Traits
+	 * @var \Traits\Singleton
 	 */
 	use \Traits\Singleton;
 
@@ -22,7 +22,7 @@ class Redis
 
 	/**
 	 * 创建对象
-	 * @param array 配置数组 host | port | timeout | auth | db
+	 * @param array $driver 配置数组 host | port | timeout | auth | db
 	 * @throws \RedisException
 	 */
 	protected function create($driver)
@@ -30,7 +30,7 @@ class Redis
 		// 创建redis对象
 		$this->redis = new \Redis();
 		// 连接redis
-		if($this->redis->connect($driver['host'], $driver['port'], $driver['timeout']))
+		if($this->redis->pconnect($driver['host'], $driver['port'], $driver['timeout']))
 		{
 			// 是否需要验证密码
 			$driver['auth'] and $this->redis->auth($driver['auth']);
@@ -46,8 +46,8 @@ class Redis
 
 	/**
 	 * 静态调用方式
-	 * @param string 方法名
-	 * @param array 参数
+	 * @param string $method 方法名
+	 * @param array $args 参数
 	 */
 	public function __call($method, $args)
 	{
