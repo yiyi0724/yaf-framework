@@ -78,7 +78,7 @@ class Mysql
 
 	/**
 	 * 简单回调pdo对象方法
-	 * @param string 函数名
+	 * @param string $method 函数名
 	 * @return mixed
 	 */
 	public function __call($method)

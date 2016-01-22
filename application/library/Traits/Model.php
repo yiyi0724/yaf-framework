@@ -62,17 +62,15 @@ abstract class Model
 	 */
 	protected function mysql($key = 'master')
 	{
-		return Mysql::getInstance($this->driver['mysql'][$key])->table($this->table);
+		return Mysql::getInstance($this->driver['mysql'][$key]);
 	}
 
 	/**
 	 * 获取redis
 	 * @param string $key
 	 */
-	protected function redis($key = 'master', $db = 0)
+	protected function redis($key = 'master')
 	{
-		$driver = $this->driver['redis'][$redis];
-		$driver['db'] = $db;
 		return Redis::getInstance($this->driver['redis'][$redis]);
 	}
 
@@ -224,8 +222,7 @@ abstract class Model
 		{
 			$number = $offset;
 			$offset = 0;
-		}
-		
+		}		
 		$this->sql['values'][':limit_offset'] = $offset;
 		$this->sql['values'][':limit_number'] = $number;
 		$this->sql["limit"] = "LIMIT :limit_offset, :limit_number";
@@ -356,7 +353,7 @@ abstract class Model
 		// 插入对应的预处理值
 		$preValues = implode(',', $this->sql['prepare']);
 		// 插入语句
-		$sql = "INSERT INTO {$this->sql['table']}{$preKeys} VALUES {$preValues}";
+		$sql = "INSERT INTO {$this->table}{$preKeys} VALUES {$preValues}";
 		// 执行sql语句
 		$this->query($sql, $this->sql['values']);
 		// 结果返回
@@ -370,7 +367,7 @@ abstract class Model
 	public final function delete()
 	{
 		// 拼接sql语句
-		$sql = "DELETE FROM {$this->sql['table']} {$this->sql['where']} {$this->sql['limit']}";
+		$sql = "DELETE FROM {$this->table} {$this->sql['where']} {$this->sql['limit']}";
 		// 执行sql语句
 		$this->query($sql, $this->sql['values']);
 		// 返回结果
@@ -384,7 +381,7 @@ abstract class Model
 	protected function select()
 	{
 		// 拼接sql语句
-		$sql = "SELECT {$this->sql['field']} FROM {$this->sql['table']} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
+		$sql = "SELECT {$this->sql['field']} FROM {$this->table} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
 		// 执行sql语句
 		$this->query($sql, $this->sql['values']);
 		// 返回类型
@@ -424,12 +421,12 @@ abstract class Model
 		// set语句
 		$set = implode(',', $set);
 		// sql语句
-		$sql = "UPDATE {$this->sql['table']} SET {$set} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
+		$sql = "UPDATE {$this->table} SET {$set} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
 		// 执行sql语句
 		$this->query($sql, $this->sql['values']);
 		// 返回当前对象
 		return $this->rowCount();
-	}
+	} 
 	
 	/**
 	 * 重置条件查询
@@ -438,15 +435,15 @@ abstract class Model
 	protected function resetSql()
 	{
 		$this->sql = array(
-				'field' => '*',
-				'where' => NULL,
-				'group' => NULL,
-				'having' => NULL,
-				'order' => NULL,
-				'limit' => NULL,
-				'prepare' => NULL,
-				'keys' => NULL,
-				'values' => NULL
+			'field' => '*',
+			'where' => NULL,
+			'group' => NULL,
+			'having' => NULL,
+			'order' => NULL,
+			'limit' => NULL,
+			'prepare' => NULL,
+			'keys' => NULL,
+			'values' => NULL
 		);
 	}
 }
