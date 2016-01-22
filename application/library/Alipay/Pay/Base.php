@@ -29,7 +29,7 @@ abstract class Base
 
 	/**
 	 * 初始化选项,请记得修改此处配置
-	 * @var string
+	 * @var array
 	 * 	partner 合作者身份ID
 	 *  email 账号,用于付款
 	 * 	signKey 签名密钥
@@ -39,9 +39,9 @@ abstract class Base
 	 * 	clentIp 用户在创建交易时，该用户当前所使用机器的IP, 如果商户申请后台开通防钓鱼IP地址检查选项，此字段必填，校验用
 	 */
 	protected $options = array(
-		'partner'=>'',
-		'email'=>'',
-		'signKey'=>'',
+		'partner'=>NULL,
+		'email'=>NULL,
+		'signKey'=>NULL,
 		'charset'=>'utf-8',
 		'signType'=>'MD5',
 		'phishingKey'=>NULL,
@@ -51,55 +51,52 @@ abstract class Base
 	/**
 	 * 同异步验证
 	 * @throw \Exception
-	 * @return array 验证通过后返回支付宝返回的信息
+	 * @return array 支付宝回调信息
 	 */
-	public function verify($callback=NULL)
-	{		
+	public function verify()
+	{
 		// 空参数传递
 		if(empty($_REQUEST) || empty($_REQUEST['sign']))
 		{
-			throw new \Exception('Alipay Notify Data Illegal');
+			throw new \Exception('Alipay Notify Data Illegal', 20001);
 		}
-		
+
 		// 签名结果检查
 		if($_REQUEST['sign'] != $this->sign($this->filterData($_REQUEST)))
 		{
-			throw new \Exception('Sign Illegal');
+			throw new \Exception('Sign Illegal', 20002);
 		}
-		
+
 		// 回调支付宝的验证地址
-		if(!empty($_REQUEST["notify_id"]))
+		if(isset($_REQUEST["notify_id"]))
 		{
 			// 请求alipay获取验证id结果
 			$url = "{$this->httpsVerifyApi}partner={$this->options['partner']}&notify_id={$_REQUEST["notify_id"]}";
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_HEADER, 0); // 过滤HTTP头
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 显示输出结果
-			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, True); // SSL证书认证
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE); // 显示输出结果
+			curl_setopt($curl, CURLOPT_HEADER, FALSE); // 不解析头信息
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, TRUE); // SSL证书认证
 			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // 严格认证
 			curl_setopt($curl, CURLOPT_CAINFO, __DIR__ . '/cacert.pem'); // 证书地址
 			$responseText = curl_exec($curl);
 			curl_close($curl);
 			if(!preg_match("/true$/i", $responseText))
 			{
-				throw new \Exception('Alipay Notify ID Illegal');
+				throw new \Exception('Alipay Notify ID Illegal', 20003);
 			}
 		}
-		
-		// 交易是否成功
-		if(!in_array($_REQUEST['trade_status'], array('TRADE_FINISHED', 'TRADE_SUCCESS')))
-		{
-			throw new \Exception('Alipay Trans Error');
-		}
-		
-		// 具体业务验证
+
+		// 具体业务结果验证
 		$this->verifyDetail();
-		
+
 		// 是否是post请求
 		if(isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
 		{
 			echo 'SUCCESS';
 		}
+
+		return $_REQUEST;
 	}
 
 	/**
@@ -137,7 +134,7 @@ abstract class Base
 	 */
 	protected function filterData($data)
 	{
-		// 删除空值|sigin和sign|type键
+		// 删除空值|sigin|sign_type键
 		foreach($data as $key=>$value)
 		{
 			if(in_array($key, array('sign', 'sign_type')) || !$value)
@@ -154,7 +151,7 @@ abstract class Base
 	/**
 	 * 数据进行签名
 	 * @param array $data 参数列表
-	 * @return string
+	 * @return string md5加密字符串
 	 */
 	protected function sign($data)
 	{
@@ -164,19 +161,19 @@ abstract class Base
 				$sign = md5(urldecode(http_build_query($data)) . $this->options['signKey']);
 				break;
 			default:
-				$sign = Null;
+				$sign = NULL;
 		}
 		
 		return $sign;
 	}
-	
+
 	/**
 	 * 发送支付请求方法
 	 * @param array $origin 具体参数
 	 * @return string html表单
 	 */
 	abstract public function send(array $origin);
-	
+
 	/**
 	 * 同异步回调验证
 	 * @return string 验证失败的信息,如果成功请返回NULL

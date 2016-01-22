@@ -12,35 +12,21 @@ abstract class Base
 	/**
 	 * 初始化配置信息
 	 * @var array
-	 */
-	protected $options = array();
-
-	/**
-	 * 错误信息
-	 */
-	protected $error = NULL;
-
-	/**
-	 * 构造函数
 	 * @param string $appid 	绑定支付的APPID
 	 * @param string $mchid 	商户号
 	 * @param string $key 		商户支付密钥, 设置地址：https://pay.weixin.qq.com/index.php/account/api_cert
 	 * @param string $appSecret 公众帐号secert（仅JSAPI支付的时候需要配置， 登录公众平台，进入开发者中心可设置），
 	 * 				 			获取地址：https://mp.weixin.qq.com/advanced/advanced?action=dev&t=advanced/dev&token=2005451881&lang=zh_CN
-	 * @param bool 	 $useCert 	是否使用证书
 	 * @param string $proxyHost 代理ip地址,不能用0.0.0.0
 	 * @param string $proxyPost 代理端口号,不能用0
 	 */
-	public function __construct($appid, $mchid, $key, $appSecret = NULL, $useCert = FALSE, $proxyHost = NULL, $proxyPost = NULL)
-	{
-		$this->options['appid'] = $appid;
-		$this->options['mchid'] = $mchid;
-		$this->options['key'] = $key;
-		$this->options['appSecret'] = $appSecret;
-		$this->options['useCert'] = $useCert;
-		$this->options['proxyHost'] = $proxyHost;
-		$this->options['proxyPost'] = $proxyPost;
-	}
+	protected $options = array('appid'=>NULL, 'mchid'=>NULL, 'key'=>NULL, 'appSecret'=>NULL, 'proxyHost'=>NULL, 'proxyPost'=>NULL);
+
+	/**
+	 * 错误信息
+	 * @var string
+	 */
+	protected $error = NULL;
 
 	/**
 	 * 生成签名
@@ -101,6 +87,7 @@ abstract class Base
 
 	/**
 	 * 获取随机字符串
+	 * @return string
 	 */
 	protected function strShuffle()
 	{
@@ -115,14 +102,11 @@ abstract class Base
 
 	/**
 	 * 以post方式提交xml到对应的接口url
-	 *
-	 * @param string $xml  需要post的xml数据
 	 * @param string $url  url
+	 * @param string $xml  需要post的xml数据
 	 * @param bool $useCert 是否需要证书，默认不需要
-	 * @param int $second   url执行超时时间，默认30s
-	 * @throws WxPayException
 	 */
-	protected function send($url, $data)
+	protected function send($url, $data, $useCert = FALSE)
 	{
 		$ch = curl_init();
 		// 初始化设置
@@ -143,7 +127,7 @@ abstract class Base
 		}
 		
 		// 设置证书, cert 与 key 分别属于两个.pem文件
-		if($this->options['useCert'])
+		if($useCert)
 		{
 			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
 			curl_setopt($ch, CURLOPT_SSLCERT, __DIR__ . '/apiclient_cert.pem');

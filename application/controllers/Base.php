@@ -3,14 +3,12 @@
 /**
  * 控制基类
  */
-namespace Traits;
-
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 use \Yaf\Session;
+use \Yaf\Registry;
 use \Security\Validate;
-
-abstract class Controller extends Controller_Abstract
+abstract class BaseController extends Controller_Abstract
 {
 
 	/**
@@ -39,11 +37,19 @@ abstract class Controller extends Controller_Abstract
 	 */
 	protected function resource()
 	{
+		// url定义
 		foreach($this->getConfig('resource') as $key=>$resource)
 		{
 			$key = 'URL_' . strtoupper($key);
 			define($key, $resource);
 		}
+		
+		// 请求方式定义
+		define('IS_AJAX', $this->getRequest()->isXmlHttpRequest());
+		define('IS_GET', $this->getRequest()->isGet());
+		define('IS_POST', $this->getRequest()->isPost());
+		define('IS_PUT', $this->getRequest()->isPut());
+		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
 	}
 
 	/**
@@ -57,7 +63,7 @@ abstract class Controller extends Controller_Abstract
 		$action = $request->getActionName();
 		// 是否需要优先登录
 		if(!UID && ($this->loginAction == '*' || in_array($action, $this->loginAction)))
-		{
+		{	
 			$url = '/member/login';
 			if($request->isXmlHttpRequest())
 			{
@@ -83,78 +89,81 @@ abstract class Controller extends Controller_Abstract
 		$action = $request->getActionName();
 		$file = strtolower("{$path}validates/{$controller}/{$action}.json");
 		
+		// 数据校验
 		try
 		{
-			$data = Validate::validity($file);
+			$input = Validate::validity($file);
 		}
-		catch(\Exception $e)
+		catch(\Security\FormException $e)
 		{
-			if($request->isXmlHttpRequest())
-			{
-				$this->json(FALSE, '表单参数有误', array(), $data);
-			}
-			else
-			{
-				$this->getView()->display('common/error.phtml', $data);
-				exit();
-			}
+			$error = $e->getMessage();
+			IS_AJAX ? $this->output(['form'=>$error], FALSE, 90001) : $this->template(['notify'=>$error], 
+				'common/error.phtml');
 		}
+		
+		return $input;
 	}
 
 	/**
 	 * 加载本控制器下的视图
-	 * @param array $data 输出到页面的数据, 格式: array('key'=>'value')
+	 * 就是view/CONTROLLER_NAME/$template.phtml
 	 * @param string $template 自定义模板
 	 */
-	protected function view(array $vars, $tpl = NULL)
+	protected function template(array $output, $tpl = NULL)
 	{
-		// 数据绑定
+		// 模板替换
+		$tpl and $this->disView() and $this->display($tpl);
+		
+		// 加载页面输出数据
 		$view = $this->getView();
-		foreach($vars as $key=>$value)
+		foreach($output as $key=>$value)
 		{
 			$view->assign($key, $value);
 		}
-		
-		// 加载自定义视图
-		$tpl and $this->disView() and $this->display($tpl);
+		exit();
 	}
 
 	/**
-	 * 输出json或者jsonp数据
-	 * @param bool $status 结果状态
-	 * @param string $notify　提示信息或者跳转
-	 * @param string $action 前端处理方式 append-数据dom操作 | alert-输出$notify提示 | location-输出提示后跳转 | form-参数有误 | alert-location
+	 * 数据输出
+	 * @param array $output 要输出的数据
 	 */
-	protected function json($status = FALSE, $notify = NULL, $action = 'alert')
+	public function jsonp(array $output, $status = TRUE, $code = NULL)
 	{
-		// 关闭视图
-		$this->disView();
+		$request = $this->getRequest();
 		
-		// 数据
-		$output['status'] = $status;
-		$output[$action] = $notify;
-		
-		// jsonp回调函数, 检查函数名
-		$jsonp = $this->getRequest()->get('jsonp', NULL);
-		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp))
+		// ajax请求
+		if($request->isXmlHttpRequest())
 		{
-			$jsonp = NULL;
+			// 关闭视图
+			$this->disView();
+			
+			// 数据整理
+			$json['data'] = $output;
+			$json['status'] = $status;
+			$json['code'] = $code;
+			
+			// jsonp回调函数, 检查函数名
+			$jsonp = $request->get('callback', NULL);
+			if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp))
+			{
+				$jsonp = NULL;
+			}
+			
+			// 格式化json
+			$json = json_encode($json);
+			$header = 'application/json';
+			
+			// 如果是jsonp
+			if($jsonp)
+			{
+				$header = 'text/javascript';
+				$output = "<script type='text/javascript'>{$jsonp}({$json});</script>";
+			}
+			
+			// 结果输出
+			header("Content-type: {$header}; charset=UTF-8");
+			exit($json);
 		}
-		
-		// 格式化json
-		$output = json_encode($output);
-		$header = 'application/json';
-		
-		// 如果是jsonp
-		if($jsonp)
-		{
-			$header = 'text/javascript';
-			$output = "<script type='text/javascript'>{$jsonp}({$json});</script>";
-		}
-		
-		// 结果输出
-		header("Content-type: {$header}; charset=UTF-8");
-		exit($output);
 	}
 
 	/**
@@ -164,7 +173,7 @@ abstract class Controller extends Controller_Abstract
 	 */
 	protected function location($url, $time = 0)
 	{
-		exit("<meta http-equiv=\"refresh\" content=\"{$time};url={$url}\">");
+		\Network\Location::post($url, ['name'=>'eny']);
 	}
 
 	/**

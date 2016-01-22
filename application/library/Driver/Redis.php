@@ -51,13 +51,6 @@ class Redis
 	 */
 	public function __call($method, $args)
 	{
-		try
-		{
-			return call_user_func_array([$this->redis, $method], $args);
-		}
-		catch(\RedisException $e)
-		{
-			return FALSE;
-		}
+		return call_user_func_array([$this->redis, $method], $args);
 	}
 }

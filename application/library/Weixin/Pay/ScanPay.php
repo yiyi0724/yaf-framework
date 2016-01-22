@@ -91,7 +91,7 @@ class ScanPay extends Base
 
 /**
  *  创建二维码
-	$wxPay = new \Pay\Wxpay\ScanPay($appid, $mchid, $key, $appSecret);
+	$wxPay = new \Pay\Wxpay\ScanPay();
 	
 	$data['order'] = 'M11111222233333';
 	$data['price'] = 1;
@@ -113,7 +113,7 @@ class ScanPay extends Base
 	---------------------------------------------------------------------
 	
 	回调验证:
-	$wxPay = new \Pay\Wxpay\ScanPay($appid, $mchid, $key, $appSecret);
+	$wxPay = new \Pay\Wxpay\ScanPay();
    	list($data, $error) = $wxPay->verify();
 	if($error) {
 		exit($error);

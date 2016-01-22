@@ -43,6 +43,5 @@ class BatchPayment extends Base
 	 */
 	public function verifyDetail()
 	{
-		return NULL;
 	}
 }

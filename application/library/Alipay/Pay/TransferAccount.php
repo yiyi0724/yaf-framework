@@ -53,14 +53,14 @@ class TransferAccount extends Base
 
 	/**
 	 * 回调验证
-	 * @return string 验证失败的信息,如果验证成功则返回NULL
+	 * @throws \Exception
 	 */
 	public function verifyDetail()
 	{
 		// 交易是否成功
 		if(!in_array($_REQUEST['trade_status'], array('TRADE_FINISHED', 'TRADE_SUCCESS')))
 		{
-			throw new \Exception('Alipay Trans Status Error');
+			throw new \Exception('Alipay Trans Status Error', 20004);
 		}
 	}
 }

@@ -39,7 +39,7 @@ class Page
 	 * @param int $button 一共要显示几页的按钮,默认10个
 	 */
 	protected static function init($limit, $count, $button = 10)
-	{
+	{		
 		// 初始化参数
 		$build['page'] = 1;
 		

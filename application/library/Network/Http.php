@@ -9,7 +9,7 @@
  * $http = new Http($url, $decode, $return, $header);
  * 1. $url		要请求的url地址
  * 2. $decode	是否对结果进行解析, json: \Network\Http::DECODE_JSON, xml: \Network\Http::DECODE_XML
- * 3. $return	结果是否返回, 默认返回
+ * 3. $return	结果是否返回, 默认返回,
  * 4. $header	启用时会将头信息作为数据流输出, 默认禁用
  * 
  * 
@@ -101,29 +101,30 @@ class Http
 	 */
 	public function __call($method, $fields)
 	{
-		$fields = $this->setFields($fields, $method != 'upload');
-		switch($method)
-		{
-			case 'get':
-				$fields and ($this->action = "{$this->action}?{$fields}");
-				break;
-			case 'post':
-			case 'put':
-			case 'delete':
-				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-				curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($fields)));
-				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
-				break;
-			case 'upload':
-				curl_setopt($this->curl, CURLOPT_POST, TRUE);
-				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
-				break;
-			default:
-				trigger_error("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
-		}
-		
 		try
 		{
+			// 读取数据
+			$fields = isset($fields[0]) ? $fields[0] : array();			
+			// 进行操作
+			switch($method)
+			{
+				case 'get':
+					$fields and ($this->action = "{$this->action}?{$fields}");
+					break;
+				case 'post':
+				case 'put':
+				case 'delete':
+					curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+					curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($fields)));
+					curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($fields));
+					break;
+				case 'upload':
+					curl_setopt($this->curl, CURLOPT_POST, TRUE);
+					curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
+					break;
+				default:
+					trigger_error("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
+			}
 			// 设置请求的地址
 			curl_setopt($this->curl, CURLOPT_URL, $this->action);
 			// 执行请求
@@ -142,18 +143,6 @@ class Http
 		
 		// 返回结果和错误
 		return array($this->result, $this->error);
-	}
-
-	/**
-	 * 处理参数
-	 * @param array $fields 参数
-	 * @param bool $httpBuild 是否数组转换
-	 * @return array|string
-	 */
-	protected function setFields($fields, $httpBuild = TRUE)
-	{
-		isset($fields[0]) and ($fields = $fields[0]);
-		return $httpBuild ? http_build_query($fields) : $fields;
 	}
 
 	/**

@@ -80,14 +80,14 @@ class Validate
 			// 是否必须
 			if(Rule::notExists($rule))
 			{
-				throw new \Exception($rule["notify"]);
+				throw new FormException($rule["notify"]);
 			}
 			
 			// 对应数据类型检查
 			$method = $rule['type'];
 			if($rule['value'] !== NULL && !Rule::$method($rule))
 			{
-				throw new \Exception($rule["notify"]);
+				throw new FormException($rule["notify"]);
 			}
 			
 			// 设置合法值
@@ -258,4 +258,11 @@ class Rule
 		}
 		return $flag;
 	}
+}
+
+/**
+ * 表单异常对象
+ */
+class FormException extends \Exception
+{
 }
