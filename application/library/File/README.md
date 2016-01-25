@@ -1,6 +1,10 @@
 # 目录
 1. [文件下载](https://github.com/enychen/yaf-framework/tree/master/application/library/File#文件下载)
-2. [文件锁]()
+2. [文件锁](https://github.com/enychen/yaf-framework/blob/master/application/library/File/README.md#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD)
+  - 内置方法
+    - 上锁
+    - 解锁
+    - 批量解锁
 
 ## 文件下载
 ```php
@@ -19,7 +23,7 @@ $download->output();
 ```
 
 ## 文件锁
-#### 内置方法
+###### 内置方法
 上锁：
 ```php
 \File\FileLock::lock(string $filename);
