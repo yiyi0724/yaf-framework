@@ -44,7 +44,7 @@ catch(\Exception $e)
   // 20001 回调的数据是空的
   // 20002 sign是错误的
   // 20003 支付宝不存在该交易信息
-  // 20004 交易的结果状态不是TRADE_FINISHED和TRADE_SUCCESS，也就是说交易成功
+  // 20004 交易的结果状态不是TRADE_FINISHED和TRADE_SUCCESS，也就是说交易不成功
 }
 
 ```
