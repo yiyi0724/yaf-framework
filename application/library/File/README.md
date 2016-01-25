@@ -1,5 +1,6 @@
 # 目录
 1. [文件下载](https://github.com/enychen/yaf-framework/tree/master/application/library/File#文件下载)
+2. [文件锁]()
 
 ## 文件下载
 ```php
@@ -16,3 +17,20 @@ $download->setDownloadName(string $downloadName);
 // 输出
 $download->output();
 ```
+
+## 文件锁
+#### 内置方法
+上锁：
+```php
+\File\FileLock::lock(string $filename);
+```
+解锁：
+```php
+\File\FileLock::unlock(string $filename, bool $delete = TRUE);
+// $delete 解锁后是否删除文件
+```
+批量解锁
+```php
+\File\FileLock::unlocks(bool $delete = TRUE);
+```
+
