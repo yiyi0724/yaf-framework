@@ -1,0 +1,18 @@
+# 目录
+1. [文件下载]()
+
+## 文件下载
+```php
+//创建对象
+$download = new \File\Download();
+// 设置输出数据
+$download->setData(string $data);
+// 下载某个文件
+//$download->setDataFromFile(string $filename);
+// 设置下载的名称
+$download->setDownloadName(string $downloadName);
+// 设置附加输出的相应头,例如微软的excel, 其它头信息请自行选择,公共头信息已经封装在内部
+// $download->setHeader(array("Content-type:application/vnd.ms-excel"));
+// 输出
+$download->output();
+```
