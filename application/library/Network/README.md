@@ -30,5 +30,5 @@ catch(\Exception  $e)
 
 # ip类：1.0
 ```php
-$ip = Network\Ip::get(); // 默认将ip转成整数，如果不转，请传入参数FALSE即可
+$ip = \Network\Ip::get(); // 默认将ip转成整数，如果不转，请传入参数FALSE即可
 ```
