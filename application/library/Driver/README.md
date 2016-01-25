@@ -1,4 +1,6 @@
 # 目录
+[1. mysql](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
+[2. redis](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
 
 ## mysql
 ```php
@@ -76,3 +78,5 @@ $driver = array(
 
 $mysql = \Driver\Redis::getInstance($driver);
 ```
+
+#### redis的方法，请参考[phpredis手册](https://github.com/phpredis/phpredis)
