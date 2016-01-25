@@ -7,7 +7,7 @@
  - phishingKey 通过时间戳查询接口获取的加密支付宝系统时间戳, 如果已申请开通防钓鱼时间戳验证，则此字段必填
  - clentIp 用户在创建交易时，该用户当前所使用机器的IP, 如果商户申请后台开通防钓鱼IP地址检查选项，此字段必填
  
-## 即时到帐接口
+## 即时到帐
 ```php
 // 付款
 $alipay = new \Alipay\Pay\TransferAccount();
@@ -47,4 +47,33 @@ catch(\Exception $e)
   // 20004 交易的结果状态不是TRADE_FINISHED和TRADE_SUCCESS，也就是说交易不成功
 }
 
+```
+
+## 批量付款
+```php
+$alipay = new \Alipay\Pay\BatchPayment();
+$origin['asyncUrl'] = '异步回调地址';
+$origin['order']	= '批次号, 格式：当天日期[8位]+序列号[3至16位]，如：201512201211';
+$origin['price'] = '付款总金额';
+$origin['number'] = '付款笔数';
+$origin['data'] = '付款详细数据,格式：流水号1^收款方帐号1^真实姓名^付款金额1^备注说明1|流水号2^收款方帐号2^真实姓名^付款金额2^备注说明2'
+exit($alipay->send($origin));
+
+//-----------------------------------------------------------------------------------------
+// 回调验证
+try
+{
+  // 回调验证
+  $alipay = new \Alipay\Pay\TransferAccount();
+  $alipay->verify();
+  
+  // 继续处理业务逻辑
+}
+catch(\Exception $e)
+{
+  $code = $e->getCode();
+  // 20001 回调的数据是空的
+  // 20002 sign是错误的
+  // 20003 支付宝不存在该交易信息
+}
 ```
