@@ -1,6 +1,6 @@
 # 目录
-[1. mysql](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
-[2. redis](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
+1. [mysql](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
+2. [redis](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
 
 ## mysql
 ```php
@@ -76,7 +76,7 @@ $driver = array(
 // 说明点：
 // options数组的每个key，比如常量完整写法是\Redis::OPT_PREFIX,则只要写prefix就行，其他配置以此类推
 
-$mysql = \Driver\Redis::getInstance($driver);
+$redis = \Driver\Redis::getInstance($driver);
 ```
 
 #### redis的方法，请参考[phpredis手册](https://github.com/phpredis/phpredis)
