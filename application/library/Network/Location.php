@@ -2,9 +2,8 @@
 
 /**
  * 页面跳转
- * @author chenxb
+ * @author enychen
  * @version 1.0
- * 
  */
 namespace Network;
 
@@ -26,7 +25,7 @@ class Location
 	 * @param string $url 跳转地址
 	 * @param int $code 跳转状态码
 	 */
-	public static function redirect($url, $code=NULL)
+	public static function redirect($url, $code = NULL)
 	{		
 		$code and isset(static::$headers[$code]) and header(static::$header[$code]);
 		header("Location: {$url}");

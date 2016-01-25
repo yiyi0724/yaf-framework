@@ -2,11 +2,8 @@
 
 /**
  * 获取ip地址
- * @author chenxb
+ * @author enychen
  * @version 1.0
- * 
- * @example
- * Network\Ip::get(bool 是否转成整数);
  */
 namespace Network;
 

@@ -4,31 +4,6 @@
  * Http请求类
  * @author enychen
  * @version 1.0
- *
- * @example
- * $http = new Http($url, $decode, $return, $header);
- * 1. $url		要请求的url地址
- * 2. $decode	是否对结果进行解析, json: \Network\Http::DECODE_JSON, xml: \Network\Http::DECODE_XML
- * 3. $return	结果是否返回, 默认返回,
- * 4. $header	启用时会将头信息作为数据流输出, 默认禁用
- * 
- * 
- * 可选的方法:
- * 1. 设置要发送的cookie信息: 	$http->setCookie($cookie); $cookie的形式: key=value; key=value 或者 array('key'=>'value')
- * 2. 设置要发送的header信息: 	$http->setHeader($headers); $headers 是一个字符串 或者 array('xxx', 'xxx')的格式
- * 3. 如果要上传文件,请使用: 	$data['upload'] = $http->getFile(string 文件名); 由于php版本的问题,我封装了这个解决方法
- * 4. 设置CURLOPT选项: 			$http->setCurlOpt(CURLOPT_*, $value);
- * 
- * 
- * try
- * {
- * 		// $mthod可以使用的方法: get | post | put | delete | upload
- * 		$result = $http->$method(array 要传递的参数);
- * }
- * catch(\Exception  $e)
- * {
- * 		$error = $e->getMessage();
- * }
  */
 namespace Network;
 
@@ -99,18 +74,20 @@ class Http
 	public function __call($method, $fields)
 	{
 		// 读取数据
-		$fields = isset($fields[0]) ? $fields[0] : array();			
+		$fields = isset($fields[0]) ? $fields[0] : array();
 		// 进行操作
 		switch($method)
 		{
 			case 'get':
-				$fields and ($this->action = "{$this->action}?".http_build_query($fields));
+				$fields and ($this->action = "{$this->action}?" . http_build_query($fields));
 				break;
 			case 'post':
 			case 'put':
 			case 'delete':
 				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-				curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($fields)));
+				curl_setopt($this->curl, CURLOPT_HTTPHEADER, array(
+					'Content-Length: ' . mb_strlen($fields)
+				));
 				curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($fields));
 				break;
 			case 'upload':
@@ -125,7 +102,9 @@ class Http
 		// 执行请求
 		$this->result = curl_exec($this->curl);
 		// 进行解析
-		in_array($this->decode, array(static::DECODE_JSON, static::DECODE_XML)) and $this->decode($this->result);
+		in_array($this->decode, array(
+			static::DECODE_JSON, static::DECODE_XML
+		)) and $this->decode($this->result);
 		
 		// 关闭连接
 		curl_close($this->curl);
@@ -167,7 +146,9 @@ class Http
 	 */
 	public function setHeader($headers)
 	{
-		curl_setopt($this->curl, CURLOPT_HTTPHEADER, is_array($headers) ? $headers : array($headers));
+		curl_setopt($this->curl, CURLOPT_HTTPHEADER, is_array($headers) ? $headers : array(
+			$headers
+		));
 	}
 
 	/**
