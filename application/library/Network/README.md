@@ -1,5 +1,9 @@
 # 目录
-[Http请求](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#http请求)  
+1. [Http请求](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#http请求)
+2. [获取ip](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#获取ip)
+3. [页面跳转](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#页面跳转)
+4. [发送邮件](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#发送邮件)
+
 
 ## Http请求
 
@@ -31,12 +35,12 @@ catch(\Exception  $e)
 }
 ```
 
-## 获取ip：1.0
+## 获取ip
 ```php
 $ip = \Network\Ip::get(); // 默认将ip转成整数，如果不转，请传入参数FALSE即可
 ```
 
-## 页面跳转：1.0
+## 页面跳转
 ```php
 // 带HTTP_REFERE的get跳转方式
 \Network\Location::get(string $url);
