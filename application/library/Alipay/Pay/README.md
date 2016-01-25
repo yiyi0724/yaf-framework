@@ -28,8 +28,7 @@ $origin['asyncUrl'] = '异步跳转地址';
 
 exit($alipay->send($origin));
 
-// 参数回调
-```php
+// 回调验证
 try
 {
   // 回调验证
@@ -47,5 +46,4 @@ catch(\Exception $e)
   // 20004 交易的结果状态不是TRADE_FINISHED和TRADE_SUCCESS，也就是说交易成功
 }
 
-```
 ```
