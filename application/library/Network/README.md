@@ -1,14 +1,14 @@
-## Http类: 1.0
+## Http请求: 1.0
 
 ```php
 try
 {
   // 创建对象
   $http = new \Network\Http($url, $decode = NULL, $return = TRUE, $header = FALSE);
-  // $url    要请求的url地址
-  // $decode 是否对结果进行解析, json: \Network\Http::DECODE_JSON, xml: \Network\Http::DECODE_XML
-  // $return 结果是否返回, 默认返回
-  // $header 启用时会将头信息作为数据流输出, 默认禁用
+  // $url    string 要请求的url地址
+  // $decode int 是否对结果进行解析, json: \Network\Http::DECODE_JSON, xml: \Network\Http::DECODE_XML
+  // $return bool 结果是否返回, 默认返回
+  // $header bool 启用时会将头信息作为数据流输出, 默认禁用
   
   // 可选方法
   // $http->setCookie($cookie); // 设置cookie信息，key=value; key=value 或者 array('key'=>'value')
@@ -28,7 +28,19 @@ catch(\Exception  $e)
 }
 ```
 
-# ip类：1.0
+## 获取ip：1.0
 ```php
 $ip = \Network\Ip::get(); // 默认将ip转成整数，如果不转，请传入参数FALSE即可
+```
+
+## 页面跳转：1.0
+```php
+// 带HTTP_REFERE的get跳转方式
+\Network\Location::get(string $url);
+
+// 带HTTP_REFERE的post跳转方式
+\Network\Location::post(string $url, array $data);
+
+// http协议进行的跳转
+\Network\Location::redirect($url, int $code=NULL); //如果要进行301,302,303,307跳转，则输入$code
 ```
