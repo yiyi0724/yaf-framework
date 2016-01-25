@@ -18,7 +18,7 @@ class TestController extends BaseController
 		echo $alipay->send($origin);
 		exit();
 	}
-	
+
 	/**
 	 * 支付宝回调测试
 	 */
@@ -37,31 +37,34 @@ class TestController extends BaseController
 			exit();
 		}
 	}
-	
+
 	/**
 	 * mysql测试
 	 */
-	public function mysqlAction() {
+	public function mysqlAction()
+	{
 		$page = $this->getRequest()->get('page', 1);
 		$userSelect = new \User\SelectModel();
-		$views['page'] = $userSelect->getPage(['field'=>'id,mark', 'table'=>'one_product', 'page'=>$page, 'limit'=>20]);
+		$views['page'] = $userSelect->getPage([
+			'field'=>'id,mark', 'table'=>'one_product', 'page'=>$page, 'limit'=>20
+		]);
 		$views['page']['lists'] = $userSelect->getPicture($views['page']['lists']);
 		
 		$this->view($views);
 	}
-	
+
 	/**
 	 * redis测试
 	 */
-	public function redisAction() {
-		
+	public function redisAction()
+	{
 		$ini = new \Yaf\Config\Ini(CONF_PATH . 'driver.ini', \Yaf\Application::app()->environ());
 		$ini = $ini->toArray();
 		
 		$redis = \Driver\Redis::getInstance($ini['redis']['master']);
 		echo '<pre>';
 		print_r($redis->keys('.one.pid*'));
-		exit;
+		exit();
 	}
 
 	/**
@@ -71,7 +74,9 @@ class TestController extends BaseController
 	{
 		$action = 'http://www.library.com/test/curlreturn';
 		$http = new \Network\Http($action, 1);
-		$http->setCookie(array('name'=>'enychen'));
+		$http->setCookie(array(
+			'name'=>'enychen'
+		));
 		$data['name'] = 'chenxiaobo';
 		$data['age'] = 26;
 		list($data, $error) = $http->put($data);
@@ -91,14 +96,29 @@ class TestController extends BaseController
 	 */
 	public function curlreturnAction()
 	{
-		exit(json_encode(['id'=>1, 'name'=>2]));
+		exit(json_encode([
+			'id'=>1, 'name'=>2
+		]));
 	}
-	
+
 	public function downloadAction()
 	{
 		$download = new \File\Download();
 		$download->setData('chenxiaobo,eny,ccc');
 		$download->setDownloadName('name.csv');
 		$download->output();
+	}
+
+	/**
+	 * 上传测试
+	 */
+	public function uploadAction()
+	{
+		$request = $this->getRequest();
+		if($request->isPost())
+		{
+			$upload = new \File\Upload('upload');
+			exit;
+		}
 	}
 }
