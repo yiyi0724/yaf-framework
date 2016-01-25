@@ -91,3 +91,8 @@ $redis = \Driver\Redis::getInstance($driver);
 ```
 
 #### redis的方法，请参考[phpredis手册](https://github.com/phpredis/phpredis)
+```php
+// 简单例子
+$redis->set('name', 'enychen');
+$redis->get('name')
+```
