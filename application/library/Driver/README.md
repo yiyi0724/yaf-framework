@@ -1,5 +1,6 @@
 # 目录
 1. [mysql](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
+  - [mysql内置方法]()
 2. [redis](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
 
 ## mysql
