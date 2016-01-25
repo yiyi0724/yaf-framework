@@ -1,5 +1,5 @@
 # 目录
-[Http请求](https://github.com/enychen/yaf-framework/edit/master/application/library/Network/README.md#Http请求)  
+[Http请求](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#http请求)  
 
 ## Http请求
 
