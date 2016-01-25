@@ -64,7 +64,7 @@ exit($alipay->send($origin));
 try
 {
   // 回调验证
-  $alipay = new \Alipay\Pay\TransferAccount();
+  $alipay = new \Alipay\Pay\BatchPayment();
   $alipay->verify();
   
   // 继续处理业务逻辑
