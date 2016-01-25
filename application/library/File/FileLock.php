@@ -5,7 +5,7 @@
  * @author enychen
  * @version 1.0
  */
-namespace Ku;
+namespace File;
 
 class FileLock
 {

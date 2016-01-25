@@ -17,7 +17,6 @@ class BatchPayment extends Base
 	 * 批量付款接口(我司向用户付钱)
 	 * @param array 包含列表如下
 	 *  $origin['asyncUrl']		必须	异步回调地址
-	 *  $origin['account']		必须	付款账户名
 	 *  $origin['order']		必须	批次号, 格式：当天日期[8位]+序列号[3至16位]，如：201512201211
 	 *  $origin['price']		必须	付款总金额
 	 *  $origin['number']		必须	付款笔数

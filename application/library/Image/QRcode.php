@@ -2,6 +2,7 @@
 /**
  * 二维码生成类,只是整理了这个类,并非原创
  * @author enychen
+ * @version 1.0
  * 
  * @example
  * \Image\QRcode::png($info, false, QR_ECLEVEL_L, 6);
