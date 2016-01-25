@@ -8,9 +8,9 @@
     - 回滚事务
     - 获取上次插入的id
     - 获取影响的行数
-    - selec获取所有
-    - selec获取一行
-    - selec获取一个值
+    - select获取所有
+    - select获取一行
+    - select获取一个值
 2. [redis](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
 
 ## mysql
@@ -59,15 +59,15 @@ $mysql->lastInsertId();
 ```php
 $mysql->rowCount();
 ```
-selec获取所有:
+select获取所有:
 ```php
 $mysql->fetchAll();
 ```
-selec获取一行:
+select获取一行:
 ```php
 $mysql->fetch();
 ```
-selec获取一个值:
+select获取一个值:
 ```php
 $mysql->fetchColumn();
 ```
