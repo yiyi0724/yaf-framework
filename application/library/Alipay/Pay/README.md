@@ -23,11 +23,12 @@ $origin['asyncUrl'] = '异步跳转地址';
 // $origin['showUrl']	可选	商品显示URL地址
 // $origin['other']		可选	其他参数,传递给支付宝后支付宝再回传
 // $origin['bank']		可选	使用什么银行支付,不设置默认使用支付宝余额支付
-		                      银行简码——混合渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103763&docType=1
-                              银行简码——纯借记卡渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103764&docType=1
+//		                      银行简码——混合渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103763&docType=1
+//                             银行简码——纯借记卡渠道: http://doc.open.alipay.com/doc2/detail?treeId=63&articleId=103764&docType=1
 
 exit($alipay->send($origin));
 
+//-----------------------------------------------------------------------------------------
 // 回调验证
 try
 {
