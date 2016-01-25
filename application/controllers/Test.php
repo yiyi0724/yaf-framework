@@ -1,5 +1,5 @@
 <?php
-class TestController extends \Tratis\Controller
+class TestController extends BaseController
 {
 
 	/**
@@ -39,15 +39,29 @@ class TestController extends \Tratis\Controller
 	}
 	
 	/**
-	 * redis测试
+	 * mysql测试
 	 */
-	public function redisAction() {
+	public function mysqlAction() {
 		$page = $this->getRequest()->get('page', 1);
 		$userSelect = new \User\SelectModel();
 		$views['page'] = $userSelect->getPage(['field'=>'id,mark', 'table'=>'one_product', 'page'=>$page, 'limit'=>20]);
 		$views['page']['lists'] = $userSelect->getPicture($views['page']['lists']);
 		
 		$this->view($views);
+	}
+	
+	/**
+	 * redis测试
+	 */
+	public function redisAction() {
+		
+		$ini = new \Yaf\Config\Ini(CONF_PATH . 'driver.ini', \Yaf\Application::app()->environ());
+		$ini = $ini->toArray();
+		
+		$redis = \Driver\Redis::getInstance($ini['redis']['master']);
+		echo '<pre>';
+		print_r($redis->keys('.one.pid*'));
+		exit;
 	}
 
 	/**
@@ -78,5 +92,13 @@ class TestController extends \Tratis\Controller
 	public function curlreturnAction()
 	{
 		exit(json_encode(['id'=>1, 'name'=>2]));
+	}
+	
+	public function downloadAction()
+	{
+		$download = new \File\Download();
+		$download->setData('chenxiaobo,eny,ccc');
+		$download->setDownloadName('name.csv');
+		$download->output();
 	}
 }

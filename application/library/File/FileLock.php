@@ -3,6 +3,7 @@
 /**
  * 文件锁机制类
  * @author enychen
+ * @version 1.0
  */
 namespace Ku;
 

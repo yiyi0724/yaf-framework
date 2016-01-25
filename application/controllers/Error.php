@@ -9,7 +9,7 @@ class ErrorController extends BaseController
 	{
 		// 获取异常对象
 		$exception = $this->getRequest()->getException();
-		
+
 		// 没有异常对象表示直接访问此控制器，跳转到首页
 		!$exception and $this->location('/');
 		
@@ -24,6 +24,6 @@ class ErrorController extends BaseController
 			$errorInfo['traceAsString'] = $exception->getTraceAsString();
 		}
 		
-		IS_AJAX ? $this->jsonp($errorInfo, FALSE, 90000) : $this->template(['error'=>$errorInfo]);
+		IS_AJAX ? $this->jsonp($errorInfo, FALSE, 90000) : $this->template(['error'=>$errorInfo]);		
 	}
 }

@@ -3,6 +3,8 @@
 /**
  * 即时到账
  * @author enychen
+ * @version 1.0
+ * 
  * @link 请求参数说明:			 https://doc.open.alipay.com/doc2/detail.htm?spm=0.0.0.0.i0aD04&treeId=62&articleId=103740&docType=1
  * @link 服务器异步通知参数说明: https://doc.open.alipay.com/doc2/detail.htm?spm=0.0.0.0.45S27X&treeId=62&articleId=103743&docType=1
  */

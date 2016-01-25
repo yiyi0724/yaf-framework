@@ -3,6 +3,8 @@
 /**
  * 批量付款到支付宝账户
  * @author enychen
+ * @version 1.0
+ * 
  * @link 请求参数说明:				https://doc.open.alipay.com/doc2/detail.htm?spm=0.0.0.0.ACgspp&treeId=64&articleId=103773&docType=1
  * @link 服务器异步通知参数说明:	https://doc.open.alipay.com/doc2/detail.htm?spm=0.0.0.0.Y0WrmN&treeId=64&articleId=103775&docType=1
  */

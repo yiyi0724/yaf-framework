@@ -3,6 +3,7 @@
 /**
  * mysql数据库类
  * @author enychen
+ * @version 1.0
  */
 namespace Driver;
 
@@ -29,7 +30,7 @@ class Mysql
 	/**
 	 * 创建PDO对象
 	 * @param array $driver 数组配置, host | port | dbname | charset | username | password
-	 * @return void
+	 * @throws \PDOException
 	 */
 	protected function create($driver)
 	{
@@ -62,7 +63,6 @@ class Mysql
 			{
 				// 字符串加上引号
 				is_string($placeholder) and ($placeholder = "'{$placeholder}'");
-				// 替换
 				$start = strpos($sql, $key);
 				$end = strlen($key);
 				$sql = substr_replace($sql, $placeholder, $start, $end);
@@ -74,6 +74,8 @@ class Mysql
 		$this->stmt = $this->pdo->prepare($sql);
 		// sql语句执行
 		$this->stmt->execute($params);
+		// 结果解析成数组
+		$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
 	}
 
 	/**
@@ -94,8 +96,7 @@ class Mysql
 				break;
 			case 'fetchAll':
 			case 'fetch':
-			case 'fetchColumn':
-				$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
+			case 'fetchColumn':				
 			case 'rowCount':
 				$result = $this->stmt->$method();
 				break;

@@ -37,7 +37,7 @@ trait Singleton
     public static function getInstance(array $driver)
     {
         // 计算hash值
-        $key = sprintf("%u", crc32(implode(':', $driver)));
+        $key = static::hashValue($driver);
         // 是否已经创建过单例对象
         if(empty(static::$instance[$key]))
         {
@@ -45,5 +45,16 @@ trait Singleton
         }
         // 返回对象
         return static::$instance[$key];
+    }
+    
+    protected static function hashValue(array $driver)
+    {
+    	$hash = array();
+    	foreach($driver as $key=>$value)
+    	{
+    		$hash[$key] = is_array($value) ? static::hashValue($value) : $value;
+    	}
+    	
+    	return sprintf("%u", crc32(implode(':', $hash)));
     }
 }

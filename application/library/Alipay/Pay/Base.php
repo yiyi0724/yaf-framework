@@ -5,6 +5,7 @@ namespace Alipay\Pay;
 /**
  * 支付宝接口
  * @author enychen
+ * @version 1.0
  */
 abstract class Base
 {

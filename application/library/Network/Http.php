@@ -19,12 +19,15 @@
  * 3. 如果要上传文件,请使用: 	$data['upload'] = $http->getFile(string 文件名); 由于php版本的问题,我封装了这个解决方法
  * 4. 设置CURLOPT选项: 			$http->setCurlOpt(CURLOPT_*, $value);
  * 
- * $mthod可以使用的方法: get | post | put | delete | upload
- * list($result, $error) = $http->$method(array 要传递的参数);
- * if($error) {
- * 		// 执行失败
- * } else { 		
- * 		// 执行成功
+ * 
+ * try
+ * {
+ * 		// $mthod可以使用的方法: get | post | put | delete | upload
+ * 		$result = $http->$method(array 要传递的参数);
+ * }
+ * catch(\Exception  $e)
+ * {
+ * 		$error = $e->getMessage();
  * }
  */
 namespace Network;
@@ -54,12 +57,6 @@ class Http
 	 * @var resource
 	 */
 	protected $curl = NULL;
-
-	/**
-	 * 错误信息
-	 * @var string
-	 */
-	protected $error = NULL;
 
 	/**
 	 * 请求结果
@@ -101,48 +98,40 @@ class Http
 	 */
 	public function __call($method, $fields)
 	{
-		try
+		// 读取数据
+		$fields = isset($fields[0]) ? $fields[0] : array();			
+		// 进行操作
+		switch($method)
 		{
-			// 读取数据
-			$fields = isset($fields[0]) ? $fields[0] : array();			
-			// 进行操作
-			switch($method)
-			{
-				case 'get':
-					$fields and ($this->action = "{$this->action}?{$fields}");
-					break;
-				case 'post':
-				case 'put':
-				case 'delete':
-					curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-					curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($fields)));
-					curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($fields));
-					break;
-				case 'upload':
-					curl_setopt($this->curl, CURLOPT_POST, TRUE);
-					curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
-					break;
-				default:
-					trigger_error("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
-			}
-			// 设置请求的地址
-			curl_setopt($this->curl, CURLOPT_URL, $this->action);
-			// 执行请求
-			$this->result = curl_exec($this->curl);
-			// 进行解析
-			in_array($this->decode, array(static::DECODE_JSON, static::DECODE_XML)) and $this->decode($this->result);
+			case 'get':
+				$fields and ($this->action = "{$this->action}?".http_build_query($fields));
+				break;
+			case 'post':
+			case 'put':
+			case 'delete':
+				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+				curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($fields)));
+				curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($fields));
+				break;
+			case 'upload':
+				curl_setopt($this->curl, CURLOPT_POST, TRUE);
+				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
+				break;
+			default:
+				throw new \Exception("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
 		}
-		catch(\Exception $e)
-		{
-			$this->result = null;
-			$this->error = $e->getMessage();
-		}
+		// 设置请求的地址
+		curl_setopt($this->curl, CURLOPT_URL, $this->action);
+		// 执行请求
+		$this->result = curl_exec($this->curl);
+		// 进行解析
+		in_array($this->decode, array(static::DECODE_JSON, static::DECODE_XML)) and $this->decode($this->result);
 		
 		// 关闭连接
 		curl_close($this->curl);
 		
 		// 返回结果和错误
-		return array($this->result, $this->error);
+		return $this->result;
 	}
 
 	/**

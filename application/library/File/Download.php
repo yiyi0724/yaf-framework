@@ -2,6 +2,7 @@
 /**
  * 文件下载类
  * @author enychen
+ * @version 1.0
  * 
  * @example 
  *	//创建对象
@@ -80,11 +81,11 @@ class Download
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
 		header("Content-Disposition: attachment; filename={$this->option['downloadName']}");
-		header('Content-Length: ' . strlen($data));
+		header('Content-Length: ' . strlen($this->option['data']));
 		foreach($this->option['headers'] as $header)
 		{
 			header($header);
 		}
-		exit($data);
+		exit($this->option['data']);
 	}
 }

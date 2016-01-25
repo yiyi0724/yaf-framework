@@ -120,7 +120,6 @@ abstract class BaseController extends Controller_Abstract
 		{
 			$view->assign($key, $value);
 		}
-		exit();
 	}
 
 	/**

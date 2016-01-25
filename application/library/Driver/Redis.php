@@ -3,6 +3,7 @@
 /**
  * redis驱动类
  * @author enychen
+ * @version 1.0
  */
 namespace Driver;
 
@@ -22,7 +23,7 @@ class Redis
 
 	/**
 	 * 创建对象
-	 * @param array $driver 配置数组 host | port | timeout | auth | db
+	 * @param array $driver 配置数组 host | port | timeout | auth | db | options
 	 * @throws \RedisException
 	 */
 	protected function create($driver)
@@ -36,11 +37,19 @@ class Redis
 			$driver['auth'] and $this->redis->auth($driver['auth']);
 			// 是否需要选择数据库
 			$driver['db'] and $this->redis->select($driver['db']);
+			// 选项设置
+			if(isset($driver['options']))
+			{
+				foreach($driver['options'] as $key=>$option)
+				{
+					$this->redis->setOption(constant("\Redis::OPT_".strtoupper($key)), $option);
+				}
+			}
 		}
 		else
 		{
 			// 连接失败抛出错误
-			throw new \RedisException("Redis Connection Error: {$driver['ip']}:{$driver['port']}");
+			throw new \RedisException("Redis Connection Error: {$driver['host']}:{$driver['port']}");
 		}
 	}
 
