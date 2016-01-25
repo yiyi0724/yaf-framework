@@ -1,6 +1,16 @@
 # 目录
 1. [mysql](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
-  - [mysql内置方法]()
+  - [mysql内置方法](https://github.com/enychen/yaf-framework/blob/master/application/library/Driver/README.md#mysql内置方法)
+    - 执行查询
+    - 开启事务
+    - 是不是在事务内
+    - 提交事务
+    - 回滚事务
+    - 获取上次插入的id
+    - 获取影响的行数
+    - selec获取所有
+    - selec获取一行
+    - selec获取一个值
 2. [redis](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
 
 ## mysql
@@ -29,7 +39,7 @@ $mysql->query(string $sql, array $params = array());
 ```php
 $mysql->beginTransaction();
 ```
-开启是不是在事务内:
+是不是在事务内:
 ```php
 $mysql->inTransaction();
 ```
@@ -41,7 +51,7 @@ $mysql->commit();
 ```php
 $mysql->rollback();
 ```
-获取插入的id:
+获取上次插入的id:
 ```php
 $mysql->lastInsertId();
 ```
