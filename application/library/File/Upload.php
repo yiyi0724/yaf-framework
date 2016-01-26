@@ -8,38 +8,39 @@ namespace File;
 
 class Upload
 {
-	protected $info = array();
-	
-	/**
-	 * 文件上传
-	 */
-	public function __construct($key)
+	public function setPath($path, $filename = NULL)
 	{
-		$this->format($key);
+		
 	}
 	
 	/**
-	 * 格式化信息
-	 * @param unknown $key
-	 * @throws \Exception
+	 * 移动文件
+	 * @param string $key 上传文件的key，也就是input的name
+	 * @param array $ext 可支持的文件后缀，数组
+	 * @param int $siez 限制大小，单位k
+	 * @param string $filename 文件移动到哪里去，绝对路径
+	 * @throws \Exception 如果文件不符合条件，抛出异常
+	 * @return bool
 	 */
-	protected function format($key) {
+	public function move($key, array $ext, $size)
+	{
+		// 格式化key
 		if(empty($_FILES[$key]))
 		{
-			throw new \Exception('文件不存在');
+			throw new \Exception('FILE NOT FOUND', 20000);
 		}
 		
 		// 多文件上传
 		if(is_array($_FILES[$key]['name']))
 		{
-			for($i=0, $len=count($_FILES[$key]['name']); $i<$len; $i++)
+			for($i = 0, $len = count($_FILES[$key]['name']); $i < $len; $i++)
 			{
 				$info[] = array(
 					'name'=>$_FILES[$key]['name'][$i],
-					'type'=>$_FILES[$key]['type'][$i],
+					'type'=>$_FILES[$key]['type'][$i], 
 					'tmp_name'=>$_FILES[$key]['tmp_name'][$i],
-					'error'=>$_FILES[$key]['error'][$i],
-					'size'=>$_FILES[$key]['size'][$i],
+					'error'=>$_FILES[$key]['error'][$i], 
+					'size'=>$_FILES[$key]['size'][$i]
 				);
 			}
 			
@@ -49,147 +50,59 @@ class Upload
 		{
 			$_FILES[$key][] = $info;
 		}
-	}
-
-	/**
-	 * 上传配置选项
-	 * @var array
-	 */
-	protected $option = array(
-		'key'=>null, 'ext'=>null, 'size'=>null, 'filename'=>null
-	);
-
-	/**
-	 * 错误提示
-	 * @var array
-	 */
-	protected $errstr = array(
-		20000=>'key有误', 20001=>'文件太大', 20002=>'文件太大', 20003=>'文件只有部分被上传', 20004=>'文件没有被上传', 20006=>'服务器错误，系统写入失败', 
-			20007=>'服务器错误，无法将临时文件写入磁盘', 20008=>'不合法的来源上传'
-	);
-
-
-
-	/**
-	 * 文件检查
-	 * @return mixed null | code码
-	 */
-	public function check()
-	{
-		// 不存在这个上传
-		if(empty($_FILES[$this->option['key']]))
-		{
-			return 20000;
-		}
 		
-		// 文件
-		$file = $_FILES[$this->option['key']];
-		
-		// 不是post上传,非法来源
-		if(!is_uploaded_file($file['tmp_name']))
+		try 
 		{
-			return 20008;
-		}
-		
-		// 文件自身错误检查
-		switch($file['error'])
-		{
-			case 0:
-				break;
-			default:
-				return "2000{$file['error']}";
-			// 1-上传的文件超过了 php.ini 中 upload_max_filesize 选项限制的值
-			// 2-上传文件的大小超过了 HTML 表单中 MAX_FILE_SIZE 选项指定的值
-			// 3-文件只有部分被上传
-			// 4-文件没有被上传
-			// 6-php设置错误，没有设置临时文件夹
-			// 7-无法将临时文件写入磁盘
-		}
-		
-		// 文件类型检查
-		if($this->option['ext'])
-		{
-			$fileInfo = new \finfo(FILEINFO_MIME_TYPE);
-			$mimeType = $fileInfo->file($file['tmp_name']);
-			if(!in_array($mimeType, $this->option['ext']))
+			// 文件检查
+			foreach($_FILES[$key] as $file)
 			{
-				return 20009;
+				// 不是post上传,非法来源
+				if(!is_uploaded_file($file['tmp_name']))
+				{
+					throw new \Exception('UPLOAD SOURCE NOT LAWFUL', 20008);
+				}
+					
+				// 文件自身错误检查
+				if($file['error'])
+				{
+					throw new \Exception('UPLOAD FILE ERROR', "2000{$file['error']}");
+				}
+					
+				// 文件类型检查
+				if($ext)
+				{
+					$fileInfo = new \finfo(FILEINFO_MIME_TYPE);
+					$mimeType = $fileInfo->file($file['tmp_name']);
+					if(!in_array($mimeType, $ext))
+					{
+						throw new \Exception('FILE MIMETYPE ERROR', 20009);
+					}
+				}
+					
+				// 检查文件的大小
+				if($this->option['size'] && $file['size'] > $this->option['size'])
+				{
+					return 20010;
+				}
+			}
+			
+			// 移动
+			foreach($_FILES[$key] as $key=>$file)
+			{
+				move_uploaded_file($file['tmp_name'], $filename[$key]);
 			}
 		}
-		
-		// 检查文件的大小
-		if($this->option['size'] && $file['size'] > $this->option['size'])
+		catch(\Exception $e)
 		{
-			return 20010;
+			foreach($_FILES[$key] as $file)
+			{
+				@unlink($file['tmp_name']);
+			}
+			
+			// 抛出错误给逻辑处理
+			throw new \Exception($e->getMessage(), $e->getCode());
 		}
 		
-		return Null;
-	}
-
-	/**
-	 * 删除临时文件(用于上传失败的时候)
-	 */
-	public function delTmpFile()
-	{
-		@unlink($_FILES[$this->option['key']]['tmp_name']);
-	}
-
-	/**
-	 * 移动文件
-	 * @return boolean 移动成功true, 否则false
-	 */
-	public function move()
-	{
-		return move_uploaded_file($_FILES[$this->option['key']]['tmp_name'], $this->option['filename']);
+		return TRUE;
 	}
 }
-
-/**
- * 使用方法
- * 
- * 	// 创建对象
- * 	$upload = new Upload(string $key, string $ext, int $size, string $filename);
- * 
- * 	// 错误检查,所有错误的code含义如下
- * 	if($error = $upload->check())
- * 	{
- * 		// 删除临时文件
- * 		$upload->delTmpFile();
- * 
- * 		// 错误输出
- * 		switch($error)
- * 		{
- * 			case 20000:
- *			case 20004:
- * 				//文件没有上传;
- * 				break;
- *			case 20003:
- *				//文件上传不完整;
- *				break;
- *			case 20001:
- *			case 20002:
- *				// 文件大小超过了php.ini设置或者表单中MAX_FILE_SIZE的值
- *				break;
- *			case 20006:
- *			case 20007:
- *				// php设置错误，没有设置临时文件夹 & 无法将临时文件写入磁盘
- *				break;
- *			case 20008:
- *				// 不是post上传,非法来源
- *				break;
- *			case 20009:
- *				// 文件类型不对
- *				break;
- *			case 20010:
- *				// 文件大小超过设置值
- *				break;
- * 		}	
- * 	} 
- * 	else
- * 	{
- * 		// 文件移动
- * 		$upload->move();
- * 	}
- * 
- * 	
- */
