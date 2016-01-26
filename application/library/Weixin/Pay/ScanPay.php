@@ -62,6 +62,7 @@ class ScanPay extends Base
 		$data['mch_id'] = $this->options['mchid'];
 		$data['spbill_create_ip'] = $_SERVER['REMOTE_ADDR'];
 		$data['nonce_str'] = $this->strShuffle();
+		$data = $this->filterData($data);
 		$data['sign'] = $this->sign($data);
 		$xml = $this->toXml($data);
 		
@@ -85,7 +86,9 @@ class ScanPay extends Base
 			$this->error = $e->getMessage();
 		}
 		
-		return array($result, $this->error);
+		return array(
+			$result, $this->error
+		);
 	}
 }
 

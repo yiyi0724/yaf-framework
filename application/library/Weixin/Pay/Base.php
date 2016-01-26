@@ -20,13 +20,9 @@ abstract class Base
 	 * @param string $proxyHost 代理ip地址,不能用0.0.0.0
 	 * @param string $proxyPost 代理端口号,不能用0
 	 */
-	protected $options = array('appid'=>NULL, 'mchid'=>NULL, 'key'=>NULL, 'appSecret'=>NULL, 'proxyHost'=>NULL, 'proxyPost'=>NULL);
-
-	/**
-	 * 错误信息
-	 * @var string
-	 */
-	protected $error = NULL;
+	protected $options = array(
+		'appid'=>NULL, 'mchid'=>NULL, 'key'=>NULL, 'appSecret'=>NULL, 'proxyHost'=>NULL, 'proxyPost'=>NULL
+	);
 
 	/**
 	 * 生成签名
@@ -34,6 +30,22 @@ abstract class Base
 	 * @return string
 	 */
 	protected function sign($origin)
+	{
+		// 签名步骤一：按字典序排序参数
+		$sign = urldecode(http_build_query($origin));
+		// 签名步骤二：在string后加入KEY
+		$sign .= "&key={$this->options['key']}";
+		// 签名步骤三：MD5加密
+		// 签名步骤四：所有字符转为大写
+		return strtoupper(md5($sign));
+	}
+
+	/**
+	 * 参数过滤
+	 * @param array $origin 要传递的参数
+	 * @return array
+	 */
+	protected function filterData($origin)
 	{
 		// 签名步骤零:过滤非法数据
 		foreach($origin as $key=>$value)
@@ -43,14 +55,8 @@ abstract class Base
 				unset($origin[$key]);
 			}
 		}
-		// 签名步骤一：按字典序排序参数
 		ksort($origin);
-		$sign = urldecode(http_build_query($origin));
-		// 签名步骤二：在string后加入KEY
-		$sign .= "&key={$this->options['key']}";
-		// 签名步骤三：MD5加密
-		// 签名步骤四：所有字符转为大写
-		return strtoupper(md5($sign));
+		return $origin;
 	}
 
 	/**
@@ -144,7 +150,7 @@ abstract class Base
 	/**
 	 * 回调验证函数
 	 * @param bool 验证是否需要sign签名
-	 * @return array(微信返回的信息, 错误信息)
+	 * @return 微信返回的信息
 	 */
 	public function verify($sign = FALSE)
 	{
@@ -163,7 +169,7 @@ abstract class Base
 			$data = $this->xmlDecode($response);
 			
 			// 签名检查
-			if($this->sign($data) != $data['sign'])
+			if($this->sign($this->filterData($data)) != $data['sign'])
 			{
 				throw new \Exception('Sign Illegal');
 			}
@@ -175,12 +181,16 @@ abstract class Base
 			}
 			
 			// 响应给微信
-			$response = array('return_code'=>'SUCCESS', 'return_msg'=>'OK');
+			$response = array(
+				'return_code'=>'SUCCESS', 'return_msg'=>'OK'
+			);
 		}
 		catch(\Exception $e)
 		{
-			$this->error = $e->getMessage();
-			$response = array('return_code'=>'FAIL', 'return_msg'=>$this->error);
+			$error = $e->getMessage();
+			$response = array(
+				'return_code'=>'FAIL', 'return_msg'=>$this->error
+			);
 		}
 		
 		// 是否需要加密
@@ -189,7 +199,12 @@ abstract class Base
 		// 输出响应信息
 		echo $this->toXml($response);
 		
-		// 结果返回
-		return array($data, $this->error);
+		// 有错误抛出
+		if(isset($error))
+		{
+			throw new \Exception($error);
+		}
+		
+		return data;
 	}
 }
