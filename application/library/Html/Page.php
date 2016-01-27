@@ -11,20 +11,20 @@
  * 1. page作为当前页面的参数,会自动解析,无需传入
  * 2. $build数组解释:
  * 	[page] => 2										// 当前第几页
- 	[url] => http://www.library.com/?page=			// url前缀,拼接page使用
- 	[count] => 205									// 总条数
- 	[limit] => 10									// 每页几条
- 	[pageTotal] => 21								// 共几页
- 	[button] => 8									// 按钮显示个数,不包括上下页和首页个数
- 	[over] => 										// 判断是否超过最大页数,比如pageTotal=21,page=22的时候则表示超过页数,不显示分页
- 	[first] => 1									// 存在则表示有首页
- 	[prev] => 1										// 存在则表示有上一页
- 	[start] => 1									// 按钮的起始值
- 	[end] => 9										// 按钮的结束值,在for的时候是<end 而不是 <= end 请注意
- 	[next] => 3										// 存在则表示有下一页
- 	[last] => 21									// 存在则表示有末页
+ [url] => http://www.library.com/?page=			// url前缀,拼接page使用
+ [count] => 205									// 总条数
+ [limit] => 10									// 每页几条
+ [pageTotal] => 21								// 共几页
+ [button] => 8									// 按钮显示个数,不包括上下页和首页个数
+ [over] => 										// 判断是否超过最大页数,比如pageTotal=21,page=22的时候则表示超过页数,不显示分页
+ [first] => 1									// 存在则表示有首页
+ [prev] => 1										// 存在则表示有上一页
+ [start] => 1									// 按钮的起始值
+ [end] => 9										// 按钮的结束值,在for的时候是<end 而不是 <= end 请注意
+ [next] => 3										// 存在则表示有下一页
+ [last] => 21									// 存在则表示有末页
  
- 	3. 具体参考 \view\common\page.phtml页面.是一个完整的案例
+ 3. 具体参考 \view\common\page.phtml页面.是一个完整的案例
  */
 namespace Html;
 
@@ -39,7 +39,7 @@ class Page
 	 * @param int $button 一共要显示几页的按钮,默认10个
 	 */
 	protected static function init($limit, $count, $button = 10)
-	{		
+	{
 		// 初始化参数
 		$build['page'] = 1;
 		
@@ -52,11 +52,15 @@ class Page
 			$build['page'] = $query['page'];
 			unset($query['page']);
 		}
-		$operation = count($query) ? '&' : '';
-		$query = http_build_query($query);
 		
 		// 固定的url
-		$build['url'] = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}{$_SERVER['PATH_INFO']}?{$query}{$operation}page=";
+		$scheme = isset($_SERVER['REQUEST_SCHEME']) ? "{$_SERVER['REQUEST_SCHEME']}://" : "http://";
+		$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : NULL;
+		$port = isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80 ? ":{$_SERVER['SERVER_PORT']}" : NULL;
+		$path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+		$query = http_build_query($query);
+		$operation = count($query) ? '&' : '';
+		$build['url'] = "{$scheme}{$host}{$port}{$path}?{$query}{$operation}page=";
 		
 		// 总共几条
 		$build['count'] = $count;
@@ -78,7 +82,10 @@ class Page
 
 	/**
 	 * 模式一:居中显示前后的分页
-	 * 生成分页的链接
+	 * @param int $limit 每页几条
+	 * @param int $count 共几条
+	 * @param int $button 显示的button个数
+	 * @return array 分页的信息
 	 */
 	public static function showCenter($limit, $count, $button = 10)
 	{
@@ -103,7 +110,7 @@ class Page
 					// 前几页
 					$build['start'] = 1;
 					$build['end'] = $build['start'] + $build['button'];
-					$build['end'] = $build['end'] > $build['pageTotal'] ? $build['pageTotal']+1 : $build['end'];
+					$build['end'] = $build['end'] > $build['pageTotal'] ? $build['pageTotal'] + 1 : $build['end'];
 					break;
 				case $build['page'] + $step > $build['pageTotal']:
 					// 超出末页
