@@ -3,6 +3,7 @@
 2. [获取ip](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#获取ip)
 3. [页面跳转](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#页面跳转)
 4. [发送邮件](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#发送邮件)
+5. [分页](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#分页)
 
 
 ## Http请求
@@ -79,7 +80,7 @@ if(!$mail->send()) {
 }
 ```
 
-## 分页类
+## 分页
 - 模式一，居中显示分页
 - @param int $limit 每页条数
 - @param int $count 共几条
