@@ -3,6 +3,7 @@
 2. [获取ip](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#获取ip)
 3. [页面跳转](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#页面跳转)
 4. [发送邮件](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#发送邮件)
+5. [分页](https://github.com/enychen/yaf-framework/blob/master/application/library/Network/README.md#分页)
 
 
 ## Http请求
@@ -77,4 +78,28 @@ if(!$mail->send()) {
 } else {
   echo '发送成功';
 }
+```
+
+## 分页
+- 模式一，居中显示分页
+- @param int $limit 每页条数
+- @param int $count 共几条
+- @param int $button 显示几个按钮
+- @return array 参数说明
+  - [page] => 2										            当前第几页
+  - [url] => http://www.library.com/?page=			url前缀,拼接page使用
+  - [count] => 205									            总条数
+  - [limit] => 10								              每页几条
+  - [pageTotal] => 21								          共几页
+  - [button] => 8									            按钮显示个数,不包括上下页和首页个数
+  - [over] => 										              是否超出页数
+  - [first] => 1									              存在则表示有首页
+  - [prev] => 1										            存在则表示有上一页
+  - [start] => 1									              分页起始值
+  - [end] => 9										              分页结束值，是end-1
+  - [next] => 3										            存在则表示有下一页
+  - [last] => 21									              存在则表示有末页
+
+```php
+$pageInfo = \Html\Page::showCenter(10, 222, 8);
 ```
