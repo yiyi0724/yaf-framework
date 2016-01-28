@@ -46,7 +46,7 @@ class FileLock
 			$delete and @unlink($lock);
 			// 删除锁资源
 			unset(static::$locks[$filename]);
-		}		
+		}
 	}
 
 	/**
@@ -63,8 +63,8 @@ class FileLock
 			@fclose($fp);
 			// 是否删除文件
 			$delete and @unlink($fp);
-			// 清空资源
-			unset(static::$locks[$key]);
 		}
+		// 清空资源
+		static::$locks = array();
 	}
 }

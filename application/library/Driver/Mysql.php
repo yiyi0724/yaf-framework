@@ -72,10 +72,41 @@ class Mysql
 		
 		// 预处理语句
 		$this->stmt = $this->pdo->prepare($sql);
+		// 参数绑定
+		$this->bindValue($params);
 		// sql语句执行
-		$this->stmt->execute($params);
+		$this->stmt->execute();
 		// 结果解析成数组
 		$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
+	}
+	
+	/**
+	 * 参数与数据类型绑定
+	 * @param array 值绑定
+	 * @return void
+	 */
+	private function bindValue($params)
+	{
+		foreach($params as $key=>$value)
+		{
+			// 数据类型选择
+			switch(TRUE)
+			{
+				case is_int($value):
+					$type = \PDO::PARAM_INT;
+					break;
+				case is_bool($value):
+					$type = \PDO::PARAM_BOOL;
+					break;
+				case is_null($value):
+					$type = \PDO::PARAM_NULL;
+					break;
+				default:
+					$type = \PDO::PARAM_STR;
+			}
+			// 参数绑定
+			$this->stmt->bindValue($key, $value, $type);
+		}
 	}
 
 	/**
@@ -83,7 +114,7 @@ class Mysql
 	 * @param string $method 函数名
 	 * @return mixed
 	 */
-	public function __call($method)
+	public function __call($method, $args)
 	{
 		switch($method)
 		{

@@ -28,21 +28,8 @@ class Validate
 	 * @param string $file
 	 * @return array 规则数组
 	 */
-	protected static function load($file)
-	{
-		// 文件加载
-		if(!is_file($file))
-		{
-			throw new \Exception("VALIDATE FILE Not Found");
-		}
-		
-		// 文件加载
-		$rules = json_decode(file_get_contents($file), TRUE);
-		if(json_last_error())
-		{
-			throw new \Exception(json_last_error_msg());
-		}
-		
+	protected static function load($rules)
+	{		
 		// PUT和DETELE方法支持
 		if(in_array($_SERVER['REQUEST_METHOD'], array('PUT', 'DELETE')))
 		{
@@ -51,14 +38,14 @@ class Validate
 		}
 		
 		// 读取参数
-		foreach($rules as $key=>$rule)
+		foreach($rules as &$rule)
 		{
-			$from = '_' . strtoupper($rule['from']);
-			$name = $rule['key'];
-			$rules[$key]['value'] = NULL;
+			array_unshift($rule, NULL);
+			$from = '_' . strtoupper($rule[2]);
+			$name = $rule[1];
 			if(isset($GLOBALS[$from][$name]))
 			{
-				$rules[$key]['value'] = $GLOBALS[$from][$name];
+				$rule[0] = $GLOBALS[$from][$name];
 			}
 		}
 		
@@ -70,24 +57,25 @@ class Validate
 	 * @param array $rules 数据规则数组
 	 * @return void
 	 */
-	public static function validity($file)
+	public static function validity($rules)
 	{
-		// 数据文件加载
-		$rules = static::load($file);
-		
+		// 数据加载
+		$rules = static::load($rules);
+
+		// 检查
 		foreach($rules as $key=>$rule)
 		{
 			// 是否必须
 			if(Rule::notExists($rule))
 			{
-				throw new FormException($rule["notify"]);
+				throw new FormException($rule[5]);
 			}
 			
 			// 对应数据类型检查
-			$method = $rule['type'];
-			if($rule['value'] !== NULL && !Rule::$method($rule))
+			$method = $rule[3];
+			if($rule[0] !== NULL && !Rule::$method($rule))
 			{
-				throw new FormException($rule["notify"]);
+				throw new FormException($rule[5]);
 			}
 			
 			// 设置合法值
@@ -95,7 +83,7 @@ class Validate
 		}
 		
 		// 结果返回
-		return $data;
+		return static::$data;
 	}
 
 	/**
@@ -104,24 +92,27 @@ class Validate
 	 */
 	private static function setData($rule)
 	{
-		// 键
-		$key = isset($rule['alias']) ? $rule['alias'] : $rule['key'];
-		// 值
-		$value = $rule['value'];
-		if(is_null($value))
+		// 是否存在别名
+		$key = isset($rule[7]) ? $rule[7] : $rule[1];
+		
+		// 是否填充默认值
+		$value = ($rule[0] === NULL && isset($rule[8])) ? $rule[8] : $rule[0];
+		
+		if($value !== NULL)
 		{
-			switch(TRUE)
+			// 进行归档
+			if(isset($rule[9]))
 			{
-				case empty($rule['default']):
-					return;
-				case in_array($rule['default'], array('time', 'date', 'mktime', 'strtotime')):
-				// $value = call_user_func_array($rule['default'], explode(',', $rule['']))
-				default:
-					$value = $rule['default'];
+				foreach(explode(',', $rule[9]) as $induce)
+				{
+					static::$data[$induce][$rule[1]] = $value;
+				}
+			}
+			else
+			{
+				static::$data[$rule[1]] = $value;
 			}
 		}
-		
-		static::$data[$key] = $value;
 	}
 }
 
@@ -141,7 +132,7 @@ class Rule
 	 */
 	public static function notExists($rule)
 	{
-		return isset($rule['require']) && is_null($rule['value']);
+		return isset($rule[4]) && is_null($rule[4]);
 	}
 
 	/**
@@ -153,18 +144,18 @@ class Rule
 	public static function int($rule)
 	{
 		// 是否是数字
-		$flag = is_numeric($rule['value']);
+		$flag = is_numeric($rule[0]);
 		
 		// 最小值检查
-		if($flag && isset($rule['min']))
+		if($flag && isset($rule[6]['min']))
 		{
-			$flag = $rule['value'] >= $rule['min'];
+			$flag = $rule[0] >= $rule[6]['min'];
 		}
 		
 		// 最大值检查
-		if($flag && isset($rule['max']))
+		if($flag && isset($rule[6]['max']))
 		{
-			$flag = $rule['value'] <= $rule['max'];
+			$flag = $rule[0] <= $rule[6]['max'];
 		}
 		
 		return $flag;

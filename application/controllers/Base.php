@@ -85,23 +85,12 @@ abstract class BaseController extends Controller_Abstract
 		
 		// 读取校验文件
 		$path = $this->getConfig('application.directory');
-		$controller = $request->getControllerName();
+		$controller = ucfirst($request->getControllerName());
 		$action = $request->getActionName();
-		$file = strtolower("{$path}validates/{$controller}/{$action}.json");
 		
 		// 数据校验
-		try
-		{
-			$input = Validate::validity($file);
-		}
-		catch(\Security\FormException $e)
-		{
-			$error = $e->getMessage();
-			IS_AJAX ? $this->output(['form'=>$error], FALSE, 90001) : $this->template(['notify'=>$error], 
-				'common/error.phtml');
-		}
-		
-		return $input;
+		require("{$path}validates/{$controller}.php");
+		return Validate::validity($controller::$action());
 	}
 
 	/**
@@ -109,17 +98,17 @@ abstract class BaseController extends Controller_Abstract
 	 * 就是view/CONTROLLER_NAME/$template.phtml
 	 * @param string $template 自定义模板
 	 */
-	protected function template(array $output, $tpl = NULL)
+	protected function view(array $output, $tpl = NULL)
 	{
-		// 模板替换
-		$tpl and $this->disView() and $this->display($tpl);
-		
-		// 加载页面输出数据
+		// 数据绑定
 		$view = $this->getView();
 		foreach($output as $key=>$value)
 		{
 			$view->assign($key, $value);
 		}
+		
+		// 模板替换
+		$tpl and $this->disView() and $this->display($tpl);
 	}
 
 	/**
@@ -172,7 +161,7 @@ abstract class BaseController extends Controller_Abstract
 	 */
 	protected function location($url, $time = 0)
 	{
-		\Network\Location::post($url, ['name'=>'eny']);
+		\Network\Location::get($url, ['name'=>'eny']);
 	}
 
 	/**

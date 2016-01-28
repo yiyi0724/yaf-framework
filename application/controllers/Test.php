@@ -43,14 +43,14 @@ class TestController extends BaseController
 	 */
 	public function mysqlAction()
 	{
-		$page = $this->getRequest()->get('page', 1);
-		$userSelect = new \User\SelectModel();
-		$views['page'] = $userSelect->getPage([
-			'field'=>'id,mark', 'table'=>'one_product', 'page'=>$page, 'limit'=>20
-		]);
-		$views['page']['lists'] = $userSelect->getPicture($views['page']['lists']);
-		
-		$this->view($views);
+		// 参数检查
+		$data = $this->validate();
+		echo 111;exit;
+		// 数据检查
+		$oneProductModel = new \Test\OneProductModel();
+		$output['page'] = $oneProductModel->getPage(1, 15, NULL, 'id DESC');
+		$this->template($output);
+		exit;
 	}
 
 	/**
@@ -107,6 +107,13 @@ class TestController extends BaseController
 		$download->setData('chenxiaobo,eny,ccc');
 		$download->setDownloadName('name.csv');
 		$download->output();
+	}
+	
+	/**
+	 * 分页测试
+	 */
+	public function pageAction() {
+		$this->template(['page'=>\Html\Page::showCenter(20, 222)]);
 	}
 
 	/**
