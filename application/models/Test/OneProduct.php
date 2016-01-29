@@ -11,6 +11,8 @@ class OneProductModel extends \BaseModel
 	 */
 	public function getProduct()
 	{
+		$db = new Mysql();
+		$db = new Mysql();
 	}
 	
 	/**
@@ -18,6 +20,7 @@ class OneProductModel extends \BaseModel
 	 */
 	public function getPicture()
 	{
+		$pdo = new Pdo();
 		
 	}
 }

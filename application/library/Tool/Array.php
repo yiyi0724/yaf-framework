@@ -1,5 +1,7 @@
 <?php
 
+namespace Tool;
+
 class Arrays
 {
 	/**
@@ -8,7 +10,7 @@ class Arrays
 	protected static function toOneDimensions($lists, $key)
 	{
 		$rescurise = array();
-		foreach($lists as $list)
+		foreach($lists as $key=>$list)
 		{
 			$rescurise[] = $list[$key];
 		}

@@ -42,14 +42,15 @@ class TestController extends BaseController
 	 * mysql测试
 	 */
 	public function mysqlAction()
-	{
-		// 参数检查
-		$data = $this->validate();
-		echo 111;exit;
+	{ 
 		// 数据检查
 		$oneProductModel = new \Test\OneProductModel();
 		$output['page'] = $oneProductModel->getPage(1, 15, NULL, 'id DESC');
-		$this->template($output);
+		
+		echo '<pre>';
+		print_r($output);
+		exit;
+		$this->view($output);
 		exit;
 	}
 
@@ -127,5 +128,15 @@ class TestController extends BaseController
 			$upload = new \File\Upload('upload');
 			exit;
 		}
+	}
+	
+	/**
+	 * 拼音测试
+	 */
+	public function pinyinAction()
+	{
+		$pccModel = new \Test\PccModel();
+		$pccModel->updateEn();
+		exit;
 	}
 }

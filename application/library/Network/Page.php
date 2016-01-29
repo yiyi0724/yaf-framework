@@ -20,42 +20,21 @@ class Page
 	protected static function init($limit, $count, $button = 10)
 	{
 		// 初始化参数
-		$build['page'] = 1;
-		
-		// 查询的参数
-		parse_str($_SERVER['QUERY_STRING'], $query);
-		
-		// 当前第几页
-		if(isset($query['page']))
-		{
-			$build['page'] = $query['page'];
-			unset($query['page']);
-		}
-		
-		// 固定的url
-		$scheme = isset($_SERVER['REQUEST_SCHEME']) ? "{$_SERVER['REQUEST_SCHEME']}://" : "http://";
-		$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : NULL;
-		$port = isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80 ? ":{$_SERVER['SERVER_PORT']}" : NULL;
-		$path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
-		$query = http_build_query($query);
-		$operation = count($query) ? '&' : '';
-		$build['url'] = "{$scheme}{$host}{$port}{$path}?{$query}{$operation}page=";
-		
+		$build['url'] = str_replace($_SERVER['QUERY_STRING'], NULL, $_SERVER['REQUEST_URI']);
+		$build['page'] = isset($_GET['page']) ? $_GET['page'] : 1;
+		unset($_GET['page']);
+		$build['url'] .= sprintf("%s%spage=", http_build_query($_GET), (count($_GET) ? '&' : NULL));		
 		// 总共几条
-		$build['count'] = $count;
-		
+		$build['count'] = $count;		
 		// 每页显示的条数
-		$build['limit'] = $limit;
-		
+		$build['limit'] = $limit;		
 		// 一共有几页
-		$build['pageTotal'] = ceil($count / $limit);
-		
+		$build['pageTotal'] = ceil($count / $limit);		
 		// 一共几个按钮
-		$build['button'] = $button;
-		
+		$build['button'] = $button;		
 		// 是否超过
 		$build['over'] = $build['page'] > $build['pageTotal'];
-		
+		// 返回
 		return $build;
 	}
 

@@ -378,6 +378,42 @@ abstract class BaseModel
 		// 返回当前对象
 		return $this->db->rowCount();
 	}
+	
+	/**
+	 * 开启事务,会先判断是否在一个事务内
+	 * @return bool
+	 */
+	public function begin()
+	{
+		return $this->in() OR $this->db->beginTransaction();
+	}
+	
+	/**
+	 * 开启事务,会先判断是否在一个事务内
+	 * @return bool
+	 */
+	public function commit()
+	{
+		return $this->db->commit();
+	}
+	
+	/**
+	 * 开启事务,会先判断是否在一个事务内
+	 * @return bool
+	 */
+	public function rollback()
+	{
+		return $this->db->rollback();
+	}
+	
+	/**
+	 * 开启事务,会先判断是否在一个事务内
+	 * @return bool
+	 */
+	public function in()
+	{
+		return $this->db->inTransaction();
+	}
 
 	/**
 	 * 重置条件查询
