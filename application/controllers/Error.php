@@ -1,7 +1,7 @@
 <?php
 
 
-class ErrorController extends BaseController
+class ErrorController extends \Base\BaseController
 {
 	public function init(){}
 		

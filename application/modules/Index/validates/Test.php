@@ -3,6 +3,11 @@
 
 class Test
 {
+	public static function index()
+	{
+		return NULL;
+	}
+	
 	public static function mysql()
 	{
 		

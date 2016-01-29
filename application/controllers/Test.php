@@ -1,7 +1,13 @@
 <?php
-class TestController extends BaseController
+class TestController extends \Base\BaseController
 {
 
+	public function indexAction()
+	{
+		phpinfo();
+		exit;
+	}
+	
 	/**
 	 * 支付宝支付测试
 	 */

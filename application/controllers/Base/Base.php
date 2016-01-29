@@ -1,5 +1,7 @@
 <?php
 
+namespace Base;
+
 /**
  * 控制基类
  */
@@ -8,6 +10,7 @@ use \Yaf\Controller_Abstract;
 use \Yaf\Session;
 use \Yaf\Registry;
 use \Security\Validate;
+
 abstract class BaseController extends Controller_Abstract
 {
 
@@ -30,6 +33,9 @@ abstract class BaseController extends Controller_Abstract
 		
 		// 登录检查
 		$this->needLogin();
+		
+		// 数据检查
+		$this->validate();
 	}
 
 	/**
@@ -63,7 +69,7 @@ abstract class BaseController extends Controller_Abstract
 		$action = $request->getActionName();
 		// 是否需要优先登录
 		if(!UID && ($this->loginAction == '*' || in_array($action, $this->loginAction)))
-		{	
+		{
 			$url = '/member/login';
 			if($request->isXmlHttpRequest())
 			{
@@ -86,10 +92,11 @@ abstract class BaseController extends Controller_Abstract
 		// 读取校验文件
 		$path = $this->getConfig('application.directory');
 		$controller = ucfirst($request->getControllerName());
+		$module = $request->getModuleName();
 		$action = $request->getActionName();
 		
 		// 数据校验
-		require("{$path}validates/{$controller}.php");
+		require ("{$path}modules/{$module}/validates/{$controller}.php");
 		return Validate::validity($controller::$action());
 	}
 

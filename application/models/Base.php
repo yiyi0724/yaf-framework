@@ -444,7 +444,7 @@ abstract class BaseModel
 		$count = $this->select(static::FETCH_ONE, FALSE);
 	
 		// 获取本页数据
-		$this->field('id,title');
+		$this->field('*');
 		$this->limit(($page - 1)*$number, $number);
 		$lists = $this->select();
 	

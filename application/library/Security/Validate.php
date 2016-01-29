@@ -59,6 +59,12 @@ class Validate
 	 */
 	public static function validity($rules)
 	{
+		// 没有规则返回空
+		if(!$rules)
+		{
+			return array();
+		}
+		
 		// 数据加载
 		$rules = static::load($rules);
 
