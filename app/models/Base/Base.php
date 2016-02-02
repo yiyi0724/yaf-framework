@@ -9,7 +9,6 @@ use \Yaf\Application;
 use \Yaf\Config\Ini;
 use \Driver\Mysql;
 use \Driver\Redis;
-use \Network\Page;
 
 abstract class BaseModel
 {

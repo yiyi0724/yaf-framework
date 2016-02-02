@@ -5,6 +5,8 @@
  */
 namespace Base;
 
+use \Network\Page;
+
 abstract class AppModel extends BaseModel
 {
 
@@ -18,7 +20,7 @@ abstract class AppModel extends BaseModel
 	 * @param array|string having条件
 	 */
 	public function getPage($page = 1, $number = 15, $where = NULL, $order = NULL, $group = NULL, $having = NULL)
-	{		
+	{
 		// 获取分页数量
 		$this->field('COUNT(*)');
 		$where and ($this->where($where));
@@ -33,7 +35,7 @@ abstract class AppModel extends BaseModel
 		$lists = $this->select();
 		
 		// 输出分页
-		$page = Page::showCenter($number, $count);
+		$page = Page::showCenter($page, $number, $count);
 		$page['lists'] = $lists;
 		
 		return $page;

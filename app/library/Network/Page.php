@@ -17,13 +17,13 @@ class Page
 	 * @param int $count 总共有几条
 	 * @param int $button 一共要显示几页的按钮,默认10个
 	 */
-	protected static function init($limit, $count, $button = 10)
+	protected static function init($page, $limit, $count, $button = 10)
 	{
 		// 初始化参数
+		$build['page'] = $page;
 		$build['url'] = str_replace($_SERVER['QUERY_STRING'], NULL, $_SERVER['REQUEST_URI']);
-		$build['page'] = isset($_GET['page']) ? $_GET['page'] : 1;
-		unset($_GET['page']);
-		$build['url'] .= sprintf("%s%spage=", http_build_query($_GET), (count($_GET) ? '&' : NULL));		
+		unset($_REQUEST['page']);
+		$build['url'] .= sprintf("%s%spage=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : NULL));
 		// 总共几条
 		$build['count'] = $count;		
 		// 每页显示的条数
@@ -40,15 +40,16 @@ class Page
 
 	/**
 	 * 模式一:居中显示前后的分页
+	 * @param int $page 当前第几页
 	 * @param int $limit 每页几条
 	 * @param int $count 共几条
 	 * @param int $button 显示的button个数
 	 * @return array 分页的信息
 	 */
-	public static function showCenter($limit, $count, $button = 10)
+	public static function showCenter($page, $limit, $count, $button = 10)
 	{
 		// 初始化参数
-		$build = static::init($limit, $count, $button);
+		$build = static::init($page, $limit, $count, $button);
 		
 		// 是否超过
 		if(!$build['over'])
