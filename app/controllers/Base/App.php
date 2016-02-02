@@ -12,7 +12,7 @@ use \Yaf\Loader;
 use \Security\Validate;
 use \Network\Location;
 
-abstract class BaseController extends Controller_Abstract
+abstract class AppController extends Controller_Abstract
 {
 	/**
 	 * 控制器初始化
@@ -24,7 +24,6 @@ abstract class BaseController extends Controller_Abstract
 
 		// 静态资源常量定义
 		$this->resource();
-
 	}
 
 	/**
@@ -33,13 +32,13 @@ abstract class BaseController extends Controller_Abstract
 	protected function resource()
 	{
 		$request = $this->getRequest();
-		
+
 		// URL常量定义
 		foreach($this->getConfig('resource') as $key=>$resource)
 		{
 			define('URL_' . strtoupper($key), $resource);
 		}
-		
+
 		// 请求方式定义
 		define('IS_AJAX', $request->isXmlHttpRequest());
 		define('IS_GET', $request->isGet());
@@ -50,6 +49,7 @@ abstract class BaseController extends Controller_Abstract
 
 	/**
 	 * 登录检查,未登录跳转
+	 * @param string 跳转地址
 	 */
 	protected function login($url = "/member/login")
 	{
@@ -68,15 +68,19 @@ abstract class BaseController extends Controller_Abstract
 			// 读取校验文件
 			$controller = ucfirst($request->getControllerName());
 			$module = $request->getModuleName();
-			$action = $request->getActionName();
+			$action = $request->getActionName().'Rules';
 			
 			// 数据校验
 			Loader::import(APPLICATION_PATH."modules/{$module}/validates/{$controller}.php");
-			return Validate::validity($controller::$action());
+			$rules = $controller::$action();
+			return Validate::validity($rules);
 		}
 		catch(\Security\FormException $e)
 		{
-			$this->view(['notify'=>$e->getMessage()], '/common/notify', TRUE);
+			// ajax输出
+			IS_AJAX and $this->jsonp([$rules[$e->getCode()][0]=>$e->getMessage()], 412);
+			// 页面输出
+			$this->view(['notify'=>$e->getMessage()], 'common/notify', TRUE);
 			exit();
 		}
 	}
@@ -98,7 +102,7 @@ abstract class BaseController extends Controller_Abstract
 		
 		// 模板替换
 		$tpl and $this->disView();
-		($tpl && $useView) ? $view->display($tpl) : $this->display($tpl);
+		($tpl && $useView) ? $view->display("{$tpl}.phtml") : $this->display($tpl);
 	}
 
 	/**
@@ -146,13 +150,6 @@ abstract class BaseController extends Controller_Abstract
 	{
 		$config = Application::app()->getConfig()->get($key);
 		return is_string($config) ? $config : $config->toArray();
-	}
-
-	/**
-	 * 自定义加载
-	 */
-	protected function logic($class)
-	{
 	}
 
 	/**

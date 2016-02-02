@@ -58,7 +58,7 @@ class Validate
 	 * @return void
 	 */
 	public static function validity($rules)
-	{
+	{		
 		// 没有规则返回空
 		if(!$rules)
 		{
@@ -74,14 +74,14 @@ class Validate
 			// 是否必须
 			if(Rule::notExists($rule))
 			{
-				throw new FormException($rule[5]);
+				throw new FormException($rule[5], $key);
 			}
 			
 			// 对应数据类型检查
 			$method = $rule[3];
 			if($rule[0] !== NULL && !Rule::$method($rule))
 			{
-				throw new FormException($rule[5]);
+				throw new FormException($rule[5], $key);
 			}
 			
 			// 设置合法值
@@ -138,7 +138,7 @@ class Rule
 	 */
 	public static function notExists($rule)
 	{
-		return isset($rule[4]) && is_null($rule[4]);
+		return $rule[4] && is_null($rule[0]);
 	}
 
 	/**

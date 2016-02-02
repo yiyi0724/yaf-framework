@@ -1,11 +1,8 @@
 <?php
 
-class IndexController extends \Base\BaseController
+class IndexController extends \Base\AppController
 {
 	public function indexAction()
 	{
-		$logic = new \logic\Member\Add();
-		echo $this->jsonp($logic->getUserInfo());
-		exit;
 	}
 }

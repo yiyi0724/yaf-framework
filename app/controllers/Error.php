@@ -3,7 +3,7 @@
  * 错误异常处理控制器
  * @author enychen
  */
-class ErrorController extends \Base\BaseController
+class ErrorController extends \Base\AppController
 {
 	/**
 	 * 不要初始化
@@ -38,15 +38,8 @@ class ErrorController extends \Base\BaseController
 			// 日志记录
 		}
 		
-		echo $errorInfo['message'] = $exception->getMessage();exit;
+		$this->getRequest()->isXmlHttpRequest() and $this->jsonp($errorInfo, 504);
 		
-		if($this->getRequest()->isXmlHttpRequest())
-		{
-			$this->jsonp($errorInfo['message'], 504);
-		}
-		else
-		{
-			$this->view(['error'=>$errorInfo], $template);
-		}
+		$this->view(['error'=>$errorInfo], 'common/error', TRUE);
 	}
 }

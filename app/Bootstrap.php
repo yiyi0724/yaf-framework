@@ -2,6 +2,7 @@
 
 use Yaf\Bootstrap_Abstract;
 use Yaf\Application;
+use Yaf\Loader;
 use Yaf\Dispatcher;
 use Yaf\Config\Ini;
 
@@ -14,7 +15,7 @@ class Bootstrap extends Bootstrap_Abstract
 	public function _initLoader(Dispatcher $dispatcher)
 	{
 		$loader = Loader::getInstance(rtrim(APPLICATION_PATH, '/'));
-		$loader->registerLocalNamespace("logic");
+		$loader->registerLocalNamespace(['logic', 'validate']);
 	}
 	
     /**
