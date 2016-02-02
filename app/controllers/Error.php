@@ -5,12 +5,6 @@
  */
 class ErrorController extends \Base\AppController
 {
-	/**
-	 * 不要初始化
-	 */
-	public function init()
-	{
-	}
 
 	/**
 	 * 默认的错误异常处理
@@ -36,10 +30,15 @@ class ErrorController extends \Base\AppController
 			$errorInfo['data']['from'] = $_SERVER['REQUEST_METHOD'];
 			$errorInfo['data']['list'] = $_REQUEST;
 			// 日志记录
+			file_put_contents(APPLICATION_PATH . 'data/' . date('Y-m-d_H') . 'log', print_r($errorInfo, TRUE));
+			// 线上环境报错
+			IS_AJAX and ($errorInfo = '服务器出错了，请重试后联系客服');
 		}
 		
-		$this->getRequest()->isXmlHttpRequest() and $this->jsonp($errorInfo, 504);
+		// json请求
+		IS_AJAX and $this->jsonp($errorInfo, 504);
 		
+		// 普通页面请求
 		$this->view(['error'=>$errorInfo], 'common/error', TRUE);
 	}
 }

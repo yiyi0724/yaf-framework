@@ -2,7 +2,7 @@
 
 namespace Test;
 
-class OneProductModel extends \BaseModel
+class OneProductModel extends \Base\AppModel
 {
 	protected $table = 'one_product';
 	
@@ -11,8 +11,6 @@ class OneProductModel extends \BaseModel
 	 */
 	public function getProduct()
 	{
-		$db = new Mysql();
-		$db = new Mysql();
 	}
 	
 	/**

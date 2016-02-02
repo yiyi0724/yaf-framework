@@ -133,7 +133,7 @@ abstract class AppController extends Controller_Abstract
 		if($jsonp)
 		{
 			$header = 'text/javascript';
-			$output = "<script type='text/javascript'>{$jsonp}({$json});</script>";
+			$output = "<script type=\"text/javascript\">{$jsonp}({$json});</script>";
 		}
 
 		// 结果输出

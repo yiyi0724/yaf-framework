@@ -1,11 +1,13 @@
 <?php
+
 /**
- * 模型积累
+ * 模型基类，逻辑处理封装
  */
 namespace Base;
 
-abstract class LogicModel extends BaseModel
+abstract class AppModel extends BaseModel
 {
+
 	/**
 	 * 分页获取信息
 	 * @param int $page 当前页
@@ -16,7 +18,7 @@ abstract class LogicModel extends BaseModel
 	 * @param array|string having条件
 	 */
 	public function getPage($page = 1, $number = 15, $where = NULL, $order = NULL, $group = NULL, $having = NULL)
-	{
+	{		
 		// 获取分页数量
 		$this->field('COUNT(*)');
 		$where and ($this->where($where));
@@ -24,19 +26,19 @@ abstract class LogicModel extends BaseModel
 		$order and ($this->order($order));
 		$having and ($this->having($having));
 		$count = $this->select(static::FETCH_ONE, FALSE);
-	
+		
 		// 获取本页数据
 		$this->field('*');
 		$this->limit(($page - 1) * $number, $number);
 		$lists = $this->select();
-	
+		
 		// 输出分页
 		$page = Page::showCenter($number, $count);
 		$page['lists'] = $lists;
-	
+		
 		return $page;
 	}
-	
+
 	/**
 	 * 读取配置信息
 	 * @param array $key 键名

@@ -15,7 +15,7 @@ class Bootstrap extends Bootstrap_Abstract
 	public function _initLoader(Dispatcher $dispatcher)
 	{
 		$loader = Loader::getInstance(rtrim(APPLICATION_PATH, '/'));
-		$loader->registerLocalNamespace(['logic', 'validate']);
+		$loader->registerLocalNamespace('logic');
 	}
 	
     /**
