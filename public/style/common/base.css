@@ -1,0 +1,25 @@
+/**
+ * reset Css
+ */
+*{margin:0;padding:0;}
+a{text-decoration:none}
+
+.notify_error{
+	width: 770px;
+    padding: 25px 20px 10px 30px;
+    margin: 120px auto;
+    border: 1px solid;
+    border-color: #ff9393;
+    background: #ffeeea;
+}
+
+.notify_error h2 {
+	font-size:30px;
+	margin-bottom:14px;
+	padding:12px 0px 12px 80px;
+	background: url(../../image/common/notify.jpg) no-repeat left bottom;
+}
+
+.notify_error p {
+	padding:0px 0px 20px 80px;
+}

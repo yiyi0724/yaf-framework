@@ -1,3 +1,8 @@
 <?php $this->display('common/header.phtml')?>
-<?php echo $notify;?>
+<div class="notify_error">
+	<h2>失败提示</h2>
+	<p><?php echo $notify;?></p>
+	<p><a href="javascript:go(-1)">返回</a></p>
+</div>
+
 <?php $this->display('common/footer.phtml')?>

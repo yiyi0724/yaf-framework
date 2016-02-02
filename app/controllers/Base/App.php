@@ -65,9 +65,12 @@ abstract class AppController extends Controller_Abstract
 		{
 			$request = $this->getRequest();
 			
+			// 所有参数
+			$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $request->getParams();
+			
 			// 读取校验文件
-			$controller = ucfirst($request->getControllerName());
-			$module = $request->getModuleName().'Form';
+			$controller = ucfirst($request->getControllerName()).'Form';
+			$module = $request->getModuleName();
 			$action = $request->getActionName().'Rules';
 			
 			// 数据校验
