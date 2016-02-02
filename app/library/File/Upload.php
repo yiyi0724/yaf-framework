@@ -8,6 +8,7 @@ namespace File;
 
 class Upload
 {
+	
 	/**
 	 * 移动文件
 	 * @param string $key 上传文件的key，也就是input的name
@@ -17,7 +18,7 @@ class Upload
 	 * @throws \Exception 如果文件不符合条件，抛出异常
 	 * @return bool
 	 */
-	public function move($key, array $ext, $size, $filename)
+	public static function move($key, array $ext, $size, $filename)
 	{
 		try
 		{

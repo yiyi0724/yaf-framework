@@ -29,7 +29,7 @@ class Validate
 	 * @return array 规则数组
 	 */
 	protected static function load($rules)
-	{		
+	{
 		// PUT和DETELE方法支持
 		if(in_array($_SERVER['REQUEST_METHOD'], array('PUT', 'DELETE')))
 		{
@@ -67,7 +67,7 @@ class Validate
 		
 		// 数据加载
 		$rules = static::load($rules);
-
+		
 		// 检查
 		foreach($rules as $key=>$rule)
 		{
@@ -147,7 +147,7 @@ class Rule
 	 * @param array 规则数组
 	 * @return void
 	 */
-	public static function int($rule)
+	public static function number($rule)
 	{
 		// 是否是数字
 		$flag = is_numeric($rule[0]);
@@ -173,7 +173,7 @@ class Rule
 	 * @param object 规则对象
 	 * @return int|string
 	 */
-	public static function in($rule)
+	public static function range($rule)
 	{
 		return in_array($rule['value'], explode(',', $rule['range']));
 	}
@@ -254,6 +254,14 @@ class Rule
 			}
 		}
 		return $flag;
+	}
+
+	/**
+	 * 回调验证
+	 */
+	public static function callback($rule)
+	{
+		return call_user_func_array($rule[6], [$rule[0]]);
 	}
 }
 

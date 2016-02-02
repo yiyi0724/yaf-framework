@@ -1,29 +1,18 @@
 <?php
+
+/**
+ * 模型基类
+ */
+namespace Base;
+
 use \Yaf\Application;
 use \Yaf\Config\Ini;
 use \Driver\Mysql;
 use \Driver\Redis;
 use \Network\Page;
+
 abstract class BaseModel
 {
-	
-	/**
-	 * 获取所有
-	 * @var string
-	 */
-	const FETCH_ALL = 'fetchAll';
-	
-	/**
-	 * 获取一行
-	 * @var string
-	 */
-	const FETCH_ROW = 'fetch';
-	
-	/**
-	 * 获取一个
-	 * @var string
-	 */
-	const FETCH_ONE = 'fetchColumn';
 
 	/**
 	 * 读取配置文件
@@ -48,19 +37,22 @@ abstract class BaseModel
 	 * @var \Driver\Mysql
 	 */
 	protected $db = NULL;
-	
-	/**
-	 * 请求对象
-	 * @var \Yaf\Request\Http
-	 */
-	protected $R = NULL;
 
 	/**
 	 * 附加的查询条件
 	 * @var array
 	 */
-	protected $sql = array('field'=>'*', 'where'=>NULL, 'group'=>NULL, 'having'=>NULL, 'order'=>NULL, 'limit'=>NULL, 
-			'prepare'=>NULL, 'keys'=>NULL, 'values'=>array());
+	protected $sql = array(
+		'field'=>'*',
+		'where'=>NULL,		
+		'group'=>NULL,
+		'having'=>NULL,
+		'order'=>NULL,
+		'limit'=>NULL, 
+		'prepare'=>NULL,
+		'keys'=>NULL,
+		'values'=>array()
+	);
 
 	/**
 	 * 构造函数,加载配置
@@ -70,8 +62,9 @@ abstract class BaseModel
 		// 读取配置
 		$this->driver = new Ini(CONF_PATH . "driver.ini", Application::app()->environ());
 		$this->driver = $this->driver->toArray();
+		
 		// 获取数据库对象
-		$this->db = Mysql::getInstance($this->driver['mysql'][$this->adapter]);
+		$this->db = Mysql::getInstance($this->driver['mysql'][$this->adapter]);		
 	}
 
 	/**
@@ -82,17 +75,6 @@ abstract class BaseModel
 	protected final function getRedis($key = 'master')
 	{
 		return Redis::getInstance($this->driver['redis'][$redis]);
-	}
-
-	/**
-	 * 读取配置信息
-	 * @param array $key 键名
-	 * @return array|string
-	 */
-	protected final function getConfig($key)
-	{
-		$result = Application::app()->getConfig()->get($key);
-		return is_string($result) ? $result : $result->toArray();
 	}
 
 	/**
@@ -321,11 +303,10 @@ abstract class BaseModel
 
 	/**
 	 * 执行查询
-	 * @param string $method 获取所有|一行|一个
 	 * @param string $clear 清空条件信息
 	 * @return \Driver\Mysql
 	 */
-	protected final function select($method = \BaseModel::FETCH_ALL, $clear = TRUE)
+	protected final function select($clear = TRUE)
 	{
 		// 拼接sql语句
 		$sql = "SELECT {$this->sql['field']} FROM {$this->table} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
@@ -333,8 +314,8 @@ abstract class BaseModel
 		$this->db->query($sql, $this->sql['values']);
 		// 清空数据
 		$clear and $this->resetSql();
-		// 返回类型
-		return $this->db->$method();
+		// 返回数据库操作对象
+		return $this->db;
 	}
 
 	/**
@@ -378,16 +359,16 @@ abstract class BaseModel
 		// 返回当前对象
 		return $this->db->rowCount();
 	}
-	
+
 	/**
 	 * 开启事务,会先判断是否在一个事务内
 	 * @return bool
 	 */
 	public function begin()
 	{
-		return $this->in() OR $this->db->beginTransaction();
+		return $this->in() or $this->db->beginTransaction();
 	}
-	
+
 	/**
 	 * 开启事务,会先判断是否在一个事务内
 	 * @return bool
@@ -396,7 +377,7 @@ abstract class BaseModel
 	{
 		return $this->db->commit();
 	}
-	
+
 	/**
 	 * 开启事务,会先判断是否在一个事务内
 	 * @return bool
@@ -405,7 +386,7 @@ abstract class BaseModel
 	{
 		return $this->db->rollback();
 	}
-	
+
 	/**
 	 * 开启事务,会先判断是否在一个事务内
 	 * @return bool
@@ -421,38 +402,8 @@ abstract class BaseModel
 	 */
 	protected final function resetSql()
 	{
-		$this->sql = array('field'=>'*', 'where'=>NULL, 'group'=>NULL, 'having'=>NULL, 'order'=>NULL, 'limit'=>NULL, 'prepare'=>NULL, 'keys'=>NULL, 'values'=>NULL);
-	}
-	
-	/**
-	 * 分页获取信息
-	 * @param int $page 当前页
-	 * @param int $number 每页几条
-	 * @param array|string $where where条件
-	 * @param string $order 排序条件
-	 * @param string $group 分组条件
-	 * @param array|string having条件
-	 */
-	public function getPage($page=1, $number=15, $where = NULL, $order = NULL, $group = NULL, $having = NULL)
-	{
-		// 获取分页数量
-		$this->field('COUNT(*)');
-		$where and ($this->where($where));
-		$group and ($this->group($group));
-		$order and ($this->order($order));
-		$having and ($this->having($having));
-		$count = $this->select(static::FETCH_ONE, FALSE);
-	
-		// 获取本页数据
-		$this->field('*');
-		$this->limit(($page - 1)*$number, $number);
-		$lists = $this->select();
-	
-		// 输出分页
-		$page = Page::showCenter($number, $count);
-		$page['lists'] = $lists;
-	
-		return $page;
+		$this->sql = array('field'=>'*', 'where'=>NULL, 'group'=>NULL, 'having'=>NULL, 'order'=>NULL, 'limit'=>NULL, 
+				'prepare'=>NULL, 'keys'=>NULL, 'values'=>NULL);
 	}
 }
 
