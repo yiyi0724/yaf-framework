@@ -7,5 +7,5 @@ define('CONF_PATH', SITE_PATH.'conf'.DIRECTORY_SEPARATOR);
 # 项目目录
 define('APPLICATION_PATH', SITE_PATH.'app'.DIRECTORY_SEPARATOR);
 # 启动框架
-$app = new \Yaf\Application(CONF_PATH.'application.ini');
+$app = new \Yaf\Application(CONF_PATH.'app.ini');
 $app->bootstrap()->run();

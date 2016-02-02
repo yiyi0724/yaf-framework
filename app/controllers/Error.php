@@ -5,6 +5,12 @@
  */
 class ErrorController extends \Base\AppController
 {
+	/**
+	 * 禁止再次初始化
+	 */
+	public function init()
+	{
+	}
 
 	/**
 	 * 默认的错误异常处理

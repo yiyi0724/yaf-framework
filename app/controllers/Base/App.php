@@ -67,7 +67,7 @@ abstract class AppController extends Controller_Abstract
 			
 			// 读取校验文件
 			$controller = ucfirst($request->getControllerName());
-			$module = $request->getModuleName();
+			$module = $request->getModuleName().'Form';
 			$action = $request->getActionName().'Rules';
 			
 			// 数据校验

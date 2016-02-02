@@ -1,6 +1,6 @@
 <?php
 
-class Index
+class IndexForm
 {
 	public static function indexRules()
 	{
