@@ -27,12 +27,12 @@ abstract class AppModel extends BaseModel
 		$group and ($this->group($group));
 		$order and ($this->order($order));
 		$having and ($this->having($having));
-		$count = $this->select(static::FETCH_ONE, FALSE);
+		$count = $this->select()->fetchColumn();
 		
 		// 获取本页数据
 		$this->field('*');
 		$this->limit(($page - 1) * $number, $number);
-		$lists = $this->select();
+		$lists = $this->select()->fetchAll();
 		
 		// 输出分页
 		$page = Page::showCenter($page, $number, $count);
