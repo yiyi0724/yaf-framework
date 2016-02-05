@@ -72,20 +72,18 @@ abstract class AppController extends Controller_Abstract
 	 */
 	protected function changeDefault()
 	{
-		// ajax请求关闭模板
-		IS_AJAX and $this->disView();
-		
-		// 默认加载页面是modules/views
-		$this->getView()->setScriptPath(APPLICATION_PATH . 'modules/' . MODULES_NAME . '/views');
+		// ajax请求关闭模板，否则设置默认模板地址
+		IS_AJAX ? $this->disView() : $this->getView()->setScriptPath(APPLICATION_PATH . 'modules/' . MODULES_NAME . '/views');
 	}
 
 	/**
 	 * 登录检查,未登录跳转
-	 * @param string 跳转地址
+	 * @param string $url 跳转地址
+	 * @param string $method 跳转方式
 	 */
-	protected function login($url = "/member/login")
+	protected function login($url = "/member/login", $method = 'get')
 	{
-		UID ? NULL : (IS_AJAX ? $this->jsonp($url, 302) : Location::get($url));
+		UID ? NULL : (IS_AJAX ? $this->jsonp($url, 302) : Location::$method($url));
 	}
 
 	/**
