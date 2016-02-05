@@ -47,14 +47,21 @@ trait Singleton
         return static::$instance[$key];
     }
     
+    /**
+     * 计算hash值
+     * @param array $driver 驱动配置
+     * @return int 哈希值
+     */
     protected static function hashValue(array $driver)
     {
-    	$hash = array();
     	foreach($driver as $key=>$value)
     	{
-    		$hash[$key] = is_array($value) ? static::hashValue($value) : $value;
+    		if(is_array($value))
+    		{
+    			unset($driver[$key]);
+    		}    		
     	}
     	
-    	return sprintf("%u", crc32(implode(':', $hash)));
+    	return sprintf("%u", crc32(implode(':', $driver)));
     }
 }

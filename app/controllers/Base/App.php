@@ -14,16 +14,28 @@ use \Network\Location;
 
 abstract class AppController extends Controller_Abstract
 {
+
 	/**
 	 * 控制器初始化
 	 */
 	public function init()
 	{
-		// 初始化用户UID
-		define('UID', Session::getInstance()->get('user.uid'));
-
+		// 初始化用户状态
+		$this->initUserInfo();
+		
 		// 静态资源常量定义
 		$this->resource();
+		
+		// 默认状态变更
+		$this->changeDefault();
+	}
+
+	/**
+	 * 初始化用户状态
+	 */
+	protected function initUserInfo()
+	{
+		define('UID', Session::getInstance()->get('user.uid'));
 	}
 
 	/**
@@ -32,19 +44,39 @@ abstract class AppController extends Controller_Abstract
 	protected function resource()
 	{
 		$request = $this->getRequest();
-
+		
 		// URL常量定义
 		foreach($this->getConfig('resource') as $key=>$resource)
 		{
 			define('URL_' . strtoupper($key), $resource);
 		}
-
+		
 		// 请求方式定义
 		define('IS_AJAX', $request->isXmlHttpRequest());
 		define('IS_GET', $request->isGet());
 		define('IS_POST', $request->isPost());
 		define('IS_PUT', $request->isPut());
 		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
+		
+		// 模块常量定义
+		define('CONTROLLER_NAME', $request->getControllerName());
+		define('ACTION_NAME', $request->getActionName());
+		define('MODULES_NAME', $request->getModuleName());
+		
+		// 所有请求的参数
+		$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $request->getParams();
+	}
+
+	/**
+	 * 默认行为变更
+	 */
+	protected function changeDefault()
+	{
+		// ajax请求关闭模板
+		IS_AJAX and $this->disView();
+		
+		// 默认加载页面是modules/views
+		$this->getView()->setScriptPath(APPLICATION_PATH . 'modules/' . MODULES_NAME . '/views');
 	}
 
 	/**
@@ -63,18 +95,13 @@ abstract class AppController extends Controller_Abstract
 	{
 		try
 		{
-			$request = $this->getRequest();
-			
-			// 所有参数
-			$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $request->getParams();
-			
 			// 读取校验文件
-			$controller = ucfirst($request->getControllerName()).'Form';
-			$module = $request->getModuleName();
-			$action = $request->getActionName().'Rules';
+			$module = MODULES_NAME;
+			$controller = CONTROLLER_NAME . 'Form';
+			$action = ACTION_NAME . 'Rules';
 			
 			// 数据校验
-			Loader::import(APPLICATION_PATH."modules/{$module}/validates/{$controller}.php");
+			Loader::import(APPLICATION_PATH . "modules/{$module}/validates/{$controller}.php");
 			$rules = $controller::$action();
 			return Validate::validity($rules);
 		}
@@ -114,9 +141,6 @@ abstract class AppController extends Controller_Abstract
 	 */
 	public function jsonp($output, $code = 200)
 	{
-		// 关闭视图
-		$this->disView();
-		
 		// 数据整理
 		$json['message'] = $output;
 		$json['code'] = $code;
@@ -127,21 +151,32 @@ abstract class AppController extends Controller_Abstract
 		{
 			$jsonp = NULL;
 		}
-
+		
 		// 格式化json
 		$json = json_encode($json);
 		$header = 'application/json';
-
+		
 		// 如果是jsonp
 		if($jsonp)
 		{
 			$header = 'text/javascript';
 			$output = "<script type=\"text/javascript\">{$jsonp}({$json});</script>";
 		}
-
+		
 		// 结果输出
 		header("Content-type: {$header}; charset=UTF-8");
 		exit($json);
+	}
+
+	/**
+	 * 页面跳转
+	 * @param string $url 要跳转的url地址
+	 * @param string $method 跳转方式，get | post |redirect
+	 * @param array|int $data 如果是post请输入数组，如果是redirect请输入301|302|303|307	 
+	 */
+	protected function location($url, $method = 'get', $data = array())
+	{
+		exit(Location::$method($url, $data));
 	}
 
 	/**

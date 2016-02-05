@@ -41,17 +41,18 @@ abstract class BaseModel
 	 * 附加的查询条件
 	 * @var array
 	 */
-	protected $sql = array(
+	protected $sql = [
 		'field'=>'*',
 		'where'=>NULL,		
 		'group'=>NULL,
 		'having'=>NULL,
 		'order'=>NULL,
-		'limit'=>NULL, 
+		'limit'=>NULL,
+		'other'=>NULL,
 		'prepare'=>NULL,
 		'keys'=>NULL,
 		'values'=>array()
-	);
+	];
 
 	/**
 	 * 构造函数,加载配置
@@ -68,7 +69,7 @@ abstract class BaseModel
 
 	/**
 	 * 获取redis
-	 * @param string $key 要连接的数据库
+	 * @param string $key 适配器名称，默认master
 	 * @return \Driver\Redis
 	 */
 	protected final function getRedis($key = 'master')
@@ -79,7 +80,7 @@ abstract class BaseModel
 	/**
 	 * 设置要查询的字段
 	 * @param string $field 查询字符串列表
-	 * @return \Traits\Model
+	 * @return \Base\BaseModel
 	 */
 	protected final function field($field)
 	{
@@ -90,7 +91,7 @@ abstract class BaseModel
 	/**
 	 * 拼接where子句
 	 * @params string|array $condition 要拼接的条件
-	 * @return \Traits\Model
+	 * @return \Base\BaseModel
 	 */
 	protected final function where($condition)
 	{
@@ -101,7 +102,7 @@ abstract class BaseModel
 	/**
 	 * 拼接having子句
 	 * @params string|array $condition 要拼接的条件
-	 * @return \Traits\Model
+	 * @return \Base\BaseModel
 	 */
 	protected final function having($condition)
 	{
@@ -112,7 +113,7 @@ abstract class BaseModel
 	/**
 	 * 拼接order子句
 	 * @param string $order 排序字符串
-	 * @return \Traits\Model
+	 * @return \Base\BaseModel
 	 */
 	protected final function order($order)
 	{
@@ -123,7 +124,7 @@ abstract class BaseModel
 	/**
 	 * 拼接group子句
 	 * @param string $group 分组字符串
-	 * @return \Traits\Model
+	 * @return \Base\BaseModel
 	 */
 	protected final function group($group)
 	{
@@ -135,7 +136,7 @@ abstract class BaseModel
 	 * 拼接limit子句
 	 * @param int $offset 偏移量
 	 * @param int $limit 个数
-	 * @return \Traits\Model
+	 * @return \Base\BaseModel
 	 */
 	protected final function limit($offset, $limit = NULL)
 	{
@@ -149,12 +150,23 @@ abstract class BaseModel
 		$this->sql["limit"] = "LIMIT :limit_offset, :limit_number";
 		return $this;
 	}
+	
+	/**
+	 * 拼接其他附加条件
+	 * @param string $other 其他附加条件，如for update
+	 * @return \Base\BaseModel
+	 */
+	protected final function other($other)
+	{
+		$this->sql['other'] = $other;
+		return $this;
+	}
 
 	/**
 	 * 拼接条件子句
 	 * @param array 键值对数组
 	 * @param string where或者having
-	 * @return array
+	 * @return array|string
 	 */
 	protected final function comCondition($condition)
 	{
@@ -286,7 +298,7 @@ abstract class BaseModel
 
 	/**
 	 * 执行删除
-	 * @return \Driver\Mysql;
+	 * @return int 影响的行数;
 	 */
 	protected final function delete()
 	{
@@ -301,16 +313,18 @@ abstract class BaseModel
 	}
 
 	/**
-	 * 执行查询
+	 * 执行查询,返回对象进行fetch操作
 	 * @param string $clear 清空条件信息
 	 * @return \Driver\Mysql
 	 */
 	protected final function select($clear = TRUE)
 	{
+		// 局部释放变量
+		extract($this->sql);
 		// 拼接sql语句
-		$sql = "SELECT {$this->sql['field']} FROM {$this->table} {$this->sql['where']} {$this->sql['group']} {$this->sql['having']} {$this->sql['order']} {$this->sql['limit']}";
+		$sql = "SELECT {$field} FROM {$this->table} {$where} {$group} {$having} {$order} {$limit} {$other}";
 		// 执行sql语句
-		$this->db->query($sql, $this->sql['values']);
+		$this->db->query($sql, $values);
 		// 清空数据
 		$clear and $this->resetSql();
 		// 返回数据库操作对象
@@ -319,38 +333,32 @@ abstract class BaseModel
 
 	/**
 	 * 执行更新
-	 * @param array 键值对数组
-	 * @return \Driver\Mysql;
+	 * @param array $update 键值对数组
+	 * @return int 影响的行数;
 	 */
 	protected final function update(array $update)
 	{
 		foreach($update as $key=>$val)
 		{
-			// 自增等系列处理
-			if(stripos($val, $key) !== FALSE)
+			if(preg_match('/([+|\-|\*|\/|%|&|\||\!|\^])(\d+)/', $val, $result))
 			{
-				foreach(array('+', '-', '*', '/', '^', '&', '|', '!') as $opeartion)
-				{
-					if(strpos($val, $opeartion))
-					{
-						$temp = explode($opeartion, $val);
-						break;
-					}
-				}
-				$set[] = "`{$key}`={$temp[0]}{$opeartion}:{$key}";
-				$this->sql['values'][":{$key}"] = $temp[1];
+				// 自增等系列处理
+				$set = "`{$key}`=`{$key}`{$result[1]}:{$key}";
+				$val = $result[2];
 			}
 			else
 			{
-				// 普通赋值
-				$set[] = "`{$key}`=:{$key}";
-				$this->sql['values'][":{$key}"] = $val;
+				// 默认处理方式
+				$set = "`{$key}`=:{$key}";
 			}
+			
+			$sets[] = $set;
+			$this->sql['values'][":{$key}"] = $val;			
 		}
 		// set语句
-		$set = implode(',', $set);
+		$sets = implode(',', $sets);
 		// sql语句
-		$sql = "UPDATE {$this->table} SET {$set} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
+		$sql = "UPDATE {$this->table} SET {$sets} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
 		// 执行sql语句
 		$this->db->query($sql, $this->sql['values']);
 		// 清空数据
@@ -363,34 +371,34 @@ abstract class BaseModel
 	 * 开启事务,会先判断是否在一个事务内
 	 * @return bool
 	 */
-	public function begin()
+	public final function begin()
 	{
 		return $this->in() or $this->db->beginTransaction();
 	}
 
 	/**
-	 * 开启事务,会先判断是否在一个事务内
+	 * 提交事务
 	 * @return bool
 	 */
-	public function commit()
+	public final function commit()
 	{
 		return $this->db->commit();
 	}
 
 	/**
-	 * 开启事务,会先判断是否在一个事务内
+	 * 回滚事务
 	 * @return bool
 	 */
-	public function rollback()
+	public final function rollback()
 	{
 		return $this->db->rollback();
 	}
 
 	/**
-	 * 开启事务,会先判断是否在一个事务内
+	 * 检查是否在事务内
 	 * @return bool
 	 */
-	public function in()
+	public final function in()
 	{
 		return $this->db->inTransaction();
 	}
@@ -401,8 +409,18 @@ abstract class BaseModel
 	 */
 	protected final function resetSql()
 	{
-		$this->sql = array('field'=>'*', 'where'=>NULL, 'group'=>NULL, 'having'=>NULL, 'order'=>NULL, 'limit'=>NULL, 
-				'prepare'=>NULL, 'keys'=>NULL, 'values'=>NULL);
+		$this->sql = [
+			'field'=>'*',
+			'where'=>NULL,
+			'group'=>NULL,
+			'having'=>NULL,
+			'order'=>NULL,
+			'limit'=>NULL,
+			'other'=>NULL,
+			'prepare'=>NULL,
+			'keys'=>NULL,
+			'values'=>NULL
+		];
 	}
 }
 

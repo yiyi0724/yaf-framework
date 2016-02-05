@@ -17,13 +17,6 @@ class Validate
 	protected static $data = array();
 
 	/**
-	 * 错误内容
-	 * @static
-	 * @var array
-	 */
-	protected static $error = array();
-
-	/**
 	 * 加载规则
 	 * @param string $file
 	 * @return array 规则数组
@@ -58,7 +51,7 @@ class Validate
 	 * @return void
 	 */
 	public static function validity($rules)
-	{		
+	{
 		// 没有规则返回空
 		if(!$rules)
 		{

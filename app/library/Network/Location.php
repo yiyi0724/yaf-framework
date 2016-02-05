@@ -29,7 +29,6 @@ class Location
 	{		
 		$code and isset(static::$headers[$code]) and header(static::$header[$code]);
 		header("Location: {$url}");
-		exit();
 	}
 	
 	/**
@@ -38,7 +37,7 @@ class Location
 	 */
 	public static function get($url)
 	{
-		exit("<meta http-equiv=\"refresh\" content=\"0;url={$url}\">");
+		echo "<meta http-equiv=\"refresh\" content=\"0;url={$url}\">";
 	}
 	
 	/**
@@ -53,7 +52,7 @@ class Location
 		{
 			$html .= "<input type=\"hidden\" name=\"{$key}\" value=\"{$value}\">";
 		}
-		$html .= "</form><script>document.forms['formSubmit'].submit();</script>";
-		exit($html);
+		$html .= "</form><script>document.forms['formSubmit'].submit();</script>";		
+		echo $html;
 	}
 }
