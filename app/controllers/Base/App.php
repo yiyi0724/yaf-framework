@@ -35,7 +35,8 @@ abstract class AppController extends Controller_Abstract
 	 */
 	protected function initUserInfo()
 	{
-		define('UID', Session::getInstance()->get('user.uid'));
+		define('UID', Session::getInstance()->get('member.uid'));
+		define('UNAME', Session::getInstance()->get('member.uname'));
 	}
 
 	/**
@@ -46,7 +47,7 @@ abstract class AppController extends Controller_Abstract
 		$request = $this->getRequest();
 		
 		// URL常量定义
-		foreach($this->getConfig('resource') as $key=>$resource)
+		foreach(Application::app()->getConfig()->get('resource') as $key=>$resource)
 		{
 			define('URL_' . strtoupper($key), $resource);
 		}
@@ -175,17 +176,6 @@ abstract class AppController extends Controller_Abstract
 	protected function location($url, $method = 'get', $data = array())
 	{
 		exit(Location::$method($url, $data));
-	}
-
-	/**
-	 * 读取配置
-	 * @param string $key 键名
-	 * @return string | array
-	 */
-	protected function getConfig($key)
-	{
-		$config = Application::app()->getConfig()->get($key);
-		return is_string($config) ? $config : $config->toArray();
 	}
 
 	/**

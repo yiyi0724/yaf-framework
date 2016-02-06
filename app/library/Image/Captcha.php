@@ -4,98 +4,91 @@ namespace Image;
 
 class Captcha
 {
-    protected $fonts = array(
-        'telefono.ttf',
-        'brokenrecords_33.ttf',
-        'brokenrecords_45.ttf',
-    );
-    
-    /**
-     * 选项
-     * @var array
-     */
-    protected $options = array();
-    
-    /**
-     * 写入$_SESSION的key
-     * @param string 键名
-     * @return \Image\Captcha
-     */
-    public function setKey($key)
-    {
-    	$this->options['key'] = $key;
-    	return $this;
-    }
-    
-    public function setWidth($width)
-    {
-    	$this->options['width'] = $witdh;
-    	return $this;
-    }
-    
-    public function setHeight($height)
-    {
-    	$this->options['height'] = $height;
-    	return $this;
-    }
-    
-    /**
-     * 输出验证码
-     * @param int 长度
-     * @param int 宽度
-     * @param string 字体
-     */
-    public static function draw($width, $height, $font=NULL)
-    {
-        // 随机码
-        $randomCode = self::randomCode();
-        // 画布
-        $image = imagecreatetruecolor($width, $height);
-        // 颜色
-        $color = imagecolorallocate($image, mt_rand(157,255), mt_rand(157,255), mt_rand(157,255));
-        // 填充颜色
-  		imagefilledrectangle($image, 0, $height, $width, 0, $color);
-  		// 填充文字
-  		for($i=0; $i<4; $i++)
-  		{
-  		    $color = imagecolorallocate($image, mt_rand(0,156), mt_rand(0,156), mt_rand(0,156));
-  		    imagettftext($image, $height*0.5, mt_rand(-30,30), $width/5*$i+mt_rand(1,5)+$width/8, $height/1.4, $color , self::font($font), $randomCode[$i]);
-  		}
-  		$_SESSION['captcha'] = $randomCode;
-  		//线条
-  		for($i=0; $i<6; $i++)
-  		{
-  		    $color = imagecolorallocate($image, mt_rand(0,156), mt_rand(0,156), mt_rand(0,156));
-  		    imageline($image, mt_rand(0,$width), mt_rand(0,$height), mt_rand(0,$width), mt_rand(0,$height), $color);
-        }
-        //雪花
-        $number = $height*0.8;
-        for($i=0; $i<$number; $i++)
-        {
-        $color = imagecolorallocate($image, mt_rand(200,255), mt_rand(200,255), mt_rand(200,255));
-        imagestring($image, mt_rand(1,5), mt_rand(0,$width), mt_rand(0,$height), '*', $color);
-        }
-        // 输出
-        header('Content-type: image/png');
-        imagepng($image);
-        // 销毁
-    	imagedestroy($image);
-    }
-    
-    /**
-     * 获取随机码
-     * @return string
-     */
-    protected static function randomCode()
-    {
-        return substr(str_shuffle("abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789"), 0, 6);
-    }
-    
-    /**
-     * 选择何种字体
-     * @param string 字体路径 $font
-     */
-    protected static function font($font) {    
-        return $font ? : __DIR__.'/Fonts/'.self::$fonts[mt_rand(0, count(self::$fonts)-1)];
-    }
+
+	protected $randomCode = 'abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+
+	/**
+	 * 字体库
+	 * @var array
+	 */
+	protected $fonts = array('brokenrecords_33.ttf', 'brokenrecords_45.ttf', 'telefono.ttf');
+
+	/**
+	 * 构造函数
+	 * @param int $width 长度
+	 * @param int $heigh 宽度
+	 * @param int $length 字符个数
+	 * @param string $font 字体名称
+	 */
+	public function __construct($width = 100, $height = 40, $length = 4, $font = NULL)
+	{
+		$this->width = $width;
+		$this->height = $height;
+		$this->image = imagecreatetruecolor($width, $height);
+		$this->code = $this->randomCode($length);
+		$this->font = __DIR__.'/Fonts/'.$this->getFont();
+	}
+
+	/**
+	 * 画图
+	 */
+	public function draw()
+	{
+		// 画布颜色
+		$color = imagecolorallocate($this->image, 255, 255, 255);
+		
+		// 填充颜色
+		imagefilledrectangle($this->image, 0, $this->height, $this->width, 0, $color);
+
+		// 填充文字
+		for($i=0, $len=strlen($this->code); $i<$len; $i++)
+		{
+			$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
+			imagettftext(
+					$this->image,
+					$this->height * 0.5,
+					mt_rand(-30, 30),
+					10+$this->width / 5 * $i,
+					$this->height / 1.4,
+					$color,
+					$this->font,
+					$this->code[$i]
+			);
+		}
+	}
+	
+	/**
+	 * 获取生成的验证码
+	 */
+	public function getCode()
+	{
+		return $this->code();
+	}
+	
+	public function output()
+	{
+		// 输出
+		header('Content-type: image/png');
+		imagepng($this->image);
+		// 销毁
+		imagedestroy($this->image);
+	}
+
+	/**
+	 * 获取随机码
+	 * @return string
+	 */
+	protected function randomCode($length)
+	{
+		return substr(str_shuffle($this->randomCode), 0, $length);
+	}
+
+	/**
+	 * 选择何种字体
+	 * @param string 字体路径 $font
+	 */
+	protected function getFont()
+	{
+		return $this->fonts[mt_rand(0, count($this->fonts) - 1)];
+	}
 }

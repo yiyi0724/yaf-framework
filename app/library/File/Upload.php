@@ -7,8 +7,7 @@
 namespace File;
 
 class Upload
-{
-	
+{	
 	/**
 	 * 移动文件
 	 * @param string $key 上传文件的key，也就是input的name
