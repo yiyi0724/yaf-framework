@@ -4,11 +4,12 @@ namespace Tool;
 
 class Debug
 {
-	public static function echoArr($arr)
+	/**
+	 * 
+	 * @param mixed $arr
+	 */
+	public static function prePrint($arr)
 	{
-		echo '<pre>';
-		print_r($arr);
-		echo '</pre>';
-		exit;
+		exit('<pre>'.print_r($arr).'</pre>');
 	}
 }

@@ -31,18 +31,33 @@ class Validate
 		}
 		
 		// 读取参数
-		foreach($rules as &$rule)
+		$rulesList = array();
+		foreach($rules as $key=>$rule)
 		{
-			array_unshift($rule, NULL);
-			$from = '_' . strtoupper($rule[2]);
-			$name = $rule[1];
-			if(isset($GLOBALS[$from][$name]))
+			// 获取来源
+			if(strcasecmp($_SERVER['REQUEST_METHOD'], $rule[0]))
 			{
-				$rule[0] = $GLOBALS[$from][$name];
+				continue;
+			}
+			
+			// 检查整理
+			$from = '_' . strtoupper($rule[0]);
+			$rulesList[$key] = array(
+				'value'=>NULL,
+				'method'=>$rule[1],
+				'require'=>$rule[2],
+				'notify'=>$rule[3], 
+				'options'=>isset($rule[4]) ? $rule[4] : NULL, 
+				'default'=>isset($rule[5]) ? $rule[5] : NULL, 
+				'alias'=>isset($rule[6]) ? $rule[6] : NULL			
+			);
+			if(isset($GLOBALS[$from][$key]))
+			{
+				$rulesList[$key]['value'] = trim($GLOBALS[$from][$key]);
 			}
 		}
-		
-		return $rules;
+				
+		return $rulesList;
 	}
 
 	/**
@@ -62,55 +77,49 @@ class Validate
 		$rules = static::load($rules);
 		
 		// 检查
+		$error = array();
 		foreach($rules as $key=>$rule)
 		{
 			// 是否必须
 			if(Rule::notExists($rule))
 			{
-				throw new FormException($rule[5], $key);
+				$error[$key] = $rule['notify'];
+				continue;
 			}
 			
 			// 对应数据类型检查
-			$method = $rule[3];
-			if($rule[0] !== NULL && !Rule::$method($rule))
+			$method = $rule['method'];
+			if($rule['value'] !== NULL && !Rule::$method($rule))
 			{
-				throw new FormException($rule[5], $key);
+				$error[$key] = $rule['notify'];
+				continue;
 			}
 			
 			// 设置合法值
-			static::setData($rule);
+			static::setData($key, $rule);
 		}
-		
 		// 结果返回
-		return static::$data;
+		return array(static::$data, $error);
 	}
 
 	/**
 	 * 通过检查的值进行设置
 	 * @param array $rule
 	 */
-	private static function setData($rule)
+	private static function setData($key, $rule)
 	{
 		// 是否存在别名
-		$key = isset($rule[7]) ? $rule[7] : $rule[1];
+		$key = $rule['alias'] ? $rule['alias'] : $key;
 		
 		// 是否填充默认值
-		$value = ($rule[0] === NULL && isset($rule[8])) ? $rule[8] : $rule[0];
-		
-		if($value !== NULL)
+		if($rule['value'] === NULL && $rule['default'])
 		{
-			// 进行归档
-			if(isset($rule[9]))
-			{
-				foreach(explode(',', $rule[9]) as $induce)
-				{
-					static::$data[$induce][$rule[1]] = $value;
-				}
-			}
-			else
-			{
-				static::$data[$rule[1]] = $value;
-			}
+			$rule['value'] = $rule['default'];
+		}
+		
+		if($rule['value'] !== NULL)
+		{
+			static::$data[$key] = $rule['value'];
 		}
 	}
 }
@@ -131,7 +140,7 @@ class Rule
 	 */
 	public static function notExists($rule)
 	{
-		return $rule[4] && is_null($rule[0]);
+		return $rule['require'] && is_null($rule['value']);
 	}
 
 	/**
@@ -143,18 +152,16 @@ class Rule
 	public static function number($rule)
 	{
 		// 是否是数字
-		$flag = is_numeric($rule[0]);
-		
+		$flag = is_numeric($rule['value']);
 		// 最小值检查
-		if($flag && isset($rule[6]['min']))
+		if($flag && isset($rule['options']['min']))
 		{
-			$flag = $rule[0] >= $rule[6]['min'];
+			$flag = $rule['value'] >= $rule['options']['min'];
 		}
-		
 		// 最大值检查
-		if($flag && isset($rule[6]['max']))
+		if($flag && isset($rule['options']['max']))
 		{
-			$flag = $rule[0] <= $rule[6]['max'];
+			$flag = $rule['value'] <= $rule['options']['max'];
 		}
 		
 		return $flag;
@@ -200,7 +207,7 @@ class Rule
 	 */
 	public static function regexp($rule)
 	{
-		return preg_match($rule['pattern'], $rule['value']);
+		return preg_match($rule['options'], $rule['value']);
 	}
 
 	/**
@@ -211,26 +218,23 @@ class Rule
 	public static function string($rule)
 	{
 		// xss注入攻击
-		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', 
-			$rule['value']);
+		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', $rule['value']);
 		
 		// 字符串长度
-		if(isset($rule['length']))
+		$length = mb_strlen($rule['value']);
+		
+		// 最小值检查
+		if($flag && isset($rule['options']['min']))
 		{
-			$length = mb_strlen($rule['value']);
-			
-			// 最小值检查
-			if($flag && isset($rule['min']))
-			{
-				$flag = $rule['value'] >= $rule['min'];
-			}
-			
-			// 最大值检查
-			if($flag && isset($rule['max']))
-			{
-				$flag = $rule['value'] <= $rule['max'];
-			}
+			$flag = $length >= $rule['options']['min'];
 		}
+		
+		// 最大值检查
+		if($flag && isset($rule['options']['max']))
+		{
+			$flag = $length <= $rule['options']['max'];
+		}
+		
 		return $flag;
 	}
 
@@ -254,7 +258,7 @@ class Rule
 	 */
 	public static function callback($rule)
 	{
-		return call_user_func_array($rule[6], [$rule[0]]);
+		return call_user_func_array($rule['options'], [$rule['value']]);
 	}
 }
 

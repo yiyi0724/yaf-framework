@@ -8,7 +8,6 @@ namespace Base;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 use \Yaf\Session;
-use \Yaf\Loader;
 use \Security\Validate;
 use \Network\Location;
 
@@ -21,22 +20,21 @@ abstract class AppController extends Controller_Abstract
 	public function init()
 	{
 		// 初始化用户状态
-		$this->initUserInfo();
+		$this->member();
 		
 		// 静态资源常量定义
-		$this->resource();
+		$this->resource('index');
 		
 		// 默认状态变更
-		$this->changeDefault();
+		$this->behavior();
 	}
 
 	/**
 	 * 初始化用户状态
 	 */
-	protected function initUserInfo()
+	protected function member()
 	{
-		define('UID', Session::getInstance()->get('member.uid'));
-		define('UNAME', Session::getInstance()->get('member.uname'));
+		defined('UID') or define('UID', Session::getInstance()->get('member.uid'));
 	}
 
 	/**
@@ -49,42 +47,54 @@ abstract class AppController extends Controller_Abstract
 		// URL常量定义
 		foreach(Application::app()->getConfig()->get('resource') as $key=>$resource)
 		{
-			define('URL_' . strtoupper($key), $resource);
+			$constKey = 'URL_' . strtoupper($key);
+			defined($constKey) or define($constKey, $resource);
 		}
 		
 		// 请求方式定义
-		define('IS_AJAX', $request->isXmlHttpRequest());
-		define('IS_GET', $request->isGet());
-		define('IS_POST', $request->isPost());
-		define('IS_PUT', $request->isPut());
-		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
+		defined('IS_AJAX') or define('IS_AJAX', $request->isXmlHttpRequest());
+		defined('IS_GET') or define('IS_GET', $request->isGet());
+		defined('IS_POST') or define('IS_POST', $request->isPost());
+		defined('IS_PUT') or define('IS_PUT', $request->isPut());
+		defined('IS_DELETE') or define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
 		
 		// 模块常量定义
-		define('CONTROLLER_NAME', $request->getControllerName());
-		define('ACTION_NAME', $request->getActionName());
-		define('MODULES_NAME', $request->getModuleName());
+		defined('CONTROLLER_NAME') OR define('CONTROLLER_NAME', $request->getControllerName());
+		defined('ACTION_NAME') OR define('ACTION_NAME', $request->getActionName());
+		defined('MODULES_NAME') OR define('MODULES_NAME', $request->getModuleName());
 		
 		// 所有请求的参数
-		$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $request->getParams();
+		$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = array_merge($_REQUEST, $request->getParams());
 	}
 
 	/**
 	 * 默认行为变更
 	 */
-	protected function changeDefault()
+	protected function behavior()
 	{
 		// ajax请求关闭模板，否则设置默认模板地址
-		IS_AJAX ? $this->disView() : $this->getView()->setScriptPath(APPLICATION_PATH . 'modules/' . MODULES_NAME . '/views');
+		if(IS_AJAX)
+		{
+			$this->disView();
+		}
+		else
+		{
+			$this->getView()->setScriptPath(APPLICATION_PATH . 'modules/' . MODULES_NAME . '/views');
+		}
 	}
 
 	/**
 	 * 登录检查,未登录跳转
 	 * @param string $url 跳转地址
 	 * @param string $method 跳转方式
+	 * @param int|array 跳转code或者post传递参数
 	 */
-	protected function login($url = "/member/login", $method = 'get')
+	protected function login($url = "/member/login", $method = 'get', $data = NULL)
 	{
-		UID ? NULL : (IS_AJAX ? $this->jsonp($url, 302) : Location::$method($url));
+		if(!UID)
+		{
+			IS_AJAX ? $this->jsonp($url, 302) : $this->location($url, $method, $data);
+		}
 	}
 
 	/**
@@ -92,26 +102,25 @@ abstract class AppController extends Controller_Abstract
 	 */
 	protected function validate()
 	{
-		try
-		{
-			// 读取校验文件
-			$module = MODULES_NAME;
-			$controller = CONTROLLER_NAME . 'Form';
-			$action = ACTION_NAME . 'Rules';
+		// 读取校验文件
+		$module = MODULES_NAME;
+		$controller = CONTROLLER_NAME . 'Form';
+		$action = ACTION_NAME . 'Rules';
 			
-			// 数据校验
-			Loader::import(APPLICATION_PATH . "modules/{$module}/validates/{$controller}.php");
-			$rules = $controller::$action();
-			return Validate::validity($rules);
-		}
-		catch(\Security\FormException $e)
+		// 数据校验
+		require (APPLICATION_PATH . "modules/{$module}/validates/{$controller}.php");
+		$rules = $controller::$action();
+		list($success, $fail) = Validate::validity($rules);		
+		if($fail)
 		{
 			// ajax输出
-			IS_AJAX and $this->jsonp([$rules[$e->getCode()][0]=>$e->getMessage()], 412);
+			IS_AJAX and $this->jsonp($fail, 412);			
 			// 页面输出
-			$this->view(['notify'=>$e->getMessage()], 'common/notify', TRUE);
+			$this->view(['form'=>$fail], 'common/notify', TRUE);
 			exit();
 		}
+		
+		return $success;
 	}
 
 	/**

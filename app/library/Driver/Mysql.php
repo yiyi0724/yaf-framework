@@ -10,40 +10,70 @@ namespace Driver;
 class Mysql
 {
 	/**
-	 * 加载单例模式
-	 * @var \Traits\Singleton
+	 * 对象池
+	 * @var array
 	 */
-	use \Traits\Singleton;
-
+	protected static $instance;
+	
 	/**
 	 * pdo对象
 	 * @var \Pdo
 	 */
 	protected $pdo;
+	
+	/**
+	 * 配置信息
+	 * @var array
+	 */
+	protected $driver = array();
 
 	/**
 	 * 预处理对象
 	 * @var \PDOStatement
 	 */
 	protected $stmt;
-
+	
 	/**
-	 * 创建PDO对象
-	 * @param array $driver 数组配置, host | port | dbname | charset | username | password
-	 * @throws \PDOException
+	 * 禁止直接创建构造函数
+	 * @param array $driver
 	 */
-	protected function create($driver)
-	{
+	protected function __construct(array $driver) {
 		// 数据库连接信息
-		$dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";
-		
+		$dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";		
 		// 驱动选项
 		$options = array(
 			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION, \PDO::ATTR_TIMEOUT=>30
-		);
-		
+		);		
 		// 创建数据库驱动对象
 		$this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
+		// 保存配置
+		$this->driver = $driver;
+	}
+	
+	/**
+	 * 禁止克隆对象
+	 * @return void
+	 */
+	protected final function __clone()
+	{
+	}
+	
+	/**
+	 * 单例模式创建连接池对象
+	 * @param array 数组配置
+	 * @return \Driver
+	 */
+	public static function getInstance(array $driver)
+	{
+		// 计算hash值
+		$key = sprintf("%u", crc32(implode(':', $driver)));
+		// 是否已经创建过单例对象
+		if(empty(static::$instance[$key]))
+		{
+			static::$instance[$key] = new static($driver);
+		}
+		// 返回对象
+		return static::$instance[$key];
 	}
 
 	/**

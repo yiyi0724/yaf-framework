@@ -1,7 +1,6 @@
 <?php
 class IndexForm
 {
-
 	public static function indexRules()
 	{
 		// key from type require notify options alias induce
