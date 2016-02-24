@@ -33,10 +33,6 @@ class ErrorController extends \Base\AppController
 			// 线上环境报错
 			IS_AJAX and ($errorInfo = '服务器出错了，请重试后联系客服');
 		}
-		
-		echo '<pre>';
-		print_r($errorInfo);
-		exit;
 
 		// json请求
 		IS_AJAX and $this->jsonp($errorInfo, 504);

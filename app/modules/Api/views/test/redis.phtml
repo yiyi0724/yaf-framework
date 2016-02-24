@@ -1,0 +1,18 @@
+<style>
+table {
+	width:100%;
+	border-collapse: collapse;
+    text-align: center;
+}
+</style>
+<?php $this->display('common/header.phtml')?>
+<table style="border:1px">
+	<?php foreach($page['lists'] as $list):?>
+	<tr>
+		<td><?php echo $list['id'];?></td>
+		<td><img width="100px" src="http://static.dev.5755.com/image/<?php echo $list['thumb']?>"></td>
+	</tr>
+	<?php endforeach;?>
+</table>
+<?php $this->display('common/page.phtml')?>
+<?php $this->display('common/footer.phtml')?>

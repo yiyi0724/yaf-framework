@@ -9,6 +9,15 @@ namespace Traits;
  */
 class Route implements \Yaf\Route_Interface
 {
+	/**
+	 * 默认路由信息
+	 * @var array $route
+	 */
+	protected $route = array(
+		'module'=>'front',
+		'controller'=>'index',
+		'action'=>'index'
+	);
 
 	/**
 	 * 已在Yaf中注册的模块
@@ -48,28 +57,23 @@ class Route implements \Yaf\Route_Interface
 		// 模块修改
 		if(in_array($module, $this->modules))
 		{
-			// 具体模块
-			$request->module = $module;
-			//$request->setModuleName();
-			array_splice($uri, 0);
+			$this->route['module'] = $module;
+			array_splice($uri, 0, 1);
 		}
-		else
-		{
-			// 默认模块
-			$request->setModuleName('front');
-		}		
 		// 控制器修改
 		if(isset($uri[0]))
 		{
-			$request->setControllerName($uri[0]);
-		}		
+			$this->route['controller'] = $uri[0];
+		}
 		// 方法修改
 		if(isset($uri[1]))
 		{
-			$request->setActionName($uri[1]);
-		}	
-		
-		return false;
+			$this->route['action'] = $uri[1];
+		}
+		// 更改调度信息
+		$request->setModuleName($this->route['module']);
+		$request->setControllerName(ucfirst($this->route['controller']));
+		$request->setActionName(ucfirst($this->route['action']));
 	}
 
 	public function assemble(array $info, array $query = NULL)
