@@ -6,20 +6,19 @@ use Yaf\Dispatcher;
 use Yaf\Config\Ini;
 class Bootstrap extends Bootstrap_Abstract
 {
-
 	/**
 	 * 修改php.ini的默认配置
 	 * @param Dispatcher $dispatcher
 	 */
-	public function _initIni(Dispatcher $dispatcher)
+	public function _initRuntime(Dispatcher $dispatcher)
 	{
-		if($inis = Application::app()->getConfig()->get('phpini'))
-		{
-			foreach($inis as $prefix=>$ini)
-			{
-				foreach($ini as $suffixe=>$value)
+		if($runtime = Application::app()->getConfig()->get('runtime'))
+		{				
+			foreach($runtime as $prefix=>$config)
+			{				
+				foreach($config as $key=>$value)
 				{
-					ini_set("{$prefix}.{$suffixe}", $value);
+					ini_set("{$prefix}.{$key}", $value);
 				}
 			}
 		}
@@ -40,8 +39,12 @@ class Bootstrap extends Bootstrap_Abstract
 	 */
 	public function _initRoute(Dispatcher $dispatcher)
 	{
+		// 路由重写
 		$router = $dispatcher->getRouter();
 		$routeConfig = new Ini(CONF_PATH . 'route.ini');
 		$router->addConfig($routeConfig);
+		
+		// 自定义路由协议
+		$router->addRoute('enyRouter', new \Traits\Route());
 	}
 }

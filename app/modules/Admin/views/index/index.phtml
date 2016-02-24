@@ -1,0 +1,61 @@
+﻿<?php $this->display("common/header.phtml", array('title'=>'控制台'))?>
+<body>
+	<?php
+	// 头部区域
+	$this->display("common/nav.phtml");
+	?>
+	<div class="main-container" id="main-container">
+		<div class="main-container-inner">
+			<?php
+			// 左边导航区域
+			$this->display("common/left.phtml");
+			?>
+
+			<!--右边内容区域-->
+			<div class="main-content">
+				<div class="breadcrumbs" id="breadcrumbs">
+					<ul class="breadcrumb">
+						<li>
+							<i class="icon-home home-icon"></i>
+							<a href="#">控制台</a>
+						</li>
+						<li>
+							<a href="#">面包屑</a>
+						</li>
+						<li class="active">内容</li>
+					</ul>
+					<div class="nav-search" id="nav-search">
+						<form class="form-search">
+							<span class="input-icon">
+								<input type="text" placeholder="搜索 ..." class="nav-search-input" id="nav-search-input" autocomplete="off">
+								<i class="icon-search nav-search-icon"></i>
+							</span>
+						</form>
+					</div>
+				</div>
+			</div>
+			<!--/右边内容区域-->
+		</div>
+		<a href="javascript:void(0);" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+			<i class="icon-double-angle-up icon-only bigger-110"></i>
+		</a>
+	</div>
+	<!--[if lte IE 8]>
+	  <script src="/admin/js/excanvas.min.js"></script>
+	<![endif]-->
+</body>
+<?php $this->display("common/footer.phtml", array('scripts'=>array(
+	'typeahead-bs2.min.js',
+	'jquery-ui-1.10.3.custom.min.js',
+	'jquery.ui.touch-punch.min.js',
+	'jquery.slimscroll.min.js',
+	'jquery.easy-pie-chart.min.js',
+	'jquery.sparkline.min.js',
+	'jquery.sparkline.min.js',
+	'flot/jquery.flot.min.js',
+	'flot/jquery.flot.pie.min.js',
+	'flot/jquery.flot.resize.min.js',
+	'ace-elements.min.js',
+	'ace.min.js',
+)))?>
+

@@ -6,9 +6,7 @@ class IndexController extends \Base\IndexController
 
 	public function indexAction()
 	{
-		echo 1;exit;
-		$image = new \Image\Captcha();
-		$image->draw();
+		echo 11111;exit;
 	}
 
 	public function captchaAction()
