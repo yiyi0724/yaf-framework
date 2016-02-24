@@ -21,12 +21,12 @@ class Route implements \Yaf\Route_Interface
 
 	/**
 	 * 已在Yaf中注册的模块
-	 * @var array
+	 * @var array $modules
 	 */
 	protected $modules = array();
 
 	/**
-	 * 构造函数，获取所有模块信息
+	 * 构造函数，获取所有模块信息并删除默认模块
 	 */
 	public function __construct()
 	{
@@ -40,8 +40,8 @@ class Route implements \Yaf\Route_Interface
 	}
 
 	/**
-	 *
-	 * @param  \Yaf\Request\Http  $request
+	 * 路由调度
+	 * @param  \Yaf\Request\Http  $request http请求对象
 	 * @return boolean
 	 */
 	public function route($request)

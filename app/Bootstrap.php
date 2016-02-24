@@ -39,7 +39,7 @@ class Bootstrap extends Bootstrap_Abstract
 	 */
 	public function _initRoute(Dispatcher $dispatcher)
 	{
-		// 路由重写
+		// 路由重写正则
 		$router = $dispatcher->getRouter();
 		$routeConfig = new Ini(CONF_PATH . 'route.ini');
 		$router->addConfig($routeConfig);
