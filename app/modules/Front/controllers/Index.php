@@ -1,11 +1,11 @@
 <?php
 
 
-class IndexController extends \Base\IndexController
+class IndexController extends FrontController
 {
 
 	public function indexAction()
 	{
-		ECHO __CLASS__;exit;
+		$data = $this->validity();
 	}
 }

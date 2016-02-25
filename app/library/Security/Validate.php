@@ -24,11 +24,11 @@ class Validate
 	protected static function load($rules)
 	{
 		// PUT和DETELE方法支持
-		if(in_array($_SERVER['REQUEST_METHOD'], array('PUT', 'DELETE')))
+		/* if(in_array($_SERVER['REQUEST_METHOD'], array('PUT', 'DELETE')))
 		{
 			parse_str(file_get_contents('php://input'), $from);
 			$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $from;
-		}
+		} */
 		
 		// 读取参数
 		$rulesList = array();
@@ -42,21 +42,15 @@ class Validate
 			
 			// 检查整理
 			$from = '_' . strtoupper($rule[0]);
-			$rulesList[$key] = array(
-				'value'=>NULL,
-				'method'=>$rule[1],
-				'require'=>$rule[2],
-				'notify'=>$rule[3], 
-				'options'=>isset($rule[4]) ? $rule[4] : NULL, 
-				'default'=>isset($rule[5]) ? $rule[5] : NULL, 
-				'alias'=>isset($rule[6]) ? $rule[6] : NULL			
-			);
+			$rulesList[$key] = array('value'=>NULL, 'method'=>$rule[1], 'require'=>$rule[2], 'notify'=>$rule[3], 
+					'options'=>isset($rule[4]) ? $rule[4] : NULL, 'default'=>isset($rule[5]) ? $rule[5] : NULL, 
+					'alias'=>isset($rule[6]) ? $rule[6] : NULL);
 			if(isset($GLOBALS[$from][$key]))
 			{
 				$rulesList[$key]['value'] = trim($GLOBALS[$from][$key]);
 			}
 		}
-				
+		
 		return $rulesList;
 	}
 
@@ -218,7 +212,8 @@ class Rule
 	public static function string($rule)
 	{
 		// xss注入攻击
-		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', $rule['value']);
+		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', 
+			$rule['value']);
 		
 		// 字符串长度
 		$length = mb_strlen($rule['value']);

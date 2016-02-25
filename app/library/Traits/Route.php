@@ -74,12 +74,17 @@ class Route implements \Yaf\Route_Interface
 		$request->setModuleName($this->route['module']);
 		$request->setControllerName(ucfirst($this->route['controller']));
 		$request->setActionName(ucfirst($this->route['action']));
-		
-		// 调用其他路由
-		return FALSE;
+				
+		return TRUE;
 	}
 
+	/**
+	 * 不知道什么鬼东西
+	 * @param array $info
+	 * @param array $query
+	 */
 	public function assemble(array $info, array $query = NULL)
 	{
+		echo 1;exit;
 	}
 }

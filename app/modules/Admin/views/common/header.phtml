@@ -10,13 +10,13 @@
 <meta name="<?php echo $meta['name']?>" content="<?php echo $meta['content'] ;?>"/>
 <?php endforeach; }; #meta_end?>
 
-<link rel="stylesheet" href="<?php echo URL_ADMIN_STYLE?>bootstrap.min.css" />
-<link rel="stylesheet" href="<?php echo URL_ADMIN_STYLE?>font-awesome.min.css" />
-<link rel="stylesheet" href="<?php echo URL_ADMIN_STYLE?>googlefonts.css" />
-<link rel="stylesheet" href="<?php echo URL_ADMIN_STYLE?>ace.min.css" />
-<link rel="stylesheet" href="<?php echo URL_ADMIN_STYLE?>ace-rtl.min.css" />
+<link rel="stylesheet" href="<?php echo RESOURCE_STYLE?>bootstrap.min.css" />
+<link rel="stylesheet" href="<?php echo RESOURCE_STYLE?>font-awesome.min.css" />
+<link rel="stylesheet" href="<?php echo RESOURCE_STYLE?>googlefonts.css" />
+<link rel="stylesheet" href="<?php echo RESOURCE_STYLE?>ace.min.css" />
+<link rel="stylesheet" href="<?php echo RESOURCE_STYLE?>ace-rtl.min.css" />
 <?php if(!empty($styles)) { foreach($styles as $style): #样式_start?>
-<link href="<?php echo URL_ADMIN_STYLE.$style; ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo RESOURCE_STYLE.$style; ?>" rel="stylesheet" type="text/css" />
 <?php endforeach; }; #样式_end?>
 <!--[if IE 7]>
 <link rel="stylesheet" href="admin/css/font-awesome-ie7.min.css" />
@@ -26,20 +26,20 @@
 <![endif]-->
 
 <!--[if !IE]> -->
-<script src="<?php echo URL_ADMIN_SCRIPT?>jquery.2.0.3.min.js"></script>
+<script src="<?php echo RESOURCE_SCRIPT?>jquery.2.0.3.min.js"></script>
 <!-- <![endif]-->
 <!--[if IE]>
-<script src="<?php echo URL_ADMIN_SCRIPT?>jquery.1.10.2.min.js"></script>
+<script src="<?php echo RESOURCE_SCRIPT?>jquery.1.10.2.min.js"></script>
 <![endif]-->
-<script src="<?php echo URL_ADMIN_SCRIPT?>bootstrap.min.js"></script>
+<script src="<?php echo RESOURCE_SCRIPT?>bootstrap.min.js"></script>
 <script type="text/javascript">
-	if("ontouchend" in document) document.write("<script src='<?php echo URL_ADMIN_SCRIPT?>jquery.mobile.custom.min.js'>"+"<"+"/script>");
+	if("ontouchend" in document) document.write("<script src='<?php echo RESOURCE_SCRIPT?>jquery.mobile.custom.min.js'>"+"<"+"/script>");
 </script>
 <!--[if lt IE 9]>
-<script src="<?php echo URL_ADMIN_SCRIPT?>html5shiv.js"></script>
-<script src="<?php echo URL_ADMIN_SCRIPT?>respond.min.js"></script>
+<script src="<?php echo RESOURCE_SCRIPT?>html5shiv.js"></script>
+<script src="<?php echo RESOURCE_SCRIPT?>respond.min.js"></script>
 <![endif]-->
 <?php if(!empty($scripts)) { foreach($scripts as $script): #脚本_start?>
-<script type="text/javascript" src="<?php echo URL_ADMIN_SCRIPT.$script; ?>"></script>
+<script type="text/javascript" src="<?php echo RESOURCE_SCRIPT.$script; ?>"></script>
 <?php endforeach; }; #脚本_end?>
 </head>

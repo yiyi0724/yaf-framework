@@ -23,7 +23,7 @@ class Bootstrap extends Bootstrap_Abstract
 			}
 		}
 	}
-
+	
 	/**
 	 * 自定义逻辑加载类
 	 * @param Dispatcher $dispatcher
@@ -39,12 +39,22 @@ class Bootstrap extends Bootstrap_Abstract
 	 */
 	public function _initRoute(Dispatcher $dispatcher)
 	{
-		// 路由重写正则
+		// 路由对象
 		$router = $dispatcher->getRouter();
-		$routeConfig = new Ini(CONF_PATH . 'route.ini');
-		$router->addConfig($routeConfig);
-		
 		// 自定义路由协议
 		$router->addRoute('enyRouter', new \Traits\Route());
+		// 路由重写正则
+		$routeConfig = new Ini(CONF_PATH . 'route.ini');
+		$router->addConfig($routeConfig);
+	}
+	
+	/**
+	 * 注册插件
+	 * @param \Yaf\Dispatcher $dispatcher 分发对象
+	 */
+	public function _initPlugin(Dispatcher $dispatcher)
+	{
+		// 行为插件
+		$dispatcher->registerPlugin(new HandlerPlugin());
 	}
 }
