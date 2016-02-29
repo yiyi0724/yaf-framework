@@ -1,7 +1,9 @@
 <?php $this->display('common/header.phtml')?>
 <div class="notify_error">
 	<h2>失败提示</h2>
-	<p><?php echo $notify;?></p>
+	<?php foreach($form as $error):?>
+	<p><?php echo $error;?></p>
+	<?php endforeach;?>
 	<p><a href="javascript:go(-1)">返回</a></p>
 </div>
 

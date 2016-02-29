@@ -21,18 +21,10 @@ class Validate
 	 * @param string $file
 	 * @return array 规则数组
 	 */
-	protected static function load($rules)
-	{
-		// PUT和DETELE方法支持
-		/* if(in_array($_SERVER['REQUEST_METHOD'], array('PUT', 'DELETE')))
-		{
-			parse_str(file_get_contents('php://input'), $from);
-			$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $from;
-		} */
-		
+	protected static function load($rules, $data)
+	{		
 		// 读取参数
-		$rulesList = array();
-		foreach($rules as $key=>$rule)
+		foreach($rules as $key=>&$rule)
 		{
 			// 获取来源
 			if(strcasecmp($_SERVER['REQUEST_METHOD'], $rule[0]))
@@ -40,26 +32,26 @@ class Validate
 				continue;
 			}
 			
-			// 检查整理
-			$from = '_' . strtoupper($rule[0]);
-			$rulesList[$key] = array('value'=>NULL, 'method'=>$rule[1], 'require'=>$rule[2], 'notify'=>$rule[3], 
-					'options'=>isset($rule[4]) ? $rule[4] : NULL, 'default'=>isset($rule[5]) ? $rule[5] : NULL, 
-					'alias'=>isset($rule[6]) ? $rule[6] : NULL);
-			if(isset($GLOBALS[$from][$key]))
-			{
-				$rulesList[$key]['value'] = trim($GLOBALS[$from][$key]);
-			}
+			// 检查数组整理
+			$rule['value'] = isset($data[$key]) ? $data[$key] : NULL;
+			$rule['method'] = $rule[1];
+			$rule['require'] = $rule[2];
+			$rule['notify'] = $rule[3];
+			$rule['options'] = isset($rule[4]) ? $rule[4] : NULL;
+			$rule['default'] = isset($rule[5]) ? $rule[5] : NULL;
+			$rule['alias'] = isset($rule[6]) ? $rule[6] : NULL;
 		}
 		
-		return $rulesList;
+		return $rules;
 	}
 
 	/**
 	 * 检查数据
 	 * @param array $rules 数据规则数组
+	 * @param array $data 输入源数据
 	 * @return void
 	 */
-	public static function validity($rules)
+	public static function validity($rules, $data)
 	{
 		// 没有规则返回空
 		if(!$rules)
@@ -68,7 +60,7 @@ class Validate
 		}
 		
 		// 数据加载
-		$rules = static::load($rules);
+		$rules = static::load($rules, $data);
 		
 		// 检查
 		$error = array();

@@ -5,8 +5,10 @@ class IndexForm
 {
 	public static function indexRule()
 	{
-		return array(
-			array('page', 'GET', 'number', FALSE, '页码有误', ['min'=>1], NULL, 3, NULL), 
-			array('page', 'POST', 'number', FALSE, '页码有误', ['min'=>1], NULL, 2, NULL));
+		// 来源 检查方法 是否必须 错误提示 可选项检查 默认值 别名
+		$forms['page'] = array('GET', 'number', TRUE, '用户名不正确', ['min'=>8]);
+		$forms['time'] = array('GET', 'number', FALSE, '时间格式有误', NULL, date('Y-m-d H:i:s'));
+		
+		return $forms;
 	}
 }

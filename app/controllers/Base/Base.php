@@ -2,32 +2,46 @@
 
 namespace Base;
 
+
+
 /**
  * 所有模块控制基类的基类
  */
 use \Yaf\Controller_Abstract;
+use \Yaf\Application;
+use \Yaf\Session;
 use \Security\Validate;
 use \Network\Location;
+
 abstract class BaseController extends Controller_Abstract
 {
 
 	/**
+	 * 入口常量定义
+	 */
+	public function init()
+	{
+		define('UID', Session::getInstance()->get('member.uid'));
+	}
+
+	/**
 	 * 登录检查
 	 */
-	abstract protected function login();
+	protected function login()
+	{
+	}
 
 	/**
 	 * 数据合法性检查
 	 */
 	protected function validity()
-	{		
+	{
 		// 读取校验文件
-		$controller = CONTROLLER . 'Form';
-		$action = ACTION . 'Rule';
-		require (MODULE . 'validates/' . CONTROLLER . 'Form.php');
-		list($success, $fail) = Validate::validity($controller::$action());
+		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Rule');
+		require (MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php');
+		list($success, $fail) = Validate::validity($controller::$action(), $GLOBALS['_INPUT']);
 		if($fail)
-		{
+		{			
 			// ajax输出
 			IS_AJAX and $this->jsonp($fail, 412);
 			// 页面输出
@@ -54,7 +68,7 @@ abstract class BaseController extends Controller_Abstract
 		}
 		
 		// 模板替换
-		$template and $this->disView();
+		$template and Application::app()->getDispatcher()->disableView();
 		($template && $useView) ? $view->display("{$template}.phtml") : $this->display($template);
 	}
 

@@ -1,6 +1,5 @@
 <?php
 
-use \Yaf\Session;
 use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
@@ -32,7 +31,7 @@ class HandlerPlugin extends Plugin_Abstract
 	 * 常量注册
 	 * @param Request_Abstract $request
 	 */
-	private function initConst($request)
+	private function initConst(\Yaf\Request\Http $request)
 	{
 		// 请求方式定义
 		define('IS_AJAX', $request->isXmlHttpRequest());
@@ -44,17 +43,17 @@ class HandlerPlugin extends Plugin_Abstract
 		// 模块常量定义
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());
-		define('MODULE', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
+		define('MODULE', $request->getModuleName());
+		define('MODULE_PATH', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
 		
 		// URL常量定义
-		$resources = Application::app()->getConfig()->get("resource.{$request->getModuleName()}");
-		foreach($resources as $key=>$value)
+		if($resources = Application::app()->getConfig()->get("resource.{$request->getModuleName()}"))
 		{
-			define('RESOURCE_' . strtoupper($key), $value);
+			foreach($resources as $key=>$value)
+			{
+				define('RESOURCE_' . strtoupper($key), $value);
+			}
 		}
-		
-		// 用户常量定义
-		define('UID', Session::getInstance()->get('member.uid'));
 	}
 
 	/**
@@ -64,21 +63,28 @@ class HandlerPlugin extends Plugin_Abstract
 	{
 		// ajax自动关闭视图
 		IS_AJAX AND Application::app()->getDispatcher()->disableView();
+		// 默认错误和异常处理方式
+		// 由于yaf默认把错误封装成了异常，所以只需要绑定一个方法就好
+		set_exception_handler('\\Error\\'.MODULE.'Controller::shutdown');
 	}
 	
 	/**
 	 * 参数整合
 	 * @param unknown $request
 	 */
-	private function input($request)
+	private function input(Yaf\Request\Http $request)
 	{
 		$from = array();
+		// PUT和DETELE方法支持
 		if(IS_PUT || IS_DELETE)
 		{
-			// PUT和DETELE方法支持
 			parse_str(file_get_contents('php://input'), $from);
 		}
-		$from = array_merge($request->getParams(), $from, $_REQUEST);		
-		$GLOBALS['_INPUT'] = $_REQUEST = $from;
+		// 整合数据
+		$from = array_merge($request->getParams(), $from, $_REQUEST);
+		// 清空输入源
+		$_GET = $_POST = $_REQUEST = array();
+		// 整合到全局输入变量
+		$GLOBALS['_INPUT'] = $from;
 	}
 }
