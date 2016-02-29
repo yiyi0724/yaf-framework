@@ -32,7 +32,7 @@ abstract class BaseController extends Controller_Abstract
 	}
 
 	/**
-	 * 数据合法性检查
+	 * 数据检查并且返回成功数组
 	 */
 	protected function validity()
 	{
