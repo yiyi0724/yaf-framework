@@ -1,5 +1,7 @@
 <?php
 
+namespace Base;
+
 /**
  * 前台控制基类
  */

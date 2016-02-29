@@ -1,5 +1,7 @@
 <?php
 
+namespace Base;
+
 /**
  * 所有模块控制基类的基类
  */
@@ -81,7 +83,7 @@ abstract class BaseController extends Controller_Abstract
 		if($jsonp)
 		{
 			$header = 'text/javascript';
-			$output = "<script type=\"text/javascript\">{$jsonp}({$json});</script>";
+			$output = "{$jsonp}({$json})";
 		}
 		
 		// 结果输出

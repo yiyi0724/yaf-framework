@@ -1,5 +1,7 @@
 <?php
 
+namespace Base;
+
 /**
  * H5控制基类
  */

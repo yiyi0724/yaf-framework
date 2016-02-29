@@ -5,6 +5,7 @@ use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
 use \Yaf\Response_Abstract;
+use \Yaf\Registry;
 
 /**
  * 行为插件
@@ -78,6 +79,6 @@ class HandlerPlugin extends Plugin_Abstract
 			parse_str(file_get_contents('php://input'), $from);
 		}
 		$from = array_merge($request->getParams(), $from, $_REQUEST);		
-		$GLOBALS["_{$_SERVER['REQUEST_METHOD']}"] = $_REQUEST = $from;
+		$GLOBALS['_INPUT'] = $_REQUEST = $from;
 	}
 }

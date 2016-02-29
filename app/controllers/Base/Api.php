@@ -1,5 +1,7 @@
 <?php
 
+namespace Base;
+
 /**
  * Api控制基类
  */
