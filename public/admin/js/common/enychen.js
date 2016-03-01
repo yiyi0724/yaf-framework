@@ -125,6 +125,10 @@ var enychen = {
 					// 操作提示
 					alert(data.message);
 					break;
+				case 502:
+					alert('服务器出错了');
+					console.log(data);
+					break;
 				default:
 					// 其他code交给自定义回调函数出来里
 					json.callback(data);

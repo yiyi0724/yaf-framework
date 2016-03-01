@@ -2,7 +2,7 @@
 
 namespace logic\Member;
 
-class Add
+class Member
 {
 	public function getUserInfo()
 	{

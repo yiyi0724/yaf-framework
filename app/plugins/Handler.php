@@ -1,10 +1,10 @@
 <?php
 
+use \Yaf\Session;
 use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
 use \Yaf\Response_Abstract;
-use \Yaf\Registry;
 
 /**
  * 行为插件
@@ -54,6 +54,10 @@ class HandlerPlugin extends Plugin_Abstract
 				define('RESOURCE_' . strtoupper($key), $value);
 			}
 		}
+		
+		// 用户访问常量定义
+		define('UID', Session::getInstance()->get('member.uid'));
+		define('AUID', Session::getInstance()->get('admin.uid'));
 	}
 
 	/**
@@ -61,11 +65,8 @@ class HandlerPlugin extends Plugin_Abstract
 	 */
 	private function behavior()
 	{
-		// ajax自动关闭视图
-		IS_AJAX AND Application::app()->getDispatcher()->disableView();
-		// 默认错误和异常处理方式
-		// 由于yaf默认把错误封装成了异常，所以只需要绑定一个方法就好
-		set_exception_handler('\\Error\\'.MODULE.'Controller::shutdown');
+		// 默认ajax关闭模板
+		IS_AJAX and Application::app()->getDispatcher()->disableView();
 	}
 	
 	/**
@@ -75,16 +76,22 @@ class HandlerPlugin extends Plugin_Abstract
 	private function input(Yaf\Request\Http $request)
 	{
 		$from = array();
+		
 		// PUT和DETELE方法支持
 		if(IS_PUT || IS_DELETE)
 		{
 			parse_str(file_get_contents('php://input'), $from);
 		}
+		
 		// 整合数据
-		$from = array_merge($request->getParams(), $from, $_REQUEST);
+		$inputs = array_merge($request->getParams(), $from, $_REQUEST);
+		
 		// 清空输入源
 		$_GET = $_POST = $_REQUEST = array();
+		
 		// 整合到全局输入变量
-		$GLOBALS['_INPUT'] = $from;
+		foreach($inputs as $key=>$input) {
+			$request->setParam($key, $input);
+		}
 	}
 }

@@ -2,34 +2,22 @@
 
 namespace Base;
 
-
-
 /**
  * 所有模块控制基类的基类
  */
 use \Yaf\Controller_Abstract;
 use \Yaf\Application;
-use \Yaf\Session;
 use \Security\Validate;
 use \Network\Location;
+use \Yaf\Registry;
 
 abstract class BaseController extends Controller_Abstract
 {
-
-	/**
-	 * 入口常量定义
-	 */
+	
 	public function init()
 	{
-		// 定义用户id
-		define('UID', Session::getInstance()->get('member.uid'));
-	}
-
-	/**
-	 * 登录检查
-	 */
-	protected function login()
-	{
+		// 保存当前对象
+		Registry::set('view', 11111);
 	}
 
 	/**
@@ -39,10 +27,11 @@ abstract class BaseController extends Controller_Abstract
 	{
 		// 读取校验文件
 		require (MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php');
-		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Rule');		
-		list($success, $fail) = Validate::validity($controller::$action(), $GLOBALS['_INPUT']);
+		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Rules');
+		list($rules, $inputs) = array($controller::$action(), $this->getRequest()->getParams());
+		list($success, $fail) = Validate::validity($rules, $inputs);
 		if($fail)
-		{			
+		{
 			// ajax输出
 			IS_AJAX and $this->jsonp($fail, 412);
 			// 页面输出
@@ -63,6 +52,7 @@ abstract class BaseController extends Controller_Abstract
 	{
 		// 数据绑定
 		$view = $this->getView();
+		$view->setScriptPath(MODULE_PATH.'views');
 		foreach($output as $key=>$value)
 		{
 			$view->assign($key, $value);
@@ -114,6 +104,13 @@ abstract class BaseController extends Controller_Abstract
 	 */
 	protected function location($url, $method = 'get', $data = array())
 	{
-		exit(Location::$method($url, $data));
+		if(IS_AJAX)
+		{
+			$this->jsonp($url, 302);
+		}
+		else
+		{
+			exit(Location::$method($url, $data));
+		}
 	}
 }

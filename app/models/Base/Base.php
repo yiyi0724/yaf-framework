@@ -82,7 +82,7 @@ abstract class BaseModel
 	 * @param string $field 查询字符串列表
 	 * @return \Base\BaseModel
 	 */
-	protected final function field($field)
+	public final function field($field)
 	{
 		$this->sql['field'] = $field;
 		return $this;
@@ -93,7 +93,7 @@ abstract class BaseModel
 	 * @params string|array $condition 要拼接的条件
 	 * @return \Base\BaseModel
 	 */
-	protected final function where($condition)
+	public final function where($condition)
 	{
 		$this->sql['where'] = 'WHERE ' . $this->comCondition($condition);
 		return $this;
@@ -104,7 +104,7 @@ abstract class BaseModel
 	 * @params string|array $condition 要拼接的条件
 	 * @return \Base\BaseModel
 	 */
-	protected final function having($condition)
+	public final function having($condition)
 	{
 		$this->sql['having'] = 'HAVING ' . $this->comCondition($condition);
 		return $this;
@@ -115,7 +115,7 @@ abstract class BaseModel
 	 * @param string $order 排序字符串
 	 * @return \Base\BaseModel
 	 */
-	protected final function order($order)
+	public final function order($order)
 	{
 		$this->sql['order'] = "ORDER BY {$order}";
 		return $this;
@@ -126,7 +126,7 @@ abstract class BaseModel
 	 * @param string $group 分组字符串
 	 * @return \Base\BaseModel
 	 */
-	protected final function group($group)
+	public final function group($group)
 	{
 		$this->sql['group'] = "GROUP BY {$group}";
 		return $this;
@@ -138,7 +138,7 @@ abstract class BaseModel
 	 * @param int $limit 个数
 	 * @return \Base\BaseModel
 	 */
-	protected final function limit($offset, $limit = NULL)
+	public final function limit($offset, $limit = NULL)
 	{
 		if(!$limit)
 		{
@@ -156,7 +156,7 @@ abstract class BaseModel
 	 * @param string $other 其他附加条件，如for update
 	 * @return \Base\BaseModel
 	 */
-	protected final function other($other)
+	public final function other($other)
 	{
 		$this->sql['other'] = $other;
 		return $this;
@@ -264,7 +264,7 @@ abstract class BaseModel
 	 * @param bool 多行返回插入的行数
 	 * @return int 返回上次插入的id 或者 影响行数
 	 */
-	protected final function insert(array $data, $rowCount = FALSE)
+	public final function insert(array $data, $rowCount = FALSE)
 	{
 		// 数据整理
 		$data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
@@ -300,7 +300,7 @@ abstract class BaseModel
 	 * 执行删除
 	 * @return int 影响的行数;
 	 */
-	protected final function delete()
+	public final function delete()
 	{
 		// 拼接sql语句
 		$sql = "DELETE FROM {$this->table} {$this->sql['where']}{$this->sql['order']}{$this->sql['limit']}";
@@ -317,7 +317,7 @@ abstract class BaseModel
 	 * @param string $clear 清空条件信息
 	 * @return \Driver\Mysql
 	 */
-	protected final function select($clear = TRUE)
+	public final function select($clear = TRUE)
 	{
 		// 局部释放变量
 		extract($this->sql);
@@ -336,7 +336,7 @@ abstract class BaseModel
 	 * @param array $update 键值对数组
 	 * @return int 影响的行数;
 	 */
-	protected final function update(array $update)
+	public final function update(array $update)
 	{
 		foreach($update as $key=>$val)
 		{
