@@ -21,6 +21,7 @@ abstract class BaseController extends Controller_Abstract
 	 */
 	public function init()
 	{
+		// 定义用户id
 		define('UID', Session::getInstance()->get('member.uid'));
 	}
 
@@ -37,8 +38,8 @@ abstract class BaseController extends Controller_Abstract
 	protected function validity()
 	{
 		// 读取校验文件
-		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Rule');
 		require (MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php');
+		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Rule');		
 		list($success, $fail) = Validate::validity($controller::$action(), $GLOBALS['_INPUT']);
 		if($fail)
 		{			

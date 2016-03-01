@@ -16,6 +16,9 @@ class LoginController extends \Base\AdminController
 	{
 		// 获取参数
 		$data = $this->validate();
-		$this->jsonp('妈的智障', 200);
+		
+		echo '<pre>';
+		print_r($data);
+		exit;
 	}
 }
