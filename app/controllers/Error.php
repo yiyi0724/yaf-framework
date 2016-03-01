@@ -1,36 +1,16 @@
 <?php
 
-use \Yaf\Registry;
 
 /**
  * 错误异常处理控制器
  * @author enychen
  */
-class ErrorController
-{
-	/**
-	 * 异常捕获
-	 * @param \Exception $exception
-	 */
-	public static function exception($e)
+class ErrorController extends \Base\BaseController
+{	
+	public function errorAction()
 	{
-		static::output(get_class($e), $e->getCode(), $e->getMessage(), $e->getFile(), $e->getTraceAsString());
-	}
-	
-	/**
-	 * 错误捕获
-	 */
-	public static function shutdown()
-	{
-		if($e = error_get_last())
-		{
-			ob_end_clean();			
-			static::output('ERROR', $e['type'], $e['message'], $e['file'], $e['line']);
-		}
-	}
-	
-	private static function output($type, $code, $message, $file, $line, $trace=NULL)
-	{
+		$e = $this->getRequest()->getException();
+		
 		// 判断是否是线上环境		
 		$errorInfo['env'] = \Yaf\ENVIRON != 'product';
 		$errorInfo['type'] = $type;
