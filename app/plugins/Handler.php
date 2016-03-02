@@ -14,8 +14,8 @@ class HandlerPlugin extends Plugin_Abstract
 {
 	/**
 	 * 进行路由分发
-	 * @param Request_Abstract $request
-	 * @param Response_Abstract $response
+	 * @param \Yaf\Request_Abstract $request 请求对象
+	 * @param \Yaf\Request_Abstract $response 响应对象
 	 */
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response)
 	{
@@ -29,9 +29,9 @@ class HandlerPlugin extends Plugin_Abstract
 	
 	/**
 	 * 常量注册
-	 * @param Request_Abstract $request
+	 * @param Request_Abstract $request 请求对象
 	 */
-	private function initConst(\Yaf\Request\Http $request)
+	private function initConst(Request_Abstract $request)
 	{
 		// 请求方式定义
 		define('IS_AJAX', $request->isXmlHttpRequest());
@@ -55,7 +55,7 @@ class HandlerPlugin extends Plugin_Abstract
 			}
 		}
 		
-		// 用户访问常量定义
+		// 用户UID 和 管理员UID
 		define('UID', Session::getInstance()->get('member.uid'));
 		define('AUID', Session::getInstance()->get('admin.uid'));
 	}
@@ -65,7 +65,7 @@ class HandlerPlugin extends Plugin_Abstract
 	 */
 	private function behavior()
 	{
-		// 默认ajax关闭模板
+		// ajax关闭模板
 		IS_AJAX and Application::app()->getDispatcher()->disableView();
 	}
 	
@@ -73,10 +73,10 @@ class HandlerPlugin extends Plugin_Abstract
 	 * 参数整合
 	 * @param unknown $request
 	 */
-	private function input(Yaf\Request\Http $request)
+	private function input(Request_Abstract $request)
 	{
-		$from = array();
-		
+		$from = [];
+
 		// PUT和DETELE方法支持
 		if(IS_PUT || IS_DELETE)
 		{

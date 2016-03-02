@@ -9,38 +9,41 @@ class ErrorController extends \Base\BaseController
 {	
 	public function errorAction()
 	{
-		$e = $this->getRequest()->getException();
+		// 获取异常
+		$exception = $this->getRequest()->getException();
 		
-		// 判断是否是线上环境		
-		$errorInfo['env'] = \Yaf\ENVIRON != 'product';
-		$errorInfo['type'] = $type;
-		$errorInfo['code'] = $code;
-		$errorInfo['file'] = $file;
-		$errorInfo['message'] = $message;
-		$errorInfo['line'] = $line;
-		$errorInfo['traceAsString'] = $trace;
-		if(!$errorInfo['env'])
+		// 整理数据
+		$errorInfo['env'] = \Yaf\ENVIRON == 'product';
+		$errorInfo['code'] = $exception->getCode();
+		$errorInfo['file'] = $exception->getFile();
+		$errorInfo['message'] = $exception->getMessage();
+		$errorInfo['line'] = $exception->getLine();
+		$errorInfo['traceAsString'] = $exception->getTraceAsString();
+		
+		// 线上环境
+		if($errorInfo['env'])
 		{
 			// 封装数据
 			$errorInfo['data']['from'] = $_SERVER['REQUEST_METHOD'];
-			$errorInfo['data']['list'] = $_REQUEST;
+			$errorInfo['data']['list'] = $this->getRequest()->getParams();
+			
 			// 日志记录
-			file_put_contents(APPLICATION_PATH . 'data/' . date('Y-m-d_H') . 'log', print_r($errorInfo, TRUE));
+			\File\Log::record($errorInfo, DATA_PATH);
+
 			// 线上环境报错
-			IS_AJAX and ($errorInfo = '服务器出错了，请重试后联系客服');
+			$errorInfo = '服务器出错了，请稍后重试';
 		}
 		
-		if(IS_AJAX)
-		{
-			$json['code'] = 502;
-			$json['message'] = $errorInfo;
-			exit(json_encode($json));
-		}
-		else
-		{
-			$controller = Registry::get('view');
-			print_r($controller);
-			exit;
-		}
+		// ajax返回json
+		IS_AJAX and $this->jsonp($errorInfo, 502);
+
+		// 模板加载
+		$viewObject = $this->getView();
+		$viewObject->assign('error', $errorInfo);
+		$viewObject->setScriptPath(MODULE_PATH . 'views');
+		$viewObject->display('common/error.phtml');
+		
+		// 结束执行
+		exit();
 	}
 }

@@ -14,10 +14,7 @@ abstract class AdminController extends BaseController
 	 * 全局控制器初始化信息
 	 */
 	public function init()
-	{
-		// 父类init方法
-		parent::init();
-		
+	{		
 		// 不是登录控制器进行检查
 		CONTROLLER != 'Login' and $this->login() and $this->timeout();
 	}

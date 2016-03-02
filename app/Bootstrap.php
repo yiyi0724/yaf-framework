@@ -1,23 +1,30 @@
 <?php
+/**
+ * 初始化自定义框架
+ * @author enychen
+ */
+
 use Yaf\Bootstrap_Abstract;
 use Yaf\Application;
 use Yaf\Loader;
 use Yaf\Dispatcher;
 use Yaf\Config\Ini;
+use \Traits\Route;
+
 class Bootstrap extends Bootstrap_Abstract
 {
 
 	/**
 	 * 修改php.ini的默认配置
-	 * @param Yaf\Dispatcher $dispatcher
+	 * @param Yaf\Dispatcher $dispatcher 分发对象
 	 */
 	public function _initRuntime(Dispatcher $dispatcher)
 	{
 		if($runtime = Application::app()->getConfig()->get('runtime'))
 		{
-			foreach($runtime as $prefix=>$config)
+			foreach($runtime as $prefix=>$suffix)
 			{
-				foreach($config as $key=>$value)
+				foreach($suffix as $key=>$value)
 				{
 					ini_set("{$prefix}.{$key}", $value);
 				}
@@ -27,7 +34,7 @@ class Bootstrap extends Bootstrap_Abstract
 
 	/**
 	 * 自定义逻辑加载类
-	 * @param Yaf\Dispatcher $dispatcher
+	 * @param Yaf\Dispatcher $dispatcher 分发对象
 	 */
 	public function _initLoader(Dispatcher $dispatcher)
 	{
@@ -43,7 +50,7 @@ class Bootstrap extends Bootstrap_Abstract
 		// 路由对象
 		$router = $dispatcher->getRouter();
 		// 自定义路由协议
-		$router->addRoute('enyRouter', new \Traits\Route());
+		$router->addRoute('enyRouter', new Route());
 		// 路由重写正则
 		$routeConfig = new Ini(CONF_PATH . 'route.ini');
 		$router->addConfig($routeConfig);

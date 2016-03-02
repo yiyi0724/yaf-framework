@@ -22,7 +22,7 @@ class Validate
 	 * @return array 规则数组
 	 */
 	protected static function load($rules, $data)
-	{		
+	{
 		// 读取参数
 		foreach($rules as $key=>&$rule)
 		{
@@ -56,7 +56,7 @@ class Validate
 		// 没有规则返回空
 		if(!$rules)
 		{
-			return array();
+			return [[], []];
 		}
 		
 		// 数据加载
@@ -204,8 +204,7 @@ class Rule
 	public static function string($rule)
 	{
 		// xss注入攻击
-		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', 
-			$rule['value']);
+		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', $rule['value']);
 		
 		// 字符串长度
 		$length = mb_strlen($rule['value']);

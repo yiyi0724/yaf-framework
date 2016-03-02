@@ -1,12 +1,13 @@
 <?php
 
-namespace Traits;
-
 /**
  * 以/模块/控制器/方法的路由调用方式
  * @author enychen
- *
  */
+namespace Traits;
+
+use \Yaf\Application;
+
 class Route implements \Yaf\Route_Interface
 {
 
@@ -28,8 +29,10 @@ class Route implements \Yaf\Route_Interface
 	public function __construct()
 	{
 		// 加载模块信息并且删除Index模块
-		$this->modules = \Yaf\Application::app()->getModules();
+		$this->modules = Application::app()->getModules();
+		// 删除默认Index模块
 		unset($this->modules[array_search('Index', $this->modules)]);
+		// 模块小写匹配
 		foreach($this->modules as $key=>$module)
 		{
 			$this->modules[$key] = strtolower($module);
