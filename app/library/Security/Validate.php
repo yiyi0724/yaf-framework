@@ -56,7 +56,7 @@ class Validate
 		// 没有规则返回空
 		if(!$rules)
 		{
-			return [[], []];
+			return array(array(), array());
 		}
 		
 		// 数据加载
@@ -161,7 +161,7 @@ class Rule
 	 */
 	public static function range($rule)
 	{
-		return in_array($rule['value'], explode(',', $rule['range']));
+		return in_array($rule['value'], $rule['options']);
 	}
 
 	/**

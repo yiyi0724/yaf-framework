@@ -36,6 +36,10 @@
 														<i class="icon-lock"></i>
 													</span>
 												</label>
+												<label class="block clearfix">
+													<input type="captcha" name="captcha" class="form-control" placeholder="验证码" style="width:150px;float:left;" />
+													<img src="/admin/image/captcha?channel=login" style="float:right;">
+												</label>
 												<div class="space"></div>
 												<div class="clearfix">
 													<button id="login-button" type="button" class="width-35 pull-right btn btn-sm btn-primary">
@@ -59,4 +63,4 @@
 		</div>
 	</div>
 </body>
-<?php $this->display("common/footer.phtml", array('scripts'=>array('common/enychen.js', 'modules/login.js')))?>
+<?php $this->display("common/footer.phtml", array('scripts'=>array('modules/login.js')))?>

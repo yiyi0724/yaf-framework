@@ -16,7 +16,7 @@ abstract class AdminController extends BaseController
 	public function init()
 	{		
 		// 不是登录控制器进行检查
-		CONTROLLER != 'Login' and $this->login() and $this->timeout();
+		!in_array(CONTROLLER, array('Login', 'Image')) and $this->login() and $this->timeout();
 	}
 
 	/**

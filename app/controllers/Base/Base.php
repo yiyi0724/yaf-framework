@@ -7,6 +7,7 @@ namespace Base;
  */
 use \Yaf\Controller_Abstract;
 use \Yaf\Application;
+use \Yaf\Session;
 use \Security\Validate;
 use \Network\Location;
 
@@ -108,5 +109,13 @@ abstract class BaseController extends Controller_Abstract
 	protected function location($url, $method = 'get', $data = array())
 	{
 		IS_AJAX ? $this->jsonp($url, 302) : Location::$method($url, $data);
+	}
+	
+	/**
+	 * 获取session操作对象
+	 */
+	protected function getSession()
+	{
+		return Session::getInstance();
 	}
 }
