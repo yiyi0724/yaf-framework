@@ -40,15 +40,4 @@ abstract class AppModel extends BaseModel
 		
 		return $page;
 	}
-
-	/**
-	 * 读取配置信息
-	 * @param array $key 键名
-	 * @return array|string
-	 */
-	protected final function getConfig($key)
-	{
-		$result = Application::app()->getConfig()->get($key);
-		return is_string($result) ? $result : $result->toArray();
-	}
 }

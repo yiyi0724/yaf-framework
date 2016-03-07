@@ -38,18 +38,14 @@ abstract class AdminController extends BaseController
 	 */
 	protected function timeout()
 	{
-		$session = Session::getInstance();
-		$logintime = $session->get('admin.logintime');
-		if($logintime <= (time() - 900))
+		// 时间检查
+		if(Session::getInstance()->get('admin.logintime') <= (time() - 900))
 		{
-			// 登录超时
 			$session->del('admin.uid');
-			IS_AJAX ? $this->jsonp('/admin/login', 302) : $this->location('/admin/login');
+			$session->del('admin.logintime');
+			$this->location('/admin/login');
 		}
-		else
-		{
-			// 更新时间
-			$session->set('admin.logintime', time());
-		}
+		// 更新时间
+		$session->set('admin.logintime', time());
 	}
 }
