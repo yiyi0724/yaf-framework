@@ -32,7 +32,7 @@ class LoginController extends \Base\AdminController
 		
 		// 检查验证码信息
 		$captChaLogic = new \logic\Captcha();
-		if(!$captChaLogic->checkCodeFromSession('login', $data['code']))
+		if(!$captChaLogic->checkCodeFromSession('login', $data['captcha']))
 		{
 			$this->jsonp('验证码有误', 200);
 		}

@@ -26,12 +26,12 @@ class Captcha extends Logic
 	public function checkCodeFromSession($channel, $code)
 	{
 		$sessionCode = $this->getSession()->get($channel);
-		if($code == $sessionCode)
+		if(strcasecmp($code, $sessionCode))
 		{
-			$this->getSession()->del($channel);
-			return TRUE;
+			return FALSE;
 		}
 		
-		return FALSE;
+		$this->getSession()->del($channel);
+		return TRUE;
 	}
 }

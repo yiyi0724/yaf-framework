@@ -26,7 +26,7 @@
 											<fieldset>
 												<label class="block clearfix">
 													<span class="block input-icon input-icon-right">
-														<input type="text" name="username" class="form-control" data-validate="{rule:'length', options:{min:5}, 'notify':'用户名有误'}" placeholder="用户名" />
+														<input type="text" name="username" class="form-control" placeholder="用户名" />
 														<i class="icon-user"></i>
 													</span>
 												</label>
@@ -37,11 +37,12 @@
 													</span>
 												</label>
 												<label class="block clearfix">
-													<input type="captcha" name="captcha" class="form-control" placeholder="验证码" style="width:150px;float:left;" />
-													<img src="/admin/image/captcha?channel=login" style="float:right;">
+													<input type="text" name="captcha" class="form-control" placeholder="验证码" style="width:150px;float:left;" />
+													<img src="/admin/image/captcha?c=login&v=142391" style="float:right;" id="captcha">
 												</label>
 												<div class="space"></div>
 												<div class="clearfix">
+													<span id="error" style="color:red;font-weight:700;font-size:14px"></span>
 													<button id="login-button" type="button" class="width-35 pull-right btn btn-sm btn-primary">
 														<i class="icon-key"></i>
 														登录
@@ -63,4 +64,4 @@
 		</div>
 	</div>
 </body>
-<?php $this->display("common/footer.phtml", array('scripts'=>array('modules/login.js')))?>
+<?php $this->display("common/footer.phtml", array('scripts'=>array('common/enychen.js','modules/login.js')))?>

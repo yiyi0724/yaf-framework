@@ -81,7 +81,7 @@ abstract class BaseController extends Controller_Abstract
 		
 		// jsonp回调函数, 检查函数名
 		$jsonp = $this->getRequest()->get('callback', NULL);
-		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback))
+		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp))
 		{
 			$header = 'text/javascript';
 			$json = "{$jsonp}({$json})";
