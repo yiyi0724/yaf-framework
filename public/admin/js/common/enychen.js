@@ -117,6 +117,10 @@ var enychen = {
 					}
 					break;
 				case 302:
+					alert(data.message.alert);
+					// 执行页面跳转
+					window.location.href = data.message.url;
+					break;
 				case 301:
 					// 执行页面跳转
 					window.location.href = data.message;
@@ -126,7 +130,7 @@ var enychen = {
 					alert(data.message);
 					break;
 				case 502:
-					alert('服务器出错了');
+					alert(data.message);
 					console.log(data);
 					break;
 				default:

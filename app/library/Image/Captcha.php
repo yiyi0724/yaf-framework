@@ -107,6 +107,5 @@ class Captcha
 		imagepng($this->image);
 		// 销毁
 		imagedestroy($this->image);
-		exit();
 	}
 }

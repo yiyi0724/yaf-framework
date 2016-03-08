@@ -30,6 +30,13 @@ class LoginController extends \Base\AdminController
 		// 获取参数
 		$data = $this->validity();
 		
+		// 检查验证码信息
+		$captChaLogic = new \logic\Captcha();
+		if(!$captChaLogic->checkCodeFromSession('login', $data['code']))
+		{
+			$this->jsonp('验证码有误', 200);
+		}
+		
 		// 获取管理员信息
 		$adminLogic = new \logic\Admin();
 		$administrator = $adminLogic->getAdministrator($data['username'], $data['password']);
@@ -42,7 +49,7 @@ class LoginController extends \Base\AdminController
 		
 		// 写入session，并且跳转
 		$adminLogic->setUidToSession($administrator['uid']);
-		$this->location('/admin/index');
+		$this->location('/admin');
 	}
 	
 	/**

@@ -13,26 +13,35 @@ use \Network\Location;
 
 abstract class BaseController extends Controller_Abstract
 {
-
 	/**
-	 * 数据检查并且返回成功数组
+	 * 数据合法性检查
 	 */
 	protected function validity()
 	{
-		$request = $this->getRequest();
-		
-		// 读取校验文件
+		// 初始化参数
 		require (MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php');
-		list($controller, $action) = [CONTROLLER . 'Form', ACTION];
-		list($success, $fail) = Form::check($controller::$action(), $this->getRequest()->getParams());
+		$controller = CONTROLLER . 'Form';
+		$action = ACTION;
+		$checks = $controller::$action();
+		$inputs = $this->getRequest()->getParams();
 		
-		// 是否有误
-		if($fail)
+		// 数据校验
+		$inputs = Form::check($checks, $inputs);
+		
+		// 存在错误进行提示
+		if($inputs[1])
 		{
-			IS_AJAX ? $this->jsonp($fail, 412) : $this->template(['form'=>$fail], 'common/notify', TRUE);
+			if(IS_AJAX)
+			{
+				$this->jsonp($fail, 412);
+			}
+			else
+			{
+				$this->template(['form'=>$inputs[1]], 'common/notify', TRUE);
+			}
 		}
 		
-		return $success;
+		return $inputs[0];
 	}
 
 	/**
@@ -71,7 +80,8 @@ abstract class BaseController extends Controller_Abstract
 		$json = json_encode($json);
 		
 		// jsonp回调函数, 检查函数名
-		if($jsonp = $this->getRequest()->get('callback', NULL))
+		$jsonp = $this->getRequest()->get('callback', NULL);
+		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback))
 		{
 			$header = 'text/javascript';
 			$json = "{$jsonp}({$json})";
@@ -94,14 +104,6 @@ abstract class BaseController extends Controller_Abstract
 	 */
 	protected function location($url, $method = 'get', $data = array())
 	{
-		IS_AJAX ? $this->jsonp($url, 302) : Location::$method($url, $data);
-	}
-
-	/**
-	 * 获取session操作对象
-	 */
-	protected function getSession()
-	{
-		return Session::getInstance();
+		IS_AJAX ? $this->jsonp($url, 301) : Location::$method($url, $data);
 	}
 }

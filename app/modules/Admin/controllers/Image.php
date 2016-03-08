@@ -11,20 +11,22 @@ class ImageController extends \Base\AdminController
 	 * 验证码获取
 	 */
 	public function captchaAction()
-	{		
+	{
 		// 数据检查
 		$data = $this->validity();
-		
-		exit;
-		
-		// 生成验证码
-		$image = new \Image\Captcha(100,33);
+
+		// 生成验证码并输出
+		$image = new \Image\Captcha($data['w'], $data['h']);
 		$image->setText();
 		$image->createLine();
-		$code = $image->getCode();				
-		// 验证码保存到session中
-		$this->getSession()->set($data['channel'], $code);		
-		// 输出验证码图片
+		$code = $image->getCode();
 		$image->output();
+
+		// 验证码保存到session中
+		$captChaLogic = new \logic\Captcha();
+		$captChaLogic->setCaptchaToSession($data['c'], $code);
+		
+		// 结束运行
+		exit();
 	}
 }

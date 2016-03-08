@@ -2,15 +2,16 @@
 class ImageForm
 {
 	/**
-	 * 登录验证
+	 * 验证码验证
 	 * @static
 	 * @return array
 	 */
 	public static function captcha()
 	{
-		// 键名 来源 检查方法 是否必须 错误提示 可选项检查 别名
 		return array(
-			'channel'=>array(NULL, 'in', TRUE, '频道有误', ['login']),
+			'c'=>array(NULL, 'in', TRUE, '频道有误', ['login']),
+			'w'=>array(NULL, 'number', FALSE, '验证码图片长度有误', ['min'=>100], 100),
+			'h'=>array(NULL, 'number', FALSE, '验证码图片宽度度有误', ['min'=>33], 33)
 		);
 	}
 }
