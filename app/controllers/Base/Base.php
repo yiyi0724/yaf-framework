@@ -8,7 +8,7 @@ namespace Base;
 use \Yaf\Controller_Abstract;
 use \Yaf\Application;
 use \Yaf\Session;
-use \Security\Validate;
+use \Security\Form;
 use \Network\Location;
 
 abstract class BaseController extends Controller_Abstract
@@ -23,27 +23,13 @@ abstract class BaseController extends Controller_Abstract
 		
 		// 读取校验文件
 		require (MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php');
-		list($controller, $action) = [CONTROLLER . 'Form', ACTION . 'Rules'];
-		list($rules, $inputs) = [$controller::$action(), $this->getRequest()->getParams()];
-		list($success, $fail) = Validate::validity($rules, $inputs);
+		list($controller, $action) = [CONTROLLER . 'Form', ACTION];
+		list($success, $fail) = Form::check($controller::$action(), $this->getRequest()->getParams());
 		
 		// 是否有误
 		if($fail)
 		{
-			IS_AJAX ? $this->jsonp($fail, 412) : $this->view(['form'=>$fail], 'common/notify', TRUE);
-		}
-		
-		// 更新全局变量
-		foreach($request->getParams() as $source=>$param)
-		{
-			if(empty($success[$source]))
-			{
-				$request->setParam($source, NULL);
-				continue;
-			}
-			
-			// 更新参数
-			$request->setParam($source, $success[$source]);
+			IS_AJAX ? $this->jsonp($fail, 412) : $this->template(['form'=>$fail], 'common/notify', TRUE);
 		}
 		
 		return $success;
@@ -55,7 +41,7 @@ abstract class BaseController extends Controller_Abstract
 	 * @param string $template 自定义模板
 	 * @param bool $useView 是否使用通用模板
 	 */
-	protected function template(array $output, $template = NULL)
+	protected function template(array $output, $template = NULL, $useView = False)
 	{
 		// 数据绑定
 		$view = $this->getView();
@@ -68,7 +54,7 @@ abstract class BaseController extends Controller_Abstract
 		if($template)
 		{
 			Application::app()->getDispatcher()->disableView();
-			$this->display($template);
+			$view ? $view->display("{$template}.phtml") : $this->display($template);
 		}
 		exit();
 	}
@@ -110,7 +96,7 @@ abstract class BaseController extends Controller_Abstract
 	{
 		IS_AJAX ? $this->jsonp($url, 302) : Location::$method($url, $data);
 	}
-	
+
 	/**
 	 * 获取session操作对象
 	 */

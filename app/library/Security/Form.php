@@ -1,12 +1,39 @@
 <?php
 
 /**
- * 数据检查类
+ * 表单检查类
  * @author enychen
+ * 
+ * 键名 => [来源, 检查方法, 是否必须, 错误提示, 可选项, 默认值， 别名]
+ * 
+ * 来源： GET|POST|PUT|DELETE|NULL，如果设置成NULL，表示对所有来源进行检查
+ * 
+ * 检查方法：
+ * 	1. in：表示内容是否相等，可选项必须是一个数组，表示值在in_array这个数组
+ * 	2. number： 是否是数值，可选项可以包含一个min和max键的数组，表示数字区间
+ * 	3. email：是否是邮箱地址，无可选项
+ * 	4. url： 是否是地址，无可选项
+ * 	5. ip：是否是ip，无可选项
+ * 	6. regexp：正则匹配，可选项必须是一个正则表达式字符串
+ * 	7. string：字符串检查
+		7.1 包含xss攻击检查，可以跳过，可选项中使用['skipXss'] = true，默认检查
+		7.2 可以检查字符串长度：可选项中使用[min] = 长度值，[max] = 长度值
+ * 8. phone：检查是否是一个手机号码或者电话号码
+ * 9. callback：使用回调函数进行检查，回调函数设置在可选项中
+ * 
+ * 是否必须： true | false
+ * 
+ * 错误提示： 检查失败后提示信息
+ * 
+ * 可选项：上面已经设置解释过
+ * 
+ * 默认值：如果未接收，并且不是必须，则设置此默认值
+ * 
+ * 别名：给key修改一个名称
  */
 namespace Security;
 
-class Validate
+class Form
 {
 
 	/**
@@ -14,32 +41,36 @@ class Validate
 	 * @static
 	 * @var array
 	 */
-	protected static $data = array();
+	protected static $inputs = array();
 
 	/**
-	 * 加载规则
-	 * @param string $file
+	 * 初始化规则
+	 * @param array 规则数组
+	 * @param array 输入源
 	 * @return array 规则数组
 	 */
-	protected static function load($rules, $data)
+	protected static function init($checks, $inputs)
 	{
 		// 读取参数
-		foreach($rules as $key=>&$rule)
+		$rules = array();
+		foreach($checks as $key=>$check)
 		{
 			// 获取来源
-			if(strcasecmp($_SERVER['REQUEST_METHOD'], $rule[0]))
+			if($check[0] && strcasecmp($_SERVER['REQUEST_METHOD'], $check[0]))
 			{
 				continue;
 			}
 			
 			// 检查数组整理
-			$rule['value'] = isset($data[$key]) ? $data[$key] : NULL;
-			$rule['method'] = $rule[1];
-			$rule['require'] = $rule[2];
-			$rule['notify'] = $rule[3];
-			$rule['options'] = isset($rule[4]) ? $rule[4] : NULL;
-			$rule['default'] = isset($rule[5]) ? $rule[5] : NULL;
-			$rule['alias'] = isset($rule[6]) ? $rule[6] : NULL;
+			$rules[$key] = array(
+				'value'=>isset($inputs[$key]) ? $inputs[$key] : NULL,
+				'method'=>$check[1],
+				'require'=>$check[2], 
+				'notify'=>$check[3],
+				'options'=>isset($check[4]) ? $check[4] : NULL, 
+				'default'=>isset($check[5]) ? $check[5] : NULL, 
+				'alias'=>isset($check[6]) ? $check[6] : NULL
+			);
 		}
 		
 		return $rules;
@@ -51,16 +82,14 @@ class Validate
 	 * @param array $data 输入源数据
 	 * @return void
 	 */
-	public static function validity($rules, $data)
+	public static function check(array $rules, array $inputs)
 	{
-		// 没有规则返回空
+		// 规则检查
+		$rules = static::init($rules, $inputs);
 		if(!$rules)
 		{
 			return array(array(), array());
 		}
-		
-		// 数据加载
-		$rules = static::load($rules, $data);
 		
 		// 检查
 		$error = array();
@@ -84,8 +113,9 @@ class Validate
 			// 设置合法值
 			static::setData($key, $rule);
 		}
+		
 		// 结果返回
-		return array(static::$data, $error);
+		return array(static::$inputs, $error);
 	}
 
 	/**
@@ -105,21 +135,20 @@ class Validate
 		
 		if($rule['value'] !== NULL)
 		{
-			static::$data[$key] = $rule['value'];
+			static::$inputs[$key] = trim($rule['value']);
 		}
 	}
 }
 
 /**
- * 各种数据检查
- * @author eny
- *
+ * 规则类
+ * @author enychen
  */
 class Rule
 {
 
 	/**
-	 * 是否必须传递
+	 * 是否必须
 	 * @static
 	 * @param array 规则数组
 	 * @param array 规则
@@ -159,7 +188,7 @@ class Rule
 	 * @param object 规则对象
 	 * @return int|string
 	 */
-	public static function range($rule)
+	public static function in($rule)
 	{
 		return in_array($rule['value'], $rule['options']);
 	}
@@ -203,8 +232,13 @@ class Rule
 	 */
 	public static function string($rule)
 	{
-		// xss注入攻击
-		$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', $rule['value']);
+		$flag = true;
+		
+		// xss注入攻击检查
+		if(empty($rule['options']['skipXss']))
+		{
+			$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', $rule['value']);
+		}
 		
 		// 字符串长度
 		$length = mb_strlen($rule['value']);
@@ -246,11 +280,4 @@ class Rule
 	{
 		return call_user_func_array($rule['options'], [$rule['value']]);
 	}
-}
-
-/**
- * 表单异常对象
- */
-class FormException extends \Exception
-{
 }
