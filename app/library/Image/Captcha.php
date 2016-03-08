@@ -21,6 +21,7 @@ class Captcha
 		$this->length = $length;
 		$this->image = imagecreatetruecolor($width, $height);
 		$this->font = __DIR__.'/Fonts/Elephant.ttf';
+		$this->fontSize = $this->height / $this->length * 2.4;
 		$this->code = NULL;
 		
 		// 生成随机码
@@ -43,13 +44,22 @@ class Captcha
 	 * 生成星星
 	 * @param int $star 星星个数
 	 */
-	public function createLine($star=130)
+	public function createLine($star = 130)
 	{
 		for($i = 0; $i < $star; $i++)
 		{
 			$color = imagecolorallocate($this->image, mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
 			imagestring($this->image, mt_rand(1, 5), mt_rand(0, $this->width), mt_rand(0, $this->height), '.', $color);
 		}
+	}
+	
+	/**
+	 * 设置字体大小
+	 * @param int $fontSize 字体大小值
+	 */
+	public function setFontSize($fontSize)
+	{
+		$this->fontSize = $fontSize;
 	}
 
 	/**
@@ -67,7 +77,6 @@ class Captcha
 		imagecolortransparent($this->image, $color);
 		
 		// 填充文字
-		$fontSize = $this->height / $this->length * 2.4;
 		$spacing = $this->width / $this->length;
 		$y = $this->height / 1.3;
 		for($i=0, $len=strlen($this->code); $i<$len; $i++)
@@ -75,7 +84,7 @@ class Captcha
 			$angle = mt_rand(-30, 30);
 			$x = $spacing*$i+mt_rand(1,3);
 			$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
-			imagettftext($this->image, $fontSize, $angle, $x, $y, $color, $this->font, $this->code[$i]);
+			imagettftext($this->image, $this->fontSize, $angle, $x, $y, $color, $this->font, $this->code[$i]);
 		}
 	}
 	
