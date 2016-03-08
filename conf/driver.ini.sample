@@ -4,16 +4,16 @@ mysql.master.host='127.0.0.1'
 mysql.master.port=3306
 mysql.master.username='root'
 mysql.master.dbname='enychen'
-mysql.master.password='123456'
+mysql.master.password='254635@enyChen'
 mysql.master.charset='utf8'
 
 ;[redis]
 redis.master.host='127.0.0.1'
 redis.master.port=6379
-redis.master.db=4
+redis.master.db=0
 redis.master.auth=
 redis.master.timeout=30
-redis.master.options.prefix=
+redis.master.options.prefix='enychen.com.'
 redis.master.options.read_timemout=-1
 
 [develop:product]

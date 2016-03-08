@@ -1,13 +1,7 @@
-front_index_index.type = "regex"
-front_index_index.match = "#/(\d)+.html#"
-front_index_index.route.module = "Front"
-front_index_index.route.controller = "Index"
-front_index_index.route.action = "index"
-front_index_index.map.1=page
-
-api_index_index.type = "regex"
-api_index_index.match = "#/api/(\d)+.html#"
-api_index_index.route.module = "Api"
-api_index_index.route.controller = "Index"
-api_index_index.route.action = "index"
-api_index_index.map.1=page
+;[案例]
+;module_controller_action.type = "regex"
+;module_controller_action.match = "#/(\d)+.html#"
+;module_controller_action.route.module = "Front"
+;module_controller_action.route.controller = "Index"
+;module_controller_action.route.action = "index"
+;module_controller_action.map.1=page

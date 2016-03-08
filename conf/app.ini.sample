@@ -6,12 +6,12 @@ application.dispatcher.catchException=True
 application.modules = "Index,Front,Admin,Api,H5"
 
 ;[前台]
-resource.Front.domain = "http://www.library.com/"
+resource.Front.domain = "http://www.enychen.com/"
 resource.Front.style = "/index/style/"
 resource.Front.script = "/index/script/"
 resource.Front.image = "/index/image/"
 ;[后台]
-resource.Admin.domain = "http://www.library.com/"
+resource.Admin.domain = "http://www.enychen.com/"
 resource.Admin.style = "/admin/css/"
 resource.Admin.script = "/admin/js/"
 resource.Admin.image = "/admin/images/"
@@ -19,7 +19,7 @@ resource.Admin.image = "/admin/images/"
 ;[修改php.ini的配置]
 runtime.date.timezone = "PRC"
 runtime.session.save_handler = "redis"
-runtime.session.save_path ="tcp://127.0.0.1?database=0&timeout=30&auth="
+runtime.session.save_path ="tcp://127.0.0.1?database=15&timeout=30&auth="
 runtime.session.cookie_domain = ".enychen.com"
 runtime.session.cookie_httponly = 1
 
