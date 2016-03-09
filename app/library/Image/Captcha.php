@@ -13,6 +13,7 @@ class Captcha {
 	 * @param int $width 图片长度
 	 * @param int $heigh 图片宽度
 	 * @param int $length 字符个数
+	 * @return void
 	 */
 	public function __construct($width = 100, $height = 40, $length = 4) {
 		// 保存初始化值
@@ -30,6 +31,7 @@ class Captcha {
 
 	/**
 	 * 获取随机验证码
+	 * @return void
 	 */
 	protected function getRandomCode() {
 		$charset = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789';
@@ -39,8 +41,9 @@ class Captcha {
 	}
 
 	/**
-	 * 生成星星
+	 * 生成干扰星星
 	 * @param int $star 星星个数
+	 * @return void
 	 */
 	public function createLine($star = 100) {
 		for($i = 0; $i < $star; $i++) {
@@ -50,8 +53,9 @@ class Captcha {
 	}
 
 	/**
-	 * 设置字体大小
+	 * 更改字体大小
 	 * @param int $fontSize 字体大小值
+	 * @return void
 	 */
 	public function setFontSize($fontSize) {
 		$this->fontSize = $fontSize;
@@ -59,6 +63,7 @@ class Captcha {
 
 	/**
 	 * 生成验证码图片
+	 * @return void
 	 */
 	public function createImage() {
 		// 画布颜色
@@ -91,6 +96,7 @@ class Captcha {
 
 	/**
 	 * 输出图片
+	 * @return void
 	 */
 	public function output() {
 		// 输出
