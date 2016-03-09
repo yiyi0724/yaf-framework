@@ -1,7 +1,7 @@
 # 目录
 1. [Mysql类操作](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
 
-  - [创建mysq对象]()
+  - [创建mysq对象](https://github.com/enychen/yaf-framework/blob/master/app/library/Driver/README.md#创建mysq对象)
   - [mysql内置方法](https://github.com/enychen/yaf-framework/blob/master/application/library/Driver/README.md#mysql内置方法)
     - 执行sql语句
     - 调试mysql
