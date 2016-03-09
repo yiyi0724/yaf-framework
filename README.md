@@ -7,4 +7,6 @@
   - [Mysql](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md)
   - [Redis](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Redis.md)
 - 网络类
-  - [Ip获取](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Ip.md)
+  - [获取Ip地址](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Ip.md)
+  - [邮件发送](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Mail.md)
+  - [HTTP请求](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Http.md)
