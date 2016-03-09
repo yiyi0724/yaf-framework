@@ -7,13 +7,7 @@
  */
 namespace Driver;
 
-class Mysql {
-
-	/**
-	 * 对象池
-	 * @var array
-	 */
-	protected static $pool;
+class Mysql extends Driver {
 
 	/**
 	 * pdo对象
@@ -43,31 +37,6 @@ class Mysql {
 		
 		// 创建数据库驱动对象
 		$this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
-	}
-
-	/**
-	 * 禁止克隆对象
-	 * @return void
-	 */
-	protected final function __clone() {
-	}
-
-	/**
-	 * 单例模式创建连接池对象
-	 * @param array 数组配置
-	 * @return \Driver
-	 */
-	public static function getInstance(array $driver) {
-		// 计算hash值
-		$key = sprintf("%u", crc32(implode(':', $driver)));
-		
-		// 是否已经创建过单例对象
-		if(empty(static::$pool[$key])) {
-			static::$pool[$key] = new static($driver);
-		}
-		
-		// 返回对象
-		return static::$pool[$key];
 	}
 
 	/**

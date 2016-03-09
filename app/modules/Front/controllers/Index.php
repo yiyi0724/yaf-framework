@@ -6,7 +6,6 @@ class IndexController extends \Base\FrontController
 
 	public function indexAction()
 	{
-		
-		$this->jsonp(array());
+		$mysql = \Driver\Redis::getInstance($driver);
 	}
 }

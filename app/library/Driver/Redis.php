@@ -7,15 +7,10 @@
  */
 namespace Driver;
 
-class Redis {
-	/**
-	 * 加载单例模式
-	 * @var \Traits\Singleton
-	 */
-	use \Traits\Singleton;
+class Redis extends Driver {
 
 	/**
-	 * 当前的redis对象
+	 * redis对象
 	 * @var \Redis
 	 */
 	protected $redis;
@@ -25,7 +20,7 @@ class Redis {
 	 * @param array $driver 配置数组 host | port | timeout | auth | db | options
 	 * @throws \RedisException
 	 */
-	protected function create($driver) {
+	protected function __construct(array $driver) {
 		// 创建redis对象
 		$this->redis = new \Redis();
 		// 连接redis
