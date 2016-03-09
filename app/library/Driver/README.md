@@ -1,7 +1,10 @@
 # 目录
-1. [mysql](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
+1. [Mysql类操作](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#mysql)
+
+  - [创建mysq对象]()
   - [mysql内置方法](https://github.com/enychen/yaf-framework/blob/master/application/library/Driver/README.md#mysql内置方法)
-    - 执行查询
+    - 执行sql语句
+    - 调试mysql
     - 开启事务
     - 是不是在事务内
     - 提交事务
@@ -11,9 +14,11 @@
     - select获取所有
     - select获取一行
     - select获取一个值
-2. [redis](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
+2. [Redis类操作](https://github.com/enychen/yaf-framework/tree/master/application/library/Driver#redis)
 
-## mysql
+## mysql类操作
+
+#### 创建mysq对象：
 ```php
 
 // 数据库选项
@@ -30,10 +35,13 @@ $mysql = \Driver\Mysql::getInstance($driver);
 ```
 
 #### mysql内置方法：
-执行查询：
+执行sql语句：
 ```php
-// 如果先define('DEBUG_SQL', TRUE)，则下面语句输出调试信息，不执行
 $mysql->query(string $sql, array $params = array());
+```
+调试mysql
+```php
+$mysql->debug(string $sql, array $params = array());
 ```
 开启事务:
 ```php
