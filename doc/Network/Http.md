@@ -1,26 +1,70 @@
-## Http请求
+## Http请求类（基于curl扩展）
+[源码地址](https://github.com/enychen/yaf-framework/blob/master/app/library/Network/Http.php)
 
+#### 完整案例
 ```php
 try
 {
   // 创建对象
   $http = new \Network\Http($timeout = 60, $return = TRUE, $header = FALSE);
-  $http
-  
-  // 可选方法
-  // $http->setCookie($cookie); // 设置cookie信息，key=value; key=value 或者 array('key'=>'value')
-  // 
-  // $data['upload'] = $http->getFile(string 文件名); // 版本问题，上传文件返回一个可上传的数据
-  // $http->setCurlOpt(CURLOPT_*, $value); // 设置CURLOPT选项
-  
-  // 执行请求
-  $result = $http->$method(array 要传递的参数); // $mthod可以使用的方法: get | post | put | delete | upload
-  
-  // 获取成功后接下来操作
+  $http->setAction("http://www.enychen.com/api/");
+  $http->setDecode(\Network\Http::DECODE_JSON);
+  $http->setCookie(array('author'=>'enychen', 'time'=>'2016-03-09'));
+  $result = $http->get(array('param1'=>1, 'param2'=>2));
+  $http->close();
 }
 catch(\Exception  $e)
 {
-  // 请求发生错误
+  $code = $e->getCode();
   $error = $e->getMessage();
 }
+```
+
+#### 内置方法介绍
+###### 创建一个http对象
+```php
+/**
+ * @param int  $timeout 超时时间，默认60秒
+ * @param bool $return  结果是否返回，如果不返回则直接输出，默认返回不输出
+ * @param bool $header　启用时会将头文件的信息作为数据流输出, 默认不输出
+ * @return void
+ */
+ $http = new \Network\Http(int $timeout = 60, bool $return = TRUE, bool $header = FALSE);
+```
+
+###### 设置请求的地址
+```php
+/**
+ * @param string $action 请求地址
+ * @return void
+ */
+$http->setAction(string $action)
+```
+
+###### 返回结果进行解析
+```php
+/**
+ * @param string $decode 只支持 \Network\Http::DECODE_JSON 或者 \Network\Http::DECODE_XML
+ * @return void
+ */ 
+$http->setDecode(int \Network\Http::DECODE_JSON);
+```
+
+###### 设置cookie信息
+```php
+/**
+ * @param string|array $cookie cookie信息
+ * @return void
+ */
+$http->setCookie(mixed $cookie);
+```
+
+###### 设置curlopt的设置
+```php
+/**
+ * @param string $key CURLOPT_*设置选项,参照http://php.net/manual/zh/function.curl-setopt.php
+ * @param int|string|bool $value CURL选项值
+ * @return void
+ */
+$http->setCurlopt(int $key, mixed $value)
 ```
