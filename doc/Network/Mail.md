@@ -1,4 +1,7 @@
 ## 发送邮件
+[源码地址_非原创](https://github.com/enychen/yaf-framework/blob/master/app/library/Network/Mail.php)
+
+#### 完整案例
 ```php
 $mail = new \Network\Mail(); // 创建一个邮件对象
 $mail->isSMTP(); // 使用SMPT验证
@@ -18,9 +21,9 @@ $mail->AltBody = '邮件备注'; // 邮件的备注
 
 $mail->isHTML(true); // 内容使用html的方式
 
-if(!$mail->send()) {
-  echo '发送失败: ' . $mail->ErrorInfo;
-} else {
+if($mail->send()) {
   echo '发送成功';
+} else {
+  echo '发送失败: ' . $mail->ErrorInfo;
 }
 ```
