@@ -1,4 +1,7 @@
 ## 发送邮件
+[源码地址_非原创](https://github.com/enychen/yaf-framework/blob/master/app/library/Network/Mail.php)
+
+#### 完整案例
 ```php
 $mail = new \Network\Mail(); // 创建一个邮件对象
 $mail->isSMTP(); // 使用SMPT验证
