@@ -14,7 +14,7 @@ abstract class AdminController extends BaseController
 	 * 全局控制器初始化信息
 	 */
 	public function init()
-	{		
+	{
 		// 不是登录控制器进行检查
 		!in_array(CONTROLLER, array('Login', 'Image')) and $this->login() and $this->timeout();
 	}
@@ -27,10 +27,13 @@ abstract class AdminController extends BaseController
 	 */
 	protected function login($url = "/admin/login", $method = 'get', $data = NULL)
 	{
+		// 用户为登录
 		if(!AUID)
 		{
 			IS_AJAX ? $this->jsonp($url, 302) : $this->location($url, $method, $data);
 		}
+		
+		
 	}
 
 	/**

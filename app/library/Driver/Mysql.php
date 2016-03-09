@@ -7,99 +7,76 @@
  */
 namespace Driver;
 
-class Mysql
-{
+class Mysql {
+
 	/**
 	 * 对象池
 	 * @var array
 	 */
-	protected static $instance;
-	
+	protected static $pool;
+
 	/**
 	 * pdo对象
 	 * @var \Pdo
 	 */
 	protected $pdo;
-	
-	/**
-	 * 配置信息
-	 * @var array
-	 */
-	protected $driver = array();
 
 	/**
 	 * 预处理对象
 	 * @var \PDOStatement
 	 */
 	protected $stmt;
-	
+
 	/**
 	 * 禁止直接创建构造函数
-	 * @param array $driver
+	 * @param array $driver 驱动选项，包含 host | port | dbname | charset | username | password
+	 * @return void
 	 */
 	protected function __construct(array $driver) {
 		// 数据库连接信息
-		$dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";		
+		$dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";
 		// 驱动选项
 		$options = array(
-			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION, \PDO::ATTR_TIMEOUT=>30
-		);		
+			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION, 
+			\PDO::ATTR_TIMEOUT=>30
+		);
+		
 		// 创建数据库驱动对象
 		$this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
-		// 保存配置
-		$this->driver = $driver;
 	}
-	
+
 	/**
 	 * 禁止克隆对象
 	 * @return void
 	 */
-	protected final function __clone()
-	{
+	protected final function __clone() {
 	}
-	
+
 	/**
 	 * 单例模式创建连接池对象
 	 * @param array 数组配置
 	 * @return \Driver
 	 */
-	public static function getInstance(array $driver)
-	{
+	public static function getInstance(array $driver) {
 		// 计算hash值
 		$key = sprintf("%u", crc32(implode(':', $driver)));
+		
 		// 是否已经创建过单例对象
-		if(empty(static::$instance[$key]))
-		{
-			static::$instance[$key] = new static($driver);
+		if(empty(static::$pool[$key])) {
+			static::$pool[$key] = new static($driver);
 		}
+		
 		// 返回对象
-		return static::$instance[$key];
+		return static::$pool[$key];
 	}
 
 	/**
 	 * 执行sql语句
 	 * @param string $sql sql语句
 	 * @param array $params 参数
-	 * @throws \PDOException
+	 * @return \Driver\Mysql
 	 */
-	public function query($sql, array $params = array())
-	{
-		if(defined('DEBUG_SQL'))
-		{
-			// 输出调试的sql语句
-			echo "<pre>placeholder sql: {$sql}<hr/>";
-			print_r($params);
-			foreach($params as $key=>$placeholder)
-			{
-				// 字符串加上引号
-				is_string($placeholder) and ($placeholder = "'{$placeholder}'");
-				$start = strpos($sql, $key);
-				$end = strlen($key);
-				$sql = substr_replace($sql, $placeholder, $start, $end);
-			}
-			exit("<hr/> origin sql: {$sql}</pre>");
-		}
-		
+	public function query($sql, array $params = array()) {
 		// 预处理语句
 		$this->stmt = $this->pdo->prepare($sql);
 		// 参数绑定
@@ -108,20 +85,36 @@ class Mysql
 		$this->stmt->execute();
 		// 结果解析成数组
 		$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
+		// 返回当前对象
+		return $this;
 	}
-	
+
+	/**
+	 * 调试sql语句
+	 * @param string $sql sql语句
+	 * @param array $params 参数
+	 */
+	public function debug($sql, array $params = array()) {
+		echo "<pre>placeholder sql: {$sql}<hr/>";
+		print_r($params);
+		foreach($params as $key=>$placeholder) {
+			is_string($placeholder) and ($placeholder = "'{$placeholder}'");
+			$start = strpos($sql, $key);
+			$end = strlen($key);
+			$sql = substr_replace($sql, $placeholder, $start, $end);
+		}
+		exit("<hr/> origin sql: {$sql}</pre>");
+	}
+
 	/**
 	 * 参数与数据类型绑定
 	 * @param array 值绑定
 	 * @return void
 	 */
-	private function bindValue($params)
-	{
-		foreach($params as $key=>$value)
-		{
+	private function bindValue($params) {
+		foreach($params as $key=>$value) {
 			// 数据类型选择
-			switch(TRUE)
-			{
+			switch(TRUE) {
 				case is_int($value):
 					$type = \PDO::PARAM_INT;
 					break;
@@ -144,10 +137,8 @@ class Mysql
 	 * @param string $method 函数名
 	 * @return mixed
 	 */
-	public function __call($method, $args)
-	{
-		switch($method)
-		{
+	public function __call($method, $args) {
+		switch($method) {
 			case 'beginTransaction':
 			case 'inTransaction':
 			case 'commit':
@@ -157,7 +148,7 @@ class Mysql
 				break;
 			case 'fetchAll':
 			case 'fetch':
-			case 'fetchColumn':				
+			case 'fetchColumn':
 			case 'rowCount':
 				$result = $this->stmt->$method();
 				break;
@@ -165,14 +156,15 @@ class Mysql
 				throw new \PDOException("Call to undefined method Mysql::{$method}()");
 		}
 		
-		// 返回结果
 		return $result;
 	}
 }
 
 /**
- * 使用说明(按照下面步骤即可):
- * 1. 获取某一个数据库的对象: $mysql = \Driver\Mysql::getInstance($config);  // $config数组包含: host port dbname charset username password 6个key,必须都有
+ * 使用说明
+ * 1. 获取某一个数据库的对象: $mysql = \Driver\Mysql::getInstance(array $config); 
+ * 1.1 $config数组包含: host port dbname charset username password 6个key,必须都有
+ * 
  * 2. 内置函数
  * 2.1 开启事务: $mysql->beginTransaction();
  * 2.2 检查是否在一个事务内: $mysql->inTransaction();
@@ -184,27 +176,10 @@ class Mysql
  * 2.8 从结果集中获取一个内容: $mysql->fetchColumn();
  * 2.9 获得影响行数: $mysql->rowCount();
  * 
- * 3. 连贯操作函数:
- * 3.1 $mysql->field('用,隔开的字符串')->table('表名')->where('数组或者字符串')->group('字符串')->order('字符串')->having('同where')->limit('偏移量', '个数')
- * 3.2 where和having函数的使用说明:
- * 3.2.1 如果传入的是字符串,则直接拼字符串
- * 3.2.2 数组说明:
- * 3.2.2.1 ['id'=>1] 拼接成 id = 1
- * 3.2.2.2 ['id >'=>1] 拼接成 id > 1, 同理其他比较运算符一致
- * 3.2.2.3 ['id'=>[1,2,3]] 拼接成 id IN(1,2,3), 同理['id N'=>[1,2,3]] 拼接成 id NOT IN(1,2,3)
- * 3.2.2.4 ['id B'=>[1,5]] 拼接成 id BETWEEN 1 AND 5
- * 3.2.2.5 ['OR'=>['id'=>1, 'other'=>1, ['other2'=>2, 'other3'=>3]]] 拼接成 id = 1 OR other = 1 OR other2 = 2 AND other3 = 3
- * 3.2.2.6 ['id L'=>'%chen%'] 拼接成 id LIKE '%chen%' 同理['id NL'=>'%chen%'] 拼接成 id NOT LIKE '%chen%'
- * 
- * 4. 连贯操作函数2,可配置上面的函数一起使用
- * 4.1 $mysql->select()->fetch();  进行select,select不是结尾,以fetch | fetchAll | fetchColumn进行的结尾
- * 4.2 $mysql->insert(array $data, $rowCount); 进行insert,第二个参数用于表示多个插入的时候,返回影响行数的操作
- * 4.3 $mysql->update(); 进行update
- * 4.4 $mysql->delete(); 进行delete
+ * 3. 原生sql操作
+ * 4.1 $mysql->query(string $sql, array $params);
+ * 4.1.1 结果返回\Driver\Mysql对象，可以连贯操作，如：$mysql->query($sql, $params)->fetch();
  *  
- *  5. 原生sql操作
- *  5.1 $mysql->query($sql, $params);
- *  
- *  6. 调试
- *  6.1 define('DEBUG_SQL', TRUE); 后,不执行sql语句,输出预处理sql语句，值数组，可执行的完整sql语句
+ * 4. 调试
+ * 4.1 $mysql->debug(string $sql, array $params); //输出完整sql语句，并直接结束程序
  */

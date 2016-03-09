@@ -63,6 +63,8 @@ class Http
 		curl_setopt($this->curl, CURLOPT_HEADER, $header);
 		// 结果是否要解析,如果需要返回或者需要输出头信息,则不进行解析,因为解析一定失败
 		$this->decode = (!($return && $header)) && $decode ? $decode : NULL;
+		// curl超时时间
+		$http->setCurlopt(CURLOPT_TIMEOUT, 30);
 	}
 
 	/**
@@ -95,21 +97,26 @@ class Http
 				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
 				break;
 			default:
-				throw new \Exception("Fatal Error: NOT FOUND METHOD Http::{$mthod}()");
+				throw new \Exception("Not Found Method Http::{$method}()", 90000);
 		}
 		// 设置请求的地址
 		curl_setopt($this->curl, CURLOPT_URL, $this->action);
 		// 执行请求
 		$this->result = curl_exec($this->curl);
+		// 操作失败
+		if($this->result === FALSE)
+		{
+			throw new \Exception("Connect Error", 90001);
+		}
 		// 进行解析
-		in_array($this->decode, array(
-			static::DECODE_JSON, static::DECODE_XML
-		)) and $this->decode($this->result);
-		
+		if(in_array($this->decode, array(static::DECODE_JSON, static::DECODE_XML)))
+		{
+			$this->decode();
+		}	
 		// 关闭连接
 		curl_close($this->curl);
 		
-		// 返回结果和错误
+		// 返回结果
 		return $this->result;
 	}
 
@@ -118,17 +125,17 @@ class Http
 	 * @param string $result curl的返回结果
 	 * @throws \Exception
 	 */
-	protected function decode($result)
+	protected function decode()
 	{
 		// xml解析
 		if($this->decode == static::DECODE_XML)
 		{
-			$this->result = @simplexml_load_string($this->result, 'SimpleXMLElement', LIBXML_NOCDATA);
-			if(!$this->result)
+			$result = @simplexml_load_string($this->result, 'SimpleXMLElement', LIBXML_NOCDATA);
+			if(!$result)
 			{
-				throw new \Exception("XML DECODE ERROR, ORIGIN DATA:{$result}");
+				throw new \Exception("Decode Error", 90002);
 			}
-			$this->result = json_encode($this->result);
+			$this->result = json_encode($result);
 		}
 		
 		// 通用解析,其实是json解析
@@ -136,7 +143,7 @@ class Http
 		$this->result = json_decode($this->result, TRUE);
 		if(json_last_error())
 		{
-			throw new \Exception("DECODE ERROR, ORIGIN DATA:{$result}");
+			throw new \Exception("DECODE ERROR, ORIGIN DATA:{$result}", 90002);
 		}
 	}
 

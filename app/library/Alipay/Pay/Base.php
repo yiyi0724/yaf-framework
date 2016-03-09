@@ -7,8 +7,7 @@ namespace Alipay\Pay;
  * @author enychen
  * @version 1.0
  */
-abstract class Base
-{
+abstract class Base {
 
 	/**
 	 * 支付宝请求接口地址
@@ -40,37 +39,45 @@ abstract class Base
 	 * 	clentIp 用户在创建交易时，该用户当前所使用机器的IP, 如果商户申请后台开通防钓鱼IP地址检查选项，此字段必填，校验用
 	 */
 	protected $options = array(
-		'partner'=>NULL,
-		'email'=>NULL,
-		'signKey'=>NULL,
-		'charset'=>'utf-8',
-		'signType'=>'MD5',
-		'phishingKey'=>NULL,
+		'partner'=>NULL, 
+		'email'=>NULL, 
+		'signKey'=>NULL, 
+		'charset'=>'utf-8', 
+		'signType'=>'MD5', 
+		'phishingKey'=>NULL, 
 		'clientIp'=>NULL
 	);
+
+	/**
+	 * 构造函数
+	 * @param unknown $partner
+	 * @param unknown $email
+	 * @param unknown $signKey
+	 */
+	public function __construct($partner, $email, $signKey) {
+		$this->options['partner'] = $partner;
+		$this->options['email'] = $email;
+		$this->options['signKey'] = $signKey;
+	}
 
 	/**
 	 * 同异步验证
 	 * @throw \Exception
 	 * @return array 支付宝回调信息
 	 */
-	public function verify()
-	{
+	public function verify() {
 		// 空参数传递
-		if(empty($_REQUEST) || empty($_REQUEST['sign']))
-		{
+		if(empty($_REQUEST) || empty($_REQUEST['sign'])) {
 			throw new \Exception('Alipay Notify Data Illegal', 20001);
 		}
-
+		
 		// 签名结果检查
-		if($_REQUEST['sign'] != $this->sign($this->filterData($_REQUEST)))
-		{
+		if($_REQUEST['sign'] != $this->sign($this->filterData($_REQUEST))) {
 			throw new \Exception('Sign Illegal', 20002);
 		}
-
+		
 		// 回调支付宝的验证地址
-		if(isset($_REQUEST["notify_id"]))
-		{
+		if(isset($_REQUEST["notify_id"])) {
 			// 请求alipay获取验证id结果
 			$url = "{$this->httpsVerifyApi}partner={$this->options['partner']}&notify_id={$_REQUEST["notify_id"]}";
 			$curl = curl_init($url);
@@ -82,21 +89,19 @@ abstract class Base
 			curl_setopt($curl, CURLOPT_CAINFO, __DIR__ . '/cacert.pem'); // 证书地址
 			$responseText = curl_exec($curl);
 			curl_close($curl);
-			if(!preg_match("/true$/i", $responseText))
-			{
+			if(!preg_match("/true$/i", $responseText)) {
 				throw new \Exception('Alipay Notify ID Illegal', 20003);
 			}
 		}
-
+		
 		// 具体业务结果验证
 		$this->verifyDetail();
-
+		
 		// 是否是post请求
-		if(isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
-		{
+		if(isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')) {
 			echo 'SUCCESS';
 		}
-
+		
 		return $_REQUEST;
 	}
 
@@ -105,8 +110,7 @@ abstract class Base
 	 * @param array $data 参数列表
 	 * @return string
 	 */
-	protected function buildForm($data)
-	{
+	protected function buildForm($data) {
 		// 公共数据
 		$data['partner'] = $this->options['partner'];
 		$data['_input_charset'] = $this->options['charset'];
@@ -120,8 +124,7 @@ abstract class Base
 		$data['sign_type'] = $this->options['signType'];
 		// 生成请求模板
 		$form = "<head><title>支付跳转中...</title><meta http-equiv='Content-Type' content='text/html;charset=utf-8'></head><p>支付跳转中...</p><form id='alipaysubmit' name='alipaysubmit' action='{$this->api}?_input_charset={$this->options['charset']}' method='post'>";
-		foreach($data as $key=>$value)
-		{
+		foreach($data as $key=>$value) {
 			$form .= "<input type='hidden' name='{$key}' value='{$value}'/>";
 		}
 		$form .= "</form><script>document.forms['alipaysubmit'].submit();</script>";
@@ -133,13 +136,13 @@ abstract class Base
 	 * @param array $data 参数列表
 	 * @return array
 	 */
-	protected function filterData($data)
-	{
+	protected function filterData($data) {
 		// 删除空值|sigin|sign_type键
-		foreach($data as $key=>$value)
-		{
-			if(in_array($key, array('sign', 'sign_type')) || !$value)
-			{
+		foreach($data as $key=>$value) {
+			if(in_array($key, array(
+				'sign', 
+				'sign_type'
+			)) || !$value) {
 				unset($data[$key]);
 			}
 		}
@@ -154,10 +157,8 @@ abstract class Base
 	 * @param array $data 参数列表
 	 * @return string md5加密字符串
 	 */
-	protected function sign($data)
-	{
-		switch($this->options['signType'])
-		{
+	protected function sign($data) {
+		switch($this->options['signType']) {
 			case "MD5":
 				$sign = md5(urldecode(http_build_query($data)) . $this->options['signKey']);
 				break;

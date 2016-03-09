@@ -5,17 +5,18 @@
 var $captchaImg = $('#captcha');
 var $button = $('#login-button');
 var $error = $('span#error');
+var captchaUrl = '/admin/image/captcha?c=login&v=';
 
 // 刷新验证码
 $captchaImg.click(function() {
-	$(this).attr('src', '/admin/image/captcha?c=login&v='+Math.random());
+	$(this).attr('src', captchaUrl+Math.random());
 })
 
 
 // 登录检查
 $button.click(function() {
 	
-	$error.html("");
+	$error.html('');
 	
 	var $username = $('input[name=username]');
 	var $password = $('input[name=password]');
@@ -37,8 +38,9 @@ $button.click(function() {
 			'data' : $('#login-form').serialize(),
 			'click' : $(this),
 			'callback':function(data) {
-				if(data.code == 301) {
-					$captchaImg.attr('src', '/admin/image/captcha?c=login&v='+Math.random());
+				if(data.code != 301) {
+					$captchaImg.attr('src', captchaUrl+Math.random());
+					$captcha.val('');
 				}
 			}
 		});
