@@ -21,9 +21,9 @@ $mail->AltBody = '邮件备注'; // 邮件的备注
 
 $mail->isHTML(true); // 内容使用html的方式
 
-if(!$mail->send()) {
-  echo '发送失败: ' . $mail->ErrorInfo;
-} else {
+if($mail->send()) {
   echo '发送成功';
+} else {
+  echo '发送失败: ' . $mail->ErrorInfo;
 }
 ```
