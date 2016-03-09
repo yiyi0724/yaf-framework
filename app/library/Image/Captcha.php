@@ -42,7 +42,7 @@ class Captcha {
 	 * 生成星星
 	 * @param int $star 星星个数
 	 */
-	public function createLine($star = 130) {
+	public function createLine($star = 100) {
 		for($i = 0; $i < $star; $i++) {
 			$color = imagecolorallocate($this->image, mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
 			imagestring($this->image, mt_rand(1, 5), mt_rand(0, $this->width), mt_rand(0, $this->height), '.', $color);
