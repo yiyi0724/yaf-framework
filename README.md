@@ -10,3 +10,6 @@
   - [获取Ip地址](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Ip.md)
   - [邮件发送](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Mail.md)
   - [HTTP请求](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Http.md)
+  - [url跳转](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Location.md)
+- 图像类
+  - [验证码](https://github.com/enychen/yaf-framework/blob/master/doc/Image/Captcha.md)
