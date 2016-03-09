@@ -58,9 +58,9 @@ class Captcha {
 	}
 
 	/**
-	 * 生成文字
+	 * 生成验证码图片
 	 */
-	public function setText() {
+	public function createImage() {
 		// 画布颜色
 		$color = imagecolorallocate($this->image, 200, 200, 200);
 		
