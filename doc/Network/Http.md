@@ -5,12 +5,15 @@
 ```php
 try
 {
+  $params = array('param1'=>1, 'param2'=>2);
+
   // 创建对象
   $http = new \Network\Http($timeout = 60, $return = TRUE, $header = FALSE);
   $http->setAction("http://www.enychen.com/api/");
   $http->setDecode(\Network\Http::DECODE_JSON);
   $http->setCookie(array('author'=>'enychen', 'time'=>'2016-03-09'));
-  $result = $http->get(array('param1'=>1, 'param2'=>2));
+  $params['file'] = $http->getFile('/home/eny/Picture/1.jpg');
+  $result = $http->upload($params);
   $http->close();
 }
 catch(\Exception  $e)
@@ -59,7 +62,7 @@ $http->setDecode(int \Network\Http::DECODE_JSON);
 $http->setCookie(mixed $cookie);
 ```
 
-###### 设置curlopt的设置
+###### 设置curlopt选项
 ```php
 /**
  * @param string $key CURLOPT_*设置选项,参照http://php.net/manual/zh/function.curl-setopt.php
@@ -67,4 +70,23 @@ $http->setCookie(mixed $cookie);
  * @return void
  */
 $http->setCurlopt(int $key, mixed $value)
+```
+
+###### 	上传文件的创建方式
+
+> 由于php上传存在版本问题，所以封装了这个方法，需要主动调用此方法
+```php
+/**
+ * @param string $path 文件的绝对路径
+ * @return \CURLFile|string 上传文件对象或者字符串
+ */
+$http->getFile(string $path);
+```
+
+###### 关闭curl资源
+```php
+/**
+ * @return void
+ */
+$http->close();
 ```
