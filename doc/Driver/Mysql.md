@@ -1,7 +1,7 @@
 ## Mysql类使用说明
 [源码地址](https://github.com/enychen/yaf-framework/blob/master/app/library/Driver/Mysql.php)
 
-### 创建mysq对象
+### 创建mysql对象
 ```php
 // 数据库选项
 $driver = array(
