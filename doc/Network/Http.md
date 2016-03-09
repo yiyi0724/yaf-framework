@@ -57,7 +57,7 @@ $http->put([array $data]);
 $http->delete([array $data]);
 
 // upload文件上传请求
-$http->post([array $data]);
+$http->upload([array $data]);
 
 ```
 
