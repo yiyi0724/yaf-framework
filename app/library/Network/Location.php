@@ -14,7 +14,6 @@ class Location {
 	 * @var array
 	 */
 	protected static $headers = array(
-		
 		301=>"HTTP/1.1 301 Moved Permanently", 
 		302=>"HTTP/1.1 302 Found", 
 		303=>"HTTP/1.1 303 See Other", 
@@ -22,20 +21,20 @@ class Location {
 	);
 
 	/**
-	 * 不带HTTP_REFERER的跳转
+	 * 头信息跳转
 	 * @param string $url 跳转地址
 	 * @param int $code 跳转状态码
+	 * @return void
 	 */
 	public static function redirect($url, $code = NULL) {
-		if(isset(static::$headers[$code]) and header(static::$header[$code])) {
-			header("Location: {$url}");
-		}
+		isset(static::$headers[$code]) and header(static::$header[$code]) and header("Location: {$url}");+
 		exit();
 	}
 
 	/**
-	 * get方式页面跳转
+	 * 带HTTP_REFERER的跳转的get方式页面跳转
 	 * @param string $url 跳转地址
+	 * @return void
 	 */
 	public static function get($url) {
 		exit("<meta http-equiv=\"refresh\" content=\"0;url={$url}\">");
@@ -45,6 +44,7 @@ class Location {
 	 * post方式页面跳转
 	 * @param string $url 跳转地址
 	 * @param array $data 附加参数
+	 * @return void
 	 */
 	public static function post($url, array $data = array()) {
 		$html = "<form id=\"formSubmit\" style=\"display:none\" method=\"post\" action=\"{$url}\">";

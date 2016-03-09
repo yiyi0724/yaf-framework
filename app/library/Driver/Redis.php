@@ -36,7 +36,7 @@ class Redis extends Driver {
 			// 密码
 			$driver['auth'] and $this->redis->auth($driver['auth']);
 		} catch(\Exception $e) {
-			throw new \RedisException("Redis Connect Error: {$e->getMessage()}");
+			
 		}
 	}
 
@@ -47,6 +47,11 @@ class Redis extends Driver {
 	 * @return mixed
 	 */
 	public function __call($method, $args) {
-		return call_user_func_array(array($this->redis, $method), $args);
+		try {
+			return call_user_func_array(array($this->redis, $method), $args);
+		} catch(\Exception $e) {
+			return FALSE;
+		}
+		
 	}
 }

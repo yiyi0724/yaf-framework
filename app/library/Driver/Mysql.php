@@ -62,6 +62,7 @@ class Mysql extends Driver {
 	 * 调试sql语句
 	 * @param string $sql sql语句
 	 * @param array $params 参数
+	 * @return void
 	 */
 	public function debug($sql, array $params = array()) {
 		echo "<pre>placeholder sql: {$sql}<hr/>";
