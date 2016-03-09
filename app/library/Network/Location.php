@@ -27,12 +27,13 @@ class Location {
 	 * @return void
 	 */
 	public static function redirect($url, $code = NULL) {
-		isset(static::$headers[$code]) and header(static::$header[$code]) and header("Location: {$url}");+
+		isset(static::$headers[$code]) and header(static::$header[$code]);
+		header("Location: {$url}");
 		exit();
 	}
 
 	/**
-	 * 带HTTP_REFERER的跳转的get方式页面跳转
+	 * 带HTTP_REFERER的get方式页面跳转
 	 * @param string $url 跳转地址
 	 * @return void
 	 */
@@ -41,7 +42,7 @@ class Location {
 	}
 
 	/**
-	 * post方式页面跳转
+	 * 带HTTP_REFERER的post方式页面跳转
 	 * @param string $url 跳转地址
 	 * @param array $data 附加参数
 	 * @return void

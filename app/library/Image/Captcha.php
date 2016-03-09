@@ -95,7 +95,7 @@ class Captcha {
 	}
 
 	/**
-	 * 输出图片
+	 * 输出验证码图片
 	 * @return void
 	 */
 	public function output() {
