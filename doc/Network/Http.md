@@ -35,6 +35,32 @@ catch(\Exception  $e)
  $http = new \Network\Http(int $timeout = 60, bool $return = TRUE, bool $header = FALSE);
 ```
 
+###### get | post | delete | put | upload 请求
+
+> 执行upload请求前，请先调用$this->getFile(string $file)方法进行上传文件封装
+
+```php
+/**
+ * @param array $data 比如 array('name'=>'enychen', 'age'=>27)，可以为空不进行传递
+ * @return bool|string|array 返回值依靠是否输出，是否进行结果解析来决定
+ */
+// get请求
+$http->get([array $data]);
+
+// post请求
+$http->post([array $data]);
+
+// put请求
+$http->put([array $data]);
+
+// delete请求
+$http->delete([array $data]);
+
+// upload文件上传请求
+$http->post([array $data]);
+
+```
+
 ###### 设置请求的地址
 ```php
 /**
