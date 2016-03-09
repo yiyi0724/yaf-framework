@@ -35,8 +35,7 @@ class Redis extends Driver {
 			$this->redis->select($driver['dbname']);
 			// 密码
 			$driver['auth'] and $this->redis->auth($driver['auth']);
-		} catch(\Exception $e) {
-			
+		} catch(\Exception $e) {			
 		}
 	}
 
