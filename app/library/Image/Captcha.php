@@ -90,7 +90,7 @@ class Captcha {
 	}
 
 	/**
-	 * 输出图片并且结束php程序
+	 * 输出图片
 	 */
 	public function output() {
 		// 输出
