@@ -4,7 +4,7 @@
 #### 完整案例
 ```php
 // 生成验证码并输出
-$image = new \Image\Captcha(100, 400);
+$image = new \Image\Captcha(100, 40);
 $image->createImage();
 $image->createLine();
 $code = $image->getCode();
