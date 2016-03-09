@@ -1,4 +1,5 @@
 ## Mysql类使用说明
+[源码地址](https://github.com/enychen/yaf-framework/blob/master/app/library/Driver/Mysql.php)
 
 ### 创建mysq对象
 ```php
@@ -18,47 +19,47 @@ $mysql = \Driver\Mysql::getInstance($driver);
 ### Mysql类内置方法
 
 
-#### 执行sql语句
+###### 执行sql语句
 ```php
 $mysql->query(string $sql, array $params = array());
 ```
-#### 调试sql语句
+###### 调试sql语句
 ```php
 $mysql->debug(string $sql, array $params = array());
 ```
-#### 开启事务:
+###### 开启事务:
 ```php
 $mysql->beginTransaction();
 ```
-#### 是不是在事务内:
+###### 是不是在事务内:
 ```php
 $mysql->inTransaction();
 ```
-#### 提交事务:
+###### 提交事务:
 ```php
 $mysql->commit();
 ```
-#### 回滚事务:
+###### 回滚事务:
 ```php
 $mysql->rollback();
 ```
-#### 获取上次插入的id:
+###### 获取上次插入的id:
 ```php
 $mysql->lastInsertId();
 ```
-#### 获取影响的行数:
+###### 获取影响的行数:
 ```php
 $mysql->rowCount();
 ```
-#### select获取所有:
+###### select获取所有:
 ```php
 $mysql->fetchAll();
 ```
-#### select获取一行:
+###### select获取一行:
 ```php
 $mysql->fetch();
 ```
-#### select获取一个值:
+###### select获取一个值:
 ```php
 $mysql->fetchColumn();
 ```
