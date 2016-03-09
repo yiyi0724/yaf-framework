@@ -6,7 +6,7 @@
 > options数组的每个key，比如常量完整写法是\Redis::OPT_PREFIX,则只要写prefix就行，其他配置以此类推
 
 ```php
-// redis 配置，options可选，其他必须
+// redis 配置,全部必须
 $driver = array(
   'host'=>'127.0.0.1',
   'port'=>6379,
