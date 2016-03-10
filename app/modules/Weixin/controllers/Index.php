@@ -18,12 +18,7 @@ class IndexController extends \Base\WeixinController
 		$tmpStr = implode( $tmpArr );
 		$tmpStr = sha1( $tmpStr );
 		
-		if( $tmpStr == $signature ){
-			echo $echostr;
-		}else{
-			return false;
-		}
-		
+		echo $echostr;
 		
 		
 		exit();
