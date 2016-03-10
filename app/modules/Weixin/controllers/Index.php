@@ -6,20 +6,9 @@ class IndexController extends \Base\WeixinController
 
 	public function indexAction()
 	{
-		$request = $this->getRequest();
-		$signature = $request->get('signature');
-		$timestamp = $request->get('timestamp');
-		$signature = $request->get('nonce');
-		$echostr = $request->get('echostr');				
-		$token = '254635@enyChen';
+		$params = $this->getRequest()->getParams();
 		
-		$tmpArr = array($token, $timestamp, $nonce);
-		sort($tmpArr, SORT_STRING);
-		$tmpStr = implode( $tmpArr );
-		$tmpStr = sha1( $tmpStr );
-		
-		echo $echostr;
-		
+		file_put_contents('/tmp/a.log', print_r($params, TRUE));
 		
 		exit();
 	}
