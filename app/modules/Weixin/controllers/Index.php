@@ -21,5 +21,7 @@ class IndexController extends \Base\WeixinController
 		}else{
 			return false;
 		}
+		
+		exit();
 	}
 }
