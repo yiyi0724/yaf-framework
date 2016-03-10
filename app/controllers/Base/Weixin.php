@@ -12,6 +12,7 @@ abstract class WeixinController extends BaseController {
 	 * @return array
 	 */
 	public function getSource() {
+		file_put_contents('/tmp/weixin.log', print_r($GLOBALS, true));
 		$params = file_get_contents('php://input');
 		$params = simplexml_load_string($params, 'SimpleXMLElement', LIBXML_NOCDATA);
 		return json_decode(json_encode($params), TRUE);
