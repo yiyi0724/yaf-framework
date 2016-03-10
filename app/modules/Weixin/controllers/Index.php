@@ -13,15 +13,13 @@ class IndexController extends \Base\WeixinController
 		$echostr = $request->get('echostr');				
 		$token = '254635@enyChen';
 		
-		file_put_contents('/tmp/a.log', implode(":", $request->getParams()));
-		
 		$tmpArr = array($token, $timestamp, $nonce);
 		sort($tmpArr, SORT_STRING);
 		$tmpStr = implode( $tmpArr );
 		$tmpStr = sha1( $tmpStr );
 		
 		if( $tmpStr == $signature ){
-			echo $_GET['echostr'];
+			echo $echostr;
 		}else{
 			return false;
 		}
