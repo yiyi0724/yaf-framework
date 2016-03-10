@@ -1,15 +1,12 @@
 <?php
 
+class IndexController extends \Base\WeixinController {
 
-class IndexController extends \Base\WeixinController
-{
-
-	public function indexAction()
-	{
-		$params = file_get_contents('php://input');
+	public function indexAction() {
+		$data = $this->getSource();
 		
-		file_put_contents('/tmp/a.log', print_r($params, TRUE));
-		
+		echo '<pre>';
+		print_r($data);
 		exit();
 	}
 }
