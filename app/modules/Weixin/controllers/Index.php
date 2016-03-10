@@ -6,11 +6,13 @@ class IndexController extends \Base\WeixinController
 
 	public function indexAction()
 	{
-		$signature = $_GET["signature"];
-		$timestamp = $_GET["timestamp"];
-		$nonce = $_GET["nonce"];
+		$request = $this->getRequest();
+		$signature = $request->get('signature');
+		$timestamp = $request->get('timestamp');
+		$signature = $request->get('nonce');
+		$echostr = $request->get('echostr');				
+		$token = '254635@enyChen';
 		
-		$token = '254635@enychen';
 		$tmpArr = array($token, $timestamp, $nonce);
 		sort($tmpArr, SORT_STRING);
 		$tmpStr = implode( $tmpArr );
