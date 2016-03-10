@@ -1,7 +1,0 @@
-;[案例]
-;module_controller_action.type = "regex"
-;module_controller_action.match = "#/(\d)+.html#"
-;module_controller_action.route.module = "Front"
-;module_controller_action.route.controller = "Index"
-;module_controller_action.route.action = "index"
-;module_controller_action.map.1=page
