@@ -57,7 +57,7 @@ abstract class BaseController extends Controller_Abstract {
 		
 		// 模板替换
 		if($template) {
-			Application::app()->getDispatcher()->disableView();
+			$this->disView();
 			$view ? $view->display("{$template}.phtml") : $this->display($template);
 		}
 		exit();
@@ -96,5 +96,9 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	protected function location($url, $method = 'get', $data = array()) {
 		IS_AJAX ? $this->jsonp($url, 301) : Location::$method($url, $data);
+	}
+	
+	protected function disView() {
+		Application::app()->getDispatcher()->disableView();
 	}
 }
