@@ -8,9 +8,6 @@ class IndexController extends \Base\WeixinController {
 	public function indexAction() {
 		// 参数信息
 		$data = $this->getParams();
-		
-		file_put_contents('/tmp/session.log', session_id());		
-		file_put_contents('/tmp/php.log', print_r($GLOBALS));
 	}
 	
 	/**
