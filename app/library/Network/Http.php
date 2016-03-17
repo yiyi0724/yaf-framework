@@ -121,35 +121,34 @@ class Http {
 	public function close() {
 		curl_close($this->curl);
 	}
-
+	
 	/**
 	 * 执行请求
 	 * @param string $method 请求方法，get|post|put|delete|upload
 	 * @param array $fields 要传递的参数
 	 * @return bool|string 请求的结果，如果返回信息则返回请求字符串
 	 */
-	public function __call($method, $fields) {		
-		// 读取数据
-		$fields = array_shift($fields);
+	public function __call($method, $params) {		
+		// 数据处理
+		$params = $this->setParams($params, $method);
 		
 		// 进行操作
 		switch($method) {
 			case 'get':
-				$fields and ($this->action = "{$this->action}?" . http_build_query($fields));
+				$params and ($this->action = "{$this->action}?{$params}");
 				break;
 			case 'post':
 			case 'put':
 			case 'delete':
 				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-				if($fields) {
-					$fields = http_build_query($fields);
-					curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($fields)));
-					curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
+				if($params) {
+					curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($params)));
+					curl_setopt($this->curl, CURLOPT_POSTFIELDS, $params);
 				}
 				break;
 			case 'upload':
 				curl_setopt($this->curl, CURLOPT_POST, TRUE);
-				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $fields);
+				curl_setopt($this->curl, CURLOPT_POSTFIELDS, $params);
 				break;
 			default:
 				throw new \Exception("Not Found Method Http::{$method}()", 99000);
@@ -171,6 +170,18 @@ class Http {
 		
 		// 返回结果
 		return $this->result;
+	}
+	
+	protected function setParams($params, $method) {
+		$params = array_shift($params);
+		switch(TRUE) {
+			case is_null($params):
+			case is_string($params):
+			case $method = 'upload':
+				return $params;
+			default:
+				return http_build_query($params);
+		}
 	}
 
 	/**

@@ -23,6 +23,13 @@ class Menu {
 	 */
 	public function createMenu(array $menu) {
 		$api = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$this->accessToken}";
-		file_put_contents($api, json_encode($menu));
+		$curl = new \Network\Http();
+		$curl->setAction($api);
+		$curl->setDecode(\Network\Http::DECODE_JSON);
+		$result = $curl->post(json_encode($menu));
+		
+		echo '<pre>';
+		print_r($result);
+		exit;
 	}
 }
