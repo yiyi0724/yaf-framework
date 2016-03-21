@@ -6,19 +6,14 @@ namespace Base;
  * 微信基类
  */
 abstract class WeixinController extends BaseController {
+	
+	protected $wechat;
 
 	/**
 	 * 初始化检查
 	 */
-	public function init() {
-		/* // 来源合法性检查
-		if(!$this->checkSignature()) {
-			header('HTTP/1.1 403 Forbidden');
-			exit();
-		}
-
-		// 关闭模板
-		$this->disView(); */
+	public function init() {		
+		$this->initWechat();
 	}
 
 	/**
@@ -32,21 +27,21 @@ abstract class WeixinController extends BaseController {
 	}
 
 	/**
-	 * 微信来源验证
+	 * 初始化微信
 	 * @return bool
 	 */
-	protected function checkSignature() {
+	protected function initWechat() {		
+		$http = new \Network\Http();
+		$this->wechat = new \Weixin\Wechat\Base(RESOURCE_TOKEN, RESOURCE_APPID, RESOURCE_APPSECRET, $http);
+		
 		// 来源验证参数
 		$request = $this->getRequest();
 		$signature = $request->get('signature');
 		$timestamp = $request->get('timestamp');
 		$nonce = $request->get('nonce');
-
-		// 检查来源合法性
-		$sign = array(RESOURCE_TOKEN, $timestamp, $nonce);
-		sort($sign, SORT_STRING);
-		$sign = sha1(implode($sign));
-
-		return $sign == $signature;
+		if(!$this->wechat->checkSignature($signature, $timestamp, $nonce)) {
+			header('HTTP/1.1 403 Forbidden');
+			exit();
+		}
 	}
 }

@@ -8,7 +8,7 @@ namespace Weixin\Wechat;
  *
  */
 
-class Menu {
+class Menu extends Base {
 	
 	protected $accessToken = NULL;
 	
