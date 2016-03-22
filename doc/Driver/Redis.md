@@ -10,7 +10,7 @@
 $driver = array(
   'host'=>'127.0.0.1',
   'port'=>6379,
-  'db'=>0,
+  'dbname'=>0,
   'timeout'=>30,
   'auth'=>NULL,
   'options'=>array('prefix'=>NULL),
