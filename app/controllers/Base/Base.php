@@ -48,19 +48,14 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param string $template 自定义模板
 	 * @param bool $useView 是否使用通用模板
 	 */
-	protected function template(array $output, $template = NULL, $useView = FALSE) {
-		// 数据绑定
-		$view = $this->getView();
-		foreach($output as $key=>$value) {
-			$view->assign($key, $value);
-		}
+	protected function template($template = NULL, $useView = FALSE) {
+		
 		
 		// 模板替换
 		if($template) {
 			$this->disView();
 			$view ? $view->display("{$template}.phtml") : $this->display($template);
 		}
-		exit();
 	}
 
 	/**
@@ -86,6 +81,13 @@ abstract class BaseController extends Controller_Abstract {
 		// 结果输出
 		header("Content-type: {$header}; charset=UTF-8");
 		exit($json);
+	}
+	
+	/**
+	 * 参数绑定
+	 */
+	protected function assign($key, $value) {
+		$this->getView()->assign($key, $value);
 	}
 
 	/**

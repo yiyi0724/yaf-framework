@@ -1,67 +1,48 @@
-<?php $this->display("common/header.phtml", array('title'=>'后台登录'))?>
-<body class="login-layout">
-	<div class="main-container">
-		<div class="main-content">
-			<div class="row">
-				<div class="col-sm-10 col-sm-offset-1">
-					<div class="login-container">
-						<div class="center">
-							<h1>
-								<i class="icon-leaf green"></i>
-								<span class="red">Eny.</span>
-								<span class="white">后台管理系统</span>
-							</h1>
-						</div>
-						<div class="space-6"></div>
-						<div class="position-relative">
-							<div id="login-box" class="login-box visible widget-box no-border">
-								<div class="widget-body">
-									<div class="widget-main">
-										<h4 class="header blue lighter bigger">
-											<i class="icon-coffee green"></i>
-											请输入您的信息
-										</h4>
-										<div class="space-6"></div>
-										<form id="login-form">
-											<fieldset>
-												<label class="block clearfix">
-													<span class="block input-icon input-icon-right">
-														<input type="text" name="username" class="form-control" placeholder="用户名" />
-														<i class="icon-user"></i>
-													</span>
-												</label>
-												<label class="block clearfix">
-													<span class="block input-icon input-icon-right">
-														<input type="password" name="password" class="form-control" placeholder="密码" />
-														<i class="icon-lock"></i>
-													</span>
-												</label>
-												<label class="block clearfix">
-													<input type="text" name="captcha" class="form-control" placeholder="验证码" style="width:150px;float:left;" />
-													<img src="/admin/image/captcha?c=login&v=142391" style="float:right;" id="captcha">
-												</label>
-												<div class="space"></div>
-												<div class="clearfix">
-													<span id="error" style="color:red;font-weight:700;font-size:14px"></span>
-													<button id="login-button" type="button" class="width-35 pull-right btn btn-sm btn-primary">
-														<i class="icon-key"></i>
-														登录
-													</button>
-												</div>
-												<div class="space-4"></div>
-											</fieldset>
-										</form>
-									</div>
-									<div class="toolbar">
-										<div class="user-signup-link">&copy; EnyChen Inc.</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<?php $this->display('common/header.phtml', array('styles'=>array('module/login/index.css')))?>
+<body class="page-body login-page login-form-fall loaded login-form-fall-init">
+    <div class="login-container">
+        <div class="login-header login-caret">
+            <div class="login-content">
+                <a href="#" class="logo">
+                    <img alt="Logo" src="image/logo.png"></a>
+            </div>
+        </div>
+        <div class="login-form">
+            <div class="login-content">
+            	<?php if($error):?>
+                <div class="form-login-error">
+                    <p><?php echo $error; ?></p>
+                </div>
+                <?php endif;?>
+                <form id="form_login" role="form" method="post" novalidate="novalidate">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"> <i class="entypo-user"></i>
+                            </div>
+                            <input type="email" placeholder="用户名" id="username" name="email" class="form-control" tabindex="1"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"> <i class="entypo-key"></i>
+                            </div>
+                            <input type="password" placeholder="密码" id="password" name="password" class="form-control" tabindex="2"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="entypo-pencil"></i>
+                            </div>
+                            <input id="checkCode" class="form-control" autocomplete="off" type="text" name="captcha[code]" tabindex="3" placeholder="验证码" maxlength="6">
+                            <img class="checkImg" src="/admin/image/captcha?w=122&h=50&c=login" width="122" height="50"></div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block btn-login" type="submit">登录</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
-<?php $this->display("common/footer.phtml", array('scripts'=>array('common/enychen.js','modules/login.js')))?>
+<?php $this->display('common/footer.phtml', array('scripts'=>array('module/login/index.js')))?>
+</html>

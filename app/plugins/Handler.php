@@ -1,6 +1,5 @@
 <?php
 
-use \Yaf\Session;
 use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
@@ -47,17 +46,13 @@ class HandlerPlugin extends Plugin_Abstract
 		define('MODULE_PATH', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
 		
 		// URL常量定义
-		if($resources = Application::app()->getConfig()->get("resource.{$request->getModuleName()}"))
-		{
+		if($resources = Application::app()->getConfig()->get('resource'))
+		{			
 			foreach($resources as $key=>$value)
 			{
-				define('RESOURCE_' . strtoupper($key), $value);
+				define(strtoupper($key), $value);
 			}
 		}
-		
-		// 用户UID 和 管理员UID
-		define('UID', Session::getInstance()->get('member.uid'));
-		define('AUID', Session::getInstance()->get('admin.uid'));
 	}
 
 	/**
@@ -71,7 +66,7 @@ class HandlerPlugin extends Plugin_Abstract
 	
 	/**
 	 * 参数整合
-	 * @param unknown $request
+	 * @param \Yaf\Request_Abstract $request 请求对象
 	 */
 	private function input(Request_Abstract $request)
 	{
@@ -87,7 +82,7 @@ class HandlerPlugin extends Plugin_Abstract
 		$inputs = array_merge($request->getParams(), $from, $_REQUEST);
 		
 		// 清空输入源
-		$_GET = $_POST = $_REQUEST = array();
+		$_GET = $_POST = $_REQUEST = [];
 		
 		// 整合到全局输入变量
 		foreach($inputs as $key=>$input) {

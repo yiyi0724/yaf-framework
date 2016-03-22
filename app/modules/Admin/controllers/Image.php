@@ -18,7 +18,7 @@ class ImageController extends \Base\AdminController
 		// 生成验证码并输出
 		$image = new \Image\Captcha($data['w'], $data['h']);
 		$image->createImage();
-		$image->createLine();
+		$image->createLine(200);
 		$code = $image->getCode();
 		$image->output();
 

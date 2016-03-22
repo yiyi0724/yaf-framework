@@ -129,27 +129,3 @@ class Mysql extends Driver {
 		return $result;
 	}
 }
-
-/**
- * 使用说明
- * 1. 获取某一个数据库的对象: $mysql = \Driver\Mysql::getInstance(array $config); 
- * 1.1 $config数组包含: host port dbname charset username password 6个key,必须都有
- * 
- * 2. 内置函数
- * 2.1 开启事务: $mysql->beginTransaction();
- * 2.2 检查是否在一个事务内: $mysql->inTransaction();
- * 2.3 事务回滚: $mysql->rollback();
- * 2.4 事务提交: $mysql->commit();
- * 2.5 获得上次插入的id: $mysql->lastInsertId();
- * 2.6 从结果集中获取所有内容: $mysql->fetchAll();
- * 2.7 从结果集中获取一行内容: $mysql->fetch();
- * 2.8 从结果集中获取一个内容: $mysql->fetchColumn();
- * 2.9 获得影响行数: $mysql->rowCount();
- * 
- * 3. 原生sql操作
- * 4.1 $mysql->query(string $sql, array $params);
- * 4.1.1 结果返回\Driver\Mysql对象，可以连贯操作，如：$mysql->query($sql, $params)->fetch();
- *  
- * 4. 调试
- * 4.1 $mysql->debug(string $sql, array $params); //输出完整sql语句，并直接结束程序
- */

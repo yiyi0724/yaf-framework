@@ -10,6 +10,6 @@ class Debug
 	 */
 	public static function prePrint($arr)
 	{
-		exit('<pre>'.print_r($arr).'</pre>');
+		exit('<pre>'.print_r($arr, true).'</pre>');
 	}
 }

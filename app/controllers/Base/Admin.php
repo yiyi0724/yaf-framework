@@ -15,6 +15,7 @@ abstract class AdminController extends BaseController
 	 */
 	public function init()
 	{
+		define('AUID', Session::getInstance()->get('adminstrator.uid'));
 		// 不是登录控制器进行检查
 		!in_array(CONTROLLER, array('Login', 'Image')) and $this->login() and $this->timeout();
 	}
