@@ -9,34 +9,32 @@
         </div>
         <div class="login-form">
             <div class="login-content">
-            	<?php if($error):?>
-                <div class="form-login-error">
-                    <p><?php echo $error; ?></p>
+                <div class="form-login-error none ">
+                    <p>111</p>
                 </div>
-                <?php endif;?>
                 <form id="form_login" role="form" method="post" novalidate="novalidate">
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"> <i class="entypo-user"></i>
                             </div>
-                            <input type="email" placeholder="用户名" id="username" name="email" class="form-control" tabindex="1"></div>
+                            <input type="text" placeholder="用户名" id="username" name="username" class="form-control" tabindex="1" value=""></div>
                     </div>
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"> <i class="entypo-key"></i>
                             </div>
-                            <input type="password" placeholder="密码" id="password" name="password" class="form-control" tabindex="2"></div>
+                            <input type="password" placeholder="密码" id="password" name="password" class="form-control" value="" tabindex="2"></div>
                     </div>
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">
                                 <i class="entypo-pencil"></i>
                             </div>
-                            <input id="checkCode" class="form-control" autocomplete="off" type="text" name="captcha[code]" tabindex="3" placeholder="验证码" maxlength="6">
-                            <img class="checkImg" src="/admin/image/captcha?w=122&h=50&c=login" width="122" height="50"></div>
+                            <input id="checkCode" class="form-control" autocomplete="off" type="text" name="captcha" tabindex="3" placeholder="验证码" maxlength="6">
+                            <img class="checkImg" src="/admin/captcha/login" width="122" height="50"></div>
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-primary btn-block btn-login" type="submit">登录</button>
+                        <button class="btn btn-primary btn-block btn-login" type="button">登录</button>
                     </div>
 
                 </form>

@@ -68,7 +68,7 @@ i.disabled{
 .dbo-title p{float:right;margin-top: 14px;}
 #dataTable-user td,#dataTable-user th{text-align: center;}
 .navbar-collapse p{float:right;margin-top:10px;}
-
+.none{display:none !important}
 
 
 

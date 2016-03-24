@@ -2,22 +2,44 @@
 
 namespace Base;
 
-use \Yaf\Session;
-
 /**
  * 后台控制基类
+ * @enychen
  */
-abstract class AdminController extends BaseController
-{
+abstract class AdminController extends BaseController {
+	
+	/**
+	 * 不需要进行登录检查的控制器
+	 * @var array
+	 */
+	protected $noLoginCheck = array('Login', 'Captcha');
 
 	/**
 	 * 全局控制器初始化信息
+	 * @return void
 	 */
-	public function init()
-	{
-		define('AUID', Session::getInstance()->get('adminstrator.uid'));
-		// 不是登录控制器进行检查
-		!in_array(CONTROLLER, array('Login', 'Image')) and $this->login() and $this->timeout();
+	public function init() {
+		
+		$amdinLogic = new \logic\Admin();
+		
+		// 定义管理员uid
+		define('AUID', $amdinLogic->getUidFromSession());
+		
+		if(!in_array(CONTROLLER, $this->noLoginCheck)) {
+			
+			// 登录状态检查
+			$this->isLogin();
+			
+			// 超时检查
+			if($amdinLogic->isLoginTimeout()) {
+				$amdinLogic->delUinfoFromSession();
+				$this->location('/admin/login');
+			} else {
+				$amdinLogic->setLogintimeToSession();
+			}
+			
+			// 权限控制
+		}
 	}
 
 	/**
@@ -25,31 +47,9 @@ abstract class AdminController extends BaseController
 	 * @param string $url 跳转地址
 	 * @param string $method 跳转方式
 	 * @param int|array 跳转code或者post传递参数
+	 * @return void
 	 */
-	protected function login($url = "/admin/login", $method = 'get', $data = NULL)
-	{
-		// 用户为登录
-		if(!AUID)
-		{
-			IS_AJAX ? $this->jsonp($url, 302) : $this->location($url, $method, $data);
-		}
-		
-		
-	}
-
-	/**
-	 * 15分钟未进行任何操作，则重新登录
-	 */
-	protected function timeout()
-	{
-		// 时间检查
-		if(Session::getInstance()->get('admin.logintime') <= (time() - 900))
-		{
-			$session->del('admin.uid');
-			$session->del('admin.logintime');
-			$this->location('/admin/login');
-		}
-		// 更新时间
-		$session->set('admin.logintime', time());
+	protected function isLogin($url = "/admin/login", $method = 'get', $data = NULL) {		
+		!AUID and $this->location($url);
 	}
 }
