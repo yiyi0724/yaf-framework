@@ -31,12 +31,19 @@ class Permission extends Logic {
 					break;
 				}
 				
-				$temp = $menuModel->field('id,name,url,icon,parent')->where(['id'=>$mid, 'is_column'=>1])->select()->fetch();				
+				$temp = $menuModel->field('id,name,url,icon,parent,sort')->where(['id'=>$mid, 'is_column'=>1])->select()->fetch();				
 				$menus[$temp['id']] = $temp;
 				$mid = $temp['parent'];
 			}
 		}
-		return $this->iterare($menus);
+		
+		// 进行手动排序
+		$menus = $this->iterare($menus);
+		usort($menus, function($a, $b) {
+			return $a['sort'] == $b['sort'] ? 0 : (($a['sort'] > $b['sort']) ? 1 : -1);
+		});
+		
+		return $menus;
 	}
 	
 	/**
