@@ -9,29 +9,27 @@ use \Yaf\Response_Abstract;
  * 行为插件
  * @author enychen
  */
-class HandlerPlugin extends Plugin_Abstract
-{
+class HandlerPlugin extends Plugin_Abstract {
+
 	/**
 	 * 进行路由分发
 	 * @param \Yaf\Request_Abstract $request 请求对象
 	 * @param \Yaf\Request_Abstract $response 响应对象
 	 */
-	public function preDispatch(Request_Abstract $request, Response_Abstract $response)
-	{
+	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		// 常量注册
-		$this->initConst($request);		
+		$this->initConst($request);
 		// 默认行为变更
 		$this->behavior();
 		// 输入数据整合
 		$this->input($request);
 	}
-	
+
 	/**
 	 * 常量注册
 	 * @param Request_Abstract $request 请求对象
 	 */
-	private function initConst(Request_Abstract $request)
-	{
+	private function initConst(Request_Abstract $request) {
 		// 请求方式定义
 		define('IS_AJAX', $request->isXmlHttpRequest());
 		define('IS_GET', $request->isGet());
@@ -40,16 +38,15 @@ class HandlerPlugin extends Plugin_Abstract
 		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
 		
 		// 模块常量定义
+		define('PATHINFO', $request->getRequestUri());
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());
 		define('MODULE', $request->getModuleName());
 		define('MODULE_PATH', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
 		
 		// URL常量定义
-		if($resources = Application::app()->getConfig()->get('resource'))
-		{			
-			foreach($resources as $key=>$value)
-			{
+		if($resources = Application::app()->getConfig()->get('resource')) {
+			foreach($resources as $key=>$value) {
 				define(strtoupper($key), $value);
 			}
 		}
@@ -58,23 +55,20 @@ class HandlerPlugin extends Plugin_Abstract
 	/**
 	 * 默认行为变更
 	 */
-	private function behavior()
-	{
+	private function behavior() {
 		// ajax关闭模板
 		IS_AJAX and Application::app()->getDispatcher()->disableView();
 	}
-	
+
 	/**
 	 * 参数整合
 	 * @param \Yaf\Request_Abstract $request 请求对象
 	 */
-	private function input(Request_Abstract $request)
-	{
+	private function input(Request_Abstract $request) {
 		$from = [];
-
+		
 		// PUT和DETELE方法支持
-		if(IS_PUT || IS_DELETE)
-		{
+		if(IS_PUT || IS_DELETE) {
 			parse_str(file_get_contents('php://input'), $from);
 		}
 		

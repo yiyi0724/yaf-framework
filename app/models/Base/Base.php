@@ -53,7 +53,7 @@ abstract class BaseModel
 		'keys'=>NULL,
 		'values'=>array()
 	];
-
+	
 	/**
 	 * 构造函数,加载配置
 	 */

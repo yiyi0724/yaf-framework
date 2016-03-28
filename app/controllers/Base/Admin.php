@@ -23,22 +23,36 @@ abstract class AdminController extends BaseController {
 		$amdinLogic = new \logic\Admin();
 		
 		// 定义管理员uid
-		define('AUID', $amdinLogic->getUidFromSession());
+		define('AUID', $amdinLogic->getSession()->get(\logic\Admin::SESSION_UID));
 		
 		if(!in_array(CONTROLLER, $this->noLoginCheck)) {
 			
 			// 登录状态检查
 			$this->isLogin();
 			
+			// ip地址检查
+			if($amdinLogic->getSession()->get(\logic\Admin::SESSION_IP) != \Network\Ip::get()) {
+				$amdinLogic->clearAdminSession();
+				$this->location('/admin/login');
+			}
+			
 			// 超时检查
-			if($amdinLogic->isLoginTimeout()) {
-				$amdinLogic->delUinfoFromSession();
+			if($amdinLogic->getSession()->get(\logic\Admin::SESSION_LOGINTIME) < (time() - 900)) {
+				$amdinLogic->clearAdminSession();
 				$this->location('/admin/login');
 			} else {
-				$amdinLogic->setLogintimeToSession();
+				$amdinLogic->getSession()->set(\logic\Admin::SESSION_LOGINTIME, time());
 			}
 			
 			// 权限控制
+			$permissionLogic = new \logic\Permission();
+			if(!IS_AJAX) {
+				$rules = $amdinLogic->getSession()->get(\logic\Admin::SESSION_GROUP);			
+				$menus = $permissionLogic->getMenusByUserPower($rules);
+				$this->assign('menus', $menus);
+			}
+			
+			// 权限检查
 		}
 	}
 
@@ -49,7 +63,7 @@ abstract class AdminController extends BaseController {
 	 * @param int|array 跳转code或者post传递参数
 	 * @return void
 	 */
-	protected function isLogin($url = "/admin/login", $method = 'get', $data = NULL) {		
+	protected function isLogin($url = "/admin/login", $method = 'get', $data = NULL) {
 		!AUID and $this->location($url);
 	}
 }

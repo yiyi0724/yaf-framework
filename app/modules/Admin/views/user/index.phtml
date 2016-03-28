@@ -1,0 +1,20 @@
+<?php $this->display('layout/header.phtml')?>
+<body class="page-body loaded">
+	<div class="page-container">
+		<?php $this->display('layout/left.phtml')?>
+		<div class="main-content" style="min-height: 947px;">
+			<?php $this->display('layout/user.phtml')?>
+			<div class="navbar-collapse"></div>
+			<div class="dataTables_wrapper"></div>
+		</div>
+	</div>
+</body>
+<?php $this->display('layout/footer.phtml', array('scripts'=>array(
+	'common/main-gsap.js', 
+	'common/resizeable.js',	
+	'common/joinable.js',
+	'common/neon-api.js',
+	'common/neon-custom.js',
+	'common/custom.js',
+)))
+?>

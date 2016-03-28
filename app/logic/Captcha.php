@@ -17,6 +17,7 @@ class Captcha extends Logic {
 	 * 把验证码写到session中
 	 * @param string $channel 验证码频道
 	 * @param string $code 验证码
+	 * @return void
 	 */
 	public function setCaptchaToSession($channel, $code) {
 		$this->getSession()->set(static::PREFIX . $channel, $code);
@@ -26,6 +27,7 @@ class Captcha extends Logic {
 	 * 检查登录验证码是否正确
 	 * @param string $channel 验证码频道
 	 * @param string $code 验证码
+	 * @return bool
 	 */
 	public function checkCodeFromSession($channel, $code) {
 		$sessionCode = $this->getSession()->get(static::PREFIX . $channel);
@@ -33,7 +35,7 @@ class Captcha extends Logic {
 			return FALSE;
 		}
 		
-		$this->getSession()->del($channel);
+		$this->getSession()->del(static::PREFIX . $channel);
 		return TRUE;
 	}
 }

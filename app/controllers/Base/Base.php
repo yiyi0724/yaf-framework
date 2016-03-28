@@ -31,9 +31,9 @@ abstract class BaseController extends Controller_Abstract {
 		// 存在错误进行提示
 		if($fail) {
 			if(IS_AJAX) {
-				$this->jsonp($inputs[1], 412);
+				$this->jsonp($fail, 412);
 			} else {
-				$this->assign('form', $inputs[1]);
+				$this->assign('form', $fail);
 				$this->template('common/notify', TRUE);
 				exit();
 			}

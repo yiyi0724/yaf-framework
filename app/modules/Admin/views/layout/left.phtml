@@ -1,0 +1,54 @@
+<div class="sidebar-menu">
+	<header class="logo-env">
+		<div class="logo">
+			<a href="javascript:;"><img width="120" alt="Logo" src="<?php echo ADMIN_IMAGE?>logo.png" title="光年设计表现"></a>
+		</div>
+		<div class="sidebar-collapse">
+			<a class="sidebar-collapse-icon" href="javascript:;"> <i class="entypo-menu"></i></a>
+		</div>
+	</header>
+	<ul id="main-menu">
+		<?php foreach($menus as $menu):?>
+		<?php 
+			$children = isset($menu['children']) ? 'has-sub' : NULL;
+			$url = isset($menu['url']) ? $menu['url'] : 'javascript:;';
+			$icon = isset($menu['icon']) ? "class='{$menu['icon']}'" : NULL;
+		?>
+		<li class="root-level <?php echo $children; ?>">
+			<a href="<?php echo $url ?>">
+				<i <?php echo $icon ?>></i>
+				<span><?php echo $menu['name']; ?></span>
+			</a>
+			<?php if(isset($menu['children'])):?>
+			<?php foreach($menu['children'] as $column):?>
+			<?php 
+				$children = isset($column['children']) ? 'has-sub' : NULL;
+				$url = isset($column['url']) ? $column['url'] : 'javascript:;';
+				$icon = isset($column['icon']) ? "class='{$column['icon']}'" : NULL;
+			?>
+			<ul>
+				<li class="<?php echo $children?>">
+					<a href="<?php echo $url;?>">
+						<i <?php echo $icon;?>></i>
+						<span><?php echo $column['name']?></span>
+					</a>
+					<?php if($children):?>
+					<ul>
+						<?php foreach($column['children'] as $children):?>
+						<li>
+							<a href="<?php echo $children['url']?>">
+								<span><?php echo $children['name']?></span>
+							</a>
+						</li>
+						<?php endforeach;?>
+
+					</ul>
+					<?php endif;?>
+				</li>
+			</ul>
+			<?php endforeach;?>
+			<?php endif;?>
+		</li>
+		<?php endforeach;?>
+	</ul>
+</div>

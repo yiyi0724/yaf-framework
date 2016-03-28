@@ -8,8 +8,29 @@ namespace logic;
 
 class Admin extends Logic {
 
+	/**
+	 * 管理员uid常量
+	 * @var string
+	 */
 	const SESSION_UID = 'admin.uid';
+	
+	/**
+	 * 管理员登录时间常量
+	 * @var string
+	 */
 	const SESSION_LOGINTIME = 'admin.logintime';
+	
+	/**
+	 * 管理员登录ip常量
+	 * @var string
+	 */
+	const SESSION_IP = 'admin.ip';
+	
+	/**
+	 * 管理员权限列表
+	 * @var string
+	 */
+	const SESSION_GROUP = 'admin.group';
 	
 	/**
 	 * 根据username和password获取一个管理员
@@ -21,48 +42,28 @@ class Admin extends Logic {
 		$adminModel = new \Enychen\AdminModel();
 		return $adminModel->where(array('username'=>$username, 'password'=>sha1($password)))->select()->fetch();
 	}
-
-	/**
-	 * 将管理员id写入session
-	 * @param int $uid 管理员id
-	 * @return void
-	 */
-	public function setUidToSession($uid) {
-		$this->getSession()->set(static::SESSION_UID, $uid);
-	}
 	
 	/**
-	 * 将管理员的登录时间写入session
-	 * @return void
+	 * 根据uid获取用户的信息
+	 * @param int $uid 用户id
+	 * @param string $fields 用户字段
+	 * @return array
 	 */
-	public function setLogintimeToSession() {
-		$this->getSession()->set(static::SESSION_LOGINTIME, time());
-	}
+	public function getAdminstratorByUid($uid, $fields='*') {
+		$adminModel = new \Enychen\AdminModel();
+		return $adminModel->field($fields)->where(array('uid'=>$uid))->select()->fetch();
+	}	
 
 	/**
 	 * 从session中删除管理员所有信息
+	 * @author chenxb
 	 * @return void
 	 */
-	public function delUinfoFromSession() {
+	public function clearAdminSession() {
 		$session = $this->getSession();
 		$session->del(static::SESSION_UID);
 		$session->del(static::SESSION_LOGINTIME);
-	}
-
-	/**
-	 * 管理员是在一定时间未进行任何操作
-	 * @param int $timeout 超时时间
-	 * @return boolean
-	 */
-	public function isLoginTimeout($timeout = 900) {		
-		return $this->getSession()->get(static::SESSION_LOGINTIME) < (time() - $timeout);
-	}
-	
-	/**
-	 * 从session中获取管理员uid
-	 * return string 管理员uid
-	 */
-	public function getUidFromSession() {
-		return $this->getSession()->get(static::SESSION_UID);
+		$session->del(static::SESSION_IP);
+		$session->del(static::SESSION_GROUP);
 	}
 }

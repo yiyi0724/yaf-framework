@@ -1,4 +1,4 @@
-<?php $this->display('common/header.phtml', array('styles'=>array('module/login/index.css')))?>
+<?php $this->display('layout/header.phtml', array('styles'=>array('module/login/index.css')))?>
 <body class="page-body login-page login-form-fall loaded login-form-fall-init">
     <div class="login-container">
         <div class="login-header login-caret">
@@ -9,9 +9,7 @@
         </div>
         <div class="login-form">
             <div class="login-content">
-                <div class="form-login-error none ">
-                    <p>111</p>
-                </div>
+                <div class="form-login-error none"></div>
                 <form id="form_login" role="form" method="post" novalidate="novalidate">
                     <div class="form-group">
                         <div class="input-group">
@@ -31,16 +29,14 @@
                                 <i class="entypo-pencil"></i>
                             </div>
                             <input id="checkCode" class="form-control" autocomplete="off" type="text" name="captcha" tabindex="3" placeholder="验证码" maxlength="6">
-                            <img class="checkImg" src="/admin/captcha/login" width="122" height="50"></div>
+                            <img class="checkImg" data-src="/admin/captcha/login" src="/admin/captcha/login" width="122" height="50"></div>
                     </div>
                     <div class="form-group">
                         <button class="btn btn-primary btn-block btn-login" type="button">登录</button>
                     </div>
-
                 </form>
             </div>
         </div>
     </div>
 </body>
-<?php $this->display('common/footer.phtml', array('scripts'=>array('module/login/index.js')))?>
-</html>
+<?php $this->display('layout/footer.phtml', array('scripts'=>array('common/enychen.js', 'module/login/index.js')))?>
