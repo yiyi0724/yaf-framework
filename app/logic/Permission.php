@@ -18,6 +18,18 @@ class Permission extends Logic {
 	}
 	
 	/**
+	 * 检查用户是否拥有权限
+	 */
+	public function hasPermission($controller, $action) {
+		$groupModel = new \Enychen\GroupModel();
+		$menuModel = new \EnyChen\MenuModel();
+		return $menuModel->field('id')
+						 ->where(array('controller'=>strtolower($controller), 'action'=>strtolower($action)))
+						 ->select()
+						 ->fetchColumn();
+	}
+	
+	/**
 	 * 根据用户的权限获取，往上查找
 	 * @params array 管理员用户的权限列表
 	 */

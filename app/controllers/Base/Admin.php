@@ -46,13 +46,18 @@ abstract class AdminController extends BaseController {
 			
 			// 权限控制
 			$permissionLogic = new \logic\Permission();
-			if(!IS_AJAX) {
-				$rules = $amdinLogic->getSession()->get(\logic\Admin::SESSION_GROUP);			
+			$rules = $amdinLogic->getSession()->get(\logic\Admin::SESSION_GROUP);
+			if(!IS_AJAX) {					
 				$menus = $permissionLogic->getMenusByUserPower($rules);
 				$this->assign('menus', $menus);
 			}
 			
 			// 权限检查
+			$id = $permissionLogic->hasPermission(CONTROLLER, ACTION);
+			if(!in_array($id, $rules)) {
+				IS_AJAX ? $this->jsonp('您没有操作权限') : $this->notify(array(''));
+				exit();
+			}
 		}
 	}
 

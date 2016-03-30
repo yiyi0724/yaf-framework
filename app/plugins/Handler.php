@@ -65,10 +65,10 @@ class HandlerPlugin extends Plugin_Abstract {
 	/**
 	 * 参数整合，清空全局变量
 	 * @param \Yaf\Request_Abstract $request 请求对象
+	 * @param array $putOrDelete put和delete方法支持存放数组
 	 * @return void
 	 */
-	private function input(Request_Abstract $request) {		
-		$putOrDelete = array();		
+	private function input(Request_Abstract $request, $putOrDelete = array()) {
 		// PUT和DETELE方法支持
 		if(IS_PUT || IS_DELETE) {
 			parse_str(file_get_contents('php://input'), $putOrDelete);

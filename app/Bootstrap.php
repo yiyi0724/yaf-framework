@@ -5,7 +5,6 @@
  */
 
 use Yaf\Loader;
-use \Traits\Route;
 use Yaf\Dispatcher;
 use Yaf\Config\Ini;
 use Yaf\Application;
@@ -46,7 +45,7 @@ class Bootstrap extends Bootstrap_Abstract {
 		// 路由对象
 		$router = $dispatcher->getRouter();
 		// 自定义路由协议
-		$router->addRoute('enyRouter', new Route());
+		$router->addRoute('enyRouter', new \Traits\Route());
 		// 路由重写正则
 		$routeConfig = new Ini(CONF_PATH . 'route.ini');
 		$router->addConfig($routeConfig);

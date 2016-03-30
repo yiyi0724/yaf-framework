@@ -1,6 +1,6 @@
 <?php
 class LoginForm
-{
+{	
 	/**
 	 * 登录验证
 	 * @static

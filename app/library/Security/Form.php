@@ -1,80 +1,26 @@
 <?php
 
 /**
- * 表单检查类
+ * 表单检查类&表单规则类
  * @author enychen
- * 
- * 键名 => [来源, 检查方法, 是否必须, 错误提示, 可选项, 默认值， 别名]
- * 
- * 来源： GET|POST|PUT|DELETE|NULL，如果设置成NULL，表示对所有来源进行检查
- * 
- * 检查方法：
- * 	1. in：表示内容是否相等，可选项必须是一个数组，表示值在in_array这个数组
- * 	2. number： 是否是数值，可选项可以包含一个min和max键的数组，表示数字区间
- * 	3. email：是否是邮箱地址，无可选项
- * 	4. url： 是否是地址，无可选项
- * 	5. ip：是否是ip，无可选项
- * 	6. regexp：正则匹配，可选项必须是一个正则表达式字符串
- * 	7. string：字符串检查
-		7.1 包含xss攻击检查，可以跳过，可选项中使用['skipXss'] = true，默认检查
-		7.2 可以检查字符串长度：可选项中使用[min] = 长度值，[max] = 长度值
- * 8. phone：检查是否是一个手机号码或者电话号码
- * 9. callback：使用回调函数进行检查，回调函数设置在可选项中
- * 
- * 是否必须： true | false
- * 
- * 错误提示： 检查失败后提示信息
- * 
- * 可选项：上面已经设置解释过
- * 
- * 默认值：如果未接收，并且不是必须，则设置此默认值
- * 
- * 别名：给key修改一个名称
  */
 namespace Security;
 
-class Form
-{
+class Form {
 
 	/**
-	 * 检查通过的参数
+	 * 检查通过
 	 * @static
 	 * @var array
 	 */
-	protected static $inputs = array();
+	protected static $success = array();
 
 	/**
-	 * 初始化规则
-	 * @param array 规则数组
-	 * @param array 输入源
-	 * @return array 规则数组
+	 * 检查失败
+	 * @static
+	 * @var array
 	 */
-	protected static function init($checks, $inputs)
-	{
-		// 读取参数
-		$rules = array();
-		foreach($checks as $key=>$check)
-		{
-			// 获取来源
-			if($check[0] && strcasecmp($_SERVER['REQUEST_METHOD'], $check[0]))
-			{
-				continue;
-			}
-			
-			// 检查数组整理
-			$rules[$key] = array(
-				'value'=>isset($inputs[$key]) ? $inputs[$key] : NULL,
-				'method'=>$check[1],
-				'require'=>$check[2], 
-				'notify'=>$check[3],
-				'options'=>isset($check[4]) ? $check[4] : NULL, 
-				'default'=>isset($check[5]) ? $check[5] : NULL, 
-				'alias'=>isset($check[6]) ? $check[6] : NULL
-			);
-		}
-		
-		return $rules;
-	}
+	protected static $error = array();
 
 	/**
 	 * 检查数据
@@ -82,100 +28,115 @@ class Form
 	 * @param array $data 输入源数据
 	 * @return void
 	 */
-	public static function check(array $rules, array $inputs)
-	{
-		// 规则检查
-		$rules = static::init($rules, $inputs);
-		if(!$rules)
-		{
-			return array(array(), array());
+	public static function fliter(array $rules, array $params) {
+		if($rules = static::init($rules, $params)) {
+			foreach($rules as $key=>$rule) {
+				// 是否必须传递
+				if(Rule::isNotExists($rule)) {
+					static::setError($rule);
+					continue;
+				}
+				
+				// 对应数据类型检查
+				if(!is_null($rule['value']) && call_user_func("Rule::is{$rule['method']}", $rule)) {
+					static::setError($rule);
+					continue;
+				}
+				
+				// 设置合法值
+				static::setSuccess($key, $rule);
+			}
 		}
 		
-		// 检查
-		$error = array();
-		foreach($rules as $key=>$rule)
-		{
-			// 是否必须
-			if(Rule::notExists($rule))
-			{
-				$error[$key] = $rule['notify'];
-				continue;
-			}
-			
-			// 对应数据类型检查
-			$method = $rule['method'];
-			if($rule['value'] !== NULL && !Rule::$method($rule))
-			{
-				$error[$key] = $rule['notify'];
-				continue;
-			}
-			
-			// 设置合法值
-			static::setData($key, $rule);
+		if(static::$error) {
+			throw new \Exception("Form Not Pass");
 		}
-		
-		// 结果返回
-		return array(static::$inputs, $error);
 	}
 
 	/**
-	 * 通过检查的值进行设置
+	 * 初始化规则
+	 * @param array 规则数组
+	 * @param array 输入源
+	 * @return array 规则数组
+	 */
+	protected static function init($checks, $params) {
+		foreach($checks as $key=>$check) {
+			if($check[0] && strcasecmp($_SERVER['REQUEST_METHOD'], $check[0])) {
+				continue;
+			}
+			$rules[$key]['value'] = isset($params[$key]) ? $params[$key] : NULL;
+			$rules[$key]['method'] = $check[1];
+			$rules[$key]['require'] = $check[2];
+			$rules[$key]['notify'] = $check[3];
+			$rules[$key]['options'] = isset($check[4]) ? $check[4] : NULL;
+			$rules[$key]['default'] = isset($check[5]) ? $check[5] : NULL;
+			$rules[$key]['alias'] = isset($check[6]) ? $check[6] : NULL;
+		}
+		
+		return isset($rules) ? $rules : array();
+	}
+
+	/**
+	 * 保存检查通过的值
 	 * @param array $rule
 	 */
-	private static function setData($key, $rule)
-	{
+	protected static function setSuccess($key, $rule) {
 		// 是否存在别名
 		$key = $rule['alias'] ? $rule['alias'] : $key;
 		
 		// 是否填充默认值
-		if($rule['value'] === NULL && $rule['default'])
-		{
+		if($rule['value'] === NULL && $rule['default']) {
 			$rule['value'] = $rule['default'];
 		}
 		
-		if($rule['value'] !== NULL)
-		{
+		if($rule['value'] !== NULL) {
 			static::$inputs[$key] = trim($rule['value']);
 		}
 	}
-}
-
-/**
- * 规则类
- * @author enychen
- */
-class Rule
-{
 
 	/**
-	 * 是否必须
-	 * @static
-	 * @param array 规则数组
-	 * @param array 规则
+	 * 保存检查不通过的值
+	 * @param unknown $key
+	 * @param unknown $rule
 	 */
-	public static function notExists($rule)
-	{
+	protected static function setError($key, $rule) {
+		static::$error[$key] = $rule['notify'];
+	}
+
+	public static function getSuccess() {
+		return static::$success;
+	}
+
+	public static function getError() {
+		return static::$error;
+	}
+}
+
+class Rule {
+
+	/**
+	 * 是否必须传递
+	 * @param array $rule 规则数组
+	 * @return boolean
+	 */
+	public static function isNotExists($rule) {
 		return $rule['require'] && is_null($rule['value']);
 	}
 
 	/**
-	 * 整数检查
-	 * @static
-	 * @param array 规则数组
-	 * @return void
+	 * 是否是整数
+	 * @param array $rule 规则数组
+	 * @return boolean
 	 */
-	public static function number($rule)
-	{
+	public static function isNumber($rule) {
 		// 是否是数字
 		$flag = is_numeric($rule['value']);
 		// 最小值检查
-		if($flag && isset($rule['options']['min']))
-		{
+		if($flag && isset($rule['options']['min'])) {
 			$flag = $rule['value'] >= $rule['options']['min'];
 		}
 		// 最大值检查
-		if($flag && isset($rule['options']['max']))
-		{
+		if($flag && isset($rule['options']['max'])) {
 			$flag = $rule['value'] <= $rule['options']['max'];
 		}
 		
@@ -183,75 +144,70 @@ class Rule
 	}
 
 	/**
-	 * 字符串|数字相等匹配
-	 * @static
-	 * @param object 规则对象
-	 * @return int|string
+	 * 是否是某一个区间值
+	 * @param array $rule 规则数组
+	 * @return boolean
 	 */
-	public static function in($rule)
-	{
+	public static function isIn($rule) {
 		return in_array($rule['value'], $rule['options']);
 	}
 
 	/**
-	 * 验证Email
+	 * 是否是邮箱
+	 * @param array $rule 规则数组
+	 * @return boolean
 	 */
-	public static function email($rule)
-	{
+	public static function isEmail($rule) {
 		return filter_var($rule['value'], FILTER_VALIDATE_EMAIL);
 	}
 
 	/**
-	 * 验证url地址
+	 * 是否是网址
+	 * @param array $rule 规则数组
+	 * @return boolean
 	 */
-	public static function url($rule)
-	{
+	public static function isUrl($rule) {
 		return filter_var($rule['value'], FILTER_VALIDATE_URL);
 	}
 
 	/**
-	 * 验证ip
+	 * 是否是ip地址
+	 * @param array $rule 规则数组
+	 * @return boolean
 	 */
-	public static function ip($rule)
-	{
+	public static function isIp($rule) {
 		return filter_var($rule['value'], FILTER_VALIDATE_IP);
 	}
 
 	/**
-	 * 验证正则表达式
+	 * 使用正则表达式进行检查
+	 * @param array $rule 规则数组
+	 * @return boolean
 	 */
-	public static function regexp($rule)
-	{
+	public static function isRegexp($rule) {
 		return preg_match($rule['options'], $rule['value']);
 	}
 
 	/**
-	 * 过滤string数据
-	 * @param object 规则对象
-	 * @return void
+	 * 是否是一个干净的字符串
+	 * @param array $rule 规则数组
+	 * @param boolean $flag 默认检查通过
+	 * @return boolean
 	 */
-	public static function string($rule)
-	{
-		$flag = true;
-		
+	public static function isString($rule, $flag = TRUE) {
 		// xss注入攻击检查
-		if(empty($rule['options']['skipXss']))
-		{
+		if(empty($rule['options']['skipXss'])) {
 			$flag = !preg_match('/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i', $rule['value']);
 		}
 		
 		// 字符串长度
 		$length = mb_strlen($rule['value']);
-		
 		// 最小值检查
-		if($flag && isset($rule['options']['min']))
-		{
+		if($flag && isset($rule['options']['min'])) {
 			$flag = $length >= $rule['options']['min'];
 		}
-		
 		// 最大值检查
-		if($flag && isset($rule['options']['max']))
-		{
+		if($flag && isset($rule['options']['max'])) {
 			$flag = $length <= $rule['options']['max'];
 		}
 		
@@ -259,25 +215,42 @@ class Rule
 	}
 
 	/**
-	 * 验证手机|电话号码
+	 * 是否是手机号码
+	 * @param array $rule 规则数组
+	 * @param boolean $flag 默认检查通过
+	 * @return boolean
 	 */
-	public static function phone($rule)
-	{
-		foreach(["/(\d{3}-)(\d{8})$|(\d{4}-)(\d{7,8})$/", "/^1(3|4|5|7|8)[0-9]{9}$/"] as $pattern)
-		{
-			if($flag = preg_match($pattern, $rule['value']))
-			{
-				break;
-			}
-		}
-		return $flag;
+	public static function isMobile($rule) {
+		return preg_match("/^1(3|4|5|7|8)[0-9]{9}$/", $rule['value']);
 	}
 
 	/**
-	 * 回调验证
+	 * 是否是电话号码
+	 * @param array $rule 规则数组
+	 * @param boolean $flag 默认检查通过
+	 * @return boolean
 	 */
-	public static function callback($rule)
-	{
-		return call_user_func_array($rule['options'], [$rule['value']]);
+	public static function isPhone($rule) {
+		return preg_match("/(\d{3}-)(\d{8})$|(\d{4}-)(\d{7,8})$/", $rule['value']);
+	}
+
+	/**
+	 * 是否是一个qq号码
+	 * @param array $rule 规则数组
+	 * @param boolean $flag 默认检查通过
+	 * @return boolean
+	 */
+	public static function isQQ($rules) {
+		return preg_match('/^[1-9][0-9]{4,9}$/', $rules['value']);
+	}
+
+	/**
+	 * 使用自定义方法进行检查
+	 * @param array $rule 规则数组
+	 * @param boolean $flag 默认检查通过
+	 * @return boolean
+	 */
+	public static function isCallback($rule) {
+		return call_user_func($rule['options'], $rule['value']);
 	}
 }

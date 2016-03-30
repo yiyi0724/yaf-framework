@@ -1,10 +1,10 @@
-<?php $this->display('common/header.phtml')?>
+<?php $this->display('layout/header.phtml')?>
 <div class="notify_error">
 	<h2>失败提示</h2>
-	<?php foreach($form as $error):?>
+	<?php foreach($data as $error):?>
 	<p><?php echo $error;?></p>
 	<?php endforeach;?>
 	<p><a href="javascript:go(-1)">返回</a></p>
 </div>
 
-<?php $this->display('common/footer.phtml')?>
+<?php $this->display('layout/footer.phtml')?>

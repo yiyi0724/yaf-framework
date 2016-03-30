@@ -33,17 +33,10 @@ class ErrorController extends \Base\BaseController
 			// 线上环境报错
 			$errorInfo = '服务器出错了，请稍后重试';
 		}
-		
+				
 		// ajax返回json
-		IS_AJAX and $this->jsonp($errorInfo, 502);
+		IS_AJAX ? $this->jsonp($errorInfo, 502) : $this->notify($errorInfo, 'error');
 
-		// 模板加载
-		$viewObject = $this->getView();
-		$viewObject->assign('error', $errorInfo);
-		$viewObject->setScriptPath(MODULE_PATH . 'views');
-		$viewObject->display('common/error.phtml');
-		
-		// 结束执行
-		exit();
+		return false;
 	}
 }

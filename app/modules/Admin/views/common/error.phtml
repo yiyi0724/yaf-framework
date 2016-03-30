@@ -1,12 +1,12 @@
 <?php $this->display('layout/header.phtml');?>
 <body>
-<?php if(!$error['env']):?>
+<?php if(!$data['env']):?>
 <div class="error-info">
-<h3> Error No:</h3><div><?php echo $error["code"];?></div>
-<h3>Message:</h3><div><?php echo $error["message"];?></div>
-<h3>File:</h3><div><?php echo $error["file"];?></div>
-<h3>Line:</h3><div><?php echo $error["line"];?></div>
-<h3>Trace:</h3><pre><?php echo $error["traceAsString"];?></pre>
+<h3> Error No:</h3><div><?php echo $data['code'];?></div>
+<h3>Message:</h3><div><?php echo $data['message'];?></div>
+<h3>File:</h3><div><?php echo $data['file'];?></div>
+<h3>Line:</h3><div><?php echo $data['line'];?></div>
+<h3>Trace:</h3><pre><?php echo $data['traceAsString'];?></pre>
 </div>
 <?php endif;?>
 </body>

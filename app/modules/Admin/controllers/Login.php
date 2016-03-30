@@ -21,11 +21,13 @@ class LoginController extends \Base\AdminController {
 		// 来源地址检查
 		if(!IS_POST || !IS_AJAX) {
 			$this->jsonp('您无权访问', 412);
+			return FALSE;
 		}
 		
 		// 用户是否已经登录
 		if(AUID) {
-			$this->location('/admin');
+			$this->jsonp('/admin', 302);
+			return FALSE;
 		}
 		
 		// 参数获取
@@ -35,6 +37,7 @@ class LoginController extends \Base\AdminController {
 		$captChaLogic = new \logic\Captcha();
 		if(!$captChaLogic->checkCodeFromSession('login', $data['captcha'])) {
 			$this->jsonp('验证码有误', 412);
+			return FALSE;
 		}
 		
 		// 账号密码检查
@@ -42,6 +45,7 @@ class LoginController extends \Base\AdminController {
 		$administrator = $adminLogic->getAdministrator($data['username'], $data['password']);
 		if(!$administrator) {
 			$this->jsonp('账号或密码不正确', 412);
+			return FALSE;
 		}
 		
 		// 写入session，并且跳转
@@ -54,9 +58,9 @@ class LoginController extends \Base\AdminController {
 		$rules = $permissionLogic->getRulesByGroupId($administrator['group_id']);
 		$session->set(\logic\Admin::SESSION_GROUP, $rules);
 		
-		$this->location('/admin');
-		
-		return true;
+		// 进行跳转
+		$this->jsonp('/admin', 302);
+		return TRUE;
 	}
 
 	/**

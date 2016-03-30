@@ -5,41 +5,40 @@ namespace Base;
 /**
  * 所有模块控制基类的基类
  */
-use \Yaf\Controller_Abstract;
 use \Yaf\Application;
-use \Yaf\Session;
-use \Security\Form;
-use \Network\Location;
+use \Yaf\Controller_Abstract;
 
 abstract class BaseController extends Controller_Abstract {
 
 	/**
 	 * 数据合法性检查
-	 * @return array 通过检查的数据
+	 * @return array|boolean 通过检查的数据,如果检查失败返回FALSE
 	 */
 	protected function validity() {
-		// 初始化参数
+		// 获取检查规则
 		require (MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php');
-		$controller = CONTROLLER . 'Form';
-		$action = ACTION;
-		$checks = $controller::$action();
-		$inputs = $this->getRequest()->getParams();
+		$rules = call_user_func(CONTROLLER . 'Form::' . ACTION);
+		$params = $this->getRequest()->getParams();
 		
-		// 数据校验
-		list($success, $fail) = Form::check($checks, $inputs);
-		
-		// 存在错误进行提示
-		if($fail) {
-			if(IS_AJAX) {
-				$this->jsonp($fail, 412);
-			} else {
-				$this->assign('form', $fail);
-				$this->template('common/notify', TRUE);
-				exit();
-			}
+		try {
+			\Security\Form::fliter($rules, $params);
+			return \Security\Form::getSuccess();
 		}
-		
-		return $success;
+		catch(\Exception $e) {
+			$error = \Security\Form::getError();
+			IS_AJAX ? $ths->jsonp($error, 412) : $this->notify($error);
+			exit();
+		}
+	}
+
+	/**
+	 * 参数绑定
+	 * @param string $key 键
+	 * @param string $value 值
+	 * @return void
+	 */
+	protected function assign($key, $value) {
+		$this->getView()->assign($key, $value);
 	}
 
 	/**
@@ -48,9 +47,8 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param bool $common 是否使用通用模板
 	 * @return void;
 	 */
-	protected function template($template, $common = FALSE) {
-		$this->disView();
-		$common ? $this->getView()->display("{$template}.phtml") : $this->display($template);
+	protected function template($template) {
+		$this->disView() and $this->display($template);
 	}
 
 	/**
@@ -77,17 +75,17 @@ abstract class BaseController extends Controller_Abstract {
 		
 		// 结果输出
 		header("Content-type: {$header}; charset=UTF-8");
-		exit($json);
+		echo $json;
 	}
 
 	/**
-	 * 参数绑定
-	 * @param string $key 键
-	 * @param string $value 值
-	 * @return void
+	 * 页面提示
+	 * @param array $data 输出数据
 	 */
-	protected function assign($key, $value) {
-		$this->getView()->assign($key, $value);
+	protected function notify(array $data, $template = 'notify') {
+		$this->assign('data', $data);
+		$this->getView()->setScriptPath(MODULE_PATH . 'views');
+		$this->getView()->display("common/{$template}.phtml");
 	}
 
 	/**
@@ -98,7 +96,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return void
 	 */
 	protected function location($url, $method = 'get', $data = array()) {
-		IS_AJAX ? $this->jsonp($url, 302) : Location::$method($url, $data);
+		IS_AJAX ? $this->jsonp($url, 302) : \Network\Location::$method($url, $data);
 	}
 
 	/**
