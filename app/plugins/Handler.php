@@ -40,13 +40,12 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
 		
 		// 模块常量定义
-		define('PATHINFO', $request->getRequestUri());
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());
 		define('MODULE', $request->getModuleName());
 		define('MODULE_PATH', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
 		
-		// URL常量定义
+		// RESOURCE常量定义
 		if($resources = Application::app()->getConfig()->get('resource')) {
 			foreach($resources as $key=>$value) {
 				define(strtoupper($key), $value);
@@ -68,22 +67,17 @@ class HandlerPlugin extends Plugin_Abstract {
 	 * @param \Yaf\Request_Abstract $request 请求对象
 	 * @return void
 	 */
-	private function input(Request_Abstract $request) {
-		$from = [];
-		
+	private function input(Request_Abstract $request) {		
+		$putOrDelete = array();		
 		// PUT和DETELE方法支持
 		if(IS_PUT || IS_DELETE) {
-			parse_str(file_get_contents('php://input'), $from);
+			parse_str(file_get_contents('php://input'), $putOrDelete);
 		}
 		
-		// 整合数据
-		$inputs = array_merge($request->getParams(), $from, $_REQUEST);
-		
 		// 清空输入源
-		$_GET = $_POST = $_REQUEST = [];
-		
+		$_GET = $_POST = $_REQUEST = array();
 		// 整合到全局输入变量
-		foreach($inputs as $key=>$input) {
+		foreach(array_merge($request->getParams(), $putOrDelete, $_REQUEST) as $key=>$input) {
 			$request->setParam($key, $input);
 		}
 	}
