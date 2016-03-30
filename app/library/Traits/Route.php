@@ -8,44 +8,45 @@ namespace Traits;
 
 use \Yaf\Application;
 
-class Route implements \Yaf\Route_Interface
-{
+class Route implements \Yaf\Route_Interface {
 
 	/**
 	 * 默认路由信息
-	 * @var array $route
+	 * @var array
 	 */
-	protected $route = array('module'=>'front', 'controller'=>'index', 'action'=>'index');
+	protected $route = array(
+		'module'=>'front', 
+		'controller'=>'index', 
+		'action'=>'index'
+	);
 
 	/**
 	 * 已在Yaf中注册的模块
-	 * @var array $modules
+	 * @var array
 	 */
 	protected $modules = array();
 
 	/**
 	 * 构造函数，获取所有模块信息并删除默认模块
+	 * @return void
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		// 加载模块信息并且删除Index模块
 		$this->modules = Application::app()->getModules();
 		// 删除默认Index模块
 		unset($this->modules[array_search('Index', $this->modules)]);
 		// 模块小写匹配
-		foreach($this->modules as $key=>$module)
-		{
+		foreach($this->modules as $key=>$module) {
 			$this->modules[$key] = strtolower($module);
 		}
 	}
 
 	/**
 	 * 路由调度
-	 * @param  \Yaf\Request\Http  $request http请求对象
+	 * @param \Yaf\Request\Http $request http请求对象
 	 * @return boolean
 	 */
-	public function route($request)
-	{
+	public function route($request) {
 		// 获取url地址
 		$uri = $request->getRequestUri();
 		
@@ -55,19 +56,16 @@ class Route implements \Yaf\Route_Interface
 		$module = strtolower($uri[0]);
 		
 		// 模块修改
-		if(in_array($module, $this->modules))
-		{
+		if(in_array($module, $this->modules)) {
 			$this->route['module'] = $module;
 			array_splice($uri, 0, 1);
 		}
 		// 控制器修改
-		if(isset($uri[0]))
-		{
+		if(isset($uri[0])) {
 			$this->route['controller'] = $uri[0];
 		}
 		// 方法修改
-		if(isset($uri[1]))
-		{
+		if(isset($uri[1])) {
 			$this->route['action'] = $uri[1];
 		}
 		// 更改调度信息
@@ -82,8 +80,8 @@ class Route implements \Yaf\Route_Interface
 	 * 不知道什么鬼东西
 	 * @param array $info
 	 * @param array $query
+	 * @return void
 	 */
-	public function assemble(array $info, array $query = NULL)
-	{
+	public function assemble(array $info, array $query = NULL) {
 	}
 }

@@ -15,6 +15,7 @@ class HandlerPlugin extends Plugin_Abstract {
 	 * 进行路由分发
 	 * @param \Yaf\Request_Abstract $request 请求对象
 	 * @param \Yaf\Request_Abstract $response 响应对象
+	 * @return void
 	 */
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		// 常量注册
@@ -28,6 +29,7 @@ class HandlerPlugin extends Plugin_Abstract {
 	/**
 	 * 常量注册
 	 * @param Request_Abstract $request 请求对象
+	 * @return void
 	 */
 	private function initConst(Request_Abstract $request) {
 		// 请求方式定义
@@ -54,6 +56,7 @@ class HandlerPlugin extends Plugin_Abstract {
 
 	/**
 	 * 默认行为变更
+	 * @return void
 	 */
 	private function behavior() {
 		// ajax关闭模板
@@ -61,8 +64,9 @@ class HandlerPlugin extends Plugin_Abstract {
 	}
 
 	/**
-	 * 参数整合
+	 * 参数整合，清空全局变量
 	 * @param \Yaf\Request_Abstract $request 请求对象
+	 * @return void
 	 */
 	private function input(Request_Abstract $request) {
 		$from = [];
