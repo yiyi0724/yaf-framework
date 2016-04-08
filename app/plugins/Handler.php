@@ -20,10 +20,8 @@ class HandlerPlugin extends Plugin_Abstract {
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		// 常量注册
 		$this->initConst($request);
-		// 默认行为变更
-		$this->behavior();
 		// 输入数据整合
-		$this->input($request);
+		$this->inputFliter($request);
 	}
 
 	/**
@@ -54,30 +52,33 @@ class HandlerPlugin extends Plugin_Abstract {
 	}
 
 	/**
-	 * 默认行为变更
-	 * @return void
-	 */
-	private function behavior() {
-		// ajax关闭模板
-		IS_AJAX and Application::app()->getDispatcher()->disableView();
-	}
-
-	/**
 	 * 参数整合，清空全局变量
 	 * @param \Yaf\Request_Abstract $request 请求对象
 	 * @param array $putOrDelete put和delete方法支持存放数组
 	 * @return void
 	 */
-	private function input(Request_Abstract $request, $putOrDelete = array()) {
+	private function inputFliter(Request_Abstract $request, $putOrDelete = array()) {
 		// PUT和DETELE方法支持
 		if(IS_PUT || IS_DELETE) {
 			parse_str(file_get_contents('php://input'), $putOrDelete);
 		}
 		
+		// 输入数据源
+		$inputs = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
+		
+		// 获取检查规则
+		$formFile = MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php';
+		if(is_file($formFile)) {
+			require($formFile);
+			
+		}
+		$rules = call_user_func(CONTROLLER . 'Form::' . ACTION);
+		$params = $this->getRequest()->getParams();
+		
 		// 清空输入源
 		$_GET = $_POST = $_REQUEST = array();
 		// 整合到全局输入变量
-		foreach(array_merge($request->getParams(), $putOrDelete, $_REQUEST) as $key=>$input) {
+		foreach( as $key=>$input) {
 			$request->setParam($key, $input);
 		}
 	}

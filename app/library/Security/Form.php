@@ -33,13 +33,13 @@ class Form {
 			foreach($rules as $key=>$rule) {
 				// 是否必须传递
 				if(Rule::isNotExists($rule)) {
-					static::setError($rule);
+					static::setError($key, $rule);
 					continue;
 				}
 				
 				// 对应数据类型检查
 				if(!is_null($rule['value']) && call_user_func("Rule::is{$rule['method']}", $rule)) {
-					static::setError($rule);
+					static::setError($key, $rule);
 					continue;
 				}
 				

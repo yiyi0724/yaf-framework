@@ -32,7 +32,7 @@ abstract class WeixinController extends BaseController {
 	 */
 	protected function initWechat() {		
 		$http = new \Network\Http();
-		$this->wechat = new \Weixin\Wechat\Base(RESOURCE_TOKEN, RESOURCE_APPID, RESOURCE_APPSECRET, $http);
+		$this->wechat = new \Weixin\Wechat\Base(WEIXIN_TOKEN, WEIXIN_APPID, WEIXIN_APPSECRET, $http);
 		
 		// 来源验证参数
 		$request = $this->getRequest();

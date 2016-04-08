@@ -14,19 +14,13 @@ abstract class BaseController extends Controller_Abstract {
 	 * 数据合法性检查
 	 * @return array|boolean 通过检查的数据,如果检查失败返回FALSE
 	 */
-	protected function validity() {
-		// 获取检查规则
-		require (MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php');
-		$rules = call_user_func(CONTROLLER . 'Form::' . ACTION);
-		$params = $this->getRequest()->getParams();
-		
+	protected function init() {
 		try {
 			\Security\Form::fliter($rules, $params);
 			return \Security\Form::getSuccess();
-		}
-		catch(\Exception $e) {
+		} catch(\Exception $e) {
 			$error = \Security\Form::getError();
-			IS_AJAX ? $ths->jsonp($error, 412) : $this->notify($error);
+			IS_AJAX ? $this->jsonp($error, 412) : $this->notify($error);
 			exit();
 		}
 	}
@@ -58,6 +52,9 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return void
 	 */
 	public function jsonp($output, $code = 200) {
+		// 关闭视图
+		$this->disView();
+		
 		// 数据整理
 		$json['message'] = $output;
 		$json['code'] = $code;

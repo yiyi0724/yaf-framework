@@ -28,7 +28,6 @@ class Base {
 	}
 	
 	protected function getAccessToken() {
-		$accessToken = 
 		$api = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->appid}&secret={$this->appsecret}";
 		$this->http->setAction($api);
 		$this->http->setDecode(\Network\Http::DECODE_JSON);
