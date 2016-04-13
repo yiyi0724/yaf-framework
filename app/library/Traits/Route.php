@@ -15,7 +15,7 @@ class Route implements \Yaf\Route_Interface {
 	 * @var array
 	 */
 	protected $route = array(
-		'module'=>'front', 
+		'module'=>'www', 
 		'controller'=>'index', 
 		'action'=>'index'
 	);
@@ -33,7 +33,6 @@ class Route implements \Yaf\Route_Interface {
 	public function __construct() {
 		// 加载模块信息并且删除Index模块
 		$this->modules = Application::app()->getModules();
-		// 删除默认Index模块
 		unset($this->modules[array_search('Index', $this->modules)]);
 		// 模块小写匹配
 		foreach($this->modules as $key=>$module) {

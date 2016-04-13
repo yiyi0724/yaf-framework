@@ -1,0 +1,11 @@
+<?php $this->display('layout/header.phtml');?>
+<?php if(!$notify['env']):?>
+<div class="error-info">
+<h3> Error No:</h3><div><?php echo $notify["code"];?></div>
+<h3>Message:</h3><div><?php echo $notify["message"];?></div>
+<h3>File:</h3><div><?php echo $notify["file"];?></div>
+<h3>Line:</h3><div><?php echo $notify["line"];?></div>
+<h3>Trace:</h3><pre><?php echo $notify["traceAsString"];?></pre>
+</div>
+<?php endif;?>
+<?php $this->display('layout/footer.phtml')?>

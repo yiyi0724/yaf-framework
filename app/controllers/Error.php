@@ -1,14 +1,16 @@
 <?php
 
-
 /**
  * 错误异常处理控制器
  * @author enychen
  */
-class ErrorController extends \Base\BaseController
-{	
-	public function errorAction()
-	{
+class ErrorController extends \Base\BaseController {
+
+	/**
+	 * 公共错误处理方法
+	 * @return boolean
+	 */
+	public function errorAction() {
 		// 获取异常
 		$exception = $this->getRequest()->getException();
 		
@@ -21,22 +23,24 @@ class ErrorController extends \Base\BaseController
 		$errorInfo['traceAsString'] = $exception->getTraceAsString();
 		
 		// 线上环境
-		if($errorInfo['env'])
-		{
+		if($errorInfo['env']) {
 			// 封装数据
 			$errorInfo['data']['from'] = $_SERVER['REQUEST_METHOD'];
 			$errorInfo['data']['list'] = $this->getRequest()->getParams();
 			
 			// 日志记录
 			\File\Log::record($errorInfo, DATA_PATH);
-
+			
 			// 线上环境报错
 			$errorInfo = '服务器出错了，请稍后重试';
 		}
-				
-		// ajax返回json
-		IS_AJAX ? $this->jsonp($errorInfo, 502) : $this->notify($errorInfo, 'error');
-
-		return false;
+		
+		if(IS_AJAX) {
+			$this->jsonp($errorInfo, 502);
+		} else {
+			$this->notify($errorInfo, 'error');
+		}
+		
+		return FALSE;
 	}
 }

@@ -47,10 +47,6 @@ class Form {
 				static::setSuccess($key, $rule);
 			}
 		}
-		
-		if(static::$error) {
-			throw new \Exception("Form Not Pass");
-		}
 	}
 
 	/**
@@ -90,7 +86,7 @@ class Form {
 		}
 		
 		if($rule['value'] !== NULL) {
-			static::$inputs[$key] = trim($rule['value']);
+			static::$success[$key] = trim($rule['value']);
 		}
 	}
 

@@ -7,7 +7,7 @@ namespace Base;
  * @enychen
  */
 abstract class AdminController extends BaseController {
-	
+
 	/**
 	 * 不需要进行登录检查的控制器
 	 * @var array
@@ -40,14 +40,15 @@ abstract class AdminController extends BaseController {
 			if($amdinLogic->getSession()->get(\logic\Admin::SESSION_LOGINTIME) < (time() - 900)) {
 				$amdinLogic->clearAdminSession();
 				$this->location('/admin/login');
-			} else {
+			}
+			else {
 				$amdinLogic->getSession()->set(\logic\Admin::SESSION_LOGINTIME, time());
 			}
 			
 			// 权限控制
 			$permissionLogic = new \logic\Permission();
 			$rules = $amdinLogic->getSession()->get(\logic\Admin::SESSION_GROUP);
-			if(!IS_AJAX) {					
+			if(!IS_AJAX) {
 				$menus = $permissionLogic->getMenusByUserPower($rules);
 				$this->assign('menus', $menus);
 			}
@@ -55,7 +56,7 @@ abstract class AdminController extends BaseController {
 			// 权限检查
 			$id = $permissionLogic->hasPermission(CONTROLLER, ACTION);
 			if(!in_array($id, $rules)) {
-				IS_AJAX ? $this->jsonp('您没有操作权限') : $this->notify(array(''));
+				IS_AJAX ? $this->jsonp('您没有操作权限') : $this->notify();
 				exit();
 			}
 		}

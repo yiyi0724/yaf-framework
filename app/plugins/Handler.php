@@ -69,17 +69,14 @@ class HandlerPlugin extends Plugin_Abstract {
 		// 获取检查规则
 		$formFile = MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php';
 		if(is_file($formFile)) {
-			require($formFile);
-			
-		}
-		$rules = call_user_func(CONTROLLER . 'Form::' . ACTION);
-		$params = $this->getRequest()->getParams();
-		
-		// 清空输入源
-		$_GET = $_POST = $_REQUEST = array();
-		// 整合到全局输入变量
-		foreach( as $key=>$input) {
-			$request->setParam($key, $input);
+			require ($formFile);
+			if(method_exists($formFile, ACTION . 'rule')) {
+				$rules = call_user_func(CONTROLLER . 'Form::' . ACTION);
+				echo '<pre>';
+				print_r($rules);
+				exit;
+				\Security\Form::fliter($rules, $inputs);
+			}
 		}
 	}
 }

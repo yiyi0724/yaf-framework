@@ -1,4 +1,4 @@
-<?php $this->display('common/header.phtml');?>
+<?php $this->display('layout/header.phtml');?>
 <?php if(!$error['env']):?>
 <div class="error-info">
 <h3> Error No:</h3><div><?php echo $error["code"];?></div>
@@ -8,4 +8,4 @@
 <h3>Trace:</h3><pre><?php echo $error["traceAsString"];?></pre>
 </div>
 <?php endif;?>
-<?php $this->display('common/footer.phtml')?>
+<?php $this->display('layout/footer.phtml')?>
