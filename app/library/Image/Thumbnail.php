@@ -106,6 +106,7 @@ class Thumbnail {
 	
 	/**
 	 * 创建缩略图
+	 * @return bool 创建成功返回TRUE
 	 */
 	public function create() {
 		// 检查文件是否存在
@@ -146,10 +147,26 @@ class Thumbnail {
 		return TRUE;
 	}
 	
+	/**
+	 * 获取完整目标缩略图名称
+	 * @return string
+	 */
+	public function getDistFileName() {
+		return $this->distfilename;
+	}
+	
+	/**
+	 * 获取错误信息
+	 * @return string
+	 */
 	public function getErrorMsg() {
 		return $this->errorMsg;
 	}
 	
+	/**
+	 * 根据错误代码转成错误信息
+	 * @return string
+	 */
 	private function getError() {
 		switch($this->errorCode) {
 			case -1:
@@ -182,7 +199,7 @@ class Thumbnail {
 	 * @return boolean
 	 */
 	private function isWritable() {
-		// 源文件文件是否存在
+		// 源文件是否存在
 		if(!is_file($this->srcfilename)) {
 			$this->setOption('errorCode', -1);
 			return FALSE;
@@ -204,6 +221,7 @@ class Thumbnail {
 	
 	/**
 	 * 原图片信息分析
+	 * @return boolean 分析成功返回TRUE
 	 */
 	private function setSrcInfo() {
 		// 分析图片信息
@@ -223,6 +241,10 @@ class Thumbnail {
 		return TRUE;
 	}
 	
+	/**
+	 * 目标图片信息分析
+	 * @return boolean 分析成功返回TRUE
+	 */
 	private function setDistInfo() {
 		// 缩略图文件名
 		if(empty($this->distfilename)) {
