@@ -14,4 +14,7 @@
   - [url跳转](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Location.md)
 - 图像类
   - [验证码](https://github.com/enychen/yaf-framework/blob/master/doc/Image/Captcha.md)
+  - [缩略图](https://github.com/enychen/yaf-framework/blob/master/doc/Image/Thumbnail.md)
   - [二维码](https://github.com/enychen/yaf-framework/blob/master/doc/Image/QRcode.md)
+- 文件类
+  - [文件上传](https://github.com/enychen/yaf-framework/blob/master/doc/File/Uploader.md)
