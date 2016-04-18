@@ -127,30 +127,11 @@ class Thumbnail {
 			return FALSE;
 		}
 	
-		// 载入旧的画布
-		$srcImage = call_user_func("imagecreatefrom{$this->srcType}", $this->srcfilename);
-		// 创建新的画布
-		$distImage = imagecreatetruecolor($this->distwidth, $this->distheight);
-		switch(TRUE) {
-			case $this->disttype == 'png':
-				// 保存格式为png
-				imagesavealpha($srcImage, TRUE);		// 不要丢了$srcImage图像的透明色;
-				imagealphablending($distImage, FALSE);	// 不合并颜色,直接用$distImage图像颜色替换,包括透明色;
-				imagesavealpha($distImage, TRUE);		// 不要丢了$distImage图像的透明色;
-				break;
-			case $this->srcType == 'png' && $this->disttype != 'png':
-				// png转其他格式
-				$color = imagecolorallocate($distImage, 255, 255, 255);
-				imagefill($distImage, 0, 0, $color);
-				break;
-		}
-		// 完整拷贝
-		imagecopyresampled($distImage, $srcImage, 0, 0, 0, 0, $this->distwidth, $this->distheight, $this->srcWidth, $this->srcHeight);
-	
 		// 生成缩略图
-		call_user_func("image{$this->disttype}", $distImage, $this->distfilename);
-		imagedestroy($distImage);
-		imagedestroy($srcImage);
+		if(!$this->copy()) {
+			$this->setOption('errorMsg', $this->getError());
+			return FALSE;
+		}
 		
 		return TRUE;
 	}
@@ -169,6 +150,40 @@ class Thumbnail {
 	 */
 	public function getErrorMsg() {
 		return $this->errorMsg;
+	}
+	
+	/**
+	 * 生成缩略图
+	 */
+	private function copy() {
+		// 载入旧的画布
+		$srcImage = call_user_func("imagecreatefrom{$this->srcType}", $this->srcfilename);
+		
+		// 创建新的画布
+		$distImage = imagecreatetruecolor($this->distwidth, $this->distheight);
+		switch(TRUE) {
+			case $this->disttype == 'png':
+				// 保存格式为png
+				imagesavealpha($srcImage, TRUE);		// 不要丢了$srcImage图像的透明色;
+				imagealphablending($distImage, FALSE);	// 不合并颜色,直接用$distImage图像颜色替换,包括透明色;
+				imagesavealpha($distImage, TRUE);		// 不要丢了$distImage图像的透明色;
+				break;
+			case $this->srcType == 'png' && $this->disttype != 'png':
+				// png转其他格式
+				$color = imagecolorallocate($distImage, 255, 255, 255);
+				imagefill($distImage, 0, 0, $color);
+				break;
+		}
+		
+		// 完整拷贝
+		imagecopyresampled($distImage, $srcImage, 0, 0, 0, 0, $this->distwidth, $this->distheight, $this->srcWidth, $this->srcHeight);
+		
+		// 生成缩略图
+		call_user_func("image{$this->disttype}", $distImage, $this->distfilename);
+		imagedestroy($distImage);
+		imagedestroy($srcImage);
+		
+		return TRUE;
 	}
 	
 	/**
