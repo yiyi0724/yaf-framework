@@ -131,10 +131,18 @@ class Thumbnail {
 		$srcImage = call_user_func("imagecreatefrom{$this->srcType}", $this->srcfilename);
 		// 创建新的画布
 		$distImage = imagecreatetruecolor($this->distwidth, $this->distheight);
-		// png转jpeg背景黑色问题
-		if($this->srcType == 'png' && $this->disttype == 'jpeg') {
-			$color = imagecolorallocate($distImage, 255, 255, 255);
-			imagefill($distImage, 0, 0, $color);
+		switch(TRUE) {
+			case $this->disttype == 'png':
+				// 保存格式为png
+				imagesavealpha($srcImage, TRUE);		// 不要丢了$srcImage图像的透明色;
+				imagealphablending($distImage, FALSE);	// 不合并颜色,直接用$distImage图像颜色替换,包括透明色;
+				imagesavealpha($distImage, TRUE);		// 不要丢了$distImage图像的透明色;
+				break;
+			case $this->srcType == 'png' && $this->disttype != 'png':
+				// png转其他格式
+				$color = imagecolorallocate($distImage, 255, 255, 255);
+				imagefill($distImage, 0, 0, $color);
+				break;
 		}
 		// 完整拷贝
 		imagecopyresampled($distImage, $srcImage, 0, 0, 0, 0, $this->distwidth, $this->distheight, $this->srcWidth, $this->srcHeight);
@@ -176,7 +184,7 @@ class Thumbnail {
 				$str = '未设置保存目录';
 				break;
 			case -3:
-				$str = '保存目录不存在';
+				$str = '保存目录不存在或无操作权限';
 				break;
 			case -4:
 				$str = '图片格式不支持转换';
