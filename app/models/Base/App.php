@@ -7,8 +7,7 @@ namespace Base;
 
 use \Network\Page;
 
-abstract class AppModel extends BaseModel
-{
+abstract class AppModel extends BaseModel {
 
 	/**
 	 * 分页获取信息
@@ -19,8 +18,7 @@ abstract class AppModel extends BaseModel
 	 * @param string $group 分组条件
 	 * @param array|string having条件
 	 */
-	public function getPage($page = 1, $number = 15, $where = NULL, $order = NULL, $group = NULL, $having = NULL)
-	{
+	public function getPage($page = 1, $number = 15, $where = NULL, $order = NULL, $group = NULL, $having = NULL) {
 		// 获取分页数量
 		$this->field('COUNT(*)');
 		$where and ($this->where($where));

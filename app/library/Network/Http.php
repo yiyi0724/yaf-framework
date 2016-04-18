@@ -52,15 +52,12 @@ class Http {
 	 * @return void
 	 */
 	public function __construct($timeout = 60, $return = TRUE, $header = FALSE) {
-		// 创建连接资源
-		$this->curl = curl_init();
-		
 		// 设置头信息输出/结果返回/超时时间
 		$this->setCurlopt(CURLOPT_RETURNTRANSFER, $return);
 		$this->setCurlopt(CURLOPT_HEADER, $header);
 		$this->setCurlopt(CURLOPT_TIMEOUT, $timeout);
 	}
-	
+
 	/**
 	 * 设置要请求的url地址
 	 * @param string $action url地址
@@ -68,6 +65,7 @@ class Http {
 	 */
 	public function setAction($action) {
 		$this->action = $action;
+		$this->curl = curl_init();
 	}
 
 	/**
@@ -113,7 +111,7 @@ class Http {
 	public function getFile($path) {
 		return class_exists('\CURLFile') ? new \CURLFile($path) : "@{$path}";
 	}
-	
+
 	/**
 	 * 关闭curl资源
 	 * @return void
@@ -121,14 +119,14 @@ class Http {
 	public function close() {
 		curl_close($this->curl);
 	}
-	
+
 	/**
 	 * 执行请求
 	 * @param string $method 请求方法，get|post|put|delete|upload
 	 * @param array $fields 要传递的参数
 	 * @return bool|string 请求的结果，如果返回信息则返回请求字符串
 	 */
-	public function __call($method, $params) {		
+	public function __call($method, $params) {
 		// 数据处理
 		$params = $this->setParams($params, $method);
 		
@@ -142,7 +140,9 @@ class Http {
 			case 'delete':
 				curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
 				if($params) {
-					curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . mb_strlen($params)));
+					curl_setopt($this->curl, CURLOPT_HTTPHEADER, array(
+						'Content-Length: ' . mb_strlen($params)
+					));
 					curl_setopt($this->curl, CURLOPT_POSTFIELDS, $params);
 				}
 				break;
@@ -159,7 +159,7 @@ class Http {
 		
 		// 执行请求
 		$this->result = curl_exec($this->curl);
-				
+		
 		// 操作失败
 		if($this->result === FALSE) {
 			throw new \Exception("Curl Exec Error", 99001);
@@ -171,7 +171,7 @@ class Http {
 		// 返回结果
 		return $this->result;
 	}
-	
+
 	protected function setParams($params, $method) {
 		$params = array_shift($params);
 		switch(TRUE) {

@@ -37,11 +37,12 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('IS_PUT', $request->isPut());
 		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
 		
-		// 模块常量定义
+		// 模块信息常量定义
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());
 		define('MODULE', $request->getModuleName());
 		define('MODULE_PATH', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
+		define('FORM_FILE', MODULE_PATH . 'forms/' . strtolower(CONTROLLER) . '.php');
 		
 		// RESOURCE常量定义
 		if($resources = Application::app()->getConfig()->get('resource')) {
@@ -64,18 +65,15 @@ class HandlerPlugin extends Plugin_Abstract {
 		}
 		
 		// 输入数据源
-		$inputs = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
+		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
 		
 		// 获取检查规则
-		$formFile = MODULE_PATH . 'validates/' . CONTROLLER . 'Form.php';
-		if(is_file($formFile)) {
-			require ($formFile);
-			if(method_exists($formFile, ACTION . 'rule')) {
-				$rules = call_user_func(CONTROLLER . 'Form::' . ACTION);
-				echo '<pre>';
-				print_r($rules);
-				exit;
-				\Security\Form::fliter($rules, $inputs);
+		if(is_file(FORM_FILE) && require (FORM_FILE)) {
+			echo CONTROLLER . 'Controller::' . ACTION;exit;
+			if(method_exists($formFile, ACTION . 'Action')) {
+				$formLib = new \Security\Form(FORM_FILE);
+				$rules = call_user_func(CONTROLLER . 'Controller::' . ACTION);
+				\Security\Form::fliter($rules, $params);
 			}
 		}
 	}

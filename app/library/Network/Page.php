@@ -7,8 +7,7 @@
  */
 namespace Network;
 
-class Page
-{
+class Page {
 
 	/**
 	 * 初始化分页信息
@@ -17,21 +16,20 @@ class Page
 	 * @param int $count 总共有几条
 	 * @param int $button 一共要显示几页的按钮,默认10个
 	 */
-	protected static function init($page, $limit, $count, $button = 10)
-	{
+	protected static function init($page, $limit, $count, $button = 10) {
 		// 初始化参数
 		$build['page'] = $page;
 		$build['url'] = str_replace($_SERVER['QUERY_STRING'], NULL, $_SERVER['REQUEST_URI']);
 		unset($_REQUEST['page']);
 		$build['url'] .= sprintf("%s%spage=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : NULL));
 		// 总共几条
-		$build['count'] = $count;		
+		$build['count'] = $count;
 		// 每页显示的条数
-		$build['limit'] = $limit;		
+		$build['limit'] = $limit;
 		// 一共有几页
-		$build['pageTotal'] = ceil($count / $limit);		
+		$build['pageTotal'] = ceil($count / $limit);
 		// 一共几个按钮
-		$build['button'] = $button;		
+		$build['button'] = $button;
 		// 是否超过
 		$build['over'] = $build['page'] > $build['pageTotal'];
 		// 返回
@@ -46,25 +44,21 @@ class Page
 	 * @param int $button 显示的button个数
 	 * @return array 分页的信息
 	 */
-	public static function showCenter($page, $limit, $count, $button = 10)
-	{
+	public static function showCenter($page, $limit, $count, $button = 10) {
 		// 初始化参数
 		$build = static::init($page, $limit, $count, $button);
 		
 		// 是否超过
-		if(!$build['over'])
-		{
+		if(!$build['over']) {
 			// 首页和上一页
-			if($build['page'] > 1)
-			{
+			if($build['page'] > 1) {
 				$build['first'] = 1;
 				$build['prev'] = $build['page'] - 1;
 			}
 			
 			// 中间的几页
 			$step = floor($build['button'] / 2);
-			switch(TRUE)
-			{
+			switch(TRUE) {
 				case $build['page'] <= $step:
 					// 前几页
 					$build['start'] = 1;
@@ -83,8 +77,7 @@ class Page
 			}
 			
 			// 下一页和末页
-			if($build['page'] < $build['pageTotal'])
-			{
+			if($build['page'] < $build['pageTotal']) {
 				$build['next'] = $build['page'] + 1;
 				$build['last'] = $build['pageTotal'];
 			}

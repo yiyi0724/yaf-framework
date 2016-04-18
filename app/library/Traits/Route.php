@@ -7,15 +7,16 @@
 namespace Traits;
 
 use \Yaf\Application;
+use \Yaf\Route_Interface;
 
-class Route implements \Yaf\Route_Interface {
+class Route implements Route_Interface {
 
 	/**
 	 * 默认路由信息
 	 * @var array
 	 */
 	protected $route = array(
-		'module'=>'www', 
+		'module'=>'www',
 		'controller'=>'index', 
 		'action'=>'index'
 	);

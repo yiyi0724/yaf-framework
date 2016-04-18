@@ -7,7 +7,6 @@
 namespace Security;
 
 class Form {
-
 	/**
 	 * 检查通过
 	 * @static

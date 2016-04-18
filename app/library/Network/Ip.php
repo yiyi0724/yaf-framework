@@ -7,30 +7,21 @@
  */
 namespace Network;
 
-class Ip
-{
+class Ip {
 
 	/**
 	 * 获取客户端的IP
 	 * @param boolean $ip2long 是否转换成为整形, 默认是
 	 * @return int|string
 	 */
-	public static function get($ip2long = TRUE)
-	{
-		if(getenv('HTTP_X_REAL_IP'))
-		{
+	public static function get($ip2long = TRUE) {
+		if(getenv('HTTP_X_REAL_IP')) {
 			$ip = getenv('HTTP_X_REAL_IP');
-		}
-		else if(getenv('HTTP_X_FORWARDED_FOR'))
-		{
+		} else if(getenv('HTTP_X_FORWARDED_FOR')) {
 			$ip = array_pop(explode(',', getenv('HTTP_X_FORWARDED_FOR')));
-		}
-		elseif(getenv('HTTP_CLIENT_IP'))
-		{
+		} elseif(getenv('HTTP_CLIENT_IP')) {
 			$ip = getenv('HTTP_CLIENT_IP');
-		}
-		else
-		{
+		} else {
 			$ip = getenv('REMOTE_ADDR');
 		}
 		

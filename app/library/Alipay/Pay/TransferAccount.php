@@ -10,9 +10,12 @@
  */
 namespace Alipay\Pay;
 
-class TransferAccount extends Base
-{
+class TransferAccount extends Base {
 
+	public function set() {
+		
+	}
+	
 	/**
 	 * 即时到账的接口(用户向我司付钱)
 	 * @param array 包含列表如下

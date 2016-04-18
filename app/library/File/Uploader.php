@@ -2,6 +2,7 @@
 /**
  * 文件上传类(支持单，多上传方式)
  * @author enychen
+ * @version 1.0
  */
 namespace File;
 
