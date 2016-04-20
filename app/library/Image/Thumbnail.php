@@ -1,6 +1,6 @@
 <?php
 /**
- * 缩略图
+ * 缩略裁剪图
  * @author enychen
  * @version 1.0
  */
@@ -13,30 +13,42 @@ class Thumbnail {
 	 * @var string
 	 */
 	private $path = './thumbs/';
+	
+	/**
+	 * 图片起始x标点
+	 * @var int
+	 */
+	private $srcx = 0;
+	
+	/**
+	 * 原图片起始y标点
+	 * @var int
+	 */
+	private $srcy = 0;
 
 	/**
 	 * 原始图片宽度
 	 * @var int
 	 */
-	private $srcWidth;
+	private $srcwidth = 0;
 	
 	/**
 	 * 原始图片高度
 	 * @var int
 	 */
-	private $srcHeight;
+	private $srcheight = 0;
 	
 	/**
 	 * 缩略图片宽度
 	 * @var int
 	 */
-	private $distwidth;
+	private $distwidth = 0;
 	
 	/**
 	 * 原始图片高度
 	 * @var int
 	 */
-	private $distheight;
+	private $distheight = 0;
 
 	/**
 	 * 支持缩略图的格式
@@ -81,7 +93,7 @@ class Thumbnail {
 	private $errorMsg;
 	
 	/**
-	 * 连贯操作成员属性($path, $distwidth, $distheight, $srcfilename, $disttype);
+	 * 连贯操作成员属性($path, $srcx, $srcy, $srcwidth,$srcheight, $distwidth, $distheight, $srcfilename, $disttype);
 	 * @param string $key 属性名
 	 * @param mixed $val 属性值
 	 * @return \Image\Thumbnail 可以进行连续操作
@@ -176,13 +188,14 @@ class Thumbnail {
 		}
 		
 		// 完整拷贝
-		imagecopyresampled($distImage, $srcImage, 0, 0, 0, 0, $this->distwidth, $this->distheight, $this->srcWidth, $this->srcHeight);
+		imagecopyresampled($distImage, $srcImage, 0, 0, $this->srcx, $this->srcy, $this->distwidth, $this->distheight, $this->srcwidth, $this->srcheight);
 		
+		// 销毁原图资源
+		imagedestroy($srcImage);		
 		// 生成缩略图
 		call_user_func("image{$this->disttype}", $distImage, $this->distfilename);
 		imagedestroy($distImage);
-		imagedestroy($srcImage);
-		
+
 		return TRUE;
 	}
 	
@@ -209,6 +222,9 @@ class Thumbnail {
 				break;
 			case -6:
 				$str = '未设置保存文件名';
+				break;
+			case -7:
+				$str = '缩略图尺寸大于原图尺寸';
 				break;
 			default:
 				$str = '未知错误';
@@ -257,8 +273,8 @@ class Thumbnail {
 		}
 		
 		// 设置属性值
-		$this->setOption('srcWidth', $imageInfo[0]);
-		$this->setOption('srcHeight', $imageInfo[1]);
+		$this->setOption('srcwidth', $this->srcwidth ? : $imageInfo[0]);
+		$this->setOption('srcheight', $this->srcheight ? : $imageInfo[1]);
 		$this->setOption('srcType', $this->allowType[$imageInfo[2]]);
 		
 		return TRUE;
@@ -283,25 +299,31 @@ class Thumbnail {
 		}
 		$this->setOption('disttype', $disttype);
 		
+		// 缩略图检查尺寸检查
+		if($this->srcwidth < $this->distwidth || $this->srcheight < $this->distheight) {
+			$this->setOption('errorCode', -7);
+			return FALSE;
+		}
+		
 		// 缩略图宽高度
 		switch(TRUE) {
 			case (!$this->distwidth && !$this->distheight):
 				// 没有设置大小，生成百分百大小
-				$this->setOption('distwidth', $this->srcWidth);
-				$this->setOption('distheight', $this->srcHeight);
+				$this->setOption('distwidth', $this->srcwidth);
+				$this->setOption('distheight', $this->srcheight);
 				break;
 			case ($this->distwidth && !$this->distheight):
 				// 根据宽度计算大小
-				$distheight = floor(($this->distwidth/$this->srcWidth) * $this->srcHeight);
+				$distheight = floor(($this->distwidth/$this->srcwidth) * $this->srcheight);
 				$this->setOption('distheight', $distheight);
 				break;
 			case ($this->distheight && !$this->distwidth):
 				// 根据高度计算大小
-				$distwidth = floor(($this->distheight/$this->srcHeight) * $this->srcWidth);
+				$distwidth = floor(($this->distheight/$this->srcheight) * $this->srcwidth);
 				$this->setOption('distwidth', $distwidth);
 				break;
 		}
-				
+		
 		// 文件名保存
 		$disttype = ($disttype == 'jpeg') ? 'jpg' : $disttype;
 		$distfilename = rtrim($this->path, '/') . '/' . $this->distfilename . '.' . $disttype;

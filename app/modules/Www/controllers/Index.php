@@ -11,8 +11,6 @@ class IndexController extends \Base\WwwController {
 	 * 网站首页
 	 */
 	public function indexAction() {
-		echo '<pre>';
-		print_r($this->getRequest()->getParams());
-		exit;
+		$watermarkLib = new \Image\Watermark();
 	}
 }

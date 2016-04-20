@@ -20,8 +20,8 @@ class Bootstrap extends Bootstrap_Abstract {
 	public function _initRuntime(Dispatcher $dispatcher) {
 		if($runtime = Application::app()->getConfig()->get('runtime')) {
 			foreach($runtime as $prefix=>$suffix) {
-				foreach($suffix as $key=>$value) {
-					ini_set("{$prefix}.{$key}", $value);
+				foreach($suffix as $option=>$value) {
+					ini_set("{$prefix}.{$option}", $value);
 				}
 			}
 		}
@@ -47,8 +47,7 @@ class Bootstrap extends Bootstrap_Abstract {
 		// 自定义路由协议
 		$router->addRoute('enyRouter', new \Traits\Route());
 		// 路由重写正则
-		$routeConfig = new Ini(CONF_PATH . 'route.ini');
-		$router->addConfig($routeConfig);
+		$router->addConfig(new Ini(CONF_PATH . 'route.ini'));
 	}
 
 	/**

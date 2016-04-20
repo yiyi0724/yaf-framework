@@ -37,8 +37,7 @@ class ErrorController extends \Base\BaseController {
 		
 		if(IS_AJAX) {
 			$this->jsonp($errorInfo, 502);
-		}
-		else {
+		} else {
 			$this->notify($errorInfo, 'error');
 		}
 		

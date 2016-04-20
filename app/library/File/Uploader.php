@@ -18,7 +18,7 @@ class Uploader {
 	 * 设置限制上传文件的类型
 	 * @var array
 	 */
-	private $allowtype = array('jpeg', 'gif', 'png');
+	private $allowtype = array('jpg', 'jpeg', 'gif', 'png');
 
 	/**
 	 * 限制文件上传大小（字节）
@@ -61,6 +61,12 @@ class Uploader {
 	 * @var string
 	 */
 	private $newfilename;
+	
+	/**
+	 * 目标保存文件
+	 * @var integer
+	 */
+	private $distFilename;
 
 	/**
 	 * 错误号
@@ -194,10 +200,10 @@ class Uploader {
 						$errors[] = $this->getError();
 						$return = FALSE;
 					}
-					$fileNames[] = $this->newfilename;
+					$fileNames[] = $this->distFilename;
 				}
 			}
-			$this->setOption('newfilename', $fileNames);
+			$this->setOption('distFilename', $fileNames);
 		}
 		$this->setOption('errorMsg', $errors);
 	
@@ -209,8 +215,29 @@ class Uploader {
 	 * @param  void   没有参数
 	 * @return string 上传后，新文件的名称， 如果是多文件上传返回数组
 	 */
-	public function getFileName() {
-		return rtrim($this->path, '/') . '/' . $this->newfilename;
+	public function getFileName() {		
+		return $this->distFilename;
+	}
+	
+	/**
+	 * 获取完整路径，可过滤前缀目录
+	 * @param string $fliter 要过滤的目录
+	 * @return string|array
+	 */
+	public function getAbsoluteFilename($fliter = NULL) {		
+		$path = rtrim($this->path, '/') . '/';
+		$isArray = is_array($this->distFilename);
+		$originFiles = $isArray ? $this->distFilename : array($this->distFilename);
+		
+		// 遍历拼接和过滤
+		foreach($originFiles as $key=>$value) {
+			$originFiles[$key] = $path . $value;
+			if($fliter) {
+				$originFiles[$key] = str_replace($fliter, NULL, $originFiles[$key]);
+			}
+		}
+		
+		return $isArray ? $originFiles : array_shift($originFiles);
 	}
 
 	/**
@@ -292,15 +319,15 @@ class Uploader {
 		switch(TRUE) {
 			case $this->newfilename:
 				// 用户自定义名称，多文件添加后缀
-				$this->setOption('newfilename', $this->suffixName($suffix));
+				$this->setOption('distFilename', $this->suffixName($suffix));
 				break;
 			case $this->israndname:
 				// 随机名称
-				$this->setOption('newfilename', $this->proRandName());
+				$this->setOption('distFilename', $this->proRandName());
 				break;
 			default:
 				// 源文件名称
-				$this->setOption('newfilename', $this->originName);
+				$this->setOption('distFilename', $this->originName);
 		}
 	}
 
@@ -314,7 +341,7 @@ class Uploader {
 		$mimeType = $this->fileType;
 
 		// php5.4以后检查文件类型
-		if(class_exists('finfo')) {
+		if(class_exists('\finfo', FALSE)) {
 			$finfo = new \finfo(FILEINFO_MIME_TYPE);
 			$mimeType = $finfo->file($this->tmpFileName);
 			$mimeType = explode('/', $mimeType);
@@ -408,7 +435,7 @@ class Uploader {
 	private function copyFile() {
 		if(!$this->errorCode) {
 			$path = rtrim($this->path, '/') . '/';
-			$path .= $this->newfilename;
+			$path .= $this->distFilename;
 			if(@move_uploaded_file($this->tmpFileName, $path)) {
 				return TRUE;
 			}

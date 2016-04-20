@@ -16,7 +16,7 @@ class Route implements Route_Interface {
 	 * @var array
 	 */
 	protected $route = array(
-		'module'=>'www',
+		'module'=>'www', 
 		'controller'=>'index', 
 		'action'=>'index'
 	);
@@ -32,10 +32,8 @@ class Route implements Route_Interface {
 	 * @return void
 	 */
 	public function __construct() {
-		// 加载模块信息并且删除Index模块
 		$this->modules = Application::app()->getModules();
 		unset($this->modules[array_search('Index', $this->modules)]);
-		// 模块小写匹配
 		foreach($this->modules as $key=>$module) {
 			$this->modules[$key] = strtolower($module);
 		}
@@ -44,17 +42,14 @@ class Route implements Route_Interface {
 	/**
 	 * 路由调度
 	 * @param \Yaf\Request\Http $request http请求对象
-	 * @return boolean
+	 * @return boolean TRUE表示和其他路由协议共存
 	 */
 	public function route($request) {
-		// 获取url地址
+		// 获取url地址，解析路由信息，独立拿出模块
 		$uri = $request->getRequestUri();
-		
-		// 解析路由信息
 		$uri = explode('/', trim($request->getRequestUri(), '/'));
-		// 独立拿出模块
 		$module = strtolower($uri[0]);
-		
+
 		// 模块修改
 		if(in_array($module, $this->modules)) {
 			$this->route['module'] = $module;
@@ -68,6 +63,7 @@ class Route implements Route_Interface {
 		if(isset($uri[1])) {
 			$this->route['action'] = $uri[1];
 		}
+		
 		// 更改调度信息
 		$request->setModuleName($this->route['module']);
 		$request->setControllerName(ucfirst($this->route['controller']));
