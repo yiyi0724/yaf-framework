@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 文件上传类(支持单，多上传方式)
  * @author enychen
@@ -12,61 +13,61 @@ class Uploader {
 	 * 文件保存目录
 	 * @var string
 	 */
-	private $path = './uploads/';
+	private $savePath = './uploads/';
+
+	/**
+	 * 文件保存名称
+	 * @var string
+	 */
+	private $saveFilename;
 
 	/**
 	 * 设置限制上传文件的类型
 	 * @var array
 	 */
-	private $allowtype = array('jpg', 'jpeg', 'gif', 'png');
+	private $allowType = array('jpg', 'jpeg', 'gif', 'png');
 
 	/**
 	 * 限制文件上传大小（字节）
 	 * @var int
-	*/
-	private $maxsize = 1024000;
+	 */
+	private $maxSize = 1024000;
 
 	/**
 	 * 设置是否随机重命名文件
 	 * @var boolean
 	 */
-	private $israndname = TRUE;
+	private $isRandName = TRUE;
 
 	/**
 	 * 源文件名
 	 * @var string
 	 */
-	private $originName;
+	private $originFilename;
 
 	/**
 	 * 临时文件名
 	 * @var string
 	 */
-	private $tmpFileName;
+	private $tmpFilename;
 
 	/**
 	 * 文件类型(文件后缀)
 	 * @var string
 	 */
-	private $fileType;
+	private $originFiletype;
 
 	/**
 	 * 文件大小
 	 * @var string
 	 */
-	private $fileSize;
+	private $originFilesize;
 
 	/**
-	 * 新文件名
+	 * 保存文件名绝对路径
 	 * @var string
 	 */
-	private $newfilename;
-	
-	/**
-	 * 目标保存文件
-	 * @var integer
-	 */
-	private $distFilename;
+	private $absSaveFilename;
 
 	/**
 	 * 错误号
@@ -81,24 +82,59 @@ class Uploader {
 	private $errorMsg = NULL;
 
 	/**
-	 * 用于设置成员属性（$path, $allowtype, $maxsize, $israndname, $newfilename）
-	 * 可以通过连贯操作一次设置多个属性值
-	 * @param  string $key    成员属性名(不区分大小写)
-	 * @param  mixed  $val    为成员属性设置的值
-	 * @return \File\Uploader 返回自己对象$this，可以用于连贯操作
+	 * 设置保存的目录
+	 * @param string $path 目录名称
+	 * @return \File\Uploader 返回$this进行连贯操作
 	 */
-	public function set($key, $val) {
-		$key = strtolower($key);
-		if(array_key_exists($key, get_class_vars(get_class($this)))) {
-			$this->setOption($key, $val);
-		}
+	public function setSavePath($savePath) {
+		$this->savePath = rtrim($savePath, '/') . '/';
 		return $this;
 	}
 
 	/**
-	 * 为单个成员属性设置值
+	 * 设置保存的文件名，注意不要带格式后缀
+	 * @param string $filename 保存的文件名
+	 * @return \File\Uploader 返回$this进行连贯操作
+	 */
+	public function setSaveFilename($saveFilename) {
+		$this->saveFilename = ltrim($saveFilename, '/');
+		return $this;
+	}
+
+	/**
+	 * 设置支持的文件类型，不需要.
+	 * @param array $allowType 支持的文件名称
+	 * @return \File\Uploader 返回$this进行连贯操作
+	 */
+	public function setAllowType(array $allowType) {
+		$this->allowType = $allowType;
+		return $this;
+	}
+
+	/**
+	 * 设置限制文件上传大小（字节）
+	 * @param int $maxSize 字节
+	 * @return \File\Uploader 返回$this进行连贯操作
+	 */
+	public function setMaxSize($maxSize) {
+		$this->maxSize = $maxSize;
+		return $this;
+	}
+
+	/**
+	 * 设置是否随机重命名文件
+	 * @param bool $isRandName 是否随机重命名文件
+	 * @return \File\Uploader 返回$this进行连贯操作
+	 */
+	public function setIsRandName($isRandName) {
+		$this->isRandName = $isRandName;
+		return $this;
+	}
+
+	/**
+	 * 设置单个属性
 	 * @param string $key 键
-	 * @param string $val 值
+	 * @param mixed  $val 值
 	 * @return void
 	 */
 	private function setOption($key, $val) {
@@ -116,37 +152,39 @@ class Uploader {
 			$this->setOption('errorMsg', $this->getError());
 			return FALSE;
 		}
-
+		
 		// 检查$_FILE是否存在此字段上传信息
 		if(!$this->isExistsFile($fileField)) {
 			$this->setOption('errorMsg', $this->getError());
 			return FALSE;
 		}
+		
+		// 获取信息
 		$name = $_FILES[$fileField]['name'];
 		$tmpName = $_FILES[$fileField]['tmp_name'];
 		$type = $_FILES[$fileField]['type'];
 		$size = $_FILES[$fileField]['size'];
 		$error = $_FILES[$fileField]['error'];
-
+		
 		// 设置文件信息
-		if($return = $this->setFiles($name, $tmpName, $size, $error)) {
+		if($return = $this->setOriginFilenameInfo($name, $tmpName, $type, $size, $error)) {
 			// 上传之前先检查一下大小和类型
-			if($return = $this->checkFileSize() && $this->checkFileType()) {
+			if($return = $this->checkOriginFilesize() && $this->checkOriginFiletype()) {
 				// 为上传文件设置新文件名
-				$this->setNewFileName();
+				$this->setAbsSaveFilename();
 				// 移动文件是否成功
 				$return = $this->copyFile();
 			}
 		}
-			
+		
 		// 上传错误
 		if(!$return) {
 			$this->setOption('errorMsg', $this->getError());
 		}
-
+		
 		return $return;
 	}
-	
+
 	/**
 	 * 多文件上传
 	 * @param  string $fileFile  上传文件的表单名称
@@ -158,7 +196,7 @@ class Uploader {
 			$this->setOption('errorMsg', $this->getError());
 			return FALSE;
 		}
-	
+		
 		// 检查$_FILE是否存在此字段上传信息
 		if(!$this->isExistsFile($fileField, TRUE)) {
 			$this->setOption('errorMsg', $this->getError());
@@ -169,13 +207,13 @@ class Uploader {
 		$type = $_FILES[$fileField]['type'];
 		$size = $_FILES[$fileField]['size'];
 		$error = $_FILES[$fileField]['error'];
-
+		
 		$errors = array();
-		for($i = 0; $i < count($name); $i++) {
+		foreach($name as $i=>$value) {
 			// 设置文件信息
-			if($this->setFiles($name[$i], $tmpName[$i], $size[$i], $error[$i])) {
+			if($this->setOriginFilenameInfo($name[$i], $tmpName[$i], $type[$i], $size[$i], $error[$i])) {
 				// 进行文件检查
-				if(!$this->checkFileSize() || !$this->checkFileType()) {
+				if(!$this->checkOriginFilesize() || !$this->checkOriginFiletype()) {
 					$errors[] = $this->getError();
 					$return = FALSE;
 				}
@@ -185,187 +223,29 @@ class Uploader {
 			}
 			// 如果有问题，则重新初使化属性
 			if(!$return) {
-				$this->setFiles();
+				$this->setOriginFilenameInfo();
 			}
 		}
-
+		
 		if($return) {
 			// 存放所有上传后文件名的变量数组
 			$fileNames = array();
 			// 通过检查，移动所有文件
-			for($i = 0; $i < count($name); $i++) {
-				if($this->setFiles($name[$i], $tmpName[$i], $size[$i], $error[$i])) {
-					$this->setNewFileName($i+1);
+			foreach($name as $i=>$value) {
+				if($this->setOriginFilenameInfo($name[$i], $tmpName[$i], $type[$i], $size[$i], $error[$i])) {
+					$this->setAbsSaveFilename($i + 1);
 					if(!$this->copyFile()) {
 						$errors[] = $this->getError();
 						$return = FALSE;
 					}
-					$fileNames[] = $this->distFilename;
+					$absSaveFilenames[] = $this->absSaveFilename;
 				}
 			}
-			$this->setOption('distFilename', $fileNames);
+			$this->setOption('absSaveFilename', $absSaveFilenames);
 		}
 		$this->setOption('errorMsg', $errors);
-	
+		
 		return $return;
-	}
-
-	/**
-	 * 获取上传后的文件名称
-	 * @param  void   没有参数
-	 * @return string 上传后，新文件的名称， 如果是多文件上传返回数组
-	 */
-	public function getFileName() {		
-		return $this->distFilename;
-	}
-	
-	/**
-	 * 获取完整路径，可过滤前缀目录
-	 * @param string $fliter 要过滤的目录
-	 * @return string|array
-	 */
-	public function getAbsoluteFilename($fliter = NULL) {		
-		$path = rtrim($this->path, '/') . '/';
-		$isArray = is_array($this->distFilename);
-		$originFiles = $isArray ? $this->distFilename : array($this->distFilename);
-		
-		// 遍历拼接和过滤
-		foreach($originFiles as $key=>$value) {
-			$originFiles[$key] = $path . $value;
-			if($fliter) {
-				$originFiles[$key] = str_replace($fliter, NULL, $originFiles[$key]);
-			}
-		}
-		
-		return $isArray ? $originFiles : array_shift($originFiles);
-	}
-
-	/**
-	 * 上传失败后，调用该方法则返回，上传出错信息
-	 * @param  void   没有参数
-	 * @return string  返回上传文件出错的信息报告，如果是多文件上传返回数组
-	 */
-	public function getErrorMsg() {
-		return $this->errorMsg;
-	}
-
-	/* 设置上传出错信息 */
-	private function getError() {
-		$str = "上传文件{$this->originName}时出错 : ";
-		switch($this->errorCode) {
-			case 5:
-				$str .= '上传方式有误';
-				break;
-			case 4:
-				$str .= "没有文件被上传";
-				break;
-			case 3:
-				$str .= "文件只有部分被上传";
-				break;
-			case 2:
-				$str .= "上传文件的大小超过了HTML表单中MAX_FILE_SIZE选项指定的值";
-				break;
-			case 1:
-				$str .= "上传的文件超过了php.ini中upload_max_filesize选项限制的值";
-				break;
-			case -1:
-				$str .= '只允许上传' . implode(',', $this->allowtype) . '格式的文件';
-				break;
-			case -2:
-				$str .= "文件过大,上传的文件不能超过{$this->maxsize}个字节";
-				break;
-			case -3:
-				$str .= "上传失败";
-				break;
-			case -4:
-				$str .= 'SERVER_ERROR_403';
-				break;
-			case -5:
-				$str .= 'SERVER_ERROR_404';
-				break;
-			default:
-				$str .= 'SERVER_ERROR_502';
-		}
-		return $str;
-	}
-
-	/**
-	 * 设置和$_FILES有关的内容
-	 * @param string $name 上传文件原始名称
-	 * @param string $tmpName 临时目录文件名称
-	 * @param int $size 文件大小
-	 * @param int $error 上传错误代码
-	 * @return boolean 如果上传没有错返回TRUE
-	 */
-	private function setFiles($name = NULL, $tmpName = NULL, $size = 0, $error = 0) {
-		if($error) {
-			$this->setOption('errorCode', $error);
-			return FALSE;
-		}
-		$this->setOption('originName', $name);
-		$this->setOption('tmpFileName', $tmpName);
-		$fileType = explode('.', $name);
-		$this->setOption('fileType', strtolower(array_pop($fileType)));
-		$this->setOption('fileSize', $size);
-		return TRUE;
-	}
-
-	/**
-	 * 设置上传后的文件名
-	 * @param string $multiple 是否多文件上传
-	 * @return void
-	 */
-	private function setNewFileName($suffix = NULL) {
-		switch(TRUE) {
-			case $this->newfilename:
-				// 用户自定义名称，多文件添加后缀
-				$this->setOption('distFilename', $this->suffixName($suffix));
-				break;
-			case $this->israndname:
-				// 随机名称
-				$this->setOption('distFilename', $this->proRandName());
-				break;
-			default:
-				// 源文件名称
-				$this->setOption('distFilename', $this->originName);
-		}
-	}
-
-	/**
-	 * 检查文件是否类型符合
-	 * 存在finfo扩展后，可以防止图片挂马问题，不存在请手动重新生成图片
-	 * @return boolean
-	 */
-	private function checkFileType() {
-		// 获取文件的后缀
-		$mimeType = $this->fileType;
-
-		// php5.4以后检查文件类型
-		if(class_exists('\finfo', FALSE)) {
-			$finfo = new \finfo(FILEINFO_MIME_TYPE);
-			$mimeType = $finfo->file($this->tmpFileName);
-			$mimeType = explode('/', $mimeType);
-			$mimeType = strtolower(array_pop($mimeType));
-		}
-
-		// 格式是否允许
-		if(!in_array($mimeType, $this->allowtype)) {
-			$this->setOption('errorCode', -1);
-			return FALSE;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * 检查上传的文件是否是允许的大小
-	 * @return boolean 没超过大小返回TRUE
-	 */
-	private function checkFileSize() {
-		if($this->fileSize > $this->maxsize) {
-			$this->setOption('errorCode', -2);
-			return FALSE;
-		}
-		return TRUE;
 	}
 
 	/**
@@ -373,12 +253,12 @@ class Uploader {
 	 * @return boolean
 	 */
 	private function isWritable() {
-		if(empty($this->path)) {
-			$this->setOption('errorCode', -5);
+		if(empty($this->savePath)) {
+			$this->setOption('errorCode', -3);
 			return FALSE;
 		}
-		if(!is_dir($this->path) || !is_writable($this->path)) {
-			if(!@mkdir($this->path, 0755, TRUE)) {
+		if(!is_dir($this->savePath) || !is_writable($this->savePath)) {
+			if(!@mkdir($this->savePath, 0755, TRUE)) {
 				$this->setOption('errorCode', -4);
 				return FALSE;
 			}
@@ -408,41 +288,196 @@ class Uploader {
 	}
 
 	/**
-	 * 设置随机文件名
-	 * @return string 随机的文件名
+	 * 获取上传后的文件名称
+	 * @param  void   没有参数
+	 * @return string 上传后，新文件的名称， 如果是多文件上传返回数组
 	 */
-	private function proRandName() {
-		$fileName = date('YmdHis') . '_' . rand(1000, 9999);
-		$fileType = ($this->fileType == 'jpeg') ? 'jpg' : $this->fileType;
-		return "{$fileName}.{$fileType}";
+	public function getFilename() {
+		return $this->absSaveFilename;
 	}
 
 	/**
-	 * 多文件上传自动加上后缀名
-	 * @param int $suffix 后缀递增值
-	 * @return string
+	 * 获取完整路径，可过滤前缀目录
+	 * @param string $fliter 要过滤的目录
+	 * @return string|array
 	 */
-	private function suffixName($suffix) {
-		$suffix = $suffix ? "_{$suffix}" : NULL;
-		$fileType = ($this->fileType == 'jpeg') ? 'jpg' : $this->fileType;
-		return "{$this->newfilename}{$suffix}.{$fileType}";
+	public function getAbsoluteFilename($fliter = NULL) {
+		$isArray = is_array($this->absSaveFilename);
+		$originFiles = $isArray ? $this->absSaveFilename : array(
+			$this->absSaveFilename
+		);
+		
+		// 遍历拼接和过滤
+		foreach($originFiles as $key=>$value) {
+			$originFiles[$key] = $this->savePath . $value;
+			if($fliter) {
+				$originFiles[$key] = str_replace($fliter, NULL, $originFiles[$key]);
+			}
+		}
+		
+		return $isArray ? $originFiles : array_shift($originFiles);
+	}
+
+	/**
+	 * 上传失败后，调用该方法则返回，上传出错信息
+	 * @param  void   没有参数
+	 * @return string  返回上传文件出错的信息报告，如果是多文件上传返回数组
+	 */
+	public function getErrorMsg() {
+		return $this->errorMsg;
+	}
+
+	/* 设置上传出错信息 */
+	private function getError() {
+		$str = "上传{$this->originFilename}出错 : ";
+		switch($this->errorCode) {
+			case 5:
+				$str .= '上传方式有误';
+				break;
+			case 4:
+				$str .= '没有文件被上传';
+				break;
+			case 3:
+				$str .= "文件只有部分被上传";
+				break;
+			case 2:
+			case 1:
+				$str .= "上传的文件大小必须小于{$this->formatSize()}";
+				break;
+			case -1:
+				$str .= '文件格式/文件类型不支持,仅支持' . implode(',', $this->allowType);
+				break;
+			case -2:
+				// 移动文件到指定目录下失败
+				$str .= "上传失败";
+				break;
+			case -3:
+				// 未设置保存目录（代码错误）
+				$str .= 'SERVER_ERROR_404';
+				break;
+			case -4:
+				// 保存目录不存在或者服务器前权限不够
+				$str .= 'SERVER_ERROR_403';
+				break;
+			default:
+				// 未知错误
+				$str .= 'SERVER_ERROR_502';
+		}
+		return $str;
+	}
+
+	/**
+	 * 设置和$_FILES有关的内容
+	 * @param string $name 上传文件原始名称
+	 * @param string $tmpName 临时目录文件名称
+	 * @param string $type 文件类型
+	 * @param int $size 文件大小
+	 * @param int $error 上传错误代码
+	 * @return boolean 如果上传没有错返回TRUE
+	 */
+	private function setOriginFilenameInfo($name = NULL, $tmpName = NULL, $type = NULL, $size = 0, $error = 0) {
+		$this->setOption('originFilename', $name);
+		if($error) {
+			$this->setOption('errorCode', $error);
+			return FALSE;
+		}
+		$this->setOption('tmpFilename', $tmpName);
+		$originFiletype = explode('/', $type);
+		$this->setOption('originFiletype', strtolower(array_pop($originFiletype)));
+		$this->setOption('originFilesize', $size);
+		return TRUE;
+	}
+
+	/**
+	 * 设置上传后的文件名
+	 * @param string $multiple 是否多文件上传
+	 * @return void
+	 */
+	private function setAbsSaveFilename($suffix = NULL) {
+		// 强迫症修改
+		$originFiletype = ($this->originFiletype == 'jpeg') ? 'jpg' : $this->originFiletype;
+		
+		switch(TRUE) {
+			case $this->saveFilename:
+				// 用户自定义名称，多文件添加后缀
+				$absSaveFilename = "{$this->saveFilename}{$suffix}.{$originFiletype}";
+				break;
+			case $this->isRandName:
+				// 随机名称
+				$fileName = date('YmdHis') . rand(1000, 9999);
+				$absSaveFilename = "{$fileName}.{$originFiletype}";
+				break;
+			default:
+				// 源文件名称
+				$absSaveFilename = $this->originFilename;
+		}
+		
+		$this->setOption('absSaveFilename', $absSaveFilename);
+	}
+
+	/**
+	 * 检查文件是否类型符合
+	 * 存在finfo扩展后，可以防止图片挂马问题，不存在请手动重新生成图片
+	 * @return boolean
+	 */
+	private function checkOriginFiletype() {
+		// 获取文件的后缀
+		$mimeType = $this->originFiletype;
+		
+		// php5.4以后检查文件类型
+		if(class_exists('\finfo', FALSE)) {
+			$finfo = new \finfo(FILEINFO_MIME_TYPE);
+			$mimeType = $finfo->file($this->tmpFilename);
+			$mimeType = explode('/', $mimeType);
+			$mimeType = strtolower(array_pop($mimeType));
+		}
+		
+		// 格式是否允许
+		if(!in_array($mimeType, $this->allowType)) {
+			$this->setOption('errorCode', -1);
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * 检查上传的文件是否是允许的大小
+	 * @return boolean 没超过大小返回TRUE
+	 */
+	private function checkOriginFilesize() {
+		if($this->originFilesize > $this->maxSize) {
+			$this->setOption('errorCode', 2);
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	/**
 	 * 复制上传文件到指定的位置
 	 * @return boolean
 	 */
-	private function copyFile() {
+	private function copyFile($result = FALSE) {
 		if(!$this->errorCode) {
-			$path = rtrim($this->path, '/') . '/';
-			$path .= $this->distFilename;
-			if(@move_uploaded_file($this->tmpFileName, $path)) {
-				return TRUE;
+			$result = @move_uploaded_file($this->tmpFilename, $this->savePath . $this->absSaveFilename);
+			if(!$result) {
+				$this->setOption('errorCode', -2);
 			}
-				
-			$this->setOption('errorCode', -3);
-			return FALSE;
 		}
-		return FALSE;
+		return $result;
+	}
+
+	/**
+	 * 容量转换
+	 * @return string
+	 */
+	private function formatSize() {
+		$size = $this->maxSize;
+		$units = array(
+			' B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB'
+		);
+		for($i = 0, $len = count($units); $size >= 1024 && $i < $len; $i++) {
+			$size /= 1024;
+		}
+		return round($size, 2) . $units[$i];
 	}
 }
