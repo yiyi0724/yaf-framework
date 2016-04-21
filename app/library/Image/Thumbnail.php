@@ -4,7 +4,7 @@
  * @author enychen
  * @version 1.0
  */
-namespace Image;
+namespace Ku\Eny;
 
 class Thumbnail {
 	
@@ -79,6 +79,12 @@ class Thumbnail {
 	 * @var string
 	 */
 	private $distfilename;
+	
+	/**
+	 * 原图进行正方形缩略
+	 * @var unknown
+	 */
+	private $srcsquare = FALSE;
 	
 	/**
 	 * 错误代码
@@ -273,8 +279,15 @@ class Thumbnail {
 		}
 		
 		// 设置属性值
-		$this->setOption('srcwidth', $this->srcwidth ? : $imageInfo[0]);
-		$this->setOption('srcheight', $this->srcheight ? : $imageInfo[1]);
+		if($this->srcsquare) {
+			$size = $imageInfo[0] > $imageInfo[1] ? $imageInfo[1] : $imageInfo[0];
+			$this->setOption('srcwidth', $size);
+			$this->setOption('srcheight', $size);
+		} else {
+			$this->setOption('srcwidth', $this->srcwidth ? : $imageInfo[0]);
+			$this->setOption('srcheight', $this->srcheight ? : $imageInfo[1]);
+		}
+		
 		$this->setOption('srcType', $this->allowType[$imageInfo[2]]);
 		
 		return TRUE;
@@ -298,13 +311,7 @@ class Thumbnail {
 			return FALSE;
 		}
 		$this->setOption('disttype', $disttype);
-		
-		// 缩略图检查尺寸检查
-		if($this->srcwidth < $this->distwidth || $this->srcheight < $this->distheight) {
-			$this->setOption('errorCode', -7);
-			return FALSE;
-		}
-		
+				
 		// 缩略图宽高度
 		switch(TRUE) {
 			case (!$this->distwidth && !$this->distheight):
