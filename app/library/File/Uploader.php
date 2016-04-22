@@ -82,6 +82,11 @@ class Uploader {
 	private $errorMsg = NULL;
 
 	/**
+	 * 是否是post传输
+	 */
+	private $isPost = TRUE;
+
+	/**
 	 * 设置保存的目录
 	 * @param string $path 目录名称
 	 * @return \File\Uploader 返回$this进行连贯操作
@@ -132,6 +137,16 @@ class Uploader {
 	}
 
 	/**
+	 * 是否强制使用post传输
+	 * @param bool $isPost 是否使用post进行传输
+	 * @return \File\Uploader 返回$this进行连贯操作
+	 */
+	public function isPost($isPost) {
+		$this->isPost = $isPost;
+		return $this;
+	}
+
+	/**
 	 * 设置单个属性
 	 * @param string $key 键
 	 * @param mixed  $val 值
@@ -168,8 +183,9 @@ class Uploader {
 		
 		// 设置文件信息
 		if($return = $this->setOriginFilenameInfo($name, $tmpName, $type, $size, $error)) {
-			// 上传之前先检查一下大小和类型
-			if($return = $this->checkOriginFilesize() && $this->checkOriginFiletype()) {
+			// 上传之前先检查一下大小,类型,来源
+			$return = $this->checkOriginFilesize() && $this->checkOriginFiletype() && $this->checkPost();
+			if($return) {
 				// 为上传文件设置新文件名
 				$this->setAbsSaveFilename();
 				// 移动文件是否成功
@@ -212,8 +228,9 @@ class Uploader {
 		foreach($name as $i=>$value) {
 			// 设置文件信息
 			if($this->setOriginFilenameInfo($name[$i], $tmpName[$i], $type[$i], $size[$i], $error[$i])) {
-				// 进行文件检查
-				if(!$this->checkOriginFilesize() || !$this->checkOriginFiletype()) {
+				// 上传之前先检查一下大小,类型,来源
+				$return = $this->checkOriginFilesize() && $this->checkOriginFiletype() && $this->checkPost();
+				if(!$return) {
 					$errors[] = $this->getError();
 					$return = FALSE;
 				}
@@ -284,6 +301,19 @@ class Uploader {
 			return FALSE;
 		}
 		
+		return TRUE;
+	}
+
+	/**
+	 * 检查是否是合法的http post上传
+	 * @param string $file 临时文件
+	 * @return bool 是合法返回TRUE
+	 */
+	private function checkPost() {
+		if($this->isPost && !is_uploaded_file($this->tmpFilename)) {
+			$this->setOption('errorCode', 5);
+			return FALSE;
+		}
 		return TRUE;
 	}
 
