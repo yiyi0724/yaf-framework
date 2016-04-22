@@ -22,13 +22,13 @@ class Uploader {
 	private $saveFilename;
 
 	/**
-	 * 设置限制上传文件的类型
+	 * 设置文件支持类型
 	 * @var array
 	 */
 	private $allowType = array('jpg', 'jpeg', 'gif', 'png');
 
 	/**
-	 * 限制文件上传大小（字节）
+	 * 设置文件限制大小（字节）
 	 * @var int
 	 */
 	private $maxSize = 1024000;
@@ -52,7 +52,7 @@ class Uploader {
 	private $tmpFilename;
 
 	/**
-	 * 文件类型(文件后缀)
+	 * 文件类型
 	 * @var string
 	 */
 	private $originFiletype;
@@ -329,7 +329,7 @@ class Uploader {
 
 	/* 设置上传出错信息 */
 	private function getError() {
-		$str = "上传{$this->originFilename}出错 : ";
+		$str = "上传{$this->originFilename}出错:";
 		switch($this->errorCode) {
 			case 5:
 				$str .= '上传方式有误';
@@ -338,7 +338,7 @@ class Uploader {
 				$str .= '没有文件被上传';
 				break;
 			case 3:
-				$str .= "文件只有部分被上传";
+				$str .= "只有部分被上传";
 				break;
 			case 2:
 			case 1:
@@ -356,7 +356,7 @@ class Uploader {
 				$str .= 'SERVER_ERROR_404';
 				break;
 			case -4:
-				// 保存目录不存在或者服务器前权限不够
+				// 保存目录不存在或者服务器权限不够
 				$str .= 'SERVER_ERROR_403';
 				break;
 			default:
@@ -404,7 +404,7 @@ class Uploader {
 				break;
 			case $this->isRandName:
 				// 随机名称
-				$fileName = date('YmdHis') . rand(1000, 9999);
+				$fileName = uniqid();
 				$absSaveFilename = "{$fileName}.{$originFiletype}";
 				break;
 			default:
@@ -473,7 +473,7 @@ class Uploader {
 	private function formatSize() {
 		$size = $this->maxSize;
 		$units = array(
-			' B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB'
+			'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'
 		);
 		for($i = 0, $len = count($units); $size >= 1024 && $i < $len; $i++) {
 			$size /= 1024;
