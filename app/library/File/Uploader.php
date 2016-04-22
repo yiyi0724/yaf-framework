@@ -264,6 +264,58 @@ class Uploader {
 		
 		return $return;
 	}
+	
+	/**
+	 * base64位图像上传
+	 * @param  string $fileFile  上传文件的表单名称
+	 * @return bool        		 如果上传成功返回数TRUE
+	 */
+	public function base64Upload($pictureStr) {
+		// 目录是否可以写入(不存在尝试创建)
+		if(!$this->isWritable()) {
+			$this->setOption('errorMsg', $this->getError());
+			return FALSE;
+		}
+
+		//匹配出图片的格式
+		$isMatch = preg_match('/^(data:\s*image\/(\w+);base64,)/', $pictureStr, $result);
+		if(!$isMatch) {
+			$this->setOption('errorCode', 4);
+			$this->setOption('errorMsg', $this->getError());
+			return FALSE;
+		}
+
+		// 文件暂时保存
+		$tmpFilename = $this->savePath.uniqid();
+		$content = base64_decode(str_replace($result[1], NULL, $pictureStr));
+		file_put_contents($tmpFilename, $content);
+		$tmpFilenameInfo = stat($tmpFilename);
+
+		// 文件类型
+		$ext = $result[2] == 'jpeg' ? 'jpg' : $result[2];
+		$name = "{$tmpFilename}.{$ext}";
+		$tmpName = $tmpFilename;
+		$type = "image/{$result[2]}";
+		$size = $tmpFilenameInfo['size'];
+		$error = 0;
+
+		// 设置文件信息
+		if($return = $this->setOriginFilenameInfo($name, $tmpName, $type, $size, $error)) {
+			// 上传之前先检查一下大小,类型,来源
+			if($return = $this->checkOriginFilesize() && $this->checkOriginFiletype()){
+				// 移动文件
+				$return = rename($tmpName, $name);
+			}
+		}
+
+		// 上传错误
+		if(!$return) {
+			@unlink($tmpName);
+			$this->setOption('errorMsg', $this->getError());
+		}
+
+		return $return;
+	}
 
 	/**
 	 * 目录是否可以写入(不存在尝试创建)
@@ -333,9 +385,7 @@ class Uploader {
 	 */
 	public function getAbsoluteFilename($fliter = NULL) {
 		$isArray = is_array($this->absSaveFilename);
-		$originFiles = $isArray ? $this->absSaveFilename : array(
-			$this->absSaveFilename
-		);
+		$originFiles = $isArray ? $this->absSaveFilename : array($this->absSaveFilename);
 		
 		// 遍历拼接和过滤
 		foreach($originFiles as $key=>$value) {
