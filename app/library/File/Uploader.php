@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 文件上传类(支持单，多上传方式)
+ * 文件上传类(支持单，多上传，base64图片上传，url远程上传方式)
  * @author enychen
  * @version 1.0
  */
@@ -291,9 +291,8 @@ class Uploader {
 		file_put_contents($tmpFilename, $content);
 		$tmpFilenameInfo = stat($tmpFilename);
 
-		// 文件类型
-		$ext = $result[2] == 'jpeg' ? 'jpg' : $result[2];
-		$name = "{$tmpFilename}.{$ext}";
+		// 文件信息
+		$name = "{$tmpFilename}.{$result[2]}";
 		$tmpName = $tmpFilename;
 		$type = "image/{$result[2]}";
 		$size = $tmpFilenameInfo['size'];
@@ -302,9 +301,55 @@ class Uploader {
 		// 设置文件信息
 		if($return = $this->setOriginFilenameInfo($name, $tmpName, $type, $size, $error)) {
 			// 上传之前先检查一下大小,类型,来源
-			if($return = $this->checkOriginFilesize() && $this->checkOriginFiletype()){
-				// 移动文件
-				$return = rename($tmpName, $name);
+			if($return = $this->checkOriginFilesize() && $this->checkOriginFiletype()) {
+				// 为上传文件设置新文件名
+				$this->setAbsSaveFilename();
+				// 重命名文件
+				$return = $this->renameFile();
+			}
+		}
+
+		// 上传错误
+		if(!$return) {
+			@unlink($tmpName);
+			$this->setOption('errorMsg', $this->getError());
+		}
+
+		return $return;
+	}
+
+	/**
+	 * 通过url地址获取上传文件
+	 * @param string $url 远程地址
+	 * @return boolean 上传成功返回TRUE
+	 */
+	public function urlUpload($url) {
+		// 目录是否可以写入(不存在尝试创建)
+		if(!$this->isWritable()) {
+			$this->setOption('errorMsg', $this->getError());
+			return FALSE;
+		}
+
+		// 文件暂时保存
+		$tmpFilename = $this->savePath.uniqid();
+		file_put_contents($tmpFilename, file_get_contents($url, FALSE));
+		$tmpFilenameInfo = stat($tmpFilename);
+
+		// 文件信息
+		$name = basename($url);
+		$tmpName = $tmpFilename;
+		$type = 'unknown/' . ltrim(strrchr($name, '.'), '.');
+		$size = $tmpFilenameInfo['size'];
+		$error = 0;
+
+		// 设置文件信息
+		if($return = $this->setOriginFilenameInfo($name, $tmpName, $type, $size, $error)) {
+			// 上传之前先检查一下大小,类型,来源
+			if($return = $this->checkOriginFilesize() && $this->checkOriginFiletype()) {
+				// 为上传文件设置新文件名
+				$this->setAbsSaveFilename();
+				// 重命名文件
+				$return = $this->renameFile();
 			}
 		}
 
@@ -407,7 +452,10 @@ class Uploader {
 		return $this->errorMsg;
 	}
 
-	/* 设置上传出错信息 */
+	/**
+	 * 获取上传出错信息
+	 * @return string 错误信息
+	 */
 	private function getError() {
 		$str = "上传{$this->originFilename}出错:";
 		switch($this->errorCode) {
@@ -470,7 +518,8 @@ class Uploader {
 
 	/**
 	 * 设置上传后的文件名
-	 * @param string $multiple 是否多文件上传
+	 * @param int $suffix 多文件上传拼接后缀
+	 * @param bool $abs 是否拼接完整文件名
 	 * @return void
 	 */
 	private function setAbsSaveFilename($suffix = NULL) {
@@ -543,6 +592,21 @@ class Uploader {
 				$this->setOption('errorCode', -2);
 			}
 		}
+		return $result;
+	}
+	
+	/**
+	 * 重新命名文件（url和base64上传方式）
+	 * @return bool $result 成功返回TRUE
+	 */
+	private function renameFile($result = FALSE) {
+		if(!$this->errorCode) {
+			$result = @rename($this->tmpFilename, $this->savePath . $this->absSaveFilename);
+			if(!$result) {
+				$this->setOption('errorCode', -2);
+			}
+		}
+		
 		return $result;
 	}
 
