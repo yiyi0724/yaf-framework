@@ -66,14 +66,17 @@ class HandlerPlugin extends Plugin_Abstract {
 		
 		// 输入数据源
 		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
+		unset($_GET, $_POST, $_REQUEST);
 		
 		// 获取检查规则
 		if(is_file(FORM_FILE) && require (FORM_FILE)) {
-			echo CONTROLLER . 'Controller::' . ACTION;exit;
-			if(method_exists($formFile, ACTION . 'Action')) {
-				$formLib = new \Security\Form(FORM_FILE);
-				$rules = call_user_func(CONTROLLER . 'Controller::' . ACTION);
-				\Security\Form::fliter($rules, $params);
+			if(method_exists(CONTROLLER . 'Form', ACTION . 'Input')) {
+				$rules = call_user_func(CONTROLLER . 'Form::' . ACTION . 'Input');
+				$formLib = new \Security\Form();
+				$formLib->setRequestMethod($request->getMethod());
+				$formLib->setRules($rules);
+				$formLib->setParams($params);
+				$isPass = $formLib->fliter();
 			}
 		}
 	}

@@ -4,7 +4,7 @@
  * @author enychen
  * @version 1.0
  */
-namespace Ku\Eny;
+namespace Image;
 
 class Thumbnail {
 	
