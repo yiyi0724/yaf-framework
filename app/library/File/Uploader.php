@@ -141,7 +141,7 @@ class Uploader {
 	 * @param bool $isPost 是否使用post进行传输
 	 * @return \File\Uploader 返回$this进行连贯操作
 	 */
-	public function isPost($isPost) {
+	public function setIsPost($isPost) {
 		$this->isPost = $isPost;
 		return $this;
 	}
