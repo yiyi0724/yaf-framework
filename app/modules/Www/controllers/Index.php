@@ -21,7 +21,7 @@ class IndexController extends \Base\WwwController {
 		$mail->Password = 'axzwjwueuaasbiig'; // 密码
 		$mail->Port = 25; // smtp服务器的端口号
 		
-		$mail->setFrom('285577011@qq.com', '对方不理你'); // 邮件的发送者
+		$mail->setFrom('285577011@qq.com', '对方不理你并想你扔了一个杨艳琴'); // 邮件的发送者
 		$mail->addAddress('89932976@qq.com',  '对方'); // 邮件的接收者
 		//$mail->addAttachment('附件地址'); // 增加附件
 		
