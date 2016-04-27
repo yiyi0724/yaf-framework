@@ -20,8 +20,6 @@ class HandlerPlugin extends Plugin_Abstract {
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		// 常量注册
 		$this->initConst($request);
-		// 输入数据整合
-		$this->inputFliter($request);
 	}
 
 	/**
@@ -48,35 +46,6 @@ class HandlerPlugin extends Plugin_Abstract {
 		if($resources = Application::app()->getConfig()->get('resource')) {
 			foreach($resources as $key=>$value) {
 				define(strtoupper($key), $value);
-			}
-		}
-	}
-
-	/**
-	 * 参数整合，清空全局变量
-	 * @param \Yaf\Request_Abstract $request 请求对象
-	 * @param array $putOrDelete put和delete方法支持存放数组
-	 * @return void
-	 */
-	private function inputFliter(Request_Abstract $request, $putOrDelete = array()) {
-		// PUT和DETELE方法支持
-		if(IS_PUT || IS_DELETE) {
-			parse_str(file_get_contents('php://input'), $putOrDelete);
-		}
-		
-		// 输入数据源
-		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
-		unset($_GET, $_POST, $_REQUEST);
-		
-		// 获取检查规则
-		if(is_file(FORM_FILE) && require (FORM_FILE)) {
-			if(method_exists(CONTROLLER . 'Form', ACTION . 'Input')) {
-				$rules = call_user_func(CONTROLLER . 'Form::' . ACTION . 'Input');
-				$formLib = new \Security\Form();
-				$formLib->setRequestMethod($request->getMethod());
-				$formLib->setRules($rules);
-				$formLib->setParams($params);
-				$isPass = $formLib->fliter();
 			}
 		}
 	}

@@ -51,8 +51,7 @@ abstract class BaseController extends Controller_Abstract {
 		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp)) {
 			$header = 'text/javascript';
 			$json = "{$jsonp}({$json})";
-		}
-		else {
+		} else {
 			$header = 'application/json';
 		}
 		
@@ -67,7 +66,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param string $template 使用的模板
 	 * @return void
 	 */
-	protected final function notify($notify = array(), $template = 'notify') {
+	protected final function notify(array $notify = array(), $template = 'notify') {
 		$view = $this->getView();
 		$this->assign('notify', $notify);
 		$view->setScriptPath(MODULE_PATH . 'views');
@@ -82,8 +81,8 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param array|int $data 如果是post请输入数组，如果是redirect请输入301|302|303|307,get则进行忽略
 	 * @return void
 	 */
-	protected final function location($url, $method = 'get', $data = array()) {
-		\Network\Location::$method($url, $data);
+	protected final function location($url, $method = 'get', $other = array()) {
+		\Network\Location::$method($url, $other);
 	}
 
 	/**
@@ -92,5 +91,41 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	protected final function disView() {
 		Application::app()->getDispatcher()->disableView();
+	}
+
+	/**
+	 * 参数整合，清空全局变量，进行数据校验
+	 * @param \Yaf\Request_Abstract $request 请求对象
+	 * @param array $putOrDelete put和delete方法支持存放数组
+	 * @return void
+	 */
+	protected function inputFliter($putOrDelete = array()) {
+		// PUT和DETELE方法支持
+		if(IS_PUT || IS_DELETE) {
+			parse_str(file_get_contents('php://input'), $putOrDelete);
+		}
+		
+		// 输入数据源
+		$request = $this->getRequest();
+		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
+		unset($_GET, $_POST, $_REQUEST);
+		
+		// 获取检查规则
+		if(is_file(FORM_FILE) && require (FORM_FILE)) {
+			if(method_exists(CONTROLLER . 'Form', ACTION . 'Input')) {
+				$rules = call_user_func(CONTROLLER . 'Form::' . ACTION . 'Input');
+				$formLib = new \Security\Form();
+				$formLib->setRequestMethod($request->getMethod());
+				$formLib->setRules($rules);
+				$formLib->setParams($params);
+				if($error = $formLib->fliter()) {
+					IS_AJAX ? $this->jsonp($error, 412) : $this->notify($error);
+					exit();
+				}
+				$params = $formLib->getSuccess();
+			}
+		}
+		
+		return $params;
 	}
 }

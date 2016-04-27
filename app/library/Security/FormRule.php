@@ -1,6 +1,6 @@
 <?php
 
-namespace \Security;
+namespace Security;
 
 /**
  * 规则数组
@@ -15,10 +15,10 @@ class FormRule {
 	 * @param array $options 可选检查项目：min|最小值， max|最大值
 	 * @return boolean
 	 */
-	public static function isNumber($value, array $options = array()) {
+	public static function isInt($value, array $options = array()) {
 		$flag = is_numeric($value);
 		$flag = ($flag && isset($options['min'])) ?  $value >= $options['min'] : $flag;
-		$flag = ($flag && isset($options['min'])) ?  $value <= $options['max'] : $flag;
+		$flag = ($flag && isset($options['max'])) ?  $value <= $options['max'] : $flag;
 		return $flag;
 	}
 

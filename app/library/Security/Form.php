@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 表单检查类&表单规则类
+ * 表单检查类
  * @author enychen
  */
 namespace Security;
@@ -33,9 +33,7 @@ class Form {
 	 */
 	protected $success = array();
 
-	protected $errorCode = 0;
-
-	protected $errorMsg = NULL;
+	protected $error = array();
 
 	/**
 	 * 设置规则
@@ -64,7 +62,8 @@ class Form {
 
 	/**
 	 * 初始化参数
-	 * @return Ambigous <multitype:, NULL, unknown>
+	 * @param array $rules 原始规则数组
+	 * @return bool 是否有需要检查的数据
 	 */
 	protected function init($rules = array()) {
 		foreach($this->rules as $key=>$rule) {
@@ -75,13 +74,13 @@ class Form {
 			$rules[$key]['method'] = $rule[1];
 			$rules[$key]['require'] = $rule[2];
 			$rules[$key]['notify'] = $rule[3];
-			$rules[$key]['options'] = isset($rule[4]) ? $rule[4] : NULL;
+			$rules[$key]['options'] = isset($rule[4]) && is_array($rule[4]) ? $rule[4] : array();
 			$rules[$key]['default'] = isset($rule[5]) ? $rule[5] : NULL;
 			$rules[$key]['alias'] = isset($rule[6]) ? $rule[6] : NULL;
 		}
 		
 		$this->rules = $rules;		
-		return count($rules);
+		return (bool)$rules;
 	}
 
 	/**
@@ -94,26 +93,23 @@ class Form {
 		if(!$this->requestMethod) {
 			throw new \Exception('Please set the request mode', 502);
 		}
-		
+
 		// 是否需要检查参数
 		if($this->init()) {
 			foreach($this->rules as $key=>$rule) {
-				// 是否必须传递
+				// 对应数据类型检查
+				$method = "is{$rule['method']}";
 				if($rule['require'] && is_null($rule['value'])) {
 					$this->setError($key, $rule['notify']);
-					continue;
-				}
-					
-				// 对应数据类型检查
-				if(!is_null($rule['value']) && call_user_func("FormRule::is{$rule['method']}", $rule)) {
+				} else if(!is_null($rule['value']) && !FormRule::$method($rule['value'], $rule['options'])) {
 					$this->setError($key, $rule['notify']);
-					continue;
+				} else {
+					$this->setSuccess($key, $rule);
 				}
-					
-				// 设置合法值
-				$this->setSuccess($key, $rule);
 			}
 		}
+				
+		return $this->getError();
 	}
 
 	/**
@@ -143,11 +139,18 @@ class Form {
 		$this->error[$key] = $notify;
 	}
 
+	/**
+	 * 验证通过的字段
+	 * @return multitype:
+	 */
 	public function getSuccess() {
-		return static::$success;
+		return $this->success;
 	}
 
-	public static function getError() {
-		return static::$error;
+	/**
+	 * 验证失败的字段
+	 */
+	public function getError() {
+		return $this->error;
 	}
 }
