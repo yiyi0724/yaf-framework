@@ -7,12 +7,18 @@ try {
   $params = array('param1'=>1, 'param2'=>2);
 
   // 创建对象
-  $http = new \Network\Http($timeout = 60, $return = TRUE, $header = FALSE);
+  $http = new \Network\Http(60, TRUE, FALSE);
+  // 设置请求地址
   $http->setAction("http://www.enychen.com/api/");
+  // 设置json结果解析
   $http->setDecode(\Network\Http::DECODE_JSON);
+  // 设置cookie
   $http->setCookie(array('author'=>'enychen', 'time'=>'2016-03-09'));
+  // 设置上传的内容
   $params['file'] = $http->getFile('/home/eny/Picture/1.jpg');
+  // 进行文件上传
   $result = $http->upload($params);
+  // 关闭连接
   $http->close();
 } catch(\Exception  $e) {
   $code = $e->getCode();
