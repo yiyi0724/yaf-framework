@@ -1,10 +1,9 @@
 ## Http请求类（基于curl扩展）
 [源码地址](https://github.com/enychen/yaf-framework/blob/master/app/library/Network/Http.php)
 
-#### 完整案例
+### 完整案例
 ```php
-try
-{
+try {
   $params = array('param1'=>1, 'param2'=>2);
 
   // 创建对象
@@ -15,16 +14,13 @@ try
   $params['file'] = $http->getFile('/home/eny/Picture/1.jpg');
   $result = $http->upload($params);
   $http->close();
-}
-catch(\Exception  $e)
-{
+} catch(\Exception  $e) {
   $code = $e->getCode();
   $error = $e->getMessage();
 }
 ```
 
-#### 内置方法介绍
-###### 创建一个http对象
+### 创建对象
 ```php
 /**
  * @param int  $timeout 超时时间，默认60秒
@@ -35,29 +31,30 @@ catch(\Exception  $e)
  $http = new \Network\Http(int $timeout = 60, bool $return = TRUE, bool $header = FALSE);
 ```
 
+### 内置方法
+
+
 ###### get | post | delete | put | upload 请求
-
-> 执行upload请求前，请先调用$this->getFile(string $file)方法进行上传文件封装
-
 ```php
 /**
- * @param array $data 比如 array('name'=>'enychen', 'age'=>27)，可以为空不进行传递
+ * @param array $data 要传递的参数，可以不传递
  * @return bool|string|array 返回值依靠是否输出，是否进行结果解析来决定
  */
 // get请求
-$http->get([array $data]);
+$http->get($data);
 
 // post请求
-$http->post([array $data]);
+$http->post($data);
 
 // put请求
-$http->put([array $data]);
+$http->put($data);
 
 // delete请求
-$http->delete([array $data]);
+$http->delete($data);
 
-// upload文件上传请求
-$http->upload([array $data]);
+// upload文件上传请求，版本差异所以封装此方法
+$data['upload'] = $http->getFile('文件地址');
+$http->upload($data);
 
 ```
 
@@ -67,16 +64,16 @@ $http->upload([array $data]);
  * @param string $action 请求地址
  * @return void
  */
-$http->setAction(string $action)
+$http->setAction($action)
 ```
 
-###### 返回结果进行解析
+###### 返回结果进行解析，只支持xml和json解析
 ```php
 /**
  * @param string $decode 只支持 \Network\Http::DECODE_JSON 或者 \Network\Http::DECODE_XML
  * @return void
  */ 
-$http->setDecode(int \Network\Http::DECODE_JSON);
+$http->setDecode(\Network\Http::DECODE_JSON);
 ```
 
 ###### 设置cookie信息
@@ -85,7 +82,7 @@ $http->setDecode(int \Network\Http::DECODE_JSON);
  * @param string|array $cookie cookie信息
  * @return void
  */
-$http->setCookie(mixed $cookie);
+$http->setCookie($cookie);
 ```
 
 ###### 设置curlopt选项
@@ -95,7 +92,7 @@ $http->setCookie(mixed $cookie);
  * @param int|string|bool $value CURL选项值
  * @return void
  */
-$http->setCurlopt(int $key, mixed $value)
+$http->setCurlopt($key, $value)
 ```
 
 ###### 	上传文件的创建方式
@@ -106,7 +103,7 @@ $http->setCurlopt(int $key, mixed $value)
  * @param string $path 文件的绝对路径
  * @return \CURLFile|string 上传文件对象或者字符串
  */
-$http->getFile(string $path);
+$http->getFile($path);
 ```
 
 ###### 关闭curl资源
