@@ -98,6 +98,7 @@ $http->setCurlopt($key, $value)
 ###### 	上传文件的创建方式
 
 > 由于php上传存在版本问题，所以封装了这个方法，需要主动调用此方法
+
 ```php
 /**
  * @param string $path 文件的绝对路径
