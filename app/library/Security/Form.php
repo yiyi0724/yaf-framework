@@ -84,7 +84,7 @@ class Form {
 			$rules[$key]['default'] = isset($rule[5]) ? $rule[5] : NULL;
 			$rules[$key]['alias'] = isset($rule[6]) ? $rule[6] : NULL;
 		}
-		
+
 		$this->rules = $rules;
 		return (bool)$rules;
 	}
@@ -98,11 +98,14 @@ class Form {
 		if(!$this->requestMethod) {
 			throw new \Exception('Please set the request mode', 502);
 		}
-		
+
 		// 是否需要检查参数
 		if($this->init()) {
 			foreach($this->rules as $key=>$rule) {
+				// 待检查的规则
 				$method = $rule['method'];
+
+				// 检查规则
 				if($rule['require'] && is_null($rule['value'])) {
 					// 是否必须
 					$this->setError($key, $rule['notify']);
@@ -115,23 +118,25 @@ class Form {
 				}
 			}
 		}
-		
+
 		return $this->getError();
 	}
 
 	/**
 	 * 保存检查通过的值
-	 * @param array $rule
+	 * @param string $name 键名
+	 * @param array $rule 规则数组
+	 * @return void
 	 */
 	protected function setSuccess($name, $rule) {
 		// 是否存在别名
 		$name = $rule['alias'] ? $rule['alias'] : $name;
-		
+
 		// 是否填充默认值
 		if(is_null($rule['value']) && $rule['default']) {
 			$rule['value'] = $rule['default'];
 		}
-		
+
 		// 不为空保存数据
 		if(!is_null($rule['value'])) {
 			$this->success[$name] = trim($rule['value']);
@@ -140,8 +145,9 @@ class Form {
 
 	/**
 	 * 保存检查不通过的值
-	 * @param string $key
-	 * @param string $rule
+	 * @param string $key  键名
+	 * @param string $notify 提示语
+	 * @return void
 	 */
 	protected function setError($key, $notify) {
 		$this->error[$key] = $notify;
