@@ -23,19 +23,19 @@ $mysql = \Driver\Mysql::getInstance($driver);
 ```php
 /**
  * @param string $sql    要执行的sql语句
- * @param array  $params sql语句预绑定参数
+ * @param array  $params sql语句预绑定参数，默认是array()
  * @return \Driver\Mysql 返回当前对象
  */
-$mysql->query(string $sql, array $params = array());
+$mysql->query($sql, $params = array());
 ```
 ###### 调试sql语句并结束程序
 ```php
 /**
  * @param string $sql    要执行的sql语句
- * @param array  $params sql语句预绑定参数
+ * @param array  $params sql语句预绑定参数，默认是array()
  * @return void
  */
-$mysql->debug(string $sql, array $params = array());
+$mysql->debug($sql, $params = array());
 ```
 ###### 开启事务:
 ```php
