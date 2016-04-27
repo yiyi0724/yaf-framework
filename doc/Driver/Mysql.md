@@ -44,7 +44,7 @@ $mysql->debug($sql, $params = array());
  */
 $mysql->beginTransaction();
 ```
-###### 是不是在事务内:
+###### 是否已经开启过事务:
 ```php
 /**
  * @return boolean 在一个事务内返回TRUE
