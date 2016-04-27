@@ -7,7 +7,7 @@ namespace Security;
  * @author eny
  *
  */
-class FormRule {
+class Is {
 
 	/**
 	 * 是否是整数
@@ -15,7 +15,7 @@ class FormRule {
 	 * @param array $options 可选检查项目：min|最小值， max|最大值
 	 * @return boolean
 	 */
-	public static function isInt($value, array $options = array()) {
+	public static function int($value, array $options = array()) {
 		$flag = is_numeric($value);
 		$flag = ($flag && isset($options['min'])) ?  $value >= $options['min'] : $flag;
 		$flag = ($flag && isset($options['max'])) ?  $value <= $options['max'] : $flag;
@@ -28,7 +28,7 @@ class FormRule {
 	 * @param array $range 区间数组
 	 * @return boolean
 	 */
-	public static function isIn($value, array $range) {
+	public static function in($value, array $range) {
 		return in_array($value, $range);
 	}
 
@@ -37,7 +37,7 @@ class FormRule {
 	 * @param string $value 参数
 	 * @return boolean
 	 */
-	public static function isEmail($value) {
+	public static function email($value) {
 		return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
 	}
 
@@ -46,7 +46,7 @@ class FormRule {
 	 * @param sring $value 参数
 	 * @return boolean
 	 */
-	public static function isUrl($value) {
+	public static function url($value) {
 		return (bool)filter_var($value, FILTER_VALIDATE_URL);
 	}
 
@@ -55,7 +55,7 @@ class FormRule {
 	 * @param int|string $value 参数
 	 * @return boolean
 	 */
-	public static function isIp($value) {
+	public static function ip($value) {
 		$value = is_numeric($value) ? long2ip($value) : $value;
 		return (bool)filter_var($value, FILTER_VALIDATE_IP);
 	}
@@ -65,7 +65,7 @@ class FormRule {
 	 * @param array $rule 规则数组
 	 * @return boolean
 	 */
-	public static function isRegexp($value, $pattern) {
+	public static function regexp($value, $pattern) {
 		return (bool)preg_match($pattern, $value);
 	}
 
@@ -75,7 +75,7 @@ class FormRule {
 	 * @param boolean $flag 默认检查通过
 	 * @return boolean
 	 */
-	public static function isString($value, array $options = array()) {
+	public static function string($value, array $options = array()) {
 		$flag = is_string($value) || is_numeric($value);
 		if(empty($options['skipXss']) || !$options['skipXss']) {
 			$pattern = '/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:)/i';
@@ -93,7 +93,7 @@ class FormRule {
 	 * @param boolean $flag 默认检查通过
 	 * @return boolean
 	 */
-	public static function isMobile($value) {
+	public static function mobile($value) {
 		return (bool)preg_match("/^1(3|4|5|7|8)[0-9]{9}$/", $value);
 	}
 
@@ -103,7 +103,7 @@ class FormRule {
 	 * @param boolean $flag 默认检查通过
 	 * @return boolean
 	 */
-	public static function isPhone($value) {
+	public static function phone($value) {
 		return (bool)preg_match("/(\d{3}-)(\d{8})$|(\d{4}-)(\d{7,8})$/", $value);
 	}
 
@@ -113,7 +113,7 @@ class FormRule {
 	 * @param boolean $flag 默认检查通过
 	 * @return boolean
 	 */
-	public static function isQQ($value) {
+	public static function qq($value) {
 		return (bool)preg_match('/^[1-9][0-9]{4,9}$/', $value);
 	}
 
@@ -123,7 +123,7 @@ class FormRule {
 	 * @param boolean $flag 默认检查通过
 	 * @return boolean
 	 */
-	public static function isCallback($value, $callback) {
+	public static function callback($value, $callback) {
 		return (bool)call_user_func($callback, $value);
 	}
 }

@@ -11,8 +11,5 @@ class IndexController extends \Base\WwwController {
 	 * 网站首页
 	 */
 	public function indexAction() {
-		
-		// 数据检查
-		$params = $this->inputFliter();
 	}
 }

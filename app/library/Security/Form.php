@@ -28,16 +28,20 @@ class Form {
 
 	/**
 	 * 检查通过
-	 * @static
 	 * @var array
 	 */
 	protected $success = array();
 
+	/**
+	 * 检查不通过
+	 * @var array
+	 */
 	protected $error = array();
 
 	/**
 	 * 设置规则
 	 * @param array $rules
+	 * @return void
 	 */
 	public function setRules(array $rules) {
 		$this->rules = $rules;
@@ -47,6 +51,7 @@ class Form {
 	 * 初始化规则
 	 * @param array 输入数据
 	 * @return array 规则数组
+	 * @return void
 	 */
 	public function setParams(array $params) {
 		$this->params = $params;
@@ -54,14 +59,15 @@ class Form {
 
 	/**
 	 * 设置请求方式
-	 * @param unknown $requestMethod
+	 * @param array $requestMethod 请求方式：GET | POST | DELETE | PUT
+	 * @return void
 	 */
 	public function setRequestMethod($requestMethod) {
 		$this->requestMethod = $requestMethod;
 	}
 
 	/**
-	 * 初始化参数
+	 * 初始化验证规则
 	 * @param array $rules 原始规则数组
 	 * @return bool 是否有需要检查的数据
 	 */
@@ -79,36 +85,37 @@ class Form {
 			$rules[$key]['alias'] = isset($rule[6]) ? $rule[6] : NULL;
 		}
 		
-		$this->rules = $rules;		
+		$this->rules = $rules;
 		return (bool)$rules;
 	}
 
 	/**
-	 * 检查数据
-	 * @param string $method 请求方式
-	 * @return void
+	 * 检查过滤数据
+	 * @return array 返回错误数组
 	 */
 	public function fliter() {
 		// 检查方式
 		if(!$this->requestMethod) {
 			throw new \Exception('Please set the request mode', 502);
 		}
-
+		
 		// 是否需要检查参数
 		if($this->init()) {
 			foreach($this->rules as $key=>$rule) {
-				// 对应数据类型检查
-				$method = "is{$rule['method']}";
+				$method = $rule['method'];
 				if($rule['require'] && is_null($rule['value'])) {
+					// 是否必须
 					$this->setError($key, $rule['notify']);
-				} else if(!is_null($rule['value']) && !FormRule::$method($rule['value'], $rule['options'])) {
+				} else if(!is_null($rule['value']) && !Is::$method($rule['value'], $rule['options'])) {
+					// 检查不通过
 					$this->setError($key, $rule['notify']);
 				} else {
+					// 检查通过
 					$this->setSuccess($key, $rule);
 				}
 			}
 		}
-				
+		
 		return $this->getError();
 	}
 
@@ -116,24 +123,25 @@ class Form {
 	 * 保存检查通过的值
 	 * @param array $rule
 	 */
-	protected function setSuccess($key, $rule) {
+	protected function setSuccess($name, $rule) {
 		// 是否存在别名
-		$key = $rule['alias'] ? $rule['alias'] : $key;
+		$name = $rule['alias'] ? $rule['alias'] : $name;
 		
 		// 是否填充默认值
 		if(is_null($rule['value']) && $rule['default']) {
 			$rule['value'] = $rule['default'];
 		}
 		
+		// 不为空保存数据
 		if(!is_null($rule['value'])) {
-			$this->success[$key] = trim($rule['value']);
+			$this->success[$name] = trim($rule['value']);
 		}
 	}
 
 	/**
 	 * 保存检查不通过的值
-	 * @param unknown $key
-	 * @param unknown $rule
+	 * @param string $key
+	 * @param string $rule
 	 */
 	protected function setError($key, $notify) {
 		$this->error[$key] = $notify;
@@ -141,7 +149,7 @@ class Form {
 
 	/**
 	 * 验证通过的字段
-	 * @return multitype:
+	 * @return array 通过的数组
 	 */
 	public function getSuccess() {
 		return $this->success;
@@ -149,6 +157,7 @@ class Form {
 
 	/**
 	 * 验证失败的字段
+	 * @return array 失败的数组
 	 */
 	public function getError() {
 		return $this->error;
