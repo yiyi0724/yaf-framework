@@ -16,7 +16,7 @@ $driver = array(
 $mysql = \Driver\Mysql::getInstance($driver);
 ```
 
-### Mysql类内置方法
+### 内置方法
 
 
 ###### 执行sql语句
