@@ -22,6 +22,7 @@ $mysql = \Driver\Mysql::getInstance($driver);
 - [开启事务](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md#开启事务)  
 - [是否已经开启过事务](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md#是否已经开启过事务)  
 - [提交事务](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md#提交事务)  
+- [回滚事务](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md#回滚事务)
 - [获取上次插入的id](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md#获取上次插入的id)  
 - [获取影响的行数](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md#获取影响的行数)  
 - [select获取所有](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md#select获取所有)  
