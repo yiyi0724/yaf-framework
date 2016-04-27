@@ -1,7 +1,7 @@
 ## 获取ip
 [源码地址](https://github.com/enychen/yaf-framework/blob/master/app/library/Network/Ip.php)
 
-### IP类内置函数
+### 内置方法
 
 ###### 获取ip地址
 ```php
