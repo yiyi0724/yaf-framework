@@ -1,11 +1,9 @@
 <?php
 
 /**
- * 模型基类，逻辑处理封装
+ * 模型逻辑基类
  */
 namespace Base;
-
-use \Network\Page;
 
 abstract class AppModel extends BaseModel {
 
@@ -33,7 +31,7 @@ abstract class AppModel extends BaseModel {
 		$lists = $this->select()->fetchAll();
 		
 		// 输出分页
-		$page = Page::showCenter($page, $number, $count);
+		$page = \Network\Page::showCenter($page, $number, $count);
 		$page['lists'] = $lists;
 		
 		return $page;
