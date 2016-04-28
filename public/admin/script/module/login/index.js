@@ -41,11 +41,11 @@ $(function() {
 		enychen.hideFormError();
 		
 		if(!$uesrnameInput.val()) {
-			enychen.showError('请输入用户名');
+			enychen.showFormError('请输入用户名');
 		} else if(!$passwordInput.val()) {
-			enychen.showError('请输入密码');
+			enychen.showFormError('请输入密码');
 		} else if(!$captachInput.val()) {
-			enychen.showError('请输入验证码');
+			enychen.showFormError('请输入验证码');
 		} else {
 			$.ajax({
 				url : "/admin/login/login",
@@ -56,7 +56,7 @@ $(function() {
 				},
 				error : function() {
 					$loginBtn.removeAttr('disabled')
-					enychen.showError('网络超时，请重试');
+					enychen.alert('网络超时，请重试');
 				},
 				success : function(data) {					
 					enychen.ajaxReturn(data);

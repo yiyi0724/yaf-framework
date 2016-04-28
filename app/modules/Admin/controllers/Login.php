@@ -20,7 +20,7 @@ class LoginController extends \Base\AdminController {
 	public function loginAction() {
 		// 来源地址检查
 		if(!IS_POST || !IS_AJAX) {
-			$this->jsonp('您无权访问', 412);
+			$this->jsonp('您无权访问');
 			return FALSE;
 		}
 		
@@ -31,7 +31,7 @@ class LoginController extends \Base\AdminController {
 		}
 		
 		// 参数获取
-		$data = $this->validity();
+		$data = $this->inputFliter();
 		
 		// 验证码检查
 		$captChaLogic = new \logic\Captcha();
@@ -59,7 +59,7 @@ class LoginController extends \Base\AdminController {
 		$session->set(\logic\Admin::SESSION_GROUP, $rules);
 		
 		// 进行跳转
-		$this->jsonp('/admin', 302);
+		$this->jsonp('/admin', 301);
 		return TRUE;
 	}
 

@@ -34,16 +34,16 @@ abstract class BaseController extends Controller_Abstract {
 	/**
 	 * json|jsonp数据输出
 	 * @param array $output 要输出的数据
-	 * @param int $code 通用代码
+	 * @param int $code 通用代码 200-弹出提示框，301-url地址跳转，302|弹框并进行页面跳转，412-提示表单错误
 	 * @return void
 	 */
-	protected final function jsonp($output, $code = 200) {
+	protected final function jsonp($output, $action = 200) {
 		// 关闭视图
 		$this->disView();
 		
 		// 数据整理
 		$json['message'] = $output;
-		$json['code'] = $code;
+		$json['action'] = $action;
 		$json = json_encode($json);
 		
 		// jsonp回调函数, 检查函数名
