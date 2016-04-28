@@ -1,7 +1,7 @@
 ## 页面跳转
 [源码地址](https://github.com/enychen/yaf-framework/blob/master/app/library/Network/Location.php)
 
-#### 内置方法介绍
+### 内置方法
 ###### 头信息跳转（不带HTTP_REFERE信息）
 ```php
 /**
