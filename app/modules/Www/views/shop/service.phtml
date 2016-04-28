@@ -3,9 +3,10 @@
     <div class="content container">      
       <div class="picture-1">
         <div class="row row-show1">
+          <?php for($i=1; $i<5; $i++):?>
           <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <div class="thumbnail">
-              <a href="detail.html" title=""><img src="<?php echo WWW_IMAGE; ?>show1.jpg"></a>
+              <a href="/shop/album/<?php echo $i?>.html" target="_blank" title=""><img src="<?php echo WWW_IMAGE; ?>show<?php echo $i?>.jpg"></a>
                 <div class="caption">
                   <h4>500元/张</h4>
                   <p>工装效果图</p>
@@ -14,86 +15,7 @@
                 </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div class="thumbnail">
-              <a href="#" title=""><img src="<?php echo WWW_IMAGE; ?>show2.jpg"></a>
-                <div class="caption">
-                  <h4>500元/张</h4>
-                  <p>工装效果图</p>
-                  <small>成交:1次</small>
-                  <a class="btn btn-danger" href="">立即购买</a>
-                </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div class="thumbnail">
-              <a href="#" title=""><img src="<?php echo WWW_IMAGE; ?>show3.jpg"></a>
-                <div class="caption">
-                  <h4>500元/张</h4>
-                  <p>工装效果图</p>
-                  <small>成交:1次</small>
-                  <a class="btn btn-danger" href="">立即购买</a>
-                </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div class="thumbnail">
-              <a href="#" title=""><img src="<?php echo WWW_IMAGE; ?>show4.jpg"></a>
-                <div class="caption">
-                  <h4>500元/张</h4>
-                  <p>工装效果图</p>
-                  <small>成交:1次</small>
-                  <a class="btn btn-danger" href="">立即购买</a>
-                </div>
-            </div>
-          </div>
-        </div>
-        <div class="row row-show1">
-          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div class="thumbnail">
-              <a href="#" title=""><img src="<?php echo WWW_IMAGE; ?>show1.jpg"></a>
-                <div class="caption">
-                  <h4>500元/张</h4>
-                  <p>工装效果图</p>
-                  <small>成交:1次</small>
-                  <a class="btn btn-danger" href="">立即购买</a>
-                </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div class="thumbnail">
-              <a href="#" title=""><img src="<?php echo WWW_IMAGE; ?>show2.jpg"></a>
-                <div class="caption">
-                  <h4>500元/张</h4>
-                  <p>工装效果图</p>
-                  <small>成交:1次</small>
-                  <a class="btn btn-danger" href="">立即购买</a>
-                </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div class="thumbnail">
-              <a href="#" title=""><img src="<?php echo WWW_IMAGE; ?>show3.jpg"></a>
-                <div class="caption">
-                  <h4>500元/张</h4>
-                  <p>工装效果图</p>
-                  <small>成交:1次</small>
-                  <a class="btn btn-danger" href="">立即购买</a>
-                </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div class="thumbnail">
-              <a href="#" title=""><img src="<?php echo WWW_IMAGE; ?>show4.jpg"></a>
-                <div class="caption">
-                  <h4>500元/张</h4>
-                  <p>工装效果图</p>
-                  <small>成交:1次</small>
-                  <a class="btn btn-danger" href="">立即购买</a>
-                </div>
-            </div>
-          </div>
-        </div>
+          <?php endfor; ?>
       </div>
     </div>
   </div>

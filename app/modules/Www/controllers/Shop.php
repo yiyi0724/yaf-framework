@@ -28,4 +28,10 @@ class ShopController extends \Base\WwwController {
 	public function recordAction() {
 		
 	}
+	
+	/**
+	 * 某件商品
+	 */
+	public function albumAction() {
+	}
 }
