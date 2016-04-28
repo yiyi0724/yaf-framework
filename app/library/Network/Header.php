@@ -23,4 +23,8 @@ class Header {
 		header("Access-Control-Allow-Origin: enychen.com");
 		header('Access-Control-Allow-Headers: X-Requested-With,X_Requested_With');
 	}
+	
+	public static function setcookie($name, $value, $expire, $path, $domain, $secure=NULL, $httponly=TRUE) {
+		
+	}
 }

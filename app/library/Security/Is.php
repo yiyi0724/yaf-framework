@@ -78,7 +78,7 @@ class Is {
 	public static function string($value, array $options = array()) {
 		$flag = is_string($value) || is_numeric($value);
 		if(empty($options['xss']) || $options['xss']) {
-			$pattern = '/(<script|<iframe|<link|<frameset|<vbscript|<form|<\?php|document.cookie|javascript:|vbscript)/i';
+			$pattern = '/(<script|<iframe|<link|<frameset|<vbscript|<meta|<form|<\?php|document.cookie|javascript:|vbscript)/i';
 			$flag = !preg_match($pattern, $value);
 		}
 		$flag = ($flag && isset($options['min'])) ? mb_strlen($value) >= $options['min'] : $flag;

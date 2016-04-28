@@ -1,2 +1,368 @@
-<?php $this->display('layout/header.phtml')?>
-<?php $this->display('layout/footer.phtml')?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>光年设计表现</title>
+  <link rel="stylesheet" type="text/css" href="<?php echo WWW_STYLE; ?>bootstrap.min.css">
+  <style type="text/css">
+    header .block{
+      display: block;
+      text-decoration: none;
+      color: #db3c29;
+      margin-bottom: 20px;
+    }
+    .navbar {
+      margin-bottom:0 !important;
+    }
+    .media{
+           margin-left: 300px;
+       }
+     .media .media-left .top{
+         position: relative;
+         height: 94px;
+         width: 199px;
+     }
+     .media .media-left .top .info{
+          font-weight: bolder;
+          color: #ffffff;
+          float: left;
+          position: absolute;
+          top: 35px;
+          left: 70px;
+          width: 80px;
+          height: 20px;
+     }
+     .media .media-left .bottom{
+          padding:20px 0;
+     }
+     .media .media-left .bottom .row{
+          width: 199px;
+          margin: 5px 0;
+     }
+     .media .media-left .bottom .row a{
+          font-size: 12px;
+     }
+     .media .media-left .bottom .row a:hover{
+          color: red;
+     }
+     .media .media-left .bottom .style{
+          width: 199px;
+          margin-bottom: 15px;
+          border-bottom: 1px solid #cccccc;
+          height: 10px;
+          padding-top: 10px;
+     }
+     .media .media-body .big{
+          float: left;
+     }
+
+     .media .media-body .small{
+          float: left;
+          border: 1px solid #ccc;
+     }
+    #footer{
+      background-color: #bbb;
+      border-top: 1px solid #ccc;
+      padding: 20px;
+      margin-top:30px; 
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1><a class="block" href="#">光年设计表现</a></h1>
+    </div>
+    <div class="title-1">
+      <nav class="navbar navbar-default navbar-static-top" >
+        <div class="container">
+          <ul class="nav nav-pills nav-justified">
+            <li class="active"><a href="#">首页</a></li>
+            <li><a href="#">服务商库</a></li>
+            <li><a href="#">搜服务</a></li>
+            <li><a href="#">搜作品</a></li>
+            <li><a href="#">搜咨讯</a></li>
+            <li><a href="#">客服中心</a></li>
+            <li><a href="#">交易保障</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <div class="main">
+    <div id="myCarousel" class="carousel slide">
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="item active" style="background:#243442;">
+          <a href="#"><img src="<?php echo WWW_IMAGE; ?>title1.jpg" alt="第一张"></a>
+        </div>
+        <div class="item" style="background:#F5E5DD;">
+          <a href="#"><img src="<?php echo WWW_IMAGE; ?>title2.jpg" alt="第二张"></a>
+        </div>
+        <div class="item" style="background:#DC292C;">
+          <a href="#"><img src="<?php echo WWW_IMAGE; ?>title3.jpg" alt="第三张"></a>
+        </div>
+      </div>
+      <a href="#myCarousel" data-slide="prev" class="carousel-control left">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a href="#myCarousel" data-slide="next" class="carousel-control right">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>
+  <div class="media">
+    <div class="media-left">
+      <div  class="top" style="background-image:url('<?php echo WWW_IMAGE; ?>home_des.png');">
+        <div class="info"><span class="glyphicon glyphicon-home"></span>&nbsp;家装空间</div>
+      </div>
+      <div class="bottom"> 
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">现代</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简约</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">欧式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简欧</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">田园</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">现代</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简约</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">欧式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">宜家</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">地中海</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">东南亚</a></div>
+        </div>
+        <div class="style"> 
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="media-body">
+      <div class="big">
+        <a href="#"><img src="<?php echo WWW_IMAGE; ?>big1.png"></a>
+      </div>
+      <div class="small">
+        <div class="small-top">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small1.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small2.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small3.png"></a>
+            </div>
+          </div>
+        </div>
+        <div class="small-bottom">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs1.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs2.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs3.png"></a>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+  </div>
+  <div class="media">
+    <div class="media-left">
+      <div class="top" style="background-image:url('<?php echo WWW_IMAGE; ?>project_des.png');">
+        <div class="info"><span class="glyphicon glyphicon-home"></span>&nbsp;工装空间</div>
+      </div>
+      <div class="bottom"> 
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">现代</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简约</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">欧式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简欧</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">田园</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">现代</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简约</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">欧式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">宜家</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">地中海</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">东南亚</a></div>
+        </div>
+        <div class="style"> 
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="media-body">
+      <div class="big">
+        <a href="#"><img src="<?php echo WWW_IMAGE; ?>big2.png"></a>
+      </div>
+      <div class="small">
+        <div class="small-top">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small1.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small2.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small3.png"></a>
+            </div>
+          </div>
+        </div>
+        <div class="small-bottom">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs1.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs2.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs3.png"></a>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+  </div>
+  <div class="media">
+    <div class="media-left">
+      <div class="top" style="background-image:url('<?php echo WWW_IMAGE; ?>result_des.png');">
+        <div class="info"><span class="glyphicon glyphicon-home"></span>&nbsp;建筑其他</div>
+      </div>
+      <div class="bottom"> 
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">现代</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简约</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">欧式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简欧</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">田园</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">现代</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">简约</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">欧式</a></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">宜家</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">地中海</a></div>
+          <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">东南亚</a></div>
+        </div>
+        <div class="style"> 
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">平层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">跃层</a></div>
+            <div class="col-lg-4 col-md-4 col-xs-4"><a href="#">中空</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="media-body">
+      <div class="big">
+        <a href="#"><img src="<?php echo WWW_IMAGE; ?>big3.png"></a>
+      </div>
+      <div class="small">
+        <div class="small-top">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small1.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small2.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>small3.png"></a>
+            </div>
+          </div>
+        </div>
+        <div class="small-bottom">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs1.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs2.png"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-4">
+              <a href="#"><img src="<?php echo WWW_IMAGE; ?>xs3.png"></a>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+  </div>
+  <footer id="footer" class="text-muted">
+      <div class="container">
+        <p>企业宣传 | 合作事宜 | 版权投诉</p>
+        <p>苏ICP备12345678. © 2009-2016 装潢网. Powered by Bootstrap.</p>
+      </div>  
+  </footer>
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="<?php echo WWW_SCRIPT; ?>bootstrap.min.js"></script>
+
+</body>
+</html>

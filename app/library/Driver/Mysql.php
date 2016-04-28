@@ -1,7 +1,7 @@
 <?php
 
 /**
- * mysql数据库类
+ * mysql数据库类(基于pdo)
  * @author enychen
  * @version 1.0
  */
