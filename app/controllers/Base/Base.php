@@ -5,8 +5,6 @@ namespace Base;
 /**
  * 所有模块控制基类的基类
  */
-use \Yaf\Session;
-use \Yaf\Config\Ini;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 
@@ -33,11 +31,19 @@ abstract class BaseController extends Controller_Abstract {
 
 	/**
 	 * json|jsonp数据输出
+	 * 1001 - 正确弹框提示
+	 * 1002 - 警告弹框提示
+	 * 1003 - 错误弹框提示
+	 * 1010 - url地址跳转
+	 * 1011 - 正确弹框并跳转
+	 * 1012 - 警告弹框并跳转
+	 * 1013 - 错误弹框并跳转
+	 * 1020 - 表单错误
 	 * @param array $output 要输出的数据
-	 * @param int $code 通用代码 200-弹出提示框，301-url地址跳转，302|弹框并进行页面跳转，412-提示表单错误
+	 * @param int $code 通用代码
 	 * @return void
 	 */
-	protected final function jsonp($output, $action = 200) {
+	protected final function jsonp($output, $action = 1001) {
 		// 关闭视图
 		$this->disView();
 		
@@ -58,6 +64,15 @@ abstract class BaseController extends Controller_Abstract {
 		// 结果输出
 		header("Content-type: {$header}; charset=UTF-8");
 		echo $json;
+	}
+	
+	/**
+	 * 输出<script></script>标签
+	 * @param string $content 要输出的script执行代码
+	 * @return void
+	 */
+	protected final function scriptTab($content) {
+		echo "<script type='text/javascript'>{$content}</script>";
 	}
 
 	/**
@@ -111,19 +126,18 @@ abstract class BaseController extends Controller_Abstract {
 		unset($_GET, $_POST, $_REQUEST);
 		
 		// 获取检查规则
-		if(is_file(FORM_FILE) && require (FORM_FILE)) {
-			if(method_exists(CONTROLLER . 'Form', ACTION . 'Input')) {
-				$rules = call_user_func(CONTROLLER . 'Form::' . ACTION . 'Input');
-				$formLib = new \Security\Form();
-				$formLib->setRequestMethod($request->getMethod());
-				$formLib->setRules($rules);
-				$formLib->setParams($params);
-				if($error = $formLib->fliter()) {
-					IS_AJAX ? $this->jsonp($error, 412) : $this->notify($error);
-					exit();
-				}
-				$params = $formLib->getSuccess();
+		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Input');
+		if(is_file(FORM_FILE) && require (FORM_FILE) && method_exists($controller, $action)) {
+			$rules = call_user_func($controller, $action);
+			$formLib = new \Security\Form();
+			$formLib->setRequestMethod($request->getMethod());
+			$formLib->setRules($rules);
+			$formLib->setParams($params);
+			if($error = $formLib->fliter()) {
+				IS_AJAX ? $this->jsonp($error, 412) : $this->notify($error);
+				exit();
 			}
+			$params = $formLib->getSuccess();
 		}
 		
 		return $params;

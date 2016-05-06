@@ -1,17 +1,23 @@
 <?php
 
 /**
- * mysql数据库类(基于pdo)
+ * 数据库类公共组件(基于pdo)
  * @author enychen
  * @version 1.0
  */
-namespace Driver;
+namespace Database;
 
-class Mysql extends Driver {
+abstract class Assembly {
+
+	/**
+	 * 对象池
+	 * @var array
+	 */
+	protected static $pool;
 
 	/**
 	 * pdo对象
-	 * @var \Pdo
+	 * @var \PDO
 	 */
 	protected $pdo;
 
@@ -23,38 +29,57 @@ class Mysql extends Driver {
 
 	/**
 	 * 禁止直接创建构造函数
-	 * @param array $driver 驱动选项，包含 host | port | dbname | charset | username | password
+	 * @param string $dsn 	   数据库连接dsn信息
+	 * @param string $username 数据库连接用户
+	 * @param string $password 数据库连接密码
 	 * @return void
 	 */
-	protected function __construct(array $driver) {
-		// 数据库连接信息
-		$dsn = "mysql:host={$driver['host']};port={$driver['port']};dbname={$driver['dbname']};charset={$driver['charset']}";
-		// 驱动选项
+	protected final function __construct($dsn, $username, $password) {
 		$options = array(
 			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION, 
 			\PDO::ATTR_TIMEOUT=>30
 		);
-		
-		// 创建数据库驱动对象
-		$this->pdo = new \PDO($dsn, $driver['username'], $driver['password'], $options);
+		$this->pdo = new \PDO($dsn, $username, $password, $options);
+	}
+
+	/**
+	 * 禁止克隆对象
+	 * @return void
+	 */
+	protected final function __clone() {
+	}
+
+	/**
+	 * 单例模式创建连接池对象
+	 * @param string $dsn 	   数据库连接dsn信息
+	 * @param string $username 数据库连接用户
+	 * @param string $password 数据库连接密码
+	 * @return \Database\Assembly
+	 */
+	public static function getInstance($dsn, $username, $password) {
+		if(empty(static::$pool[$dsn])) {
+			static::$pool[$dsn] = new static($dsn, $username, $password);
+		}
+		return static::$pool[$dsn];
 	}
 
 	/**
 	 * 执行sql语句
-	 * @param string $sql sql语句
-	 * @param array $params 参数
-	 * @return \Driver\Mysql
+	 * @throws \PDOException
+	 * @param string $sql    sql语句
+	 * @param array  $params 预绑定参数
+	 * @return \Database\Assembly
 	 */
 	public function query($sql, array $params = array()) {
-		// 预处理语句
-		$this->stmt = $this->pdo->prepare($sql);
-		// 参数绑定
-		$this->bindValue($params);
-		// sql语句执行
-		$this->stmt->execute();
-		// 结果解析成数组
-		$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
-		// 返回当前对象
+		try {
+			$this->stmt = $this->pdo->prepare($sql);
+			$this->bindValue($params);
+			$this->stmt->execute();
+			$this->stmt->setFetchMode(\PDO::FETCH_OBJ);
+		} catch(PDOException $e) {
+			defined('DEBUG_SQL') and $this->debug($sql, $params);
+			throw $e;
+		}
 		return $this;
 	}
 
@@ -65,7 +90,7 @@ class Mysql extends Driver {
 	 * @return void
 	 */
 	public function debug($sql, array $params = array()) {
-		echo "<pre>placeholder sql: {$sql}<hr/>";
+		echo "{$sql}<hr/><pre>";
 		print_r($params);
 		foreach($params as $key=>$placeholder) {
 			is_string($placeholder) and ($placeholder = "'{$placeholder}'");
@@ -73,7 +98,7 @@ class Mysql extends Driver {
 			$end = strlen($key);
 			$sql = substr_replace($sql, $placeholder, $start, $end);
 		}
-		exit("<hr/> origin sql: {$sql}</pre>");
+		exit("<hr/>{$sql}</pre>");
 	}
 
 	/**
@@ -123,7 +148,7 @@ class Mysql extends Driver {
 				$result = $this->stmt->$method();
 				break;
 			default:
-				throw new \PDOException("Call to undefined method Mysql::{$method}()");
+				throw new \PDOException("Call to undefined method {$method}()");
 		}
 		
 		return $result;

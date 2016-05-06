@@ -19,7 +19,6 @@ abstract class AdminController extends BaseController {
 	 * @return void
 	 */
 	public function init() {
-		
 		$amdinLogic = new \logic\Admin();
 		
 		// 定义管理员uid

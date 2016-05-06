@@ -4,7 +4,7 @@ $(function() {
 	var $inputs = $('.input-group');
 	var $captcha = $('.checkImg');
 	var $form = $('#form_login');
-	var $loginBtn = $('.btn-login');
+	var $loginBtn = $('.btn-login');s 
 	
 	// input框选中状态
 	$inputs.click(function() {
