@@ -5,9 +5,9 @@
  * @author enychen
  * @version 1.0
  */
-namespace Driver;
+namespace Storage;
 
-class Redis extends Driver {
+class Redis extends Assembly {
 
 	/**
 	 * redis对象
@@ -21,19 +21,19 @@ class Redis extends Driver {
 	 * @throws \RedisException
 	 * @return void
 	 */
-	protected function __construct(array $driver) {
+	protected function __construct($host, $port, $db, $timeout, $auth, array $options) {
 		// 创建redis对象
 		$this->redis = new \Redis();
 		// 选项设置
-		foreach($driver['options'] as $key=>$option) {
+		foreach($options as $key=>$option) {
 			$this->redis->setOption(constant("\Redis::OPT_" . strtoupper($key)), $option);
 		}
 		// 持久性连接
-		$this->pconnect($driver['host'], $driver['port'], $driver['timeout']);
+		$this->pconnect($host, $port, $timeout);
 		// 密码验证
-		$driver['auth'] and $this->auth($driver['auth']);
+		$auth and $this->auth($auth);
 		// 选择数据库
-		$this->select($driver['dbname']);
+		$this->select($db);
 	}
 
 	/**

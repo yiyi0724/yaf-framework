@@ -4,9 +4,8 @@
  * 管理员操作逻辑
  * @author enychen
  */
-namespace logic;
 
-class Admin extends Logic {
+class AdminLogic {
 
 	/**
 	 * 管理员uid常量

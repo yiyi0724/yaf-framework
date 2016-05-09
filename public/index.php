@@ -1,15 +1,17 @@
 <?php
 
+// 目录分隔符
+define('DS', DIRECTORY_SEPARATOR);
 // 站点目录
-define('SITE_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
-// 公开项目
-define('PUBLIC_PATH', __DIR__ . DIRECTORY_SEPARATOR);
+define('SITE_PATH', dirname(__DIR__) . DS);
 // 代码目录
-define('APPLICATION_PATH', 'app' . DIRECTORY_SEPARATOR);
+define('APPLICATION_PATH', SITE_PATH . 'app' . DS);
+// 公开项目
+define('PUBLIC_PATH', __DIR__ . DS);
 // 配置目录
-define('CONF_PATH', SITE_PATH . 'conf' . DIRECTORY_SEPARATOR);
+define('CONF_PATH', SITE_PATH . 'conf' . DS);
 // 数据目录
-define('DATA_PATH', SITE_PATH . 'data' . DIRECTORY_SEPARATOR);
+define('DATA_PATH', SITE_PATH . 'data' . DS);
 
 // 启动框架
 $app = new \Yaf\Application(CONF_PATH . 'app.ini');

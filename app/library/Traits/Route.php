@@ -16,8 +16,8 @@ class Route implements Route_Interface {
 	 * @var array
 	 */
 	protected $route = array(
-		'module'=>'www', 
-		'controller'=>'index', 
+		'module'=>'www',
+		'controller'=>'index',
 		'action'=>'index'
 	);
 
@@ -45,35 +45,30 @@ class Route implements Route_Interface {
 	 * @return boolean TRUE表示和其他路由协议共存
 	 */
 	public function route($request) {
-		// 获取url地址，解析路由信息，独立拿出模块
 		$uri = $request->getRequestUri();
 		$uri = explode('/', trim($request->getRequestUri(), '/'));
 		$module = strtolower($uri[0]);
 
-		// 模块修改
 		if(in_array($module, $this->modules)) {
 			$this->route['module'] = $module;
 			array_splice($uri, 0, 1);
 		}
-		// 控制器修改
 		if(isset($uri[0])) {
 			$this->route['controller'] = $uri[0];
 		}
-		// 方法修改
 		if(isset($uri[1])) {
 			$this->route['action'] = $uri[1];
 		}
-		
-		// 更改调度信息
+
 		$request->setModuleName($this->route['module']);
 		$request->setControllerName(ucfirst($this->route['controller']));
 		$request->setActionName(ucfirst($this->route['action']));
-		
+
 		return TRUE;
 	}
 
 	/**
-	 * 不知道什么鬼东西
+	 * 不知道什么鬼东西，但是又必须继承
 	 * @param array $info
 	 * @param array $query
 	 * @return void

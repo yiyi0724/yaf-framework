@@ -7,7 +7,7 @@ namespace Base;
  * @enychen
  */
 abstract class AdminController extends BaseController {
-
+	
 	/**
 	 * 不需要进行登录检查的控制器
 	 * @var array
@@ -19,35 +19,30 @@ abstract class AdminController extends BaseController {
 	 * @return void
 	 */
 	public function init() {
-		$amdinLogic = new \logic\Admin();
+		$adminModel = new \Admin\AdminstratorModel();
 		
 		// 定义管理员uid
-		define('AUID', $amdinLogic->getSession()->get(\logic\Admin::SESSION_UID));
+		define('AUID', $adminModel->getUidFromSession());
 		
-		if(!in_array(CONTROLLER, $this->noLoginCheck)) {
-			
+		// 登录控制器检查
+		if(!in_array(CONTROLLER, $this->noLoginCheck)) {			
 			// 登录状态检查
 			$this->isLogin();
-			
-			// ip地址检查
-			if($amdinLogic->getSession()->get(\logic\Admin::SESSION_IP) != \Network\Ip::get()) {
-				$amdinLogic->clearAdminSession();
+						
+			// ip地址检查&&超时检查
+			$ip = \Network\Ip::get();
+			$timeout = time() - 900;
+			if($adminModel->getIpFromSession() != $ip || ($adminModel->getTimeFromSession() < $timeout)) {
+				$adminModel->exitLogin();
 				$this->location('/admin/login');
 			}
 			
-			// 超时检查
-			if($amdinLogic->getSession()->get(\logic\Admin::SESSION_LOGINTIME) < (time() - 900)) {
-				$amdinLogic->clearAdminSession();
-				$this->location('/admin/login');
-			}
-			else {
-				$amdinLogic->getSession()->set(\logic\Admin::SESSION_LOGINTIME, time());
-			}
+			// 更新用户上次使用时间
+			$userModel->flushTimeToSession(time());
 			
 			// 权限控制
-			$permissionLogic = new \logic\Permission();
-			$rules = $amdinLogic->getSession()->get(\logic\Admin::SESSION_GROUP);
 			if(!IS_AJAX) {
+				$rules = $adminModel->getRules(new \Admin\PermissionModel());
 				$menus = $permissionLogic->getMenusByUserPower($rules);
 				$this->assign('menus', $menus);
 			}

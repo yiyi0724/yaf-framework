@@ -5,6 +5,7 @@ namespace Base;
 /**
  * 所有模块控制基类的基类
  */
+use \Yaf\Session;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 
@@ -63,7 +64,7 @@ abstract class BaseController extends Controller_Abstract {
 		
 		// 结果输出
 		header("Content-type: {$header}; charset=UTF-8");
-		echo $json;
+		exit($json);
 	}
 	
 	/**
@@ -97,7 +98,11 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return void
 	 */
 	protected final function location($url, $method = 'get', $other = array()) {
-		\Network\Location::$method($url, $other);
+		if(IS_AJAX) {
+			$this->jsonp($url, 1010);
+		} else {
+			\Network\Location::$method($url, $other);
+		}		
 	}
 
 	/**
