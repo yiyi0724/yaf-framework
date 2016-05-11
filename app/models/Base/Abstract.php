@@ -95,7 +95,7 @@ abstract class AbstractModel {
 	 * @return \Yaf\Session
 	 */
 	public final function getSession() {
-		return Session::getInstance();
+		return \Yaf\Session::getInstance();
 	}
 	
 	/**

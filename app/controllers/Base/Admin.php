@@ -18,11 +18,9 @@ abstract class AdminController extends BaseController {
 	 * 全局控制器初始化信息
 	 * @return void
 	 */
-	public function init() {
-		$adminModel = new \Admin\AdminstratorModel();
-		
+	public function init() {		
 		// 定义管理员uid
-		define('AUID', $adminModel->getUidFromSession());
+		define('AUID', $this->getSession()->get('admin.uid'));
 		
 		// 登录控制器检查
 		if(!in_array(CONTROLLER, $this->noLoginCheck)) {			

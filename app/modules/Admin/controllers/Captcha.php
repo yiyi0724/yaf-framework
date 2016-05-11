@@ -12,15 +12,11 @@ class CaptchaController extends \Base\AdminController {
 	 */
 	public function loginAction() {
 		// 验证码库
-		$imageLib = new \Image\Captcha(122, 50);
-		$code = $imageLib->getCode();
-		
-		// 验证码保存到session中
-		$captChaLogic = new \logic\Captcha();
-		$captChaLogic->setCaptchaToSession('login', $code);
-		
-		// 输出验证码图像
-		$imageLib->show();
+		$captcha = new \Image\Captcha(122, 50);
+		$captcha->setBackgroundColor(55, 62, 74);
+		$captcha->setStar(50);
+		$captcha->setLine(3);
+		$captcha->show();
 		
 		// 结束运行
 		exit();

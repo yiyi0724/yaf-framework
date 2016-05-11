@@ -23,7 +23,8 @@ class Captcha {
 		$this->image = imagecreatetruecolor($width, $height);
 		$this->font = __DIR__ . '/Fonts/Elephant.ttf';
 		$this->fontSize = $height / $length * 1.9;
-		$this->code = NULL;
+		$this->backgroundColor = imagecolorallocate($this->image, 255, 255, 255);
+		$this->code = $this->star = $this->line = NULL;
 		
 		// 生成随机码
 		$this->getRandomCode();
@@ -45,11 +46,17 @@ class Captcha {
 	 * @param int $star 星星个数
 	 * @return void
 	 */
-	public function createStar($star = 100) {
-		for($i = 0; $i < $star; $i++) {
-			$color = imagecolorallocate($this->image, mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
-			imagestring($this->image, mt_rand(1, 5), mt_rand(0, $this->width), mt_rand(0, $this->height), '.', $color);
-		}
+	public function setStar($star = 100) {
+		$this->star = $star;		
+	}
+	
+	/**
+	 * 生成干扰线
+	 * @param int $star 星星个数
+	 * @return void
+	 */
+	public function setLine($line = 1) {
+		$this->line = $line;
 	}
 	
 	/**
@@ -79,32 +86,50 @@ class Captcha {
 	}
 
 	/**
+	 * 设置背景颜色
+	 */
+	public function setBackgroundColor($red, $green, $blue) {
+		$this->backgroundColor = imagecolorallocate($this->image, $red, $green, $blue);
+	}
+
+	/**
 	 * 生成并输出验证码图片
 	 * @return void
 	 */
-	public function show() {
-		
-		// 画布颜色
-		$color = imagecolorallocate($this->image, 200, 200, 200);
-		
-		// 填充颜色
-		imagefilledrectangle($this->image, 0, $this->height, $this->width, 0, $color);
-		
-		// 透明颜色
-		imagecolortransparent($this->image, $color);
-		
+	public function show() {		
+		// 填充颜色 && 透明颜色
+		imagefilledrectangle($this->image, 0, $this->height, $this->width, 0, $this->backgroundColor);
+		imagecolortransparent($this->image, $this->backgroundColor);
+
+		// 画星星
+		if($this->star) {
+			for($i = 0; $i < $this->star; $i++) {
+				$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
+				$result = imagestring($this->image, mt_rand(0, 5), mt_rand(0, $this->width), mt_rand(0, $this->height), '.', $color);
+			}
+		}
+
+		// 画干扰线
+		if($this->line) {
+			for($i = 0; $i < $this->line; $i++) {
+				$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
+				$result = imageline($this->image, mt_rand(0, $this->width-5), mt_rand($this->height*0.2, $this->height*0.8), 
+					mt_rand($this->width-5, $this->width), mt_rand(0, $this->height), $color);
+			}
+		}		
+
 		// 填充文字
 		$spacing = floor($this->width / $this->length);
 		$y = $this->height / 1.3;
 		for($i = 0, $len = strlen($this->code); $i < $len; $i++) {
 			$angle = mt_rand(-30, 30);
-			$x = $spacing * $i + mt_rand(1, 3);
+			$x = $spacing * $i + mt_rand(1, 3)+1;
 			$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
 			imagettftext($this->image, $this->fontSize, $angle, $x, $y, $color, $this->font, $this->code[$i]);
 		}
 		
 		// 输出
-		header('Content-type: image/png');
+		header('Content-type: image/png;charset=UTF-8');
 		imagepng($this->image);
 		// 销毁
 		imagedestroy($this->image);
