@@ -123,7 +123,7 @@ class Captcha {
 		$y = $this->height / 1.3;
 		for($i = 0, $len = strlen($this->code); $i < $len; $i++) {
 			$angle = mt_rand(-30, 30);
-			$x = $spacing * $i + mt_rand(1, 3)+1;
+			$x = $spacing * $i + mt_rand(2, 4);
 			$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
 			imagettftext($this->image, $this->fontSize, $angle, $x, $y, $color, $this->font, $this->code[$i]);
 		}
