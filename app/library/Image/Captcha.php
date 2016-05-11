@@ -22,7 +22,7 @@ class Captcha {
 		$this->length = $length;
 		$this->image = imagecreatetruecolor($width, $height);
 		$this->font = __DIR__ . '/Fonts/Elephant.ttf';
-		$this->fontSize = $height / $length * 1.9;
+		$this->fontSize = $height / $length * 1.8;
 		$this->backgroundColor = imagecolorallocate($this->image, 255, 255, 255);
 		$this->code = $this->star = $this->line = NULL;
 		
