@@ -6,6 +6,7 @@ namespace Base;
  * 所有模块控制基类的基类
  */
 use \Yaf\Session;
+use \Yaf\Config\Ini;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 
@@ -31,49 +32,11 @@ abstract class BaseController extends Controller_Abstract {
 	}
 
 	/**
-	 * json|jsonp数据输出
-	 * 1001 - 正确弹框提示
-	 * 1002 - 警告弹框提示
-	 * 1003 - 错误弹框提示
-	 * 1010 - url地址跳转
-	 * 1011 - 正确弹框并跳转
-	 * 1012 - 警告弹框并跳转
-	 * 1013 - 错误弹框并跳转
-	 * 1020 - 表单错误
-	 * @param array $output 要输出的数据
-	 * @param int $code 通用代码
+	 * 关闭模板
 	 * @return void
 	 */
-	protected final function jsonp($output, $action = 1001) {
-		// 关闭视图
-		$this->disView();
-		
-		// 数据整理
-		$json['message'] = $output;
-		$json['action'] = $action;
-		$json = json_encode($json);
-		
-		// jsonp回调函数, 检查函数名
-		$jsonp = $this->getRequest()->get('callback', NULL);
-		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp)) {
-			$header = 'text/javascript';
-			$json = "{$jsonp}({$json})";
-		} else {
-			$header = 'application/json';
-		}
-		
-		// 结果输出
-		header("Content-type: {$header}; charset=UTF-8");
-		exit($json);
-	}
-	
-	/**
-	 * 输出<script></script>标签
-	 * @param string $content 要输出的script执行代码
-	 * @return void
-	 */
-	protected final function scriptTab($content) {
-		echo "<script type='text/javascript'>{$content}</script>";
+	protected final function disView() {
+		Application::app()->getDispatcher()->disableView();
 	}
 
 	/**
@@ -87,30 +50,59 @@ abstract class BaseController extends Controller_Abstract {
 		$this->assign('notify', $notify);
 		$view->setScriptPath(MODULE_PATH . 'views');
 		$view->display("layout/{$template}.phtml");
+		exit();
 	}
 
 	/**
-	 * 页面跳转
-	 * redirect-使用http头信息跳转, get-使用<meta>跳转，post-使用<form>跳转
+	 * json|jsonp数据输出
+	 * 1001 - 正确弹框提示
+	 * 1002 - 警告弹框提示
+	 * 1003 - 错误弹框提示
+	 * 1010 - url地址跳转
+	 * 1011 - 正确弹框并跳转
+	 * 1012 - 警告弹框并跳转
+	 * 1013 - 错误弹框并跳转
+	 * 1020 - 表单错误
+	 * @param int|string|array $output 要输出的数据
+	 * @param int $code 通用代码
+	 * @return void
+	 */
+	protected final function jsonp($output, $action = 1001) {
+		$json['message'] = $output;
+		$json['action'] = $action;
+		$json = json_encode($json);
+		
+		$header = 'application/json';
+		$jsonp = $this->getRequest()->get('callback', NULL);		
+		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp)) {
+			$header = 'text/javascript';
+			$json = "{$jsonp}({$json})";
+		}
+		
+		$this->disView();
+		header("Content-type: {$header}; charset=UTF-8");
+		exit($json);
+	}
+	
+	/**
+	 * 输出<script></script>标签
+	 * @param string $content 要输出的script执行代码
+	 * @return void
+	 */
+	protected final function scriptTab($content) {
+		exit("<script type='text/javascript'>{$content}</script>");
+	}
+
+	/**
+	 * 页面跳转(封装ajax跳转和http|form跳转)
+	 * location-使用http头信息跳转, get-使用<meta>跳转，post-使用<form>跳转
 	 * @param string $url 要跳转的url地址
 	 * @param string $method 跳转方式，get|post|redirect
-	 * @param array|int $data 如果是post请输入数组，如果是redirect请输入301|302|303|307,get则进行忽略
+	 * @param array|int $data 如果是post请输入数组，如果是location请输入301|302|303|307,get则进行忽略
 	 * @return void
 	 */
-	protected final function location($url, $method = 'get', $other = array()) {
-		if(IS_AJAX) {
-			$this->jsonp($url, 1010);
-		} else {
-			\Network\Location::$method($url, $other);
-		}		
-	}
-
-	/**
-	 * 关闭模板
-	 * @return void
-	 */
-	protected final function disView() {
-		Application::app()->getDispatcher()->disableView();
+	public final function redirect($url, $method = 'location', $other = array()) {
+		IS_AJAX ? $this->jsonp($url, 1010) : \Network\Location::$method($url, $other);
 	}
 
 	/**
@@ -132,14 +124,17 @@ abstract class BaseController extends Controller_Abstract {
 		
 		// 获取检查规则
 		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Input');
-		if(is_file(FORM_FILE) && require (FORM_FILE) && method_exists($controller, $action)) {
-			$rules = call_user_func($controller, $action);
+		if(is_file(FORM_FILE) && require (FORM_FILE)) {
+			if(!method_exists($controller, $action)) {
+				return array();
+			}
+			$rules = $controller::$action();
 			$formLib = new \Security\Form();
 			$formLib->setRequestMethod($request->getMethod());
 			$formLib->setRules($rules);
 			$formLib->setParams($params);
 			if($error = $formLib->fliter()) {
-				IS_AJAX ? $this->jsonp($error, 412) : $this->notify($error);
+				IS_AJAX ? $this->jsonp($error, 1020) : $this->notify($error);
 				exit();
 			}
 			$params = $formLib->getSuccess();
@@ -147,28 +142,28 @@ abstract class BaseController extends Controller_Abstract {
 		
 		return $params;
 	}
-	
+
 	/**
 	 * 获取session对象
 	 * @return \Yaf\Session
 	 */
 	public final function getSession() {
-		return \Yaf\Session::getInstance();
+		return Session::getInstance();
 	}
-	
+
 	/**
 	 * 读取配置信息
 	 * @param array $key 键名
-	 * @return string|object
+	 * @return string|object|NULL 返回配置信息
 	 */
 	public final function getConfig($key) {
 		return Application::app()->getConfig()->get($key);
 	}
-	
+
 	/**
 	 * 加载ini配置文件
-	 * @param string $ini 文件名，不包含.ini后缀
-	 * @return \Yaf\Config\Ini
+	 * @param string $ini 文件名，不需要包含.ini后缀
+	 * @return \Yaf\Config\Ini ini对象
 	 */
 	public final function loadIni($ini) {
 		return new Ini(CONF_PATH . "{$ini}.ini", \YAF\ENVIRON);

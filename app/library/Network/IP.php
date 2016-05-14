@@ -7,7 +7,7 @@
  */
 namespace Network;
 
-class Ip {
+class IP {
 
 	/**
 	 * 获取客户端的IP

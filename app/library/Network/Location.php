@@ -26,7 +26,7 @@ class Location {
 	 * @param int $code 跳转状态码
 	 * @return void
 	 */
-	public static function redirect($url, $code = NULL) {
+	public static function location($url, $code = NULL) {
 		isset(static::$headers[$code]) and header(static::$header[$code]);
 		header("Location: {$url}");
 		exit();
@@ -52,7 +52,7 @@ class Location {
 		foreach($data as $key=>$value) {
 			$html .= "<input type=\"hidden\" name=\"{$key}\" value=\"{$value}\">";
 		}
-		$html .= "</form><script>document.forms['formSubmit'].submit();</script>";
+		$html .= "</form><script type='text/javascript'>document.forms['formSubmit'].submit();</script>";
 		exit($html);
 	}
 }

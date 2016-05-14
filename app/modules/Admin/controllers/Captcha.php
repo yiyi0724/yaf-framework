@@ -11,14 +11,17 @@ class CaptchaController extends \Base\AdminController {
 	 * 后台登录验证码获取
 	 */
 	public function loginAction() {
-		// 验证码库
+		// 生成验证码
 		$captcha = new \Image\Captcha(122, 50);
 		$captcha->setBackgroundColor(55, 62, 74);
 		$captcha->setStar(50);
 		$captcha->setLine(3);
 		$captcha->show();
 		
-		// 结束运行
-		exit();
+		// 保存验证码
+		\logic\Captcha::set('login', $captcha->getCode());
+		
+		// 关闭视图渲染
+		$this->disView();
 	}
 }

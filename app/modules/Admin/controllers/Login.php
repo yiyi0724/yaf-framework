@@ -11,7 +11,7 @@ class LoginController extends \Base\AdminController {
 	 */
 	public function indexAction() {
 		// 是否已经登录
-		AUID and $this->location('/admin');
+		ADMIN_UID and $this->redirect('/admin');
 	}
 
 	/**
@@ -19,59 +19,46 @@ class LoginController extends \Base\AdminController {
 	 */
 	public function loginAction() {
 		// 来源地址检查
-		if(!IS_POST || !IS_AJAX) {
-			$this->jsonp('您无权访问');
-			return FALSE;
-		}
-		
+		(IS_POST && IS_AJAX) or $this->jsonp('您无权访问');
+
 		// 用户是否已经登录
-		if(AUID) {
-			$this->jsonp('/admin', 302);
-			return FALSE;
-		}
+		ADMIN_UID and $this->jsonp('/admin', 1010);
 		
 		// 参数获取
-		$data = $this->inputFliter();
-		
+		$params = $this->inputFliter();
+				
 		// 验证码检查
-		$captChaLogic = new \logic\Captcha();
-		if(!$captChaLogic->checkCodeFromSession('login', $data['captcha'])) {
-			$this->jsonp('验证码有误', 412);
-			return FALSE;
+		if(!\logic\Captcha::check('login', $params['captcha'])) {
+			$this->jsonp(array('captcha'=>'验证码有误'), 1020);
 		}
 		
 		// 账号密码检查
-		$adminLogic = new \logic\Admin();
-		$administrator = $adminLogic->getAdministrator($data['username'], $data['password']);
-		if(!$administrator) {
-			$this->jsonp('账号或密码不正确', 412);
-			return FALSE;
-		}
+		$adminUserModel = new \Enychen\AdminUserModel();
+		$admin = $adminUserModel->getAdminByPW($params['username'], $params['password']);
+		$admin or $this->jsonp(array('password'=>'账号或密码不正确'), 1020);
 		
-		// 写入session，并且跳转
-		$session = $adminLogic->getSession();
-		$session->set(\logic\Admin::SESSION_UID, $administrator['uid']);
-		$session->set(\logic\Admin::SESSION_LOGINTIME, time());
-		$session->set(\logic\Admin::SESSION_IP, \Network\Ip::get());
-		// 记录用户的权限
-		$permissionLogic = new \logic\Permission();
-		$rules = $permissionLogic->getRulesByGroupId($administrator['group_id']);
-		$session->set(\logic\Admin::SESSION_GROUP, $rules);
+		// 获取用户的权限列表
+		$adminGroupModel = new \Enychen\AdminGroupModel();
+		$rules = $adminGroupModel->getRulesMergeAttach($admin->group_id, $admin->attach_rules);
+		
+		// 写入session
+		$this->getSession()->set('admin.ip', \Network\IP::get());
+		$this->getSession()->set('admin.uid', $admin->id);
+		$this->getSession()->set('admin.name', $admin->nickname);
+		$this->getSession()->set('admin.lasttime', time());
+		$this->getSession()->set('admin.rules', $rules);
 		
 		// 进行跳转
-		$this->jsonp('/admin', 301);
-		return TRUE;
+		$this->jsonp('/admin', 1010);
 	}
 
 	/**
 	 * 进行登出
 	 */
-	public function logoutAction() {		
-		// 删除session信息
-		$adminLogic = new \logic\Admin();
-		$adminLogic->clearAdminSession();
-		
-		// 跳转到登录页面
-		$this->location('/admin/login');
+	public function logoutAction() {
+		foreach($this->adminInfo as $value) {
+			$this->getSession()->del("admin.{$value}");
+		}
+		$this->redirect('/admin/login');
 	}
 }

@@ -6,7 +6,7 @@
  */
 namespace logic;
 
-class Captcha extends Logic {
+class Captcha {
 	/**
 	 * 验证码前缀
 	 * @var string
@@ -19,23 +19,33 @@ class Captcha extends Logic {
 	 * @param string $code 验证码
 	 * @return void
 	 */
-	public function setCaptchaToSession($channel, $code) {
-		$this->getSession()->set(static::PREFIX . $channel, $code);
+	public static function set($channel, $code) {
+		$session = \Yaf\Session::getInstance();
+		$session->set(static::PREFIX . $channel, $code);
+		$session->set(static::PREFIX . "{$channel}.limit", 0);
 	}
 
 	/**
 	 * 检查登录验证码是否正确
 	 * @param string $channel 验证码频道
 	 * @param string $code 验证码
+	 * @param string $limit 最多验证几次
 	 * @return bool
 	 */
-	public function checkCodeFromSession($channel, $code) {
-		$sessionCode = $this->getSession()->get(static::PREFIX . $channel);
+	public static function check($channel, $code, $limit = 1) {
+		$session = \Yaf\Session::getInstance();
+		$sessionCode = $session->get(static::PREFIX . $channel);
 		if(strcasecmp($code, $sessionCode)) {
+			$sessionLimit = $session->get(static::PREFIX . "{$channel}.limit");
+			if($sessionLimit == $limit) {
+				$session->del(static::PREFIX . $channel);
+			} else {
+				$session->set(static::PREFIX . "{$channel}.limit", $limit+1);
+			}
 			return FALSE;
+		} else {
+			$session->del(static::PREFIX . $channel);
+			return TRUE;
 		}
-		
-		$this->getSession()->del(static::PREFIX . $channel);
-		return TRUE;
 	}
 }

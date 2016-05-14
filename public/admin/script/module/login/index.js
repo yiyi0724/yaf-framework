@@ -1,10 +1,10 @@
 $(function() {
-	
 	var $document = $(document);
 	var $inputs = $('.input-group');
-	var $captcha = $('.checkImg');
 	var $form = $('#form_login');
-	var $loginBtn = $('.btn-login');s 
+	var $captchaImg = $('.checkImg');
+	var $formError = $('.form-login-error');
+	var $loginBtn = $('.btn-login');
 	
 	// input框选中状态
 	$inputs.click(function() {
@@ -13,7 +13,7 @@ $(function() {
 	});
 	
 	// 验证码刷新
-	$captcha.click(function() {
+	$captchaImg.click(function() {
 		$(this).attr('src', $(this).attr('data-src') + "?r="+Math.random());
 	});
 	
@@ -37,15 +37,21 @@ $(function() {
 		var $uesrnameInput = $form.find('input[name=username]');
 		var $passwordInput = $form.find('input[name=password]');
 		var $captachInput = $form.find('input[name=captcha]');
+		var error = null;
 		
-		enychen.hideFormError();
+		$formError.addClass('none').html('');
 		
+		// 数据检查
 		if(!$uesrnameInput.val()) {
-			enychen.showFormError('请输入用户名');
+			error = '请输入用户名';
 		} else if(!$passwordInput.val()) {
-			enychen.showFormError('请输入密码');
+			error = '请输入密码';
 		} else if(!$captachInput.val()) {
-			enychen.showFormError('请输入验证码');
+			error = '请输入验证码';
+		} 
+		
+		if(error) {
+			$formError.removeClass('none').html('<p>'+error+'</p>');
 		} else {
 			$.ajax({
 				url : "/admin/login/login",
@@ -59,7 +65,16 @@ $(function() {
 					enychen.alert('网络超时，请重试');
 				},
 				success : function(data) {					
-					enychen.ajaxReturn(data);
+					enychen.ajaxReturn(data, function(data) {
+						$formError.removeClass('none');
+						var html = $formError.html();
+						for(var key in data.message) {
+							html += '<p>'+data.message[key]+'</p>';
+						}
+						$formError.html(html);
+						$captchaImg.trigger('click');
+						$captachInput.val('');
+					});					
 					$loginBtn.removeAttr('disabled');
 				}
 			})

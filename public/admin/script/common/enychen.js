@@ -1,66 +1,40 @@
 var enychen = {
-	'ajaxReturn' : function(data) {
+	'ajaxReturn' : function(data,callback) {				
 		switch(data.action) {
-			case 302:
-				this.alertRedirct(data.message);
-				break;
-			case 301:
-				this.redirect(data.message);
-				break;
-			case 412:
-				this.showFormError(data.message);
-				break;
-			case 200:
+			case 1001:
+			case 1002:
+			case 1003:
+				// 弹窗提示
 				this.alert(data.message);
 				break;
+			case 1010:
+				// url地址跳转
+				this.redirect(data.message);
+			case 1011:
+			case 1012:
+			case 1013:
+				// 某种状态先弹窗然后提示
+				this.alertRedirct(data);
+				break;
+			case 1020:
+				// 表单错误
+				callback(data);
+				break;
 		}
-	},
-	
-	'showFormError' : function(error) {
-		var $formError = $('.form-login-error');
-		$formError.removeClass('none');
-		
-		if(typeof error == 'string') {
-			error = [error];
-		}
-		
-		for(var key in error) {
-			var $p = $('<p></p>');
-			$p.html(error[key]);
-			$formError.append($p);
-		}
-	},
-	
-	'hideFormError' : function() {
-		var $formError = $('.form-login-error');
-		$formError.addClass('none');
-		$formError.html('');
 	},
 	
 	// 弹出提示框
 	'alert' : function(msg) {
-		var alert = '<div class="modal fade" id="myModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button  class="close" data-dismiss="modal"><span>&times;</span></button><h3 class="modal-title">系统提示</h3></div><div class="modal-body"><div class="container-fluid"><div class="row"><div class="col-md-12">'+msg+'</div></div></div></div><div class="modal-footer"><button class="btn btn-info" data-dismiss="modal">关闭</button><button class=" none" data-toggle="modal" data-target="#myModal"></button></div></div></div></div>';
-		$('body').append(alert);
-		$('[data-toggle="modal"]').trigger('click');		
-		$('#myModal').on('hidden.bs.modal', function (e) {
-			$(this).remove();
-		})
+		alert(msg);
 	},
 	
 	// 弹出提示框然后进行跳转
-	'alertRedirct' : function(json) {
-		// 弹窗
-		var alert = '<div class="modal fade" id="myModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button  class="close" data-dismiss="modal"><span>&times;</span></button><h3 class="modal-title">系统提示</h3></div><div class="modal-body"><div class="container-fluid"><div class="row"><div class="col-md-12">'+json.msg+'</div></div></div></div><div class="modal-footer"><button class="btn btn-link btn-success" data-dismiss="modal">正在跳转中，如果未跳转，请点击此处...</button><button class=" none" data-toggle="modal" data-target="#myModal"></button></div></div></div></div>';
-		$('body').append(alert);
-		$('[data-toggle="modal"]').trigger('click');		
-		$('#myModal').on('hidden.bs.modal', function (e) {
-			$(this).remove();
-			window.location.href = json.url;
-		})
-		
+	'alertRedirct' : function(data) {
+		// 信息提示
+		alert(data.msg);
 		// 定时跳转
 		setInterval(function(){
-			window.location.href = json.url;
+			window.location.href = data.url;
 		}, 2000);
 	},
 	

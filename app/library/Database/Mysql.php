@@ -31,7 +31,7 @@ class Mysql extends Assembly {
 	/**
 	 * 设置要查询的字段
 	 * @param string $field 查询字符串列表
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function field($field) {
 		$this->sql['field'] = $field;
@@ -41,7 +41,7 @@ class Mysql extends Assembly {
 	/**
 	 * 设置表名
 	 * @param string $from 表名
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function table($table) {
 		$this->sql['table'] = $table;
@@ -53,7 +53,7 @@ class Mysql extends Assembly {
 	 * @param string $table 要连接的表名
 	 * @param string $on 连接on条件
 	 * @param string $type left|right|inner 三种连接方式
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public function join($table, $on, $type = 'left') {
 		$this->sql['join'] = "{$type} join {$table} on {$on}";
@@ -63,7 +63,7 @@ class Mysql extends Assembly {
 	/**
 	 * 拼接where子句
 	 * @params string|array $condition 要拼接的条件
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function where($condition) {
 		$this->sql['where'] = "WHERE {$this->comCondition($condition)}";
@@ -73,7 +73,7 @@ class Mysql extends Assembly {
 	/**
 	 * 拼接having子句
 	 * @params string|array $condition 要拼接的条件
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function having($condition) {
 		$this->sql['having'] = "HAVING {$this->comCondition($condition)}";
@@ -83,7 +83,7 @@ class Mysql extends Assembly {
 	/**
 	 * 拼接order子句
 	 * @param string $order 排序字符串
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function order($order) {
 		$this->sql['order'] = "ORDER BY {$order}";
@@ -93,7 +93,7 @@ class Mysql extends Assembly {
 	/**
 	 * 拼接group子句
 	 * @param string $group 分组字符串
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function group($group) {
 		$this->sql['group'] = "GROUP BY {$group}";
@@ -104,7 +104,7 @@ class Mysql extends Assembly {
 	 * 拼接limit子句
 	 * @param int $offset 偏移量
 	 * @param int $limit 个数
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function limit($offset, $limit = NULL) {
 		if(!$limit) {
@@ -120,7 +120,7 @@ class Mysql extends Assembly {
 	/**
 	 * 拼接其他附加条件
 	 * @param string $other 其他附加条件，如for update
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function other($other) {
 		$this->sql['other'] = $other;
@@ -259,7 +259,7 @@ class Mysql extends Assembly {
 	/**
 	 * 执行查询,返回对象进行fetch操作
 	 * @param string $clear 清空条件信息
-	 * @return \Driver\Mysql
+	 * @return \Database\Mysql
 	 */
 	public final function select($clear = TRUE) {
 		// 局部释放变量
