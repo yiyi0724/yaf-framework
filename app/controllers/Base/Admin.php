@@ -18,7 +18,7 @@ abstract class AdminController extends BaseController {
 	 * 用户信息
 	 * @var array
 	 */
-	protected $adminInfo = array('ip', 'uid', 'name', 'lasttime', 'rules');
+	protected $adminInfo = array('ip', 'uid', 'name', 'lasttime', 'rules', 'avatar');
 
 	/**
 	 * 全局控制器初始化信息

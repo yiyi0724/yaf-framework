@@ -47,6 +47,7 @@ class LoginController extends \Base\AdminController {
 		$this->getSession()->set('admin.name', $admin->nickname);
 		$this->getSession()->set('admin.lasttime', time());
 		$this->getSession()->set('admin.rules', $rules);
+		$this->getSession()->set('admin.avatar', $admin->avatar);
 		
 		// 进行跳转
 		$this->jsonp('/admin', 1010);

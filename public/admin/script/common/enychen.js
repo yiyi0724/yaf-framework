@@ -10,6 +10,7 @@ var enychen = {
 			case 1010:
 				// url地址跳转
 				this.redirect(data.message);
+				break;
 			case 1011:
 			case 1012:
 			case 1013:
