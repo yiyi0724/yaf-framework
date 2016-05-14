@@ -10,34 +10,34 @@
 	<ul id="main-menu">
 		<?php foreach($menus as $menu):?>
 		<?php 
-			$children = isset($menu['children']) ? 'has-sub' : NULL;
-			$url = isset($menu['url']) ? $menu['url'] : 'javascript:;';
-			$icon = isset($menu['icon']) ? "class='{$menu['icon']}'" : NULL;
+			$children = isset($menu->children) ? 'has-sub' : NULL;
+			$url = isset($menu->url) ? $menu->url : 'javascript:;';
+			$icon = isset($menu->icon) ? "class='{$menu->icon}'" : NULL;
 		?>
 		<li class="root-level <?php echo $children; ?>">
 			<a href="<?php echo $url ?>">
 				<i <?php echo $icon ?>></i>
-				<span><?php echo $menu['name']; ?></span>
+				<span><?php echo $menu->name; ?></span>
 			</a>
-			<?php if(isset($menu['children'])):?>
-			<?php foreach($menu['children'] as $column):?>
+			<?php if(isset($menu->children)):?>
+			<?php foreach($menu->children as $column):?>
 			<?php 
-				$children = isset($column['children']) ? 'has-sub' : NULL;
-				$url = isset($column['url']) ? $column['url'] : 'javascript:;';
-				$icon = isset($column['icon']) ? "class='{$column['icon']}'" : NULL;
+				$children = isset($column->children) ? 'has-sub' : NULL;
+				$url = !empty($column->url) ? $column->url : 'javascript:;';
+				$icon = isset($column->icon) ? "class='{$column->icon}'" : NULL;
 			?>
 			<ul>
 				<li class="<?php echo $children?>">
 					<a href="<?php echo $url;?>">
 						<i <?php echo $icon;?>></i>
-						<span><?php echo $column['name']?></span>
+						<span><?php echo $column->name?></span>
 					</a>
 					<?php if($children):?>
 					<ul>
-						<?php foreach($column['children'] as $children):?>
+						<?php foreach($column->children as $children):?>
 						<li>
-							<a href="<?php echo $children['url']?>">
-								<span><?php echo $children['name']?></span>
+							<a href="<?php echo $children->url?>">
+								<span><?php echo $children->name?></span>
 							</a>
 						</li>
 						<?php endforeach;?>

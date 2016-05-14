@@ -29,37 +29,44 @@ class AdminMenuModel extends \Base\AbstractModel {
 
 	/**
 	 * 获取用户能操作的权限列表
-	 * @param string|array $rules
+	 * @param string $rules
 	 */
 	public function getUserMenus($rules) {
-		
-		return array();
+		if($rules == '*') {
+			// 超级管理员
+			$menus = $this->db->field('id')->table($this->table)->where(array('is_column'=>1))->select()->fetchAll();
+			$rules = array();
+			foreach($menus as $object) {
+				$rules[] = $object->id;
+			}
+		} else {
+			$rules = explode(',', $rules);
+		}
 
+		// 获取权限
 		$menus = array();
-		$menuModel = new \Enychen\MenuModel();
-		foreach(explode(',', $rules) as $mid) {
+		foreach($rules as $mid) {
 			while(TRUE) {
 				if(!$mid || isset($menus[$mid])) {
 					break;
 				}
-				
-				$temp = $menuModel->field('id,name,url,icon,parent,sort')->where([
-					'id'=>$mid, 'is_column'=>1
-				])->select()->fetch();
-				$menus[$temp['id']] = $temp;
-				$mid = $temp['parent'];
+				$temp = $this->db->field('id,name,url,icon,parent,sort')->table($this->table)
+					->where(array('id'=>$mid, 'is_column'=>1))->select()->fetch();
+				$menus[$temp->id] = $temp;
+				$mid = $temp->parent;
 			}
 		}
+		
 		
 		// 进行手动排序
 		$menus = $this->iterare($menus);
 		usort($menus, function ($a, $b) {
-			return $a['sort'] == $b['sort'] ? 0 : (($a['sort'] > $b['sort']) ? 1 : -1);
+			return $a->sort == $b->sort ? 0 : (($a->sort > $b->sort) ? 1 : -1);
 		});
 		
 		return $menus;
 	}
-
+	
 	/**
 	 * 无限级分类
 	 * @param array $menus 初始化栏目
@@ -68,12 +75,13 @@ class AdminMenuModel extends \Base\AbstractModel {
 	protected function iterare(array $menus) {
 		$tree = array();
 		foreach($menus as $item) {
-			if(isset($menus[$item['parent']])) {
-				$menus[$item['parent']]['children'][] = &$menus[$item['id']];
+			if(isset($menus[$item->parent])) {
+				$menus[$item->parent]->children[] = &$menus[$item->id];
 			} else {
-				$tree[] = &$menus[$item['id']];
+				$tree[] = &$menus[$item->id];
 			}
 		}
+		
 		return $tree;
 	}
 }
