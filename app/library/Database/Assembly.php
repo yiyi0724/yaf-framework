@@ -76,7 +76,7 @@ abstract class Assembly {
 			$this->bindValue($params);
 			$this->stmt->execute();
 			$this->stmt->setFetchMode(\PDO::FETCH_OBJ);
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			defined('DEBUG_SQL') and $this->debug($sql, $params);
 			throw $e;
 		}

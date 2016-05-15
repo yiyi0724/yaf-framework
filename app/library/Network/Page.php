@@ -21,7 +21,7 @@ class Page {
 		$build['page'] = $page;
 		$build['url'] = str_replace($_SERVER['QUERY_STRING'], NULL, $_SERVER['REQUEST_URI']);
 		unset($_REQUEST['page']);
-		$build['url'] .= sprintf("%s%spage=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : NULL));
+		$build['url'] .= sprintf("%s%sp=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : NULL));
 		// 总共几条
 		$build['count'] = $count;
 		// 每页显示的条数

@@ -26,6 +26,7 @@ class LoginController extends \Base\AdminController {
 		
 		// 参数获取
 		$params = $this->inputFliter();
+		$params['ip'] = \Network\IP::get();
 				
 		// 验证码检查
 		if(!\logic\Captcha::check('login', $params['captcha'])) {
@@ -36,13 +37,22 @@ class LoginController extends \Base\AdminController {
 		$adminUserModel = new \Enychen\AdminUserModel();
 		$admin = $adminUserModel->getAdminByPW($params['username'], $params['password']);
 		$admin or $this->jsonp(array('password'=>'账号或密码不正确'), 1020);
+
+		// 不是正常状态
+		if($admin->status != 0) {
+			$this->jsonp(array('password'=>'帐号状态异常, 请联系管理员'), 1020);
+		} 
 		
 		// 获取用户的权限列表
 		$adminGroupModel = new \Enychen\AdminGroupModel();
 		$rules = $adminGroupModel->getRulesMergeAttach($admin->group_id, $admin->attach_rules);
+
+		// 写入管理员登录日志
+		$adminLoginLogModel = new \Enychen\AdminLoginLogModel();
+		$adminLoginLogModel->recordLoginLog($admin->id, $params['ip']);
 		
 		// 写入session
-		$this->getSession()->set('admin.ip', \Network\IP::get());
+		$this->getSession()->set('admin.ip', $params['ip']);
 		$this->getSession()->set('admin.uid', $admin->id);
 		$this->getSession()->set('admin.name', $admin->nickname);
 		$this->getSession()->set('admin.lasttime', time());

@@ -238,7 +238,7 @@ class Mysql extends Assembly {
 		// 清空数据
 		$this->resetSql();
 		// 结果返回
-		return $rowCount ? $this->pdo->rowCount() : $this->pdo->lastInsertId();
+		return $rowCount ? $this->rowCount() : $this->lastInsertId();
 	}
 	
 	/**
@@ -253,7 +253,7 @@ class Mysql extends Assembly {
 		// 清空数据
 		$this->resetSql();
 		// 返回结果
-		return $this->pdo->rowCount();
+		return $this->rowCount();
 	}
 	
 	/**
@@ -302,7 +302,7 @@ class Mysql extends Assembly {
 		// 清空数据
 		$this->resetSql();
 		// 返回当前对象
-		return $this->pdo->rowCount();
+		return $this->rowCount();
 	}
 	
 	/**

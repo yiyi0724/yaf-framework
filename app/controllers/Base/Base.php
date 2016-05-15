@@ -120,8 +120,7 @@ abstract class BaseController extends Controller_Abstract {
 		// 输入数据源
 		$request = $this->getRequest();
 		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
-		unset($_GET, $_POST, $_REQUEST);
-		
+
 		// 获取检查规则
 		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Input');
 		if(is_file(FORM_FILE) && require (FORM_FILE)) {

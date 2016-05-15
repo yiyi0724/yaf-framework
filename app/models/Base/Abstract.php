@@ -77,11 +77,12 @@ abstract class AbstractModel {
 	public function paging($page = 1, $number = 15, $where = NULL, $order = NULL, $group = NULL, $having = NULL) {
 		// 获取分页数量
 		$this->db->field('COUNT(*)');
+		$this->db->table($this->table);
 		$where and $this->db->where($where);
 		$order and $this->db->order($order);
 		$group and $this->db->group($group);
 		$having and $this->db->having($having);
-		$total = $this->db->select()->fetchColumn();
+		$total = $this->db->select(FALSE)->fetchColumn();
 		
 		// 获取本页数据
 		$this->db->field('*');
@@ -89,7 +90,7 @@ abstract class AbstractModel {
 		$lists = $this->db->select()->fetchAll();
 		
 		// 输出分页
-		$page = \Network\Page::showCenter($page, $number, $total);
+		$page = \Network\Page::showCenter($page, $number, $total, 6);
 		$page['lists'] = $lists;
 		
 		return $page;
