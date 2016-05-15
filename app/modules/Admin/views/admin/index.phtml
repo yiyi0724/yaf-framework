@@ -1,4 +1,4 @@
-<?php $this->display('layout/header.phtml')?>
+<?php $this->display('layout/header.phtml', array('title'=>'管理员_列表'))?>
 <body class="page-body loaded">
 	<div class="page-container">
 		<?php $this->display('layout/left.phtml')?>
@@ -6,9 +6,6 @@
 			<?php $this->display('layout/user.phtml')?>
 			<div class="navbar-collapse"></div>
 			<div class="dataTables_wrapper"></div>
-			<div>
-				<h3>管理员列表</h3>
-			</div>
 			<div class="navbar-collapse">
 				<p><a class="btn btn-green" href="javascript:;">添加</a></p>
 			</div>
@@ -43,12 +40,5 @@
         </div>
 	</div>
 </body>
-<?php $this->display('layout/footer.phtml', array('scripts'=>array(
-	'common/main-gsap.js', 
-	'common/resizeable.js',	
-	'common/joinable.js',
-	'common/neon-api.js',
-	'common/neon-custom.js',
-	'common/custom.js',
-)))
+<?php $this->display('layout/footer.phtml');
 ?>

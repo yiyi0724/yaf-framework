@@ -15,7 +15,7 @@
 			$icon = isset($menu->icon) ? "class='{$menu->icon}'" : NULL;
 		?>
 		<li class="root-level <?php echo $children; ?>">
-			<a href="<?php echo $url ?>">
+			<a href="<?php echo $url ?>" data-show="<?php echo $menu->isShow; ?>">
 				<i <?php echo $icon ?>></i>
 				<span><?php echo $menu->name; ?></span>
 			</a>
@@ -28,7 +28,7 @@
 			?>
 			<ul>
 				<li class="<?php echo $children?>">
-					<a href="<?php echo $url;?>">
+					<a href="<?php echo $url;?>" data-show="<?php echo $column->isShow; ?>">
 						<i <?php echo $icon;?>></i>
 						<span><?php echo $column->name?></span>
 					</a>
@@ -36,7 +36,7 @@
 					<ul>
 						<?php foreach($column->children as $children):?>
 						<li>
-							<a href="<?php echo $children->url?>">
+							<a href="<?php echo $children->url?>"  data-show="<?php echo $children->isShow; ?>">
 								<span><?php echo $children->name?></span>
 							</a>
 						</li>
@@ -52,3 +52,24 @@
 		<?php endforeach;?>
 	</ul>
 </div>
+<script>
+$(function() {
+	$enyNow = $('#main-menu').find("[data-show=1]");
+	$enyNow.addClass('active')
+	$i = 3;
+	while($i > 0) {
+		var $li = $enyNow.parent('li');
+		if($li.hasClass('root-level')) {
+			$li.addClass('opened').addClass('active');
+			break;
+		} 
+
+		$li.addClass('opened');
+		$ul = $li.parent('ul');
+		$ul.addClass('visible');
+		$enyNow = $ul;
+
+		$i--;
+	}
+});
+</script>

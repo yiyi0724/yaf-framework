@@ -1,4 +1,9 @@
 </body>
+<script src="<?php echo ADMIN_SCRIPT; ?>common/main-gsap.js"></script>
+<script src="<?php echo ADMIN_SCRIPT; ?>common/resizeable.js"></script>
+<script src="<?php echo ADMIN_SCRIPT; ?>common/joinable.js"></script>
+<script src="<?php echo ADMIN_SCRIPT; ?>common/neon-api.js"></script>
+<script src="<?php echo ADMIN_SCRIPT; ?>common/neon-custom.js"></script>
 <?php if(!empty($scripts)) { foreach($scripts as $script): #脚本_start?>
 <script src="<?php echo ADMIN_SCRIPT.$script; ?>"></script>
 <?php endforeach; }; #脚本_end?>

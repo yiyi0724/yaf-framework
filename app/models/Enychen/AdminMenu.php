@@ -38,15 +38,11 @@ class AdminMenuModel extends \Base\AbstractModel {
 			$where['id'] = $rules;
 		}
 
-		$menus = $this->db->field('id,name,icon,parent,url')->table($this->table)->where($where)->order('parent asc, sort asc')
+		$menus = $this->db->field('id,name,icon,parent,url,controller,action')->table($this->table)->where($where)->order('parent asc, sort asc')
 			->select()->fetchAll();
 
 		$menus = $this->sonTree($menus);
-
-/*		echo '<pre>';
-		print_r($menus);
-		exit;*/
-
+		
 		return $menus;
 	}
 	
@@ -60,7 +56,14 @@ class AdminMenuModel extends \Base\AbstractModel {
 		$tree = array();
 		foreach($menus as $item) {
 			if($item->parent == $id) {
+				$item->isShow = FALSE;
+				if(!strcasecmp($item->controller, CONTROLLER) && 
+				   !strcasecmp($item->action, ACTION)) {
+					$item->isShow = true;
+				}
+
 				$tree[] = $item;
+
 				if($children = $this->sonTree($menus, $item->id)) {
 					$tree[count($tree)-1]->children = $children;
 				}
