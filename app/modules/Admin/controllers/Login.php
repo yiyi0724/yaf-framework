@@ -11,7 +11,7 @@ class LoginController extends \Base\AdminController {
 	 */
 	public function indexAction() {
 		// 是否已经登录
-		ADMIN_UID and $this->redirect('/admin');
+		ADMIN_UID and $this->redirect('/admin/');
 	}
 
 	/**
@@ -22,7 +22,7 @@ class LoginController extends \Base\AdminController {
 		(IS_POST && IS_AJAX) or $this->jsonp('您无权访问');
 
 		// 用户是否已经登录
-		ADMIN_UID and $this->jsonp('/admin', 1010);
+		ADMIN_UID and $this->jsonp('/admin/', 1010);
 		
 		// 参数获取
 		$params = $this->inputFliter();
@@ -60,7 +60,7 @@ class LoginController extends \Base\AdminController {
 		$this->getSession()->set('admin.avatar', $admin->avatar);
 		
 		// 进行跳转
-		$this->jsonp('/admin', 1010);
+		$this->jsonp('/admin/', 1010);
 	}
 
 	/**
@@ -70,6 +70,6 @@ class LoginController extends \Base\AdminController {
 		foreach($this->adminInfo as $value) {
 			$this->getSession()->del("admin.{$value}");
 		}
-		$this->redirect('/admin/login');
+		$this->redirect('/admin/login/');
 	}
 }

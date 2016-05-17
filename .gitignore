@@ -1,0 +1,80 @@
+﻿# 操作系统类
+
+## Windows ##
+###图片缓存
+Thumbs.db
+ehthumbs.db
+### 自定义文件夹
+Desktop.ini
+### 回收站
+$RECYCLE.BIN/
+## OS X ##
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+### 缩略图
+._*
+# 外部磁盘上可能会出现的文件
+.Spotlight-V100
+.Trashes
+## Linux ##
+## 缓存
+*~
+
+
+# 编辑器类
+
+## IDEA ##
+*.iml
+*.ipr
+*.iws
+.idea/
+## NetBeans ##
+nbproject/private/
+build/
+nbbuild/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+## VIM ##
+*.s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+# eclipse
+.buildpath
+.project
+.settings
+
+
+# 项目自定义
+
+## 配置文件
+conf/*.ini
+## 缓存文件
+cache/
+## 日志文件
+log/
+## 数据模型备份文件
+*.mwb.bak
+## 上传文件
+/public/update/
+/public/uploads/
+
+# 前端资源
+/public/node_modules
+/public/style/src/
+/public/.sass-cache/
+/public/*.rb
+
+/public/style/*/*.map
+/public/style/*/*/*.map
+/public/style/*/*/*/*.map
+/public/style/*/*/*/*/*.map
+
+##前端图标psd文件
+/public/image/psd
+.idea/*
+/public/ueditor
