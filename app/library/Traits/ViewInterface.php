@@ -21,7 +21,7 @@ class ViewInterface implements View_Interface {
 	 * 构造函数
 	 */
 	public function __construct() {
-		$this->engine = new View(APPLICATION_PATH);
+		$this->engine = new View(NULL);
 	}
 
 	/**
@@ -30,12 +30,12 @@ class ViewInterface implements View_Interface {
 	 * @param array $tplVars
 	 */
 	public function render($tpl, $tpl_vars = NULL) {
-		$this->engine->setScriptPath(MODULE_PATH . 'views');
+		$this->engine->setScriptPath(MODULE_VIEW);
 		return $this->engine->render($tpl, $tpl_vars);
 	}
 
 	public function display($tpl, $tpl_vars = NULL) {
-		$this->engine->setScriptPath(MODULE_PATH . 'views');
+		$this->engine->setScriptPath(MODULE_VIEW);		
 		return $this->engine->display($tpl, $tpl_vars);
 	}
 
@@ -53,7 +53,7 @@ class ViewInterface implements View_Interface {
 }
 
 class View extends Simple {
-
+	
 	/**
 	 * 加载公共模板
 	 * @param string $tpl 模板名称
@@ -61,6 +61,45 @@ class View extends Simple {
 	 */
 	public function layout($tpl, array $tpl_vars = array()) {
 		echo $this->render(MODULE_PATH."views/layout/{$tpl}", $tpl_vars);
+	}
+	
+	/**
+	 * 将时间戳格式化
+	 * @param string|int $time 时间
+	 * @param string $format 格式化选项
+	 * @return string 格式化的后的信息
+	 */
+	public function formatDate($time, $format = 'Y-m-d H:i:s') {
+		$strtotime = @strtotime($time) ? strtotime($time) : $time;
+		return date($format, $time);
+	}
+	
+	/**
+	 * 转义html
+	 * @param string $string 待转义的信息
+	 * @return string
+	 */
+	public function htmlEncode($string) {
+		return htmlspecialchars($string, ENT_QUOTES | ENT_COMPAT | ENT_HTML401);
+	}
+	
+	/**
+	 * 取消转义html
+	 * @param string $string 已经转义过的内容
+	 * @return string
+	 */
+	public function htmlDecode($string) {
+		return htmlspecialchars_decode($string);
+	}
+	
+	/**
+	 * 从一堆中获取一个type
+	 * @param string $type 
+	 * @param string $range
+	 * @return Ambigous <NULL, unknown>
+	 */
+	public function type($type, $range) {
+		return isset($range[$type]) ? $range[$type] : NULL;
 	}
 }
 

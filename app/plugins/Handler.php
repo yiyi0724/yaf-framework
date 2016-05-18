@@ -40,6 +40,7 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('ACTION', $request->getActionName());
 		define('MODULE', $request->getModuleName());
 		define('MODULE_PATH', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
+		define('MODULE_VIEW', MODULE_PATH . 'views');
 		define('FORM_FILE', MODULE_PATH . 'forms/' . strtolower(CONTROLLER) . '.php');
 		
 		// RESOURCE常量定义

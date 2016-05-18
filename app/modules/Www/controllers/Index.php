@@ -11,5 +11,6 @@ class IndexController extends \Base\WwwController {
 	 * 网站首页
 	 */
 	public function indexAction() {
+		$this->assign('name',time());
 	}
 }
