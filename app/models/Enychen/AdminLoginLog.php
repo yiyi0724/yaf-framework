@@ -23,7 +23,6 @@ class AdminLoginLogModel extends \Base\AbstractModel {
 	 */
 	public function recordLoginLog($uid, $ip) {
 		try {
-			define('DEBUG_SQL', true);
 			$where = array('uid'=>$uid, 'login_time'=>date('Ymd'), 'login_ip'=>$ip);
 			$log = $this->db->field('id,login_count')->table($this->table)->where($where)->select()->fetch();
 			if($log) {
@@ -37,8 +36,6 @@ class AdminLoginLogModel extends \Base\AbstractModel {
 				$this->db->table($this->table)->insert($insert);
 			}
 		} catch(\Exception $e) {
-			echo $e->getMessage();
-			exit;
 			return FALSE;
 		}
 

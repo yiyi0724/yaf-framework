@@ -49,6 +49,15 @@ class Bootstrap extends Bootstrap_Abstract {
 		// 路由重写正则
 		$router->addConfig(new Ini(CONF_PATH . 'route.ini'));
 	}
+	
+	/**
+	 * 自定义视图对象
+	 * @param \Yaf\Dispatcher $dispatcher 分发对象
+	 * @return void
+	 */
+	public function _initView(Dispatcher $dispatcher) {
+		$dispatcher->setView(new \Traits\ViewInterface());
+	}
 
 	/**
 	 * 注册插件

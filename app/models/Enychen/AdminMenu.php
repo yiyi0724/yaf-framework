@@ -3,7 +3,6 @@
 /**
  * 权限模型
  * @author enychen
- *
  */
 namespace Enychen;
 
@@ -22,9 +21,11 @@ class AdminMenuModel extends \Base\AbstractModel {
 	 * @return int 返回栏目的id
 	 */
 	public function hasPermission($controller, $action) {
-		return $this->db->field('id')->table($this->table)
+		return $this->db->field('id')
+			->table($this->table)
 			->where(array('controller'=>strtolower($controller), 'action'=>strtolower($action)))
-			->select()->fetchColumn();
+			->select()
+			->fetchColumn();
 	}
 
 	/**
@@ -38,8 +39,12 @@ class AdminMenuModel extends \Base\AbstractModel {
 			$where['id'] = $rules;
 		}
 
-		$menus = $this->db->field('id,name,icon,parent,url,controller,action')->table($this->table)->where($where)->order('parent asc, sort asc')
-			->select()->fetchAll();
+		$menus = $this->db->field('id,name,icon,parent,url,controller,action')
+			->table($this->table)
+			->where($where)
+			->order('parent asc, sort asc')
+			->select()
+			->fetchAll();
 
 		$menus = $this->sonTree($menus);
 		

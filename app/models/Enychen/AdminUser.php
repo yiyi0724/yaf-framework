@@ -22,8 +22,11 @@ class AdminUserModel extends \Base\AbstractModel {
 	 * @return \stdClass
 	 */
 	public function getAdminByPW($username, $password) {
-		$admin = $this->db->field('id,password,nickname,avatar,group_id,status,attach_rules')->table($this->table)
-			->where(array('username'=>$username))->select()->fetch();
+		$admin = $this->db->field('id,password,nickname,avatar,group_id,status,attach_rules')
+			->table($this->table)
+			->where(array('username'=>$username))
+			->select()
+			->fetch();
 
 		return $admin && $admin->password == sha1($password) ? $admin : NULL;
 	}
