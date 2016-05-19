@@ -39,10 +39,12 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());
 		define('MODULE', $request->getModuleName());
-		define('MODULE_PATH', APPLICATION_PATH . "modules/{$request->getModuleName()}/");
-		define('MODULE_VIEW', MODULE_PATH . 'views');
-		define('FORM_FILE', MODULE_PATH . 'forms/' . strtolower(CONTROLLER) . '.php');
+		define('MODULE_PATH', sprintf("%smodules%s%s%s", APPLICATION_PATH, DS, $request->getModuleName(), DS));
+		define('FORM_FILE', sprintf("%sforms%s%s.php", MODULE_PATH, DS, strtolower(CONTROLLER)));
 		
+		// 自定义视图常量
+		define('VIEW_PATH', sprintf("%sviews", MODULE_PATH));
+
 		// RESOURCE常量定义
 		if($resources = Application::app()->getConfig()->get('resource')) {
 			foreach($resources as $key=>$value) {
