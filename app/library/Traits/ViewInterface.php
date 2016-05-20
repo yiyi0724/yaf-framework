@@ -2,6 +2,7 @@
 
 /**
  * 自定义视图接口
+ * @author enychen
  */
 namespace Traits;
 
@@ -75,7 +76,7 @@ class ViewInterface implements View_Interface {
 }
 
 class View extends Simple {
-	
+
 	/**
 	 * 视图数据
 	 * @var array
@@ -99,14 +100,6 @@ class View extends Simple {
 	 */
 	public function moduleLayout($tpl, array $tpl_vars = array()) {
 		echo $this->render(MODULE_PATH . "views/layout/{$tpl}", $tpl_vars);
-	}
-	
-	/**
-	 * 获取所有绑定的视图
-	 * @return multitype:
-	 */
-	public function getTplVars() {
-		return $this->_tpl_vars;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 验证码操作逻辑
+ * 验证码操作逻辑封装
  * @author enychen
  */
 namespace logic;
