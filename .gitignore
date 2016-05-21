@@ -52,16 +52,15 @@ Session.vim
 # 项目自定义
 
 ## 配置文件
-conf/*.ini
-## 缓存文件
-cache/
-## 日志文件
-log/
+/conf/*.ini
+## 临时数据文件
+/data/log/
+/data/locks/
+/data/cache/
 ## 数据模型备份文件
 *.mwb.bak
 ## 上传文件
-/public/update/
-/public/uploads/
+/public/*uploads/
 
 # 前端资源
 /public/node_modules
