@@ -33,7 +33,7 @@ class Bootstrap extends Bootstrap_Abstract {
 	 * @return void
 	 */
 	public function _initLoader(Dispatcher $dispatcher) {
-		Loader::getInstance(rtrim(APPLICATION_PATH, '/'))->registerLocalNamespace('logic');
+		Loader::getInstance(rtrim(APP_PATH, '/'))->registerLocalNamespace('logic');
 	}
 
 	/**

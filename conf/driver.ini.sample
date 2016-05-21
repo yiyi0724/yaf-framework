@@ -1,10 +1,9 @@
 [product]
 ;线上环境配置
 ;[Mysql数据库]
-mysql.master.dsn = 'mysql:host=23.83.239.34;port=3306;dbname=enychen;charset=utf8'
-mysql.master.username='root'
-mysql.master.password='254635@enyChen'
-
+mysql.master.dsn = ''
+mysql.master.username=''
+mysql.master.password=''
 
 ;[redis数据库]
 redis.master.host='127.0.0.1'

@@ -89,7 +89,7 @@ class View extends Simple {
 	 * @param array $tpl_vars 视图数据
 	 */
 	public function layout($tpl, array $tpl_vars = array()) {
-		echo $this->render(APPLICATION_PATH . "views/layout/{$tpl}", $tpl_vars);
+		echo $this->render(APP_PATH . "views/layout/{$tpl}", $tpl_vars);
 	}
 
 	/**

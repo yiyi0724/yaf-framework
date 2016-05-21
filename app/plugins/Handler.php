@@ -40,7 +40,7 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());
 		define('MODULE', $request->getModuleName());
-		define('MODULE_PATH', sprintf("%smodules%s%s%s", APPLICATION_PATH, DS, $request->getModuleName(), DS));
+		define('MODULE_PATH', sprintf("%smodules%s%s%s", APP_PATH, DS, $request->getModuleName(), DS));
 		define('FORM_FILE', sprintf("%sforms%s%s.php", MODULE_PATH, DS, strtolower(CONTROLLER)));
 		define('VIEW_PATH', sprintf("%sviews", MODULE_PATH));
 

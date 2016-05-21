@@ -1,0 +1,22 @@
+[product]
+;线上环境配置
+;[项目配置]
+application.directory = APP_PATH
+application.dispatcher.catchException = True
+application.modules = "Index,Www,Admin"
+
+;[修改php.ini的配置]
+runtime.date.timezone = "PRC"
+runtime.session.save_handler = "redis"
+runtime.session.save_path = "tcp://127.0.0.1:6379?database=0&timeout=30&auth="
+runtime.session.cookie_domain = ".enychen.com"
+runtime.session.cookie_httponly = 1
+runtime.session.gc_maxlifetime = 21600
+
+
+[test:product]
+;测试环境配置
+
+
+[develop:product]
+;开发环境配置

@@ -1,0 +1,7 @@
+;案例
+www_index_index.type = "regex"
+www_index_index.match = "#/(\d)+.html#"
+www_index_index.route.module = "Www"
+www_index_index.route.controller = "Index"
+www_index_index.route.action = "index"
+www_index_index.map.1=page

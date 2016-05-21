@@ -5,7 +5,7 @@ define('DS', DIRECTORY_SEPARATOR);
 // 站点目录
 define('SITE_PATH', dirname(__DIR__) . DS);
 // 代码目录
-define('APPLICATION_PATH', SITE_PATH . 'app' . DS);
+define('APP_PATH', SITE_PATH . 'app' . DS);
 // 公开项目
 define('PUBLIC_PATH', __DIR__ . DS);
 // 配置目录
