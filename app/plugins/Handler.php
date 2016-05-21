@@ -1,5 +1,6 @@
 <?php
 
+use \Yaf\Config\Ini;
 use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
@@ -44,10 +45,9 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('VIEW_PATH', sprintf("%sviews", MODULE_PATH));
 
 		// RESOURCE常量定义
-		if($resources = Application::app()->getConfig()->get('resource')) {
-			foreach($resources as $key=>$value) {
-				define(strtoupper($key), $value);
-			}
+		$constIni = new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON);
+		foreach($constIni as $key=>$value) {
+			define(strtoupper($key), $value);
 		}
 	}
 }

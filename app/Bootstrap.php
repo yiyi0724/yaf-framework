@@ -49,7 +49,7 @@ class Bootstrap extends Bootstrap_Abstract {
 		// 路由重写正则
 		$router->addConfig(new Ini(CONF_PATH . 'route.ini'));
 	}
-	
+
 	/**
 	 * 自定义视图对象
 	 * @param \Yaf\Dispatcher $dispatcher 分发对象
