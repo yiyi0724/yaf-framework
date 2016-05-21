@@ -4,17 +4,31 @@
 - 框架目前还在完善当中
 
 ## 内置类库使用说明
-- 驱动类
-  - [Mysql](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Mysql.md)
-  - [Redis](https://github.com/enychen/yaf-framework/blob/master/doc/Driver/Redis.md)
-- 网络类
-  - [获取ip](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Ip.md)
-  - [邮件发送](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Mail.md)
-  - [http请求](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Http.md)
-  - [url跳转](https://github.com/enychen/yaf-framework/blob/master/doc/Network/Location.md)
-- 图像类
-  - [验证码](https://github.com/enychen/yaf-framework/blob/master/doc/Image/Captcha.md)
-  - [缩略图](https://github.com/enychen/yaf-framework/blob/master/doc/Image/Thumbnail.md)
-  - [二维码](https://github.com/enychen/yaf-framework/blob/master/doc/Image/QRcode.md)
-- 文件类
-  - [文件上传](https://github.com/enychen/yaf-framework/blob/master/doc/File/Uploader.md)
+- 淘宝sdk
+- 数据库
+  - [Mysql]
+- 文件
+  - [文件上传]
+  - [文件下载]
+  - [文件锁]
+  - [日志记录]
+- 图像
+  - [验证码]
+  - [缩略图]
+  - [二维码]
+  - [水印图]
+  - []
+- 网络
+  - [获取ip]
+  - [邮件发送]
+  - [http请求]
+  - [url跳转]
+- 数据校验
+  - [表单验证]
+  - [规则类]
+- 存储
+  - [Redis]
+- 框架扩展
+  - [自定义路由]
+  - [自定义视图]
+- 微信sdk

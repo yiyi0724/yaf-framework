@@ -148,4 +148,45 @@ class View extends Simple {
 	public function long2ip($ip) {
 		return long2ip($ip);
 	}
+	
+	/**
+	 * 模糊化手机号码
+	 * @param string $value 值
+	 * @return string 模糊以后的字符串
+	 */
+	public function fuzzyMobile($mobile) {
+		return substr($mobile, 0, 3) . '*****' . substr($mobile, -3);
+	}
+	
+	/**
+	 * 模糊化邮箱地址
+	 *
+	 * @param string $email
+	 * @return string
+	 */
+	public function fuzzyEmail($value) {
+		list($prefix, $domain) = explode('@', $value);
+	
+		$string_length = mb_strlen($prefix, $encoding);
+	
+		if($start < 0) {
+			$start = max(0, $string_length + $start);
+		} else if($start > $string_length) {
+			$start = $string_length;
+		}
+	
+		if($length < 0) {
+			$length = max(0, $string_length - $start + $length);
+		} else if((is_null($length) === true) || ($length > $string_length)) {
+			$length = $string_length;
+		}
+	
+		if(($start + $length) > $string_length) {
+			$length = $string_length - $start;
+		}
+	
+		$prefix =  mb_substr($prefix, 0, $start, $encoding) . $replacement . mb_substr($prefix, abs($start + $length), ceil($string_length - $start - $length), $encoding);
+	
+		return "$prefix@{$domain}";
+	}
 }
