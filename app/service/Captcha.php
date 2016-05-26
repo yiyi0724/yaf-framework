@@ -4,7 +4,7 @@
  * 验证码操作逻辑封装
  * @author enychen
  */
-namespace logic;
+namespace service;
 
 class Captcha {
 	/**
@@ -42,7 +42,7 @@ class Captcha {
 			} else {
 				$session->set(static::PREFIX . "{$channel}.limit", $limit+1);
 			}
-			return FALSE;
+			throw new Exceptions\Notify('这是一个错误', 10000);
 		} else {
 			$session->del(static::PREFIX . $channel);
 			return TRUE;

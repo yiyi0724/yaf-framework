@@ -1,11 +1,15 @@
 [product]
 ;线上环境配置
-;[Mysql数据库]
-mysql.master.dsn = ''
-mysql.master.username=''
-mysql.master.password=''
+;[数据库]
+database.master.type = 'mysql'
+database.master.host = '127.0.0.1'
+database.master.port = '3306'
+database.master.dbname = 'enychen'
+database.master.charset = 'utf8'
+database.master.username = ''
+database.master.password = ''
 
-;[redis数据库]
+;[redis]
 redis.master.host='127.0.0.1'
 redis.master.port=6379
 redis.master.db=0

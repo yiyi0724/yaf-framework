@@ -1,6 +1,6 @@
 <?php
 
-namespace Base;
+namespace base;
 
 /**
  * 所有模块控制基类的基类

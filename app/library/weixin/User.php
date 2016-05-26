@@ -9,7 +9,7 @@
  * refreshUserAccessToken 	刷新用户的令牌
  * 
  */
-namespace Weixin;
+namespace weixin;
 
 class User extends Base {
 	
@@ -32,7 +32,7 @@ class User extends Base {
 	 * @return void
 	 */
 	public function getUserAuthCode($redirectUri, $scope, $state) {
-		$url = sprintf($this->api['userCode'], $this->appid, urlencode($redirectUri), $scope, $state);
+		$url = sprintf(API::GET_USER_CODE, $this->appid, urlencode($redirectUri), $scope, $state);
 		header('location:' . $requestUrl);
 		exit();
 	}
@@ -44,7 +44,7 @@ class User extends Base {
 	 * @throws \Exception
 	 */
 	public function getUserAccessToken($code) {
-		$url = sprintf($this->api['userAccessToken'], $this->appid, $this->appSecret, $code);
+		$url = sprintf(API::GET_UESR_ACCESS_TOKEN, $this->appid, $this->appSecret, $code);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
 			throw new \Exception($result->errmsg, $result->errcode);
@@ -59,7 +59,7 @@ class User extends Base {
 	 * @throws \Exception
 	 */
 	public function refreshUserAccessToken() {
-		$url = sprintf($this->api['userRefreshToken'], $this->appid, $this->info->refresh_token);
+		$url = sprintf(API::REFRESH_USER_ACCESS_TOKEN, $this->appid, $this->info->refresh_token);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
 			throw new \Exception($result->errmsg, $result->errcode);
@@ -78,7 +78,7 @@ class User extends Base {
 			throw new \Exception('请先进行获取用户令牌操作');
 		}
 		
-		$url = sprintf($this->api['userAccessTokenExpire'], $this->info->access_token, $this->info->openid);
+		$url = sprintf(API::IS_EXPIRE_USER_ACCESS_TOKEN, $this->info->access_token, $this->info->openid);
 		$result = json_decode($this->get($url));
 		if($result->errcode != 0) {
 			throw new \Exception($result->errmsg, $result->errcode);
@@ -102,7 +102,7 @@ class User extends Base {
 			throw new \Exception('获取用户信息权限不足');
 		}
 		
-		$url = sprintf($this->api['userInfo'], $this->info->access_token, $this->info->openid, $language);
+		$url = sprintf(API::GET_ACCESS_TOKEN, $this->info->access_token, $this->info->openid, $language);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
 			throw new \Exception($result->errmsg, $result->errcode);

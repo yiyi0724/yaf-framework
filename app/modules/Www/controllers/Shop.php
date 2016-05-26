@@ -34,4 +34,8 @@ class ShopController extends \Base\WwwController {
 	 */
 	public function albumAction() {
 	}
+	
+	public function testAction() {
+		
+	}
 }

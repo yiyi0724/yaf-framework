@@ -4,7 +4,7 @@
  * 表单规则类
  * @author enychen
  */
-namespace Security;
+namespace security;
 
 class Is {
 

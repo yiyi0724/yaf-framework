@@ -5,9 +5,9 @@
  * @author enychen
  * @version 1.0
  */
-namespace Storage;
+namespace storage;
 
-class Redis extends Assembly {
+class Redis extends Adapter {
 
 	/**
 	 * redis对象
@@ -34,6 +34,28 @@ class Redis extends Assembly {
 		$auth and $this->auth($auth);
 		// 选择数据库
 		$this->select($db);
+	}
+
+	/**
+	 * 设置键值
+	 * @param string $key 键
+	 * @param mixed $value 值
+	 * @param int $expire 过期时间，默认为0表示不过期
+	 * @return bool 是否设置成功
+	 */
+	public function set($key, $value, $expire = 0) {
+		return $this->redis->set($key, $value) && $expire && $this->redis->expire($key, $expire);
+	}
+
+	/**
+	 * 设置键值
+	 * @param string $key 键
+	 * @param mixed $default 如果找不到这个键则删除
+	 * @return bool 是否设置成功
+	 */
+	public function get($key, $default = NULL) {
+		$value = $this->redis->get($key);
+		return $value === FALSE ? $default : $value;
 	}
 
 	/**

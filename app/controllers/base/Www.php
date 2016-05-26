@@ -1,6 +1,6 @@
 <?php
 
-namespace Base;
+namespace base;
 
 /**
  * 前台控制基类

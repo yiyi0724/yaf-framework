@@ -1,6 +1,6 @@
 <?php
 
-namespace Base;
+namespace base;
 
 /**
  * 后台控制基类

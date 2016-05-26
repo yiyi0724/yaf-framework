@@ -1,13 +1,13 @@
 <?php
 
 /**
- * 数据库类公共组件(基于pdo)
+ * PDO操作驱动
  * @author enychen
  * @version 1.0
  */
-namespace Database;
+namespace database\driver;
 
-abstract class Assembly {
+class PDO extends Adapter {
 
 	/**
 	 * 对象池
@@ -43,20 +43,17 @@ abstract class Assembly {
 	}
 
 	/**
-	 * 禁止克隆对象
-	 * @return void
-	 */
-	protected final function __clone() {
-	}
-
-	/**
 	 * 单例模式创建连接池对象
-	 * @param string $dsn 	   数据库连接dsn信息
-	 * @param string $username 数据库连接用户
-	 * @param string $password 数据库连接密码
-	 * @return \Database\Assembly
+	 * @param string $type	   	数据库类型，如mysql,sqlite
+	 * @param string $host	  	数据库地址
+	 * @param string $port		数据库端口
+	 * @param string $charset	数据库字符集
+	 * @param string $username 	数据库连接用户
+	 * @param string $password 	数据库连接密码
+	 * @return \Database\PDO
 	 */
-	public static function getInstance($dsn, $username, $password) {
+	public static function getInstance($type, $host, $port, $dbname, $charset, $username, $password) {
+		$dsn = "{$type}:host={$host};port={$port};dbname={$dbname};charset={$charset}";
 		if(empty(static::$pool[$dsn])) {
 			static::$pool[$dsn] = new static($dsn, $username, $password);
 		}
@@ -148,7 +145,7 @@ abstract class Assembly {
 				$result = $this->stmt->$method();
 				break;
 			default:
-				throw new \PDOException("Call to undefined method {$method}()");
+				throw new \PDOException("Call to undefined \Database\PDO::{$method}()");
 		}
 		
 		return $result;

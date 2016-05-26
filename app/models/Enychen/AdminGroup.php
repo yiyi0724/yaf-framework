@@ -22,16 +22,13 @@ class AdminGroupModel extends \Base\AbstractModel {
 	 * @return string 权限列表字符串
 	 */
 	public function getRulesMergeAttach($groupid, $attachRules) {
-		$rules = $this->db->field('rules')
-			->table($this->table)
-			->where(array('id'=>$groupid))
-			->select()
-			->fetchColumn();
-		
+		$rules = $this->field('rules')->where(array('id'=>$groupid))->select()->fetchColumn();
+
 		if($rules != '*') {
 			$rules = array_unique(array_merge(explode(',', $rules), explode(',', $attachRules)));
 			$rules = implode(',', $rules);
 		}
+
 		return $rules;
 	}
 }

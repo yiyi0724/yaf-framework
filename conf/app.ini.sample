@@ -11,7 +11,8 @@ runtime.session.save_handler = "redis"
 runtime.session.save_path = "tcp://127.0.0.1:6379?database=0&timeout=30&auth="
 runtime.session.cookie_domain = ".enychen.com"
 runtime.session.cookie_httponly = 1
-runtime.session.gc_maxlifetime = 21600
+phpSettings.session.cookie_lifetime = 7200
+phpSettings.session.gc_maxlifetime = 7200
 
 
 [test:product]

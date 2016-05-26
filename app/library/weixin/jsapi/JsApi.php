@@ -1,8 +1,8 @@
 <?php
 
-namespace Weixin;
+namespace weixin\jsapi;
 
-class JsApi extends Pay\Base {
+class JsApi extends \weixin\Base {
 	
 	const JSAPI_TICKET = 'weixin.jsapi.ticket';
 	
