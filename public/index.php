@@ -1,9 +1,5 @@
 <?php
 
-echo '<pre>';
-print_r($_SERVER);
-EXIT;
-
 // 目录分隔符
 define('DS', DIRECTORY_SEPARATOR);
 // 公开项目

@@ -177,7 +177,7 @@ class UnifiedOrder extends Pay {
 	 * @param array $params 参数请参考文档
 	 * @return array 返回获得的数组
 	 */
-	protected function unifiedOrder() {
+	public function payment() {
 		// 订单号检查
 		if(!$this->order['out_trade_no']) {
 			throw new \weixin\Exception('请设置订单号', 1024);
@@ -217,9 +217,9 @@ class UnifiedOrder extends Pay {
 		$params = $this->XmlEncode($this->order);
 		
 		// curl微信生成订单
-		$result = $this->post(\weixin\API::PAY_UNIFIED_ORDER, $this->order);
+		$result = $this->post(\weixin\API::PAY_UNIFIED_ORDER, $params);
 		$result = $this->verify($result);
-		
+
 		return $result;
 	}
 

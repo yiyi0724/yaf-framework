@@ -46,6 +46,9 @@ class Route implements Route_Interface {
 	 */
 	public function route($request) {
 		$uri = $request->getRequestUri();
+		echo '<pre>';
+		print_r($request->getServer('HTTP_HOST'));
+		exit;
 		$uri = explode('/', trim($request->getRequestUri(), '/'));
 		$module = strtolower($uri[0]);
 

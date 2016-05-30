@@ -12,7 +12,7 @@ abstract class Base {
 	 * appid缓存键
 	 * @var string
 	 */
-	const ACCESS_TOKEN_KEY = 'weixin.access.token';
+	const ACCESS_TOKEN_KEY = 'weixin.access.token.%s';
 
 	/**
 	 * appid信息
@@ -152,8 +152,11 @@ abstract class Base {
 	 * @throws \weixin\Exception
 	 */
 	protected function setAccessToken() {
+		// 缓存appid的键
+		$cacheKey = sprintf(self::ACCESS_TOKEN_KEY, $this->appid);
+
 		// 之前获取的还没有到期
-		if($this->accessToken = $this->storage->get(self::ACCESS_TOKEN_KEY)) {
+		if($this->accessToken = $this->storage->get($cacheKey)) {
 			return TRUE;
 		}
 		
@@ -165,7 +168,7 @@ abstract class Base {
 		}
 		
 		// 缓存access_token
-		$this->storage->set(self::ACCESS_TOKEN_KEY, $result->access_token, $result->expires_in);
+		$this->storage->set($cacheKey, $result->access_token, $result->expires_in);
 		
 		// 设置变量
 		$this->accessToken = $result->access_token;

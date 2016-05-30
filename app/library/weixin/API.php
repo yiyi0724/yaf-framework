@@ -9,9 +9,6 @@ class API {
 	// 获取微信公众号的jsapi_ticket
 	const GET_JSAPI_TICKET = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi';
 	
-	// 支付统一下单
-	const PAY_UNIFIED_ORDER = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
-	
 	// 微信自动帮助生成二维码图片地址
 	const CREATE_QRCODE = 'http://paysdk.weixin.qq.com/example/qrcode.php?data=%s';
 	
@@ -29,4 +26,13 @@ class API {
 	
 	// 校验用户授权的access_token是否过期
 	const IS_EXPIRE_USER_ACCESS_TOKEN = 'https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s';
+	
+	// 支付统一下单
+	const PAY_UNIFIED_ORDER = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
+	
+	// 支付订单查询
+	const PAY_ORDER_QUERY = 'https://api.mch.weixin.qq.com/pay/orderquery';
+	
+	// 关闭支付订单
+	const PAY_CLOSE_ORDER = 'https://api.mch.weixin.qq.com/pay/closeorder';
 }
