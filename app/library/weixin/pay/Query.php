@@ -15,18 +15,6 @@ class Query extends Pay {
 	private $query = array();
 
 	/**
-	 * 创建统一下单对象
-	 * @param string $appid 公众号appid
-	 * @param string $mchid 商户id
-	 * @param string $key 商户密钥
-	 */
-	public function __construct($appid, $mchid, $key) {
-		$this->setAppid($appid);
-		$this->setMchid($mchid);
-		$this->setKey(key);
-	}
-
-	/**
 	 * 设置订单号，我司的订单号,out_trade_no和transaction_id二选一
 	 * @param string $outTradeNo 订单号
 	 * @return void
@@ -43,20 +31,41 @@ class Query extends Pay {
 	public function setTransactionId($transactionId) {
 		$this->query['transaction_id'] = $transactionId;
 	}
-	
+
+	/**
+	 * 商户侧传给微信的退款单号，必须
+	 * @param string $outRefundNo 退款订单号
+	 * @return void
+	 */
+	public function setOutRefundNo($outRefundNo) {
+		$this->refund['out_refund_no'] = $outRefundNo;
+	}
+
+	/**
+	 * 微信生成的退款单号，在申请退款接口有返回，必须
+	 * @param string $outRefundNo 退款订单号
+	 * @return void
+	 */
+	public function setRefundId($refundId) {
+		$this->refund['refund_id'] = $refundId;
+	}
+
 	/**
 	 * 执行微信订单查询
-	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2
+	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2（普通订单查询）
+	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_5（退款订单查询）
 	 * @return void
 	 */
 	public function queryOrder() {
 		// 检查要查询的订单号
-		if(!$this->query['transaction_id'] && !$this->query['out_trade_no']) {
-			throw new \weixin\Exception('请设置微信或者我司的订单号', 1030);
+		foreach(array('transaction_id', 'out_trade_no', 'out_refund_no', 'refund_id') as $key) {
+			if(!empty($this->query[$key])) {
+				$isPass = TRUE;
+				break;
+			}
 		}
-		// 存在微信订单号，则删除我司订单号
-		if($this->query['transaction_id']) {
-			$this->query['out_trade_no'] = NULL;
+		if(empty($isPass)) {
+			throw new \weixin\Exception('请设置订单号', 1010);
 		}
 
 		$this->query['appid'] = $this->appid;

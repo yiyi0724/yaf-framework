@@ -95,6 +95,7 @@ abstract class Base {
 	 */
 	protected function setStorage($storage) {
 		$this->storage = $storage;
+		return $this;
 	}
 
 	/**
@@ -114,6 +115,7 @@ abstract class Base {
 	 */
 	protected function setMchid($mchid) {
 		$this->mchid = $mchid;
+		return $this;
 	}
 
 	/**
@@ -209,7 +211,7 @@ abstract class Base {
 		libxml_disable_entity_loader(true);
 		$result = @simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if(!$result) {
-			throw new Exception('XML数据无法解析', 90000);
+			throw new Exception('XML数据无法解析', 1990);
 		}
 		return json_decode(json_encode($result), TRUE);
 	}

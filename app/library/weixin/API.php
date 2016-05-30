@@ -2,7 +2,7 @@
 
 namespace weixin;
 
-class API {	
+class API {
 	// 获取微信公众号access_token
 	const GET_ACCESS_TOKEN = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
 	
@@ -35,4 +35,7 @@ class API {
 	
 	// 关闭支付订单
 	const PAY_CLOSE_ORDER = 'https://api.mch.weixin.qq.com/pay/closeorder';
+
+	// 支付退款
+	const PAY_REFUND = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
 }

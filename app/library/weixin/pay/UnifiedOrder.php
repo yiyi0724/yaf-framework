@@ -15,20 +15,6 @@ class UnifiedOrder extends Pay {
 	private $order = array();
 
 	/**
-	 * 创建统一下单对象
-	 * @param string $appid 公众号appid
-	 * @param string $appSecret 公众号appSecret
-	 * @param string $mchid 商户id
-	 * @param string $key 商户密钥
-	 */
-	public function __construct($appid, $appSecret, $mchid, $key) {
-		$this->setAppid($appid);
-		$this->setAppSecret($appSecret);
-		$this->setMchid($mchid);
-		$this->setKey(key);
-	}
-
-	/**
 	 * 设置订单号，必须
 	 * @param string $outTradeNo 订单号
 	 * @return void
@@ -180,19 +166,21 @@ class UnifiedOrder extends Pay {
 	public function payment() {
 		// 订单号检查
 		if(!$this->order['out_trade_no']) {
-			throw new \weixin\Exception('请设置订单号', 1024);
+			throw new \weixin\Exception('请设置订单号', 1000);
 		}
 		// 价格检查
 		if(!$this->order['total_fee']) {
-			throw new \weixin\Exception('请设置价格', 1025);
+			throw new \weixin\Exception('请设置价格', 1001);
 		}
 		// 商品描述信息检查
 		if(!$this->order['body']) {
-			throw new \weixin\Exception('请设置商品描述信息', 1026);
+			throw new \weixin\Exception('请设置商品描述信息', 1002);
 		}
 		// 交易类型检查
-		if(!in_array($this->order['trade_type'], array('JSAPI', 'NATIVE', 'APP', 'WAP'))) {
-			throw new \weixin\Exception("微信不支持{$this->order['trade_type']}交易类型", 1027);
+		if(!in_array($this->order['trade_type'], array(
+			'JSAPI', 'NATIVE', 'APP', 'WAP'
+		))) {
+			throw new \weixin\Exception("微信不支持{$this->order['trade_type']}交易类型", 1003);
 		}
 		// 设置交易ip地址
 		if(!$this->order['spbill_create_ip']) {
@@ -200,11 +188,11 @@ class UnifiedOrder extends Pay {
 		}
 		// JSAPI交易类型openid检查
 		if($this->order['trade_type'] == 'JSAPI' && !$this->order['openid']) {
-			throw new \weixin\Exception('请设置用户openid信息', 1028);
+			throw new \weixin\Exception('请设置openid', 1004);
 		}
 		// NAVITE交易类型product_id检查
 		if($this->order['trade_type'] == 'NAVITE' && !$this->order['product_id']) {
-			throw new \weixin\Exception('请设置商品ID', 1029);
+			throw new \weixin\Exception('请设置product_id', 1005);
 		}
 		
 		// 拼接公共参数
@@ -219,7 +207,7 @@ class UnifiedOrder extends Pay {
 		// curl微信生成订单
 		$result = $this->post(\weixin\API::PAY_UNIFIED_ORDER, $params);
 		$result = $this->verify($result);
-
+		
 		return $result;
 	}
 

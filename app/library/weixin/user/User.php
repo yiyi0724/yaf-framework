@@ -4,10 +4,6 @@
  * 微信SDK用户类
  * @author enychen
  * @method
- * getUserAuthCode 			跳转到授权页面获取用户的code信息
- * getUserAccessToken 		获取用户的令牌
- * refreshUserAccessToken 	刷新用户的令牌
- * 
  */
 namespace weixin;
 
@@ -23,6 +19,12 @@ class User extends Base {
 	 * @var \stdClass
 	 */
 	protected $info = NULL;
+	
+	public function __construct($appid, $appSecret) {
+		$this->setAppid($appid);
+		$this->setAppSecret($appSecret);
+		$this->setAccessToken();
+	}
 
 	/**
 	 * 跳转到用户授权页面，让用户进行授权

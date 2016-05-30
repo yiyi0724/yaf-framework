@@ -9,19 +9,24 @@ namespace weixin\pay;
 class Notify extends Pay {
 
 	/**
-	 * 微信支付回调验证，获取参数信息
-	 * @param string $key 需要签名验证请传入商户密钥
+	 * 构造函数
+	 * @param string $key 商户密钥，需要签名验证请传入商户密钥
 	 * @return void
 	 */
-	public function notify($key = NULL) {
+	public function __construct($key = NULL) {
+		$this->setKey($key);
+	}
+	
+	/**
+	 * 微信支付回调验证，获取参数信息
+	 * @return void
+	 */
+	public function notify() {
 		// 通知微信成功获取返回结果
 		$response = array('return_code'=>'SUCCESS', 'return_msg'=>'OK');
 
 		// 是否需要进行签名
-		if($key) {
-			$this->setKey($key);
-			$response['sign'] = $this->sign($response);
-		}
+		$this->key and ($response['sign'] = $this->sign($response));
 
 		try {
 			// 数据来源检查
