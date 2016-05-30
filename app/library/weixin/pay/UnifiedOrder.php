@@ -6,7 +6,7 @@
  */
 namespace weixin\pay;
 
-class UnifiedOrder extends Pay {
+class UnifiedOrder extends Base {
 
 	/**
 	 * 订单信息
@@ -177,9 +177,7 @@ class UnifiedOrder extends Pay {
 			throw new \weixin\Exception('请设置商品描述信息', 1002);
 		}
 		// 交易类型检查
-		if(!in_array($this->order['trade_type'], array(
-			'JSAPI', 'NATIVE', 'APP', 'WAP'
-		))) {
+		if(!in_array($this->order['trade_type'], array('JSAPI', 'NATIVE', 'APP', 'WAP'))) {
 			throw new \weixin\Exception("微信不支持{$this->order['trade_type']}交易类型", 1003);
 		}
 		// 设置交易ip地址

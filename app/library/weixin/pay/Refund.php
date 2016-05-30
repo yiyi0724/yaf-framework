@@ -6,7 +6,7 @@
  */
 namespace weixin\pay;
 
-class Refund extends Pay {
+class Refund extends Base {
 
 	/**
 	 * 查询数组

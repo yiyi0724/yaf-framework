@@ -6,7 +6,7 @@
  */
 namespace weixin\pay;
 
-class Notify extends Pay {
+class Notify extends Base {
 
 	/**
 	 * 构造函数

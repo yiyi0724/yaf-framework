@@ -6,7 +6,7 @@
  */
 namespace weixin\pay;
 
-abstract class Pay extends \weixin\Base {
+abstract class Base extends \weixin\Base {
 	
 	/**
 	 * 创建支付业务逻辑对象

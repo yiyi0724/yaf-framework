@@ -6,7 +6,7 @@
  */
 namespace weixin\pay;
 
-class Close extends Pay {
+class Close extends Base {
 
 	/**
 	 * 查询数组
