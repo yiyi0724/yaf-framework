@@ -9,7 +9,7 @@ namespace weixin;
 abstract class Base {
 
 	/**
-	 * appid缓存键
+	 * access_token缓存键
 	 * @var string
 	 */
 	const ACCESS_TOKEN_KEY = 'weixin.access.token.%s';
@@ -27,7 +27,7 @@ abstract class Base {
 	protected $appSecret = NULL;
 
 	/**
-	 * 商户id
+	 * 商户号id
 	 * @var string
 	 */
 	protected $mchid = NULL;
@@ -46,13 +46,13 @@ abstract class Base {
 
 	/**
 	 * 代理服务器端口信息
-	 * @var string
+	 * @var int
 	 */
 	protected $proxyPort = NULL;
 
 	/**
 	 * 是否使用证书
-	 * @var string
+	 * @var bool
 	 */
 	protected $isUseCert = FALSE;
 
@@ -71,81 +71,73 @@ abstract class Base {
 	/**
 	 * 设置公众号id
 	 * @param string $appid 公众号appid
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @return void
 	 */
 	protected function setAppid($appid) {
 		$this->appid = $appid;
-		return $this;
 	}
-	
+
 	/**
 	 * 设置公众号Secret
-	 * @param string $appid 公众号Secret
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @param string $appSecret 公众号Secret
+	 * @return void
 	 */
 	protected function setAppSecret($appSecret) {
 		$this->appSecret = $appSecret;
-		return $this;
 	}
 
 	/**
 	 * 设置存储对象
 	 * @param \storage\Adapter $storage 存储对象
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @return void
 	 */
 	protected function setStorage($storage) {
 		$this->storage = $storage;
-		return $this;
 	}
 
 	/**
 	 * 设置商户密钥
 	 * @param string $key 密钥串
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @return void
 	 */
 	protected function setKey($key) {
 		$this->key = $key;
-		return $this;
 	}
 
 	/**
 	 * 设置商户id
 	 * @param string $mchid 商户id
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @return void
 	 */
 	protected function setMchid($mchid) {
 		$this->mchid = $mchid;
-		return $this;
 	}
 
 	/**
 	 * 设置代理服务器信息
 	 * @param string $proxyHost 理服务器ip地址
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @return void
 	 */
 	protected function setProxyHost($proxyHost) {
 		$this->proxyHost = $proxyHost;
-		return $this;
 	}
 
 	/**
 	 * 设置代理服务器端口信息
 	 * @param string $proxyPort 理服务器端口地址
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @return void
 	 */
 	protected function setProxyPort($proxyPort) {
 		$this->proxyPort = $proxyPort;
-		return $this;
 	}
 
 	/**
 	 * 是否使用ssl证书
 	 * @param bool $useCert 是否使用ssl证书
-	 * @return \weixin\Base 当前对象进行连贯操作
+	 * @return void
 	 */
 	protected function setIsUseCert($isUseCert) {
 		$this->isUseCert = $isUseCert;
-		return $this;
 	}
 
 	/**
@@ -297,7 +289,7 @@ abstract class Base {
 	 */
 	protected function post($url, $params) {
 		$ch = curl_init();
-		
+
 		// 初始化设置
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -307,13 +299,13 @@ abstract class Base {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-		
+
 		// 如果有配置代理这里就设置代理
 		if($this->proxyHost && $this->proxyPort) {
 			curl_setopt($ch, CURLOPT_PROXY, $this->proxyHost);
 			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxyPort);
 		}
-		
+
 		// 设置证书, cert 与 key 分别属于两个.pem文件
 		if($this->isUseCert) {
 			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
@@ -321,11 +313,11 @@ abstract class Base {
 			curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
 			curl_setopt($ch, CURLOPT_SSLKEY, __DIR__ . '/certificate/apiclient_key.pem');
 		}
-		
+
 		// 获取结果
 		$result = curl_exec($ch);
 		curl_close($ch);
-		
+
 		return $result;
 	}
 }
