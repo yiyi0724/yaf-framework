@@ -5,7 +5,7 @@
  * @author enychen
  * @method
  */
-namespace weixin;
+namespace weixin\user;
 
 class User extends Base {
 
@@ -49,7 +49,7 @@ class User extends Base {
 		$url = sprintf(API::GET_UESR_ACCESS_TOKEN, $this->appid, $this->appSecret, $code);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
-			throw new \Exception($result->errmsg, $result->errcode);
+			throw new \weixin\Exception($result->errmsg, $result->errcode);
 		}
 		
 		$this->info = $result;
@@ -64,9 +64,9 @@ class User extends Base {
 		$url = sprintf(API::REFRESH_USER_ACCESS_TOKEN, $this->appid, $this->info->refresh_token);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
-			throw new \Exception($result->errmsg, $result->errcode);
+			throw new \weixin\Exception($result->errmsg, $result->errcode);
 		}
-		
+
 		$this->info = $result;
 	}
 	
@@ -77,13 +77,13 @@ class User extends Base {
 	 */
 	public function getUserAccessTokenIsExpire() {
 		if(!$this->info) {
-			throw new \Exception('请先进行获取用户令牌操作');
+			throw new \weixin\Exception('请先进行获取用户令牌操作');
 		}
-		
+
 		$url = sprintf(API::IS_EXPIRE_USER_ACCESS_TOKEN, $this->info->access_token, $this->info->openid);
 		$result = json_decode($this->get($url));
 		if($result->errcode != 0) {
-			throw new \Exception($result->errmsg, $result->errcode);
+			throw new \weixin\Exception($result->errmsg, $result->errcode);
 		}
 		
 		return $result->errmsg != 'ok';
@@ -97,17 +97,17 @@ class User extends Base {
 	 */
 	public function getUserinfo($language = 'zh-CN') {
 		if(!$this->info) {
-			throw new \Exception('请先进行获取用户令牌操作');
+			throw new \weixin\Exception('请先进行获取用户令牌操作');
 		}
 		
-		if(empty($this->info->scope) || ($this->info->scope->scope != snsapi_userinfo)) {
-			throw new \Exception('获取用户信息权限不足');
+		if(empty($this->info->scope) || ($this->info->scope->scope != 'snsapi_userinfo')) {
+			throw new \weixin\Exception('获取用户信息权限不足');
 		}
 		
 		$url = sprintf(API::GET_ACCESS_TOKEN, $this->info->access_token, $this->info->openid, $language);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
-			throw new \Exception($result->errmsg, $result->errcode);
+			throw new \weixin\Exception($result->errmsg, $result->errcode);
 		}
 		
 		return $result;
