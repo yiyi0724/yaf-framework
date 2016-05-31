@@ -3,7 +3,7 @@
  * 微信用户登录
  * @access enychen
  */
-namespace\weixin\user;
+namespace \weixin\user;
 
 class Auth extends \weixin\Base {
 	/**
@@ -57,15 +57,15 @@ class Auth extends \weixin\Base {
 	 */
 	private function check() {
 		if(!$this->redirectUri) {
-			$this->throws('');
+			$this->throws(1200, '请设置回调地址');
 		}
 
 		if(!$this->scope || !in_array($this->scope, array('snsapi_userinfo', 'snsapi_base', 'snsapi_login'))) {
-			$this->throws();
+			$this->throws(1201, 'scope不正确');
 		}
 
 		if(!$this->state) {
-			$this->throws();
+			$this->throws(1202, '请设置state');
 		}
 	}
 	
@@ -77,7 +77,7 @@ class Auth extends \weixin\Base {
 		$this->check();
 		$url = sprintf(\weixin\API::USER_SCAN_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
 		header("Location: {$url}");
-		exit;	
+		exit();	
 	}
 
 	public function jsScan() {
@@ -88,8 +88,8 @@ class Auth extends \weixin\Base {
 	 * 公众号跳转登录
 	 */
 	public function jumpMp() {
-		$url = sprintf(\weixin\API::USER_MP_LOGIN, $this->appid, urlencode($redirectUri), $scope, $state);
-		header('location:' . $requestUrl);
+		$url = sprintf(\weixin\API::USER_MP_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
+		header("Location: {$url}");
 		exit();
 	}
 
