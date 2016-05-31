@@ -5,7 +5,7 @@
  * @author enychen
  *
  */
-class CaptchaController extends \Base\AdminController {
+class CaptchaController extends \base\AdminController {
 
 	/**
 	 * 后台登录验证码获取

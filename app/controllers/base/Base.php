@@ -102,7 +102,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return void
 	 */
 	public final function redirect($url, $method = 'location', $other = array()) {
-		IS_AJAX ? $this->jsonp($url, 1010) : \Network\Location::$method($url, $other);
+		IS_AJAX ? $this->jsonp($url, 1010) : \network\Location::$method($url, $other);
 	}
 
 	/**
@@ -128,7 +128,7 @@ abstract class BaseController extends Controller_Abstract {
 				return array();
 			}
 			$rules = $controller::$action();
-			$formLib = new \Security\Form();
+			$formLib = new \security\Form();
 			$formLib->setRequestMethod($request->getMethod());
 			$formLib->setRules($rules);
 			$formLib->setParams($params);

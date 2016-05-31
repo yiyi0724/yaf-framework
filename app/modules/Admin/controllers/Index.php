@@ -1,6 +1,6 @@
 <?php
 
-class IndexController extends \Base\AdminController {
+class IndexController extends \base\AdminController {
 
 	/**
 	 * 后台首页

@@ -320,4 +320,29 @@ abstract class Base {
 
 		return $result;
 	}
+
+	/**
+	 * 微信来源合法性检查
+	 * @param string $signature 微信加密签名
+	 * @param string $timestamp 时间戳
+	 * @param string $nonce	 	随机数
+	 * @return boolean
+	 */
+	public function checkSignature($signature, $timestamp, $nonce, $token) {
+		$signArr = array($token, $timestamp, $nonce);
+		sort($signArr, SORT_STRING);
+		$signArr = sha1(implode($signArr));
+		return $signArr === $signature;
+	}
+
+	/**
+	 * 获取参数
+	 */
+	public function getParams($signature, $timestamp, $nonce, $token) {
+		if(!$this->checkSignature($signature, $timestamp, $nonce, $token)) {
+			throw new \weixin\Exception('出错了');	
+		}
+
+		return $this->xmlDecode(file_get_contents('php://input'));
+	}
 }

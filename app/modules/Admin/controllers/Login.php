@@ -4,7 +4,7 @@
  * 登录登出控制器
  * @author enychen
  */
-class LoginController extends \Base\AdminController {
+class LoginController extends \base\AdminController {
 
 	/**
 	 * 登录页面

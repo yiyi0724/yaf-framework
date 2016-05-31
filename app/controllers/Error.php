@@ -4,7 +4,7 @@
  * 错误异常处理控制器
  * @author enychen
  */
-class ErrorController extends \Base\BaseController {
+class ErrorController extends \base\BaseController {
 
 	/**
 	 * 公共错误处理方法

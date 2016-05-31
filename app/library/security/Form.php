@@ -4,7 +4,7 @@
  * 表单检查类
  * @author enychen
  */
-namespace Security;
+namespace security;
 
 class Form {
 

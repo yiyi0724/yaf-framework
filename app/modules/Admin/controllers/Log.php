@@ -1,6 +1,6 @@
 <?php
 
-class LogController extends \Base\AdminController {
+class LogController extends \base\AdminController {
 
 	/**
 	 * 用户首页

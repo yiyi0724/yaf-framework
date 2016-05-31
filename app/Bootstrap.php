@@ -45,7 +45,7 @@ class Bootstrap extends Bootstrap_Abstract {
 		// 路由对象
 		$router = $dispatcher->getRouter();
 		// 自定义路由协议
-		$router->addRoute('enyRouter', new \Traits\Route());
+		$router->addRoute('enyRouter', new \traits\Route());
 		// 路由重写正则
 		$router->addConfig(new Ini(CONF_PATH . 'route.ini'));
 	}
@@ -56,7 +56,7 @@ class Bootstrap extends Bootstrap_Abstract {
 	 * @return void
 	 */
 	public function _initView(Dispatcher $dispatcher) {
-		$dispatcher->setView(new \Traits\ViewInterface());
+		$dispatcher->setView(new \traits\ViewInterface());
 	}
 
 	/**

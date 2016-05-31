@@ -40,17 +40,17 @@ abstract class AdminController extends BaseController {
 			if(ADMIN_IP != \Network\IP::get() || (ADMIN_LASTTIME <= (time() - 900))) {
 				$this->redirect('/admin/login/logout');
 			}
-			
+
 			// 更新用户上次使用时间
 			$this->getSession()->set('admin.lasttime', time());
-			
+
 			// 权限检查
 			$adminMenuModel = new \Enychen\AdminMenuModel();
 			$id = $adminMenuModel->hasPermission(CONTROLLER, ACTION);
 			if(ADMIN_RULES != '*' && !in_array($id, explode(',', ADMIN_RULES))) {
 				IS_AJAX ? $this->jsonp('您没有操作权限') : $this->notify(array('forbidden'=>'您没有操作权限'));
 			}
-			
+
 			// 获取用户能操作的权限
 			if(!IS_AJAX) {
 				$menus = $adminMenuModel->getUserMenus(ADMIN_RULES);

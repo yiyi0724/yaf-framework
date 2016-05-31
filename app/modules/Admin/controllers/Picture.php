@@ -1,6 +1,6 @@
 <?php
 
-class PictureController extends \Base\AdminController
+class PictureController extends \base\AdminController
 {
 	/**
 	 * 后台首页

@@ -11,10 +11,22 @@ abstract class Base extends \weixin\Base {
 	const JSAPI_TICKET = 'weixin.jsapi.ticket';
 
 	/**
-	 * js_api_ticket票据
+	 * jsapi_ticket票据
 	 * @var string
 	 */
 	protected $jsApiTicket = NULL;
+
+	/**
+	 * 生成jsapi_ticket需要的当前url地址，不包括#部分
+	 * @var string
+	 */
+	protected $url;
+
+	/**
+	 * jsapi_ticket要验证的接口
+	 * @var array
+	 */
+	protected $jsApiList = array();
 	
 	/**
 	 * 设置jsapi_ticket票据
@@ -52,17 +64,41 @@ abstract class Base extends \weixin\Base {
 	}
 
 	/**
-	 * 获取jsconfig信息
-	 * @param string $url 当前页面的url地址, 不包括#部分
-	 * @return array
+	 * 生成js_ticket需要的当前url地址，不包括#部分
+	 * @var string $url url地址
+	 * @return void
 	 */
-	public function getConfig($url) {
-		$jsConfig['timestamp'] = time();
-		$jsConfig['noncestr'] = $this->strShuffle();
-		$jsConfig['jsapi_ticket'] = $this->getJsTicket();
-		$jsConfig['url'] = $url;
-		$jsConfig['sign'] = sha1("jsapi_ticket={$jsConfig['jsapi_ticket']}&noncestr={$jsConfig['noncestr']}&timestamp={$jsConfig['timestamp']}&url={$jsConfig['url']}");
+	public function setUrl($url) {
+		$this->url = $url;
+	}
 
-		return $jsConfig;
+	/**
+	 * jsapi_ticket要验证的接口
+	 * @param array $jsApiList 接口名称
+	 * @return void
+	 */
+	public function setJsApiList(array $jsApiList) {
+		$this->jsApiList = array_value($jsApiList);
+	}	
+
+	/**
+	 * 获取wxConfig信息
+	 * @return string
+	 */
+	public function getWxConfig() {
+		if(!$this->url) {
+			throw new \weixin\Exception('请先设置url地址', 1101);
+		}
+
+		$wxConfig['appId'] = $this->appid;
+		$wxConfig['timestamp'] = time();
+		$wxConfig['nonceStr'] = $this->strShuffle();
+		$wxConfig['jsapi_ticket'] = $this->getJsTicket();
+		$signature = "jsapi_ticket={$wxConfig['jsapi_ticket']}&noncestr={$wxConfig['noncestr']}";
+		$signature .= "&timestamp={$wxConfig['timestamp']}&url={$this->url}";
+		$wxConfig['signature']  = sha1($signature);
+		$wxConfig['jsApiList'] = json_encode($this->jsApiList);
+
+		return json_encode($wxConfig);
 	}
 }

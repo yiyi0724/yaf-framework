@@ -7,7 +7,7 @@
  */
 namespace weixin\user;
 
-class User extends Base {
+class User extends \weixin\Base {
 
 	/**
 	 * 获取的用户信息, 成功获取后, 将包含如下字段（snsapi_userinfo方式，如果是snsapi_base，则只有获取到access_token，openid）
@@ -19,7 +19,12 @@ class User extends Base {
 	 * @var \stdClass
 	 */
 	protected $info = NULL;
-	
+
+	/**
+	 * web网站用户
+	 * @param unknown $appid
+	 * @param unknown $appSecret
+	 */
 	public function __construct($appid, $appSecret) {
 		$this->setAppid($appid);
 		$this->setAppSecret($appSecret);

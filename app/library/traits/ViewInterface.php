@@ -4,7 +4,7 @@
  * 自定义视图接口
  * @author enychen
  */
-namespace Traits;
+namespace traits;
 
 use \Yaf\Application;
 use \Yaf\View\Simple;

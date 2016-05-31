@@ -1,16 +1,16 @@
 [product]
 ;线上环境配置
 ;[前台样式]
-www_domain = "http://www.enychen.com/"
-www_style = "/www/css/"
-www_script = "/www/js/"
-www_image = "/www/img/"
+www_domain 		= "http://www.enychen.com/"
+www_style 		= "/www/css/"
+www_script 		= "/www/js/"
+www_image 		= "/www/img/"
 
 ;[后台样式]
-admin_domain = "http://www.enychen.com/"
-admin_style = "/admin/style/"
-admin_script = "/admin/script/"
-admin_image = "/admin/image/"
+admin_domain 	= "http://www.enychen.com/"
+admin_style 	= "/admin/style/"
+admin_script 	= "/admin/script/"
+admin_image 	= "/admin/image/"
 
 
 [test:product]
@@ -19,5 +19,5 @@ admin_image = "/admin/image/"
 
 [develop:product]
 ;开发环境配置
-www_domain = "http://www.local.enychen.com/"
-admin_domain = "http://www.local.enychen.com/"
+www_domain 		= "http://www.local.enychen.com/"
+admin_domain 	= "http://www.local.enychen.com/"

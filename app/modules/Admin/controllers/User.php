@@ -1,6 +1,6 @@
 <?php
 
-class UserController extends \Base\AdminController {
+class UserController extends \base\AdminController {
 
 	/**
 	 * 用户首页

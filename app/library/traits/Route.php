@@ -4,7 +4,7 @@
  * 以/模块/控制器/方法的路由调用方式
  * @author enychen
  */
-namespace Traits;
+namespace traits;
 
 use \Yaf\Application;
 use \Yaf\Route_Interface;
@@ -28,15 +28,24 @@ class Route implements Route_Interface {
 	protected $modules = array();
 
 	/**
+	 * 模块分配信息
+	 * @var array
+	 */
+	protected $moduleType;
+
+	/**
 	 * 构造函数，获取所有模块信息并删除默认模块
 	 * @return void
 	 */
 	public function __construct() {
+		// 模块信息
 		$this->modules = Application::app()->getModules();
 		unset($this->modules[array_search('Index', $this->modules)]);
 		foreach($this->modules as $key=>$module) {
 			$this->modules[$key] = strtolower($module);
 		}
+		// 路由分析信息
+		$this->moduleType = Application::app()->getConfig()->get('application.route.type');
 	}
 
 	/**
@@ -45,12 +54,20 @@ class Route implements Route_Interface {
 	 * @return boolean TRUE表示和其他路由协议共存
 	 */
 	public function route($request) {
+		// 解析url信息
 		$uri = $request->getRequestUri();
-		echo '<pre>';
-		print_r($request->getServer('HTTP_HOST'));
-		exit;
 		$uri = explode('/', trim($request->getRequestUri(), '/'));
 		$module = strtolower($uri[0]);
+		
+		// 二级域名还是path信息
+		if($this->moduleType == 'domain') {
+			$module = explode('.', $request->getServer('HTTP_HOST'));
+			if(count($module) > 2) {
+				$module = strtolower($module[0]);
+			}
+		} else {
+			$module = strtolower($uri[0]);
+		}
 
 		if(in_array($module, $this->modules)) {
 			$this->route['module'] = $module;

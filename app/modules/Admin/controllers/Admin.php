@@ -1,6 +1,6 @@
 <?php
 
-class AdminController extends \Base\AdminController {
+class AdminController extends \base\AdminController {
 
 	/**
 	 * 管理员列表

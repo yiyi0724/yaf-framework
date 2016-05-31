@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 文件
+ * 文件类型
  */
 namespace File;
 

@@ -4,7 +4,7 @@
  * 水印类
  * @author enychen
  */
-namespace Image;
+namespace image;
 
 class Watermark {
 
