@@ -7,7 +7,7 @@
  */
 namespace weixin\user;
 
-class User extends \weixin\Base {
+class Base extends \weixin\Base {
 
 	/**
 	 * 获取的用户信息, 成功获取后, 将包含如下字段（snsapi_userinfo方式，如果是snsapi_base，则只有获取到access_token，openid）
@@ -44,21 +44,7 @@ class User extends \weixin\Base {
 		exit();
 	}
 
-	/**
-	 * 获取用户网页授权access_token
-	 * @param string $code 通过getUserAuthCode方法获取的结果code
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function getUserAccessToken($code) {
-		$url = sprintf(API::GET_UESR_ACCESS_TOKEN, $this->appid, $this->appSecret, $code);
-		$result = json_decode($this->get($url));
-		if(isset($result->errcode)) {
-			throw new \weixin\Exception($result->errmsg, $result->errcode);
-		}
-		
-		$this->info = $result;
-	}
+
 	
 	/**
 	 * 刷新用户的access_token

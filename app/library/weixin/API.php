@@ -12,9 +12,6 @@ class API {
 	// 微信自动帮助生成二维码图片地址
 	const CREATE_QRCODE = 'http://paysdk.weixin.qq.com/example/qrcode.php?data=%s';
 	
-	// 获取用户的access_token
-	const GET_UESR_ACCESS_TOKEN = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code';
-	
 	// 刷新用户的acess_token
 	const REFRESH_USER_ACCESS_TOKEN = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s';
 	
@@ -29,6 +26,10 @@ class API {
 	
 	// 用户扫码登录
 	const USER_SCAN_LOGIN = 'https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect';
+
+	// 获取用户的access_token
+	const UESR_ACCESS_TOKEN = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code';
+	
 	
 	// 支付统一下单
 	const PAY_UNIFIED_ORDER = 'https://api.mch.weixin.qq.com/pay/unifiedorder';

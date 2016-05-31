@@ -5,12 +5,13 @@
  */
 namespace \weixin\user;
 
-class Auth extends \weixin\Base {
-	/**
-	 * 登录信息
-	 * @var array
-	 */
-	private $login = array();
+class Auth extends Base {
+
+	private $scope = NULL;
+
+	private $redirectUri = NULL;
+
+	private $state = NULL;
 
 	/**
 	 * 登录信息
@@ -29,7 +30,7 @@ class Auth extends \weixin\Base {
 	 * @param unknown $scope
 	 */
 	public function setScope($scope) {
-		$this->login['scope'] = $scope;
+		$this->scope = $scope;
 	}
 
 	/**
@@ -38,7 +39,7 @@ class Auth extends \weixin\Base {
 	 * @return void
 	 */
 	public function setState($state) {
-		$this->login['state'] = $state;
+		$this->state = $state;
 	}
 
 	/**
@@ -47,7 +48,7 @@ class Auth extends \weixin\Base {
 	 * @return void
 	 */
 	public function setRedirectUri($redirectUri) {
-		$this->login['redirectUri'] = urlencode($redirectUri);
+		$this->redirectUri = urlencode($redirectUri);
 	}
 
 	/**
