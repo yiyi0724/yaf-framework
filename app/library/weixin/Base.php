@@ -345,4 +345,14 @@ abstract class Base {
 
 		return $this->xmlDecode(file_get_contents('php://input'));
 	}
+
+	/**
+	 * 抛出异常
+	 * @param int $code 错误代码
+	 * @param string $message 错误信息
+	 * @return void
+	 */
+	protected function throws($code, $message) {
+		throw new \weixin\Exception($message, $code);
+	}
 }

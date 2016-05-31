@@ -8,7 +8,7 @@ namespace\weixin\user;
 class Auth extends \weixin\Base {
 	/**
 	 * 登录信息
-	 * @var unknown
+	 * @var array
 	 */
 	private $login = array();
 
@@ -49,15 +49,13 @@ class Auth extends \weixin\Base {
 	public function setRedirectUri($redirectUri) {
 		$this->login['redirectUri'] = urlencode($redirectUri);
 	}
-
+	
 	/**
 	 * 执行登录
 	 * @return void
 	 */
 	public function jumpScan() {
-		$url = sprintf(\weixin\API::USER_AUTHCODE_LOGIN, $this->appid, urlencode($redirectUri), $scope, $state);
-		header('location:' . $requestUrl);
-		exit();
+		
 	}
 
 	public function jsScan() {
@@ -65,9 +63,18 @@ class Auth extends \weixin\Base {
 	}
 
 	/**
-	 * 公众号
+	 * 公众号跳转登录
 	 */
-	public function mediePlatform() {
-		
+	public function jumpMp() {
+		$url = sprintf(\weixin\API::USER_AUTHCODE_LOGIN, $this->appid, urlencode($redirectUri), $scope, $state);
+		header('location:' . $requestUrl);
+		exit();
+	}
+
+	/**
+	 * 公众号无需跳转获取基本信息
+	 */
+	public function baseMp() {
+
 	}
 }
