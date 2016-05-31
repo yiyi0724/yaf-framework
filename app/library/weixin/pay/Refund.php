@@ -22,9 +22,7 @@ class Refund extends Base {
 	 * @return void
 	 */
 	public function __construct($appid, $mchid, $key) {
-		$this->setAppid($appid);
-		$this->setMchid($mchid);
-		$this->setKey(key);
+		parent::__construct($appid, $mchid, $key);
 		$this->setIsUseCert(TRUE);
 	}
 	
@@ -108,23 +106,23 @@ class Refund extends Base {
 	public function refundOrder() {
 		// 检查要查询的订单号
 		if(empty($this->refund['transaction_id']) && empty($this->refund['out_trade_no'])) {
-			throw new \weixin\Exception('请设置微信或者我司的订单号', 1020);
+			$this->throws(1020, '请设置微信或者我司的订单号');
 		}
 		// 订单退款号检查
 		if(empty($this->refund['out_refund_no'])) {
-			throw new \weixin\Exception('请设置退款订单号', 1021);
+			$this->throws(1021, '请设置退款订单号');
 		}
 		// 总金额检查
 		if(empty($this->refund['total_fee'])) {
-			throw new \weixin\Exception('请设置总金额', 1022);
+			$this->throws(1022, '请设置总金额');
 		}
 		// 退款金额检查
 		if(empty($this->refund['refund_fee'])) {
-			throw new \weixin\Exception('请设置退款金额', 1023);
+			$this->throws(1023, '请设置退款金额');
 		}
 		// 操作人员检查
 		if(empty($this->refund['op_user_id'])) {
-			throw new \weixin\Exception('请设置操作人员信息', 1024);
+			$this->throws(1024, '请设置操作人员信息');
 		}
 
 		// 拼接公共参数

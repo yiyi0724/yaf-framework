@@ -25,7 +25,7 @@ class API {
 	const IS_EXPIRE_USER_ACCESS_TOKEN = 'https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s';
 	
 	// 微信公众号登录
-	const USER_AUTHCODE_LOGIN = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect';
+	const USER_MP_LOGIN = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect';
 	
 	// 用户扫码登录
 	const USER_SCAN_LOGIN = 'https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect';

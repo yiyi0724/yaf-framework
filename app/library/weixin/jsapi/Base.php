@@ -42,7 +42,7 @@ abstract class Base extends \weixin\Base {
 		$url = sprintf(\weixin\API::GET_JSAPI_TICKET, $this->accessToken);
 		$result = json_decode($this->get($url));
 		if($result->errcode != 0) {
-			throw new \weixin\Exception($result->errmsg, $result->errcode);
+			$this->throws($result->errcode, $result->errmsg);
 		}
 	
 		// 缓存access_token
@@ -87,7 +87,7 @@ abstract class Base extends \weixin\Base {
 	 */
 	public function getWxConfig() {
 		if(!$this->url) {
-			throw new \weixin\Exception('请先设置url地址', 1101);
+			$this->throws(1101, '请先设置url地址');
 		}
 
 		$wxConfig['appId'] = $this->appid;

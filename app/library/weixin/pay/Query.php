@@ -65,7 +65,7 @@ class Query extends Base {
 			}
 		}
 		if(empty($isPass)) {
-			throw new \weixin\Exception('请设置订单号', 1010);
+			$this->throws(1010, '请设置订单号');
 		}
 
 		$this->query['appid'] = $this->appid;

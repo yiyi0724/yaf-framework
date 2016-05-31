@@ -29,7 +29,7 @@ abstract class Base extends \weixin\Base {
 	protected function verify($result) {
 		// 数据来源检查
 		if(!$result) {
-			throw new \weixin\Exception('来源非法', 1090);
+			$this->throws(1090, '来源非法');
 		}
 
 		// 把数据转成xml
@@ -37,17 +37,17 @@ abstract class Base extends \weixin\Base {
 
 		// 签名检查
 		if($this->sign($result) !== $result['sign']) {
-			throw new \weixin\Exception('签名不正确', 1091);
+			$this->throws(1091, '签名不正确');
 		}
 
 		// 微信方通信是否成功
 		if($result['return_code'] != 'SUCCESS') {
-			throw new \weixin\Exception($data['return_msg'], 1092);
+			$this->throws(1092, $data['return_msg']);
 		}
 		
 		// 微信业务处理是否失败
 		if(isset($result['result_code']) && $result['result_code'] == 'FAIL') {
-			throw new \weixin\Exception($result['err_code_des'], 1093);
+			$this->throws(1093, $result['err_code_des']);
 		}
 
 		return $result;

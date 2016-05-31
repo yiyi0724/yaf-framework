@@ -49,13 +49,35 @@ class Auth extends \weixin\Base {
 	public function setRedirectUri($redirectUri) {
 		$this->login['redirectUri'] = urlencode($redirectUri);
 	}
+
+	/**
+	 * 数据检查
+	 * @return void
+	 * @throws \weixin\Exception
+	 */
+	private function check() {
+		if(!$this->redirectUri) {
+			$this->throws('');
+		}
+
+		if(!$this->scope || !in_array($this->scope, array('snsapi_userinfo', 'snsapi_base', 'snsapi_login'))) {
+			$this->throws();
+		}
+
+		if(!$this->state) {
+			$this->throws();
+		}
+	}
 	
 	/**
-	 * 执行登录
+	 * 执行网页扫码跳转登录
 	 * @return void
 	 */
 	public function jumpScan() {
-		
+		$this->check();
+		$url = sprintf(\weixin\API::USER_SCAN_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
+		header("Location: {$url}");
+		exit;	
 	}
 
 	public function jsScan() {
@@ -66,7 +88,7 @@ class Auth extends \weixin\Base {
 	 * 公众号跳转登录
 	 */
 	public function jumpMp() {
-		$url = sprintf(\weixin\API::USER_AUTHCODE_LOGIN, $this->appid, urlencode($redirectUri), $scope, $state);
+		$url = sprintf(\weixin\API::USER_MP_LOGIN, $this->appid, urlencode($redirectUri), $scope, $state);
 		header('location:' . $requestUrl);
 		exit();
 	}

@@ -47,7 +47,7 @@ class Pay extends Base {
 	public function payment() {
 		// 生成订单
 		if(!$this->unifiedOrder) {
-			throw new \weixin\Exception('请设置统一下单对象', 1100);
+			$this->throws(1100, '请设置统一下单对象');
 		}
 		$result = $this->unifiedOrder->payment();
 

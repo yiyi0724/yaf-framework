@@ -158,7 +158,7 @@ abstract class Base {
 		$url = sprintf(API::GET_ACCESS_TOKEN, $this->appid, $this->appSecret);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
-			throw new Exception($result->errmsg, $result->errcode);
+			$this->throws($result->errcode, $result->errmsg);
 		}
 		
 		// 缓存access_token
@@ -203,7 +203,7 @@ abstract class Base {
 		libxml_disable_entity_loader(true);
 		$result = @simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if(!$result) {
-			throw new Exception('XML数据无法解析', 1990);
+			$this->throws(1990, 'XML数据无法解析');
 		}
 		return json_decode(json_encode($result), TRUE);
 	}
@@ -336,11 +336,15 @@ abstract class Base {
 	}
 
 	/**
-	 * 获取参数
+	 * 获取微信回调后的参数
+	 * @param string $signature 微信加密签名
+	 * @param string $timestamp 时间戳
+	 * @param string $nonce	 	随机数
+	 * @return array 解析后的数据 
 	 */
 	public function getParams($signature, $timestamp, $nonce, $token) {
 		if(!$this->checkSignature($signature, $timestamp, $nonce, $token)) {
-			throw new \weixin\Exception('出错了');	
+			$this->throws(1991, '签名不正确');	
 		}
 
 		return $this->xmlDecode(file_get_contents('php://input'));

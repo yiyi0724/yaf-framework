@@ -31,7 +31,7 @@ class Close extends Base {
 	public function closeOrder() {
 		// 存在微信订单号，则删除我司订单号
 		if($this->close['out_trade_no']) {
-			throw new \weixin\Exception('请设置设置订单号', 1031);
+			$this->throws(1031, '请设置设置订单号');
 		}
 		
 		$this->close['appid'] = $this->appid;
