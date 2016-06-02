@@ -27,36 +27,6 @@ abstract class Base {
 	protected $appSecret = NULL;
 
 	/**
-	 * 商户号id
-	 * @var string
-	 */
-	protected $mchid = NULL;
-
-	/**
-	 * 商户密钥
-	 * @var string
-	 */
-	protected $key = NULL;
-
-	/**
-	 * 代理服务器信息
-	 * @var string
-	 */
-	protected $proxyHost = NULL;
-
-	/**
-	 * 代理服务器端口信息
-	 * @var int
-	 */
-	protected $proxyPort = NULL;
-
-	/**
-	 * 是否使用证书
-	 * @var bool
-	 */
-	protected $isUseCert = FALSE;
-
-	/**
 	 * 公众号access_token信息
 	 * @var string
 	 */
@@ -69,75 +39,54 @@ abstract class Base {
 	protected $storage = NULL;
 
 	/**
-	 * 设置公众号id
+	 * 设置公众号appiid
 	 * @param string $appid 公众号appid
 	 * @return void
 	 */
-	protected function setAppid($appid) {
+	public function setAppid($appid) {
 		$this->appid = $appid;
 	}
 
 	/**
-	 * 设置公众号Secret
+	 * 获取公众号appid
+	 * @return string
+	 */
+	public function getAppid() {
+		return $this->appid;
+	}
+
+	/**
+	 * 设置公众号appSecret
 	 * @param string $appSecret 公众号Secret
 	 * @return void
 	 */
-	protected function setAppSecret($appSecret) {
+	public function setAppSecret($appSecret) {
 		$this->appSecret = $appSecret;
 	}
 
+	/**
+	 * 获取公众号appSecret
+	 * @return string
+	 */
+	public function getAppSecret() {
+		return $this->appSecret;
+	}
+	
 	/**
 	 * 设置存储对象
 	 * @param \storage\Adapter $storage 存储对象
 	 * @return void
 	 */
-	protected function setStorage($storage) {
+	public function setStorage($storage) {
 		$this->storage = $storage;
 	}
 
 	/**
-	 * 设置商户密钥
-	 * @param string $key 密钥串
-	 * @return void
+	 * 获取存储对象
+	 * @return \storage\Adapter
 	 */
-	protected function setKey($key) {
-		$this->key = $key;
-	}
-
-	/**
-	 * 设置商户id
-	 * @param string $mchid 商户id
-	 * @return void
-	 */
-	protected function setMchid($mchid) {
-		$this->mchid = $mchid;
-	}
-
-	/**
-	 * 设置代理服务器信息
-	 * @param string $proxyHost 理服务器ip地址
-	 * @return void
-	 */
-	protected function setProxyHost($proxyHost) {
-		$this->proxyHost = $proxyHost;
-	}
-
-	/**
-	 * 设置代理服务器端口信息
-	 * @param string $proxyPort 理服务器端口地址
-	 * @return void
-	 */
-	protected function setProxyPort($proxyPort) {
-		$this->proxyPort = $proxyPort;
-	}
-
-	/**
-	 * 是否使用ssl证书
-	 * @param bool $useCert 是否使用ssl证书
-	 * @return void
-	 */
-	protected function setIsUseCert($isUseCert) {
-		$this->isUseCert = $isUseCert;
+	public function getStorage() {
+		return $this->storage;
 	}
 
 	/**
@@ -147,20 +96,20 @@ abstract class Base {
 	 */
 	protected function setAccessToken() {
 		// 缓存appid的键
-		$cacheKey = sprintf(self::ACCESS_TOKEN_KEY, $this->appid);
+		$cacheKey = sprintf(self::ACCESS_TOKEN_KEY, $this->getAppid());
 
 		// 之前获取的还没有到期
 		if($this->accessToken = $this->storage->get($cacheKey)) {
 			return TRUE;
 		}
-		
+
 		// 走微信接口进行请求
-		$url = sprintf(API::GET_ACCESS_TOKEN, $this->appid, $this->appSecret);
+		$url = sprintf(API::GET_ACCESS_TOKEN, $this->getAppid(), $this->getAppSecret());
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
 			$this->throws($result->errcode, $result->errmsg);
 		}
-		
+
 		// 缓存access_token
 		$this->storage->set($cacheKey, $result->access_token, $result->expires_in);
 		
@@ -205,12 +154,12 @@ abstract class Base {
 		if(!$result) {
 			$this->throws(1990, 'XML数据无法解析');
 		}
-		return json_decode(json_encode($result), TRUE);
+		return json_decode(json_encode($result));
 	}
 
 	/**
 	 * 生成sign签名
-	 * @param array $params 原始数据
+	 * @param array|\stdClass $params 原始数据
 	 * @return string
 	 */
 	protected function sign($params) {
@@ -333,21 +282,6 @@ abstract class Base {
 		sort($signArr, SORT_STRING);
 		$signArr = sha1(implode($signArr));
 		return $signArr === $signature;
-	}
-
-	/**
-	 * 获取微信回调后的参数
-	 * @param string $signature 微信加密签名
-	 * @param string $timestamp 时间戳
-	 * @param string $nonce	 	随机数
-	 * @return array 解析后的数据 
-	 */
-	public function getParams($signature, $timestamp, $nonce, $token) {
-		if(!$this->checkSignature($signature, $timestamp, $nonce, $token)) {
-			$this->throws(1991, '签名不正确');	
-		}
-
-		return $this->xmlDecode(file_get_contents('php://input'));
 	}
 
 	/**

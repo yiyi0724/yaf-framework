@@ -165,31 +165,31 @@ class UnifiedOrder extends Base {
 	 */
 	public function payment() {
 		// 订单号检查
-		if(!$this->order['out_trade_no']) {
+		if(empty($this->order['out_trade_no'])) {
 			$this->throws(1000, '请设置订单号');
 		}
 		// 价格检查
-		if(!$this->order['total_fee']) {
+		if(empty($this->order['total_fee'])) {
 			$this->throws(1001, '请设置价格');
 		}
 		// 商品描述信息检查
-		if(!$this->order['body']) {
+		if(empty($this->order['body'])) {
 			$this->throws(1002, '请设置商品描述信息');
 		}
 		// 交易类型检查
-		if(!in_array($this->order['trade_type'], array('JSAPI', 'NATIVE', 'APP', 'WAP'))) {
+		if(empty($this->order['trade_type']) || !in_array($this->order['trade_type'], array('JSAPI', 'NATIVE', 'APP', 'WAP'))) {
 			$this->throws(1003, "微信不支持{$this->order['trade_type']}交易类型");
 		}
 		// 设置交易ip地址
-		if(!$this->order['spbill_create_ip']) {
+		if(empty($this->order['spbill_create_ip'])) {
 			$this->order['spbill_create_ip'] = $_SERVER['REMOTE_ADDR'];
 		}
 		// JSAPI交易类型openid检查
-		if($this->order['trade_type'] == 'JSAPI' && !$this->order['openid']) {
+		if($this->order['trade_type'] == 'JSAPI' && empty($this->order['openid'])) {
 			$this->throws(1004, '请设置openid');
 		}
 		// NAVITE交易类型product_id检查
-		if($this->order['trade_type'] == 'NAVITE' && !$this->order['product_id']) {
+		if($this->order['trade_type'] == 'NAVITE' && empty($this->order['product_id'])) {
 			$this->throws(1005, '请设置product_id');
 		}
 		

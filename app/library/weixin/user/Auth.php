@@ -1,21 +1,34 @@
 <?php
 /**
- * 微信用户登录
+ * 微信用户登录认证
  * @access enychen
  */
 namespace \weixin\user;
 
 class Auth extends Base {
 
+	/**
+	 * 回调地址
+	 * @var string
+	 */
+	private $redirectUri = NULL;
+	
+	/**
+	 * 获取用户信息的作用域
+	 * @var string
+	 */
 	private $scope = NULL;
 
-	private $redirectUri = NULL;
-
+	/**
+	 * csrf防御值
+	 * @var string
+	 */
 	private $state = NULL;
 
 	/**
 	 * 登录信息
 	 * @param string $appid 公众号id
+	 * @return void
 	 */
 	public function __construct($appid) {
 		$this->setAppid($appid);
@@ -27,7 +40,7 @@ class Auth extends Base {
 	 * 	snsapi_base		直接跳转无需授权,只拿到用户的open_id
 	 * 	snsapi_login	网页扫码登录
 	 * @param string $scope 权限
-	 * @param unknown $scope
+	 * @return void
 	 */
 	public function setScope($scope) {
 		$this->scope = $scope;
@@ -81,23 +94,13 @@ class Auth extends Base {
 		exit();	
 	}
 
-	public function jsScan() {
-		
-	}
-
 	/**
 	 * 公众号跳转登录
+	 * @return void
 	 */
 	public function jumpMp() {
 		$url = sprintf(\weixin\API::USER_MP_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
 		header("Location: {$url}");
 		exit();
-	}
-
-	/**
-	 * 公众号无需跳转获取基本信息
-	 */
-	public function baseMp() {
-
 	}
 }

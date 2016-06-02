@@ -30,7 +30,6 @@ class API {
 	// 获取用户的access_token
 	const UESR_ACCESS_TOKEN = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code';
 	
-	
 	// 支付统一下单
 	const PAY_UNIFIED_ORDER = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
 	
