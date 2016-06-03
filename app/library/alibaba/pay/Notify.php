@@ -4,7 +4,7 @@
  * 回调通知检查
  * @author enychen
  */
-namespace alisdk\pay;
+namespace alibaba\pay;
 
 class Notify extends Base {
 

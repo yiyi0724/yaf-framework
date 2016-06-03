@@ -15,19 +15,19 @@ abstract class Base {
 	const ACCESS_TOKEN_KEY = 'weixin.access.token.%s';
 
 	/**
-	 * appid信息
+	 * 公众号appid
 	 * @var string
 	 */
 	protected $appid = NULL;
 
 	/**
-	 * appSecret信息
+	 * 公众号appSecret
 	 * @var string
 	 */
 	protected $appSecret = NULL;
 
 	/**
-	 * 公众号access_token信息
+	 * 公众号access_token
 	 * @var string
 	 */
 	protected $accessToken = NULL;
@@ -71,7 +71,7 @@ abstract class Base {
 	public function getAppSecret() {
 		return $this->appSecret;
 	}
-	
+
 	/**
 	 * 设置存储对象
 	 * @param \storage\Adapter $storage 存储对象
@@ -92,7 +92,6 @@ abstract class Base {
 	/**
 	 * 设置公众号的access_token
 	 * @return boolean
-	 * @throws \weixin\Exception
 	 */
 	protected function setAccessToken() {
 		// 缓存appid的键
@@ -146,7 +145,6 @@ abstract class Base {
 	 * 将xml字符串转成数组
 	 * @param string $xml xml字符串
 	 * @return array 解析后的数组
-	 * @throw \Exception
 	 */
 	protected function xmlDecode($xml) {
 		libxml_disable_entity_loader(true);
@@ -202,44 +200,24 @@ abstract class Base {
 	 */
 	protected function get($url) {
 		$ch = curl_init();
-		
-		// 初始化设置
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 500);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($curl, CURLOPT_URL, $url);
-		
-		// 如果有配置代理这里就设置代理
-		if($this->proxyHost && $this->proxyPort) {
-			curl_setopt($ch, CURLOPT_PROXY, $this->proxyHost);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxyPort);
-		}
-		
-		// 设置证书, cert 与 key 分别属于两个.pem文件
-		if($this->useCert) {
-			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
-			curl_setopt($ch, CURLOPT_SSLCERT, __DIR__ . '/apiclient_cert.pem');
-			curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
-			curl_setopt($ch, CURLOPT_SSLKEY, __DIR__ . '/apiclient_key.pem');
-		}
-		
+		curl_setopt($curl, CURLOPT_URL, $url);		
 		$result = curl_exec($curl);
 		curl_close($curl);
-		
 		return $result;
 	}
 
 	/**
 	 * 发送post请求
 	 * @param string $url  url地址
-	 * @param string $params 需要post的xml字符串数据
+	 * @param string $params 需要post的字符串数据
 	 * @return string
 	 */
 	protected function post($url, $params) {
 		$ch = curl_init();
-
-		// 初始化设置
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 500);
@@ -248,25 +226,8 @@ abstract class Base {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-
-		// 如果有配置代理这里就设置代理
-		if($this->proxyHost && $this->proxyPort) {
-			curl_setopt($ch, CURLOPT_PROXY, $this->proxyHost);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxyPort);
-		}
-
-		// 设置证书, cert 与 key 分别属于两个.pem文件
-		if($this->isUseCert) {
-			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
-			curl_setopt($ch, CURLOPT_SSLCERT, __DIR__ . '/certificate/apiclient_cert.pem');
-			curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
-			curl_setopt($ch, CURLOPT_SSLKEY, __DIR__ . '/certificate/apiclient_key.pem');
-		}
-
-		// 获取结果
 		$result = curl_exec($ch);
 		curl_close($ch);
-
 		return $result;
 	}
 
@@ -275,6 +236,7 @@ abstract class Base {
 	 * @param string $signature 微信加密签名
 	 * @param string $timestamp 时间戳
 	 * @param string $nonce	 	随机数
+	 * @param string $token		在微信平台设定的token值
 	 * @return boolean
 	 */
 	public function checkSignature($signature, $timestamp, $nonce, $token) {

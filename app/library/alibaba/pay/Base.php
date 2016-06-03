@@ -4,9 +4,9 @@
  * 支付宝SDK基类
  * @author enychen
  */
-namespace alisdk\pay;
+namespace alibaba\pay;
 
-abstract class Base extends \alisdk\Base {
+abstract class Base extends \alibaba\Base {
 
 	/**
 	 * 合作者id（appid）

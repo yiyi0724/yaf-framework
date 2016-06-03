@@ -4,7 +4,7 @@
  * 阿里SDK基类异常信息
  * @author enychen
  */
-namespace alisdk;
+namespace alibaba;
 
 class Exception extends \Exception {
 }
