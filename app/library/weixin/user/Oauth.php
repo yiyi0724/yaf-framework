@@ -5,7 +5,7 @@
  */
 namespace \weixin\user;
 
-class Auth extends Base {
+class Oauth extends Base {
 
 	/**
 	 * 回调地址
