@@ -19,9 +19,13 @@ class Bootstrap extends Bootstrap_Abstract {
 	 */
 	public function _initRuntime(Dispatcher $dispatcher) {
 		if($runtime = Application::app()->getConfig()->get('runtime')) {
-			foreach($runtime as $prefix=>$suffix) {
-				foreach($suffix as $option=>$value) {
-					ini_set("{$prefix}.{$option}", $value);
+			foreach($runtime->toArray() as $prefix=>$suffix) {
+				if(is_array($suffix)) {
+					foreach($suffix as $option=>$value) {
+						ini_set("{$prefix}.{$option}", $value);
+					}
+				} else {
+					ini_set($prefix, $suffix);
 				}
 			}
 		}

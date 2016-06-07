@@ -28,7 +28,7 @@ class Route implements Route_Interface {
 	protected $modules = array();
 
 	/**
-	 * 模块分配信息
+	 * 模块处理信息
 	 * @var array
 	 */
 	protected $moduleType;

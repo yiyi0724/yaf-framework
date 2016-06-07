@@ -35,7 +35,7 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('IS_POST', $request->isPost());
 		define('IS_PUT', $request->isPut());
 		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
-		
+
 		// 模块信息常量定义
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());

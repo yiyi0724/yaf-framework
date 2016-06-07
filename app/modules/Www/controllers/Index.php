@@ -5,19 +5,12 @@
  * @author enychen
  *
  */
-class IndexController extends \Base\WwwController {
+class IndexController extends \base\WwwController {
 
 	/**
 	 * 网站首页
 	 */
 	public function indexAction() {
-		$adminGroupModel = new \Enychen\AdminGroupModel();
-		$all = $adminGroupModel->explain();
-		
-		echo '<pre>';
-		print_r($all);
-		exit;
-		
-		exit();
+		throw new \Exception('有问题请找警察');
 	}
 }

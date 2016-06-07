@@ -13,7 +13,7 @@ runtime.date.timezone 					= "PRC"
 runtime.session.save_handler 			= "redis"
 runtime.session.save_path 				= "tcp://127.0.0.1:6379?database=0&timeout=30&auth="
 runtime.session.cookie_domain 			= ".enychen.com"
-runtime.session.gc_maxlifetime 			= 0
+;runtime.session.gc_maxlifetime 		= 0
 runtime.session.cookie_lifetime			= 0
 runtime.session.cookie_httponly 		= 1
 

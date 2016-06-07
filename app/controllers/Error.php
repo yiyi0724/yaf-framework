@@ -11,59 +11,66 @@ class ErrorController extends \base\BaseController {
 	 * @return boolean
 	 */
 	public function errorAction() {
-		// 获取异常
 		$exception = $this->getRequest()->getException();
-		
-		$class = get_class($exception);
-		
+		switch(get_class($exception)) {
+			case 'service\Exception\FormException':
+				// 数据错误
+				$this->showFormError($exception);
+				break;
+			case 'service\Exceptions\NotifyException':
+				// 通知错误
+				$this->showNotify($exception);
+				break;
+			case 'service\Exceptions\RedirectException':
+				// 进行url跳转
+				$this->redirect($exception->getMessage(), 'get');
+				break;
+			default:
+				// 捕捉其他错误，一般是系统错误
+				$this->systemError($exception);
+				break;
+		}
+	}
+
+	/**
+	 * 显示提示
+	 * @param \Exception $exception 异常对象
+	 * @return void
+	 */
+	private function showNotify($exception) {
+		$notify['msg'] = $exception->getMessage();
+		$notify['type'] = $exception->getCode();
+
+		// 结果输出
+		IS_AJAX ? $this->jsonp($errorInfo, 1003) : $this->notify($errorInfo, 502);
+		exit();
+	}
+
+	/**
+	 * 系统错误处理
+	 * @param \Exception $exception 异常对象
+	 * @return void
+	 */
+	private function systemError($exception) {
 		// 整理数据
+		$errorInfo['method'] = $_SERVER['REQUEST_METHOD'];
+		$errorInfo['params'] = $_REQUEST; 
 		$errorInfo['env'] = \Yaf\ENVIRON == 'product';
 		$errorInfo['code'] = $exception->getCode();
 		$errorInfo['file'] = $exception->getFile();
 		$errorInfo['message'] = $exception->getMessage();
 		$errorInfo['line'] = $exception->getLine();
 		$errorInfo['traceAsString'] = $exception->getTraceAsString();
-		
-		echo '<pre>';
-		print_r($errorInfo);
-		exit;
-		
-		switch($class) {
-			case 'service\Exceptions\Notify':				
-				// 通知错误
-				$this->notify();
-				break;
-			case 'service\Exceptions\Redirect':
-				$this->location();
-				break;
-			default:
-				// 捕捉系统的错误
-				$this->error();
-				if(\Yaf\ENVIRON == 'product') {
-					error_log(print_r($errorInfo, TRUE));
-				}
-				break;
-		}
-		
+
 		// 线上环境
-		if($errorInfo['env']) {
-			// 封装数据
-			$errorInfo['data']['from'] = $_SERVER['REQUEST_METHOD'];
-			$errorInfo['data']['list'] = $this->getRequest()->getParams();
-			
-			// 日志记录
-			\File\Log::record($errorInfo, DATA_PATH);
-			
+		if(\Yaf\ENVIRON == 'product') {
+			error_log(print_r($errorInfo, TRUE), 1, 'chenxiaobo_901021@yeah.net');
 			// 线上环境报错
-			$errorInfo = '服务器出错了，请稍后重试';
+			$errorInfo['message'] = '服务器出错了，请稍后重试';
 		}
-		
-		if(IS_AJAX) {
-			$this->jsonp($errorInfo, 502);
-		} else {
-			$this->notify($errorInfo, 'error');
-		}
-		
-		return FALSE;
+
+		// 结果输出
+		IS_AJAX ? $this->jsonp($errorInfo, 1003) : $this->notify($errorInfo, 502);
+		exit();
 	}
 }
