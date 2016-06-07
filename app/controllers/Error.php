@@ -64,7 +64,8 @@ class ErrorController extends \base\BaseController {
 
 		// 线上环境
 		if(\Yaf\ENVIRON == 'product') {
-			error_log(print_r($errorInfo, TRUE), 1, 'chenxiaobo_901021@yeah.net');
+			// 记录错误
+			//error_log(print_r($errorInfo, TRUE), 1, 'chenxiaobo_901021@yeah.net');
 			// 线上环境报错
 			$errorInfo['message'] = '服务器出错了，请稍后重试';
 		}
