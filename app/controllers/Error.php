@@ -42,7 +42,7 @@ class ErrorController extends \base\BaseController {
 		$notify['type'] = $exception->getCode();
 
 		// 结果输出
-		IS_AJAX ? $this->jsonp($errorInfo, 1003) : $this->notify($errorInfo, 502);
+		IS_AJAX ? $this->jsonp($notify, 1003) : $this->notify($notify, 502);
 		exit();
 	}
 
