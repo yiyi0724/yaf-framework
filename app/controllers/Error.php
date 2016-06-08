@@ -57,14 +57,14 @@ class ErrorController extends \base\BaseController {
 		$errorInfo['params'] = $_REQUEST; 
 		$errorInfo['env'] = \Yaf\ENVIRON == 'product';
 		$errorInfo['code'] = $exception->getCode();
-		$errorInfo['file'] = $exception->getFile();
+		$errorInfo['file'] = $exception->getFile;
 		$errorInfo['message'] = $exception->getMessage();
 		$errorInfo['line'] = $exception->getLine();
 		$errorInfo['traceAsString'] = $exception->getTraceAsString();
 
 		// 线上环境
 		if(\Yaf\ENVIRON == 'product') {
-			// 记录错误
+			// 记录cuowu
 			//error_log(print_r($errorInfo, TRUE), 1, 'chenxiaobo_901021@yeah.net');
 			// 线上环境报错
 			$errorInfo['message'] = '服务器出错了，请稍后重试';
