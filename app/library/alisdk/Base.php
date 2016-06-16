@@ -4,7 +4,7 @@
  * 阿里SDK基类
  * @author enychen
  */
-namespace alibaba;
+namespace alisdk;
 
 abstract class Base {
 

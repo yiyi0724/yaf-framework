@@ -4,7 +4,7 @@
  * 回调通知检查
  * @author enychen
  */
-namespace alibaba\pay;
+namespace alisdk\pay;
 
 class Notify extends Base {
 
@@ -48,22 +48,22 @@ class Notify extends Base {
 	public function getParams() {
 		return $this->params;
 	}
-	
+
 	/**
 	 * 进行验证
 	 * @return void
 	 */
 	public function verify() {
 		// 参数检查
-		if(empty($this->params) || empty($this->params['sign']) || empty($this->params['notify_id'])){
+		if(empty($this->params) || empty($this->params['sign']) || empty($this->params['notify_id'])) {
 			$this->throws(2000, '来源非法');
 		}
-
+		
 		// 签名结果检查
-		if($this->params['sign'] != $this->sign($this->filterParams($this->params))){
+		if($this->params['sign'] != $this->sign($this->filterParams($this->params))) {
 			$this->throws(2001, '签名不正确');
 		}
-
+		
 		// 回调支付宝的验证地址
 		$ch = curl_init(sprintf($this->api, $this->partner, $this->params['notify_id']));
 		curl_setopt($ch, CURLOPT_HEADER, 0); // 过滤HTTP头
@@ -73,10 +73,8 @@ class Notify extends Base {
 		curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/certificate/cacert.pem'); // 证书地址
 		$result = curl_exec($ch);
 		curl_close($ch);
-		if(!preg_match("/true$/i", $result)){
+		if(!preg_match("/true$/i", $result)) {
 			$this->throws(2002, '订单非法');
 		}
 	}
-
-	
 }

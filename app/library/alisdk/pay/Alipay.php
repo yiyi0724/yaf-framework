@@ -1,13 +1,16 @@
 <?php
 
-
-namespace Ku\Pay\Alipay;
+/**
+ * pc网站即时到帐
+ * @author enychen
+ */
+namespace alisdk\pay;
 
 /**
  * 支付宝接口
  * @author enychen
  */
-class Alipay {
+class Wap extends Base {
 
 	/**
 	 * 支付宝请求接口地址
@@ -26,12 +29,9 @@ class Alipay {
 	 * @param string $clentIp 用户在创建交易时，该用户当前所使用机器的IP, 如果商户申请后台开通防钓鱼IP地址检查选项，此字段必填，校验用
 	 */
 	protected $options = array(
-		'partner'=>'2088911311187170',
-		'signKey'=>'znk7ttpqm4v7s6uem7fh869xyu4ogyuw',
-		'charset'=>'utf-8',
-		'signType'=>'MD5',
-		'phishingKey'=>NULL,
-		'clientIp'=>NULL
+		'partner'=>'2088911311187170', 
+		'signKey'=>'znk7ttpqm4v7s6uem7fh869xyu4ogyuw', 
+		'charset'=>'utf-8', 'signType'=>'MD5', 'phishingKey'=>NULL, 'clientIp'=>NULL
 	);
 
 	/**
@@ -54,7 +54,7 @@ class Alipay {
 	 *  
 	 * @return string html表单
 	 */
-	public function transferAccount(array $origin){
+	public function transferAccount(array $origin) {
 		$data['service'] = 'create_direct_pay_by_user';
 		$data['seller_id'] = $this->options['partner'];
 		$data['out_trade_no'] = $origin['order'];
@@ -86,7 +86,7 @@ class Alipay {
 	 *  
 	 * @return string html表单
 	 */
-	public function batchPayment(array $origin){
+	public function batchPayment(array $origin) {
 		$data['service'] = 'batch_trans_notify';
 		$data['email'] = $origin['email'];
 		$data['notify_url'] = $origin['asyncUrl'];
@@ -104,22 +104,22 @@ class Alipay {
 	 * @param string $cacert 证书文件路径,默认在文件路径下查找
 	 * @return bool 数据来源的合法性
 	 */
-	public function verify($cacert = Null){
+	public function verify($cacert = Null) {
 		// 公钥
 		$cacert = $cacert ?  : __DIR__ . '/cacert.pem';
 		
 		// 空参数传递
-		if(empty($_REQUEST) || empty($_REQUEST['sign'])){
+		if(empty($_REQUEST) || empty($_REQUEST['sign'])) {
 			return False;
 		}
 		
 		// 签名结果检查
-		if($_REQUEST['sign'] != $this->sign($this->filterData($_REQUEST))){
+		if($_REQUEST['sign'] != $this->sign($this->filterData($_REQUEST))) {
 			return False;
 		}
 		
 		// 回调支付宝的验证地址
-		if(!empty($_REQUEST["notify_id"])){
+		if(!empty($_REQUEST["notify_id"])) {
 			// 请求alipay获取验证id结果
 			$url = "{$this->httpsVerifyApi}partner={$this->options['partner']}&notify_id={$_REQUEST["notify_id"]}";
 			$curl = curl_init($url);
@@ -130,7 +130,7 @@ class Alipay {
 			curl_setopt($curl, CURLOPT_CAINFO, $cacert); // 证书地址
 			$responseText = curl_exec($curl);
 			curl_close($curl);
-			if(!preg_match("/true$/i", $responseText)){
+			if(!preg_match("/true$/i", $responseText)) {
 				return False;
 			}
 		}

@@ -14,6 +14,7 @@ abstract class BaseController extends Controller_Abstract {
 
 	/**
 	 * 参数绑定
+	 * 
 	 * @param string $key 键
 	 * @param mixed $value 值
 	 * @return void
@@ -51,37 +52,6 @@ abstract class BaseController extends Controller_Abstract {
 		$view->setScriptPath(MODULE_PATH . 'views');
 		$view->display("error/{$template}.phtml");
 		exit();
-	}
-
-	/**
-	 * json|jsonp数据输出
-	 * 1001 - 正确弹框提示
-	 * 1002 - 警告弹框提示
-	 * 1003 - 错误弹框提示
-	 * 1010 - url地址跳转
-	 * 1011 - 正确弹框并跳转
-	 * 1012 - 警告弹框并跳转
-	 * 1013 - 错误弹框并跳转
-	 * 1020 - 表单错误
-	 * @param int|string|array $output 要输出的数据
-	 * @param int $code 通用代码
-	 * @return void
-	 */
-	protected final function jsonp($output, $action = 1001) {
-		$json['message'] = $output;
-		$json['action'] = $action;
-		$json = json_encode($json);
-		
-		$header = 'application/json';
-		$jsonp = $this->getRequest()->get('callback', NULL);		
-		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $jsonp)) {
-			$header = 'text/javascript';
-			$json = "{$jsonp}({$json})";
-		}
-		
-		$this->disView();
-		header("Content-type: {$header}; charset=UTF-8");
-		exit($json);
 	}
 	
 	/**

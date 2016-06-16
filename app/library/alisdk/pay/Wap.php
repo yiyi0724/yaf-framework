@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Wap页面支付
+ * 手机网站即时支付（新版）
  * @author enychen
  * @deprecated https://doc.open.alipay.com/doc2/detail.htm?spm=a219a.7629140.0.0.moXJGZ&treeId=60&articleId=104790&docType=1
  */
-namespace alibaba\pay;
+namespace alisdk\pay;
 
 class Wap extends Base {
 

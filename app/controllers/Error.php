@@ -38,11 +38,12 @@ class ErrorController extends \base\BaseController {
 	 * @return void
 	 */
 	private function showNotify($exception) {
-		$notify['msg'] = $exception->getMessage();
-		$notify['type'] = $exception->getCode();
+		if(IS_AJAX) {
+			$this->jsonp($exception->getMessage(), 1001+$exception->getCode());
+		} else {
+			$this->notify($exception->getMessage(), 'notify');
+		}
 
-		// 结果输出
-		IS_AJAX ? $this->jsonp($notify, 1003) : $this->notify($notify, 502);
 		exit();
 	}
 
@@ -57,21 +58,20 @@ class ErrorController extends \base\BaseController {
 		$errorInfo['params'] = $_REQUEST; 
 		$errorInfo['env'] = \Yaf\ENVIRON == 'product';
 		$errorInfo['code'] = $exception->getCode();
-		$errorInfo['file'] = $exception->getFile;
+		$errorInfo['file'] = $exception->getFile();
 		$errorInfo['message'] = $exception->getMessage();
 		$errorInfo['line'] = $exception->getLine();
 		$errorInfo['traceAsString'] = $exception->getTraceAsString();
 
 		// 线上环境
 		if(\Yaf\ENVIRON == 'product') {
-			// 记录cuowu
-			//error_log(print_r($errorInfo, TRUE), 1, 'chenxiaobo_901021@yeah.net');
 			// 线上环境报错
 			$errorInfo['message'] = '服务器出错了，请稍后重试';
 		}
+		
 
 		// 结果输出
-		IS_AJAX ? $this->jsonp($errorInfo, 1003) : $this->notify($errorInfo, 502);
+		IS_AJAX ? $this->jsonp($errorInfo, 1003) : $this->notify($errorInfo, '502');
 		exit();
 	}
 }

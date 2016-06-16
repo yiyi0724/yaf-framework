@@ -3,6 +3,7 @@
 use \Yaf\Config\Ini;
 use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
+use \Yaf\Dispatcher;
 use \Yaf\Request_Abstract;
 use \Yaf\Response_Abstract;
 
@@ -34,8 +35,9 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('IS_GET', $request->isGet());
 		define('IS_POST', $request->isPost());
 		define('IS_PUT', $request->isPut());
-		define('IS_DELETE', $_SERVER['REQUEST_METHOD'] == 'DELETE');
-
+		define('IS_DELETE', $request->getServer('REQUEST_METHOD') == 'DELETE');
+		define('IS_SCRIPT', $request->get('callback'));
+		
 		// 模块信息常量定义
 		define('CONTROLLER', $request->getControllerName());
 		define('ACTION', $request->getActionName());
@@ -43,7 +45,7 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('MODULE_PATH', sprintf("%smodules%s%s%s", APP_PATH, DS, $request->getModuleName(), DS));
 		define('FORM_FILE', sprintf("%sforms%s%s.php", MODULE_PATH, DS, strtolower(CONTROLLER)));
 		define('VIEW_PATH', sprintf("%sviews", MODULE_PATH));
-
+		
 		// RESOURCE常量定义
 		$constIni = new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON);
 		foreach($constIni as $key=>$value) {

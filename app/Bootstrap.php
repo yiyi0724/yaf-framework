@@ -55,20 +55,20 @@ class Bootstrap extends Bootstrap_Abstract {
 	}
 
 	/**
-	 * 自定义视图对象
-	 * @param \Yaf\Dispatcher $dispatcher 分发对象
-	 * @return void
-	 */
-	public function _initView(Dispatcher $dispatcher) {
-		$dispatcher->setView(new \traits\ViewInterface());
-	}
-
-	/**
 	 * 注册插件
 	 * @param \Yaf\Dispatcher $dispatcher 分发对象
 	 * @return void
 	 */
 	public function _initPlugin(Dispatcher $dispatcher) {
 		$dispatcher->registerPlugin(new HandlerPlugin());
+	}
+
+	/**
+	 * 自定义视图对象
+	 * @param \Yaf\Dispatcher $dispatcher 分发对象
+	 * @return void
+	 */
+	public function _initView(Dispatcher $dispatcher) {
+		$dispatcher->setView(new \traits\response\Adapter());
 	}
 }

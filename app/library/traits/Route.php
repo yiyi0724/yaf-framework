@@ -28,24 +28,15 @@ class Route implements Route_Interface {
 	protected $modules = array();
 
 	/**
-	 * 模块处理信息
-	 * @var array
-	 */
-	protected $moduleType;
-
-	/**
-	 * 构造函数，获取所有模块信息并删除默认模块
+	 * 构造函数，获取所有模块信息并删除默认index模块
 	 * @return void
 	 */
 	public function __construct() {
-		// 模块信息
 		$this->modules = Application::app()->getModules();
 		unset($this->modules[array_search('Index', $this->modules)]);
 		foreach($this->modules as $key=>$module) {
 			$this->modules[$key] = strtolower($module);
 		}
-		// 路由分析信息
-		$this->moduleType = Application::app()->getConfig()->get('application.route.type');
 	}
 
 	/**
@@ -58,16 +49,6 @@ class Route implements Route_Interface {
 		$uri = $request->getRequestUri();
 		$uri = explode('/', trim($request->getRequestUri(), '/'));
 		$module = strtolower($uri[0]);
-		
-		// 二级域名还是path信息
-		if($this->moduleType == 'domain') {
-			$module = explode('.', $request->getServer('HTTP_HOST'));
-			if(count($module) > 2) {
-				$module = strtolower($module[0]);
-			}
-		} else {
-			$module = strtolower($uri[0]);
-		}
 
 		if(in_array($module, $this->modules)) {
 			$this->route['module'] = $module;
@@ -89,8 +70,8 @@ class Route implements Route_Interface {
 
 	/**
 	 * 不知道什么鬼东西，但是又必须继承
-	 * @param array $info
-	 * @param array $query
+	 * @param array $info 不知道什么鬼还不调用的内容
+	 * @param array $query 不知道什么鬼还不调用的内容
 	 * @return void
 	 */
 	public function assemble(array $info, array $query = NULL) {
