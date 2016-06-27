@@ -36,7 +36,7 @@ class PDO extends Adapter {
 	 */
 	protected final function __construct($dsn, $username, $password) {
 		$options = array(
-			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION, 
+			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,
 			\PDO::ATTR_TIMEOUT=>30
 		);
 		$this->pdo = new \PDO($dsn, $username, $password, $options);
@@ -63,9 +63,9 @@ class PDO extends Adapter {
 	/**
 	 * 执行sql语句
 	 * @throws \PDOException
-	 * @param string $sql    sql语句
-	 * @param array  $params 预绑定参数
-	 * @return \Database\Assembly
+	 * @param string $sql    		sql语句
+	 * @param array  $params 		预绑定参数数组
+	 * @return \database\driver\PDO
 	 */
 	public function query($sql, array $params = array()) {
 		try {
@@ -74,7 +74,7 @@ class PDO extends Adapter {
 			$this->stmt->execute();
 			$this->stmt->setFetchMode(\PDO::FETCH_OBJ);
 		} catch(\PDOException $e) {
-			defined('DEBUG_SQL') and $this->debug($sql, $params);
+			$this->getIsDebug() and $this->debug($sql, $params);
 			throw $e;
 		}
 		return $this;
@@ -82,11 +82,11 @@ class PDO extends Adapter {
 
 	/**
 	 * 调试sql语句
-	 * @param string $sql sql语句
+	 * @param string $sql 	sql语句
 	 * @param array $params 参数
 	 * @return void
 	 */
-	public function debug($sql, array $params = array()) {
+	private function debug($sql, array $params = array()) {
 		echo "{$sql}<hr/><pre>";
 		print_r($params);
 		foreach($params as $key=>$placeholder) {
@@ -145,7 +145,7 @@ class PDO extends Adapter {
 				$result = $this->stmt->$method();
 				break;
 			default:
-				throw new \PDOException("Call to undefined \Database\PDO::{$method}()");
+				throw new \PDOException("Call to undefined \database\PDO::{$method}()");
 		}
 		
 		return $result;

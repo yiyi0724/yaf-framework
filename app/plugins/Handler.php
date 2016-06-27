@@ -37,15 +37,16 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('IS_PUT', $request->isPut());
 		define('IS_DELETE', $request->getServer('REQUEST_METHOD') == 'DELETE');
 		define('IS_SCRIPT', $request->get('callback'));
-		
+
 		// 模块信息常量定义
-		define('CONTROLLER', $request->getControllerName());
-		define('ACTION', $request->getActionName());
-		define('MODULE', $request->getModuleName());
+		define('CONTROLLER_NAME', $request->getControllerName());
+		define('ACTION_NAME', $request->getActionName());
+		define('MODULE_NAME', $request->getModuleName());
 		define('MODULE_PATH', sprintf("%smodules%s%s%s", APP_PATH, DS, $request->getModuleName(), DS));
-		define('FORM_FILE', sprintf("%sforms%s%s.php", MODULE_PATH, DS, strtolower(CONTROLLER)));
-		define('VIEW_PATH', sprintf("%sviews", MODULE_PATH));
-		
+		define('COMMON_VIEW_PATH', sprintf('%sviews%s', APP_PATH, DS));
+		define('MODULE_VIEW_PATH', sprintf("%sviews%s", MODULE_PATH, DS));
+		define('FORM_FILE', sprintf("%sforms%s%s.php", MODULE_PATH, DS, strtolower(CONTROLLER_NAME)));
+
 		// RESOURCE常量定义
 		$constIni = new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON);
 		foreach($constIni as $key=>$value) {

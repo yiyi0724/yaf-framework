@@ -1,14 +1,16 @@
 <?php
+
 /**
  * 初始化自定义框架
  * @author enychen
  */
-
 use Yaf\Loader;
+use \traits\Route;
 use Yaf\Dispatcher;
 use Yaf\Config\Ini;
 use Yaf\Application;
 use Yaf\Bootstrap_Abstract;
+use \traits\response\Adapter;
 
 class Bootstrap extends Bootstrap_Abstract {
 
@@ -49,7 +51,7 @@ class Bootstrap extends Bootstrap_Abstract {
 		// 路由对象
 		$router = $dispatcher->getRouter();
 		// 自定义路由协议
-		$router->addRoute('enyRouter', new \traits\Route());
+		$router->addRoute('enyRouter', new Route());
 		// 路由重写正则
 		$router->addConfig(new Ini(CONF_PATH . 'route.ini'));
 	}
@@ -69,6 +71,6 @@ class Bootstrap extends Bootstrap_Abstract {
 	 * @return void
 	 */
 	public function _initView(Dispatcher $dispatcher) {
-		$dispatcher->setView(new \traits\response\Adapter());
+		$dispatcher->setView(new Adapter());
 	}
 }

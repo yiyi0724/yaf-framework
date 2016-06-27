@@ -23,7 +23,8 @@ class View extends Simple {
 	 * @param array $tpl_vars 视图数据
 	 */
 	public function layout($tpl, array $tpl_vars = array()) {
-		echo $this->render(APP_PATH . "views/layout/{$tpl}", $tpl_vars);
+		$this->setScriptPath(rtrim(COMMON_VIEW_PATH, DS));
+		return parent::render($tpl, $tpl_vars);
 	}
 
 	/**
@@ -33,36 +34,57 @@ class View extends Simple {
 	 * @return void
 	 */
 	public function moduleLayout($tpl, array $tpl_vars = array()) {
-		echo $this->render(MODULE_PATH . "views/layout/{$tpl}", $tpl_vars);
+		$this->setScriptPath(rtrim(MODULE_VIEW_PATH, DS));
+		return parent::render($tpl, $tpl_vars);
 	}
 
 	/**
 	 * 渲染视图
 	 * @param string $tpl 视图名称
-	 * @param array $tpl_vars 视图要绑定的信息
+	 * @param array|null $tpl_vars 视图要绑定的信息
 	 * @return string
 	 */
 	public function render($tpl, $tpl_vars = NULL) {
-		if(!IS_AJAX) {
-			
-		} else {
-			$this->setScriptPath(VIEW_PATH);
-			return parent::render($tpl, $tpl_vars);
-		}
+		return $this->response($tpl, $tpl_vars, 'render');
 	}
 
 	/**
 	 * 加载视图
 	 * @param string $tpl 视图名称
-	 * @param array $tpl_vars 视图要绑定的信息、
+	 * @param array|null $tpl_vars 视图要绑定的信息
 	 * @return string
 	 */
 	public function display($tpl, $tpl_vars = NULL) {
-		if(IS_AJAX) {
-				
-		} else {
-			$this->setScriptPath(VIEW_PATH);
-			return parent::display($tpl, $tpl_vars);
+		return $this->response($tpl, $tpl_vars, 'display');
+	}
+
+	/**
+	 * 最终输出格式化样式
+	 * @param string $tpl 视图名称
+	 * @param array $tpl_vars 视图要绑定的信息
+	 */
+	protected final function response($tpl, $tplVars, $callback) {
+		// 合并参数
+		if(is_array($tplVars)) {
+			$tplVars = array_merge($this->_tpl_vars, $tplVars);
+		}
+		// 获取接受对象
+		$accept = Application::app()->getDispatcher()->getRequest()->getServer('HTTP_ACCEPT');
+		switch(TRUE) {
+			case stripos($accept, 'text/javascript') !== FALSE:
+			case stripos($accept, 'application/javascript') !== FALSE:
+				// jsonp返回
+				$tplVars['callback'] = IS_SCRIPT;
+			case stripos($accept, 'text/json') !== FALSE:
+			case stripos($accept, 'application/json') !== FALSE:
+				// json返回
+				$this->jsonp($tplVars);
+				break;
+			default:
+				// 页面输出
+				$this->setScriptPath(rtrim(MODULE_VIEW_PATH, DS));
+				return parent::$callback($tpl, $tplVars);
+				break;
 		}
 	}
 	
@@ -80,9 +102,9 @@ class View extends Simple {
 	 * @param int $code 通用代码
 	 * @return void
 	 */
-	protected final function jsonp($output, $action = 1001) {
+	protected final function jsonp(array $output) {
 		$json['message'] = $output;
-		$json['action'] = $action;
+		$json['action'] = isset($action['action']);
 		$json = json_encode($json);
 	
 		$header = 'application/json';
@@ -91,7 +113,7 @@ class View extends Simple {
 			$json = "{$jsonp}({$json})";
 		}
 
-		$this->disView();
+		Application::app()->getDispatcher()->disableView();
 		header("Content-type: {$header}; charset=UTF-8");
 		exit($json);
 	}
