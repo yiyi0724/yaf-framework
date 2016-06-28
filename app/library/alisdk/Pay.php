@@ -232,19 +232,19 @@ class Pay {
 	public function webPayment(\alisdk\pay\Web $webObject) {
 		// 参数检查
 		if(!$webObject->getOutTradeNo()) {
-			$this->throws(2001, '请设置订单号码');
+			$this->throws(2000, '请设置订单号码');
 		}
 		if(!$webObject->getSubject()) {
-			$this->throws(2002, '请设置商品描述');
+			$this->throws(2001, '请设置商品描述');
 		}
 		if(!$webObject->getTotalFee()) {
-			$this->throws(2003, '请设交易金额');
+			$this->throws(2002, '请设交易金额');
 		}
 		if(!$this->getNotifyUrl()) {
-			$this->throws(2005, '请设置异步回调地址');
+			$this->throws(2003, '请设置异步回调地址');
 		}
 		if(!$this->getReturnUrl()) {
-			$this->throws(2006, '请设置同步回调地址');
+			$this->throws(2004, '请设置同步回调地址');
 		}
 
 		// 整合订单信息
@@ -273,22 +273,22 @@ class Pay {
 	public function wapPayment(\alisdk\pay\Wap $wapObject) {
 		// 参数检查
 		if(!$wapObject->getOutTradeNo()) {
-			$this->throws(2007, '请设置订单号码');
+			$this->throws(2005, '请设置订单号码');
 		}
 		if(!$wapObject->getSubject()) {
-			$this->throws(2008, '请设置商品描述');
+			$this->throws(2006, '请设置商品描述');
 		}
 		if(!$wapObject->getTotalFee()) {
-			$this->throws(2009, '请设交易金额');
+			$this->throws(2007, '请设交易金额');
 		}
 		if(!$wapObject->getShowUrl()) {
-			$this->throws(2010, '请设置商品显示地址');
+			$this->throws(2008, '请设置商品显示地址');
 		}
 		if(!$this->getNotifyUrl()) {
-			$this->throws(2011, '请设置异步回调地址');
+			$this->throws(2009, '请设置异步回调地址');
 		}
 		if(!$this->getReturnUrl()) {
-			$this->throws(2012, '请设置同步回调地址');
+			$this->throws(2010, '请设置同步回调地址');
 		}
 
 		// 整合订单信息
@@ -313,10 +313,10 @@ class Pay {
 	 * @param \alisdk\pay\Notify $notifyObject 回调对象
 	 * @return void
 	 */
-	private function verify(\alisdk\pay\Notify $notifyObject) {
+	private function notify(\alisdk\pay\Notify $notifyObject) {
 		// 签名结果检查
 		if(!$notifyObject->getSign() || ($notifyObject->getSign() != $this->sign($notifyObject->getParams()))) {
-			$this->throws(2091, '签名不正确');
+			$this->throws(2090, '签名不正确');
 		}
 
 		// 回调支付宝的验证地址
@@ -330,7 +330,7 @@ class Pay {
 		$result = curl_exec($ch);
 		curl_close($ch);
 		if(!preg_match("/true$/i", $result)) {
-			$this->throws(2092, '订单非法');
+			$this->throws(2091, '校验失败');
 		}
 
 		// 异步回调输出success通知支付宝已经收到
