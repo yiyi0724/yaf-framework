@@ -4,7 +4,7 @@
  * 数据库驱动基类
  * @author enychen
  */
-namespace database\driver;
+namespace database;
 
 abstract class Adapter {
 

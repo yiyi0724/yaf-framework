@@ -12,5 +12,5 @@
 > 2008	[Pay/wapPayment]	未设置商品展示网址     
 > 2019	[Pay/wapPayment]	未设置异步回调地址    
 > 2010	[Pay/wapPayment]	未设置同步回调地址    
-> 2090 	[pay/notify]		  订单的签名不正确，通常是来源非法导致    
-> 2091	[pay/notify]		  notify_id校验有误，通常是来源非法导致   
+> 2090 	[pay/notify]		订单的签名不正确，通常是来源非法导致    
+> 2091	[pay/notify]		notify_id校验有误，通常是来源非法导致   

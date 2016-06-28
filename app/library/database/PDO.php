@@ -5,7 +5,7 @@
  * @author enychen
  * @version 1.0
  */
-namespace database\driver;
+namespace database;
 
 class PDO extends Adapter {
 
