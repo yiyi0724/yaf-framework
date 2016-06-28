@@ -22,7 +22,7 @@ class Pay {
 	protected $key;
 
 	/**
-	 * _input_charset 字符编码
+	 * _input_charset字符编码
 	 * @var string
 	 */
 	protected $inputCharset = 'utf-8';
@@ -44,6 +44,12 @@ class Pay {
 	 * @var string
 	 */
 	protected $returnUrl = NULL;
+
+	/**
+	 * 证书地址
+	 * @var string
+	 */
+	protected $certificate = __DIR__ . '/pay/certificate/cacert.pem';
 
 	/**
 	 * 构造函数
@@ -164,17 +170,37 @@ class Pay {
 	}
 
 	/**
+	 * 设置证书路径
+	 * @param string $certificate 证书完整路径
+	 * @return Pay $this 返回当前对象进行连贯操作
+	 */
+	public function setCertificate($certificate) {
+		$this->certificate = $certificate;
+		return $this;
+	}
+
+	/**
+	 * 获取完整证书路径
+	 * @return string
+	 */
+	public function getCertificate() {
+		return $this->certificate;
+	}
+
+	/**
 	 * 数据进行签名
 	 * @param array $params 参数列表
 	 * @return string 签名字符串
 	 */
 	private function sign($params) {
-		// 进行排序
+		// 删除不进行签名的字段
 		foreach($params as $key=>$value) {
 			if(in_array($key, array('sign', 'sign_type')) || !$value) {
 				unset($params[$key]);
 			}
 		}
+		
+		// 进行排序
 		ksort($params);
 
 		// 生成加密信息
@@ -201,18 +227,17 @@ class Pay {
 	 * 网站支付
 	 * @param \alisdk\pay\Web $webObject web支付数据对象
 	 * @return array action=>请求地址, params=>请求附加参数数组
+	 * @throws \alisdk\Exception
 	 */
 	public function webPayment(\alisdk\pay\Web $webObject) {
-		// 获取订单
-		$order = $webObject->getOrder();
 		// 参数检查
-		if(empty($order['out_trade_no'])) {
+		if(!$webObject->getOutTradeNo()) {
 			$this->throws(2001, '请设置订单号码');
 		}
-		if(empty($order['subject'])) {
+		if(!$webObject->getSubject()) {
 			$this->throws(2002, '请设置商品描述');
 		}
-		if(empty($order['total_fee'])) {
+		if(!$webObject->getTotalFee()) {
 			$this->throws(2003, '请设交易金额');
 		}
 		if(!$this->getNotifyUrl()) {
@@ -222,7 +247,8 @@ class Pay {
 			$this->throws(2006, '请设置同步回调地址');
 		}
 
-		// 公共参数
+		// 整合订单信息
+		$order = $webObject->getOrder();
 		$order['service'] = 'create_direct_pay_by_user';
 		$order['seller_id'] = $this->getPartner();
 		$order['partner'] = $this->getPartner();
@@ -242,22 +268,21 @@ class Pay {
 	 * wap新版本支付
 	 * @param \alisdk\pay\Wap $wapObject wap支付数据对象
 	 * @return array action=>请求地址, params=>请求附加参数数组
+	 * @throws \alisdk\Exception
 	 */
 	public function wapPayment(\alisdk\pay\Wap $wapObject) {
-		// 获取订单
-		$order = $wapObject->getOrder();
 		// 参数检查
-		if(empty($order['out_trade_no'])) {
+		if(!$wapObject->getOutTradeNo()) {
 			$this->throws(2007, '请设置订单号码');
 		}
-		if(empty($order['subject'])) {
+		if(!$wapObject->getSubject()) {
 			$this->throws(2008, '请设置商品描述');
 		}
-		if(empty($order['total_fee'])) {
+		if(!$wapObject->getTotalFee()) {
 			$this->throws(2009, '请设交易金额');
 		}
-		if(empty($order['show_url'])) {
-			$this->throws(2010, '请设置商品展示网址');
+		if(!$wapObject->getShowUrl()) {
+			$this->throws(2010, '请设置商品显示地址');
 		}
 		if(!$this->getNotifyUrl()) {
 			$this->throws(2011, '请设置异步回调地址');
@@ -266,7 +291,8 @@ class Pay {
 			$this->throws(2012, '请设置同步回调地址');
 		}
 
-		// 公共参数
+		// 整合订单信息
+		$order = $wapObject->getOrder();
 		$order['service'] = 'alipay.wap.create.direct.pay.by.user';
 		$order['seller_id'] = $this->getPartner();
 		$order['partner'] = $this->getPartner();
@@ -276,7 +302,7 @@ class Pay {
 		$order['notify_url'] = $this->getNotifyUrl();
 		$order['return_url'] = $this->getReturnUrl();
 		$order['sign'] = $this->sign($order);
-		
+
 		// 组装地址
 		$api = 'https://mapi.alipay.com/gateway.do?_input_charset=%s';
 		return array('action'=>sprintf($api, $this->getInputCharset()), 'params'=>$order);
@@ -284,32 +310,32 @@ class Pay {
 
 	/**
 	 * 同步|异步回调验证
-	 * @param array $params 支付宝回调参数列表
-	 * @param bool $isAsync 是否异步回调，TRUE-是|FALSE-不是
+	 * @param \alisdk\pay\Notify $notifyObject 回调对象
+	 * @return void
 	 */
-	private function verify($params, $isAsync) {
-		// 参数检查
-		if(empty($params) || empty($params['sign']) || empty($params['notify_id'])) {
-			$this->throws(2090, '来源非法');
-		}
-		
+	private function verify(\alisdk\pay\Notify $notifyObject) {
 		// 签名结果检查
-		if($params['sign'] != $this->sign($params)) {
+		if(!$notifyObject->getSign() || ($notifyObject->getSign() != $this->sign($notifyObject->getParams()))) {
 			$this->throws(2091, '签名不正确');
 		}
 
 		// 回调支付宝的验证地址
 		$api = 'https://mapi.alipay.com/gateway.do?service=notify_verify&partner=%s&notify_id=%s';
-		$ch = curl_init(sprintf($api, $this->getPartner(), $params['notify_id']));
+		$ch = curl_init(sprintf($api, $this->getPartner(), $notifyObject->getNotifyId()));
 		curl_setopt($ch, CURLOPT_HEADER, 0); // 过滤HTTP头
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // 返回输出结果
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE); // SSL证书认证
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 严格认证
-		curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/pay/certificate/cacert.pem'); // 证书地址
+		curl_setopt($ch, CURLOPT_CAINFO, $this->getCertificate()); // 证书地址
 		$result = curl_exec($ch);
 		curl_close($ch);
 		if(!preg_match("/true$/i", $result)) {
 			$this->throws(2092, '订单非法');
+		}
+
+		// 异步回调输出success通知支付宝已经收到
+		if($notifyObject->isAsync()) {
+			echo 'success';
 		}
 	}
 }

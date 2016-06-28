@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 阿里SDK基类异常信息
+ * 案例SDK基类异常信息
  * @author enychen
  */
 namespace alisdk;
