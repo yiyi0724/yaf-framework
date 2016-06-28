@@ -186,9 +186,9 @@ abstract class AbstractModel {
 			$limit = $offset;
 			$offset = 0;
 		}
-		$this->sql['values'][':limitOffset'] = $offset;
-		$this->sql['values'][':limitNumber'] = $limit;
-		$this->sql["limit"] = "LIMIT :limitOffset, :limitNumber";
+		$this->sql['values'][':limit_offset'] = $offset;
+		$this->sql['values'][':limit_number'] = $limit;
+		$this->sql["limit"] = "LIMIT :limit_offset, :limit_number";
 		return $this;
 	}
 
@@ -203,8 +203,7 @@ abstract class AbstractModel {
 
 	/**
 	 * 拼接条件子句
-	 * @param array 键值对数组
-	 * @param string where或者having
+	 * @param array|string $condition 键值对数组或者字符串
 	 * @return string
 	 */
 	protected final function comCondition($condition) {
@@ -226,9 +225,7 @@ abstract class AbstractModel {
 			$key = trim($key);
 			
 			// 操作类型
-			$operations = array(
-				' B', ' NL', ' L', ' N', ' <>', ' >=', ' <=', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL
-			);
+			$operations = array(' B', ' NL', ' L', ' N', ' <>', ' >=', ' <=', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL);
 			foreach($operations as $from=>$action) {
 				if($location = strpos($key, $action)) {
 					$origin = $key;
@@ -284,15 +281,12 @@ abstract class AbstractModel {
 
 	/**
 	 * 执行插入
-	 * @param array 待插入的数据
-	 * @param bool 多行返回插入的行数
-	 * @return int 返回上次插入的id 或者 影响行数
+	 * @param array $data 待插入的数据
+	 * @return int 返回上次插入的id
 	 */
-	public final function insert(array $data, $rowCount = FALSE) {
+	public final function insert(array $data) {
 		// 数据整理
-		$data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array(
-			$data
-		);
+		$data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
 		// 设置插入的键
 		$this->sql['keys'] = array_keys($data[0]);
 		// 设置插入的值
@@ -316,12 +310,12 @@ abstract class AbstractModel {
 		// 清空数据
 		$this->resetSql();
 		// 结果返回
-		return $rowCount ? $this->rowCount() : $this->lastInsertId();
+		return $this->getDatabase()->lastInsertId();
 	}
 
 	/**
 	 * 执行删除
-	 * @return int 影响的行数;
+	 * @return int 影响的行数
 	 */
 	public final function delete() {
 		// 拼接sql语句
@@ -331,7 +325,7 @@ abstract class AbstractModel {
 		// 清空数据
 		$this->resetSql();
 		// 返回结果
-		return $this->rowCount();
+		return $this->getDatabase()->rowCount();
 	}
 
 	/**
@@ -343,41 +337,13 @@ abstract class AbstractModel {
 		// 局部释放变量
 		extract($this->sql);
 		// 拼接sql语句
-		$sql = "SELECT {$field} FROM {$this->table} {$join} {$where} {$group} {$having} {$order} {$limit} {$other}";
+		$sql = "SELECT {$field} FROM {$this->table} {$join} {$where} {$group} {$having} {$order} {$limit} {$lock}";
 		// 执行sql语句
 		$this->query($sql, $values);
 		// 清空数据
 		$clear and $this->resetSql();
 		// 返回数据库操作对象
-		return $this->db;
-	}
-
-	/**
-	 * 执行查询计划,输出<table></table>
-	 * @return void
-	 */
-	public final function explain() {
-		// 局部释放变量
-		extract($this->sql);
-		// 拼接sql语句
-		$sql = "EXPLAIN SELECT {$field} FROM {$this->table} {$join} {$where} {$group} {$having} {$order} {$limit} {$lock}";
-		// 执行sql语句
-		$this->query($sql, $values);
-		// 清空数据
-		$this->resetSql();
-		
-		// 返回数据库操作对象
-		$results = $this->db->fetchAll();
-		$keys = array_keys((array)$results[0]);
-		$table = '<style>table{width:100%;border-collapse: collapse;}th,td{border:1px solid #ccc;padding:5px 10px}td{text-align:center;padding:10px;}</style>';
-		$table .= '<table>';
-		$table .= '<tr><th>' . implode('</th><th>', $keys) . '</th></tr>';
-		foreach($results as $result) {
-			$result = (array)$result;
-			$table .= '<tr><td>' . implode('</td><td>', $result) . '</td></tr>';
-		}
-		$table .= '</table>';
-		exit($table);
+		return $this->getDatabase();
 	}
 
 	/**
@@ -408,7 +374,17 @@ abstract class AbstractModel {
 		// 清空数据
 		$this->resetSql();
 		// 返回当前对象
-		return $this->rowCount();
+		return $this->getDatabase()->rowCount();
+	}
+
+	/**
+	 * 执行原生sql语句
+	 * @param string $sql sql语句
+	 * @param array $params 参数
+	 * @return \database\Adapter 返回数据库驱动对象
+	 */
+	public function query($sql, array $params = array()) {
+		return $this->getDatabase()->query($sql, $params);
 	}
 
 	/**
@@ -417,40 +393,39 @@ abstract class AbstractModel {
 	 */
 	protected final function resetSql() {
 		$this->sql = array(
-			'field'=>'*', 'join'=>NULL, 'where'=>NULL, 'group'=>NULL, 'having'=>NULL, 'order'=>NULL, 'limit'=>NULL, 'lock'=>NULL, 'prepare'=>NULL, 'keys'=>NULL, 'values'=>array()
+			'field'=>'*',
+			'join'=>NULL,
+			'where'=>NULL,
+			'group'=>NULL,
+			'having'=>NULL,
+			'order'=>NULL,
+			'limit'=>NULL,
+			'lock'=>NULL,
+			'prepare'=>NULL,
+			'keys'=>NULL,
+			'values'=>array()
 		);
 	}
 
 	/**
-	 * 执行原生sql语句
-	 * @param string $sql sql语句
-	 * @param array $params 参数
-	 * @return
-	 */
-	public function query($sql, array $params = array()) {
-		$this->setDb();
-		return $this->getDb->query($sql, $params);
-	}
-
-	/**
 	 * 分页获取信息
-	 * @param int 			$page 	当前页
-	 * @param int 			$number 每页几条
+	 * @param int $page 当前页
+	 * @param int $number 每页几条
 	 * @return array 分页信息
 	 */
 	public function paging($page = 1, $number = 15) {
 		// 获取本页数据
 		$this->limit(abs($page - 1) * $number, $number);
-		$lists = $this->select()->fetchAll();
-		
+		$lists = $this->select(FALSE)->fetchAll();
+
 		// 获取分页数量
 		$this->field('COUNT(*)');
-		$total = $this->select(FALSE)->fetchColumn();
-		
+		$total = $this->select()->fetchColumn();
+
 		// 输出分页
 		$pagitor = \Network\Page::showCenter($page, $number, $total, 6);
 		$pagitor['lists'] = $lists;
-		
+
 		return $pagitor;
 	}
 }
