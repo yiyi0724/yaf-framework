@@ -9,7 +9,7 @@ namespace Base;
 use \Yaf\Config\Ini;
 
 abstract class AbstractModel {
-	
+
 	/**
 	 * 配置信息
 	 * @var \Yaf\Config\Ini
@@ -17,22 +17,10 @@ abstract class AbstractModel {
 	protected $config = NULL;
 
 	/**
-	 * 数据库对象
+	 * 数据库驱动适配器
 	 * @var \Database\Adapter
 	 */
-	protected $db = NULL;
-
-	/**
-	 * 配置适配器
-	 * @var string
-	 */
-	protected $adapter = 'master';
-	
-	/**
-	 * 驱动适配器
-	 * @var string
-	 */
-	protected $driver = 'PDO';
+	protected $database = 'PDO';
 
 	/**
 	 * 表名
@@ -41,7 +29,7 @@ abstract class AbstractModel {
 	protected $table = NULL;
 
 	/**
-	 * 附加的查询条件
+	 * 查询条件列表
 	 * @var array
 	 */
 	protected $sql = array(
@@ -62,169 +50,185 @@ abstract class AbstractModel {
 	 * 构造函数,加载配置
 	 * @return void
 	 */
-	public final function __construct() {
+	public final function __construct($adapter = 'master') {
 		$this->setDriverConfig();
-		$this->setDriver();
+		$this->setDatabase($adapter);
+	}
+
+	/**
+	 * 获取表名称
+	 * @return string
+	 */
+	public final function getTable() {
+		return $this->table;
 	}
 
 	/**
 	 * 设置驱动配置信息
 	 * @return AbstractModel
 	 */
-	protected function setDriverConfig() {
+	protected final function setDriverConfig() {
 		$this->config = new Ini(CONF_PATH . 'driver.ini', \YAF\ENVIRON);
 		return $this;
 	}
 
 	/**
 	 * 获取驱动配置信息
-	 * @param string $key
+	 * @param string $key 键
+	 * @param mixed $default 默认值
 	 * @return \Yaf\Config\Ini
 	 */
-	protected function getConfig($key, $default = NULL) {
+	protected final function getDriverConfig($key, $default = NULL) {
 		return $this->config->get($key);
 	}
 
 	/**
-	 * 获取数据库驱动
-	 * @return \Database\Adapter
+	 * 获取数据库驱动对象
+	 * @param string $adapter 配置适配器名称
+	 * @return void
 	 */
-	protected final function setDriver() {
-		$dbDriver = "\\Database\\{$this->driver}";
-		$config = $this->getConfig();
-		return $dbDriver::getInstance($config->type, $config->host, $config->port,
+	protected final function setDatabase($adapter) {
+		$config = $this->getDriverConfig("database.{$adapter}");
+		$driver = "\\Database\\{$this->database}";
+		$this->database = $dbDriver::getInstance($config->type, $config->host, $config->port, 
 			$config->dbname, $config->charset, $config->username, $config->password);
 	}
-	
-	protected final function getDb() {
-		return $this->db;
-	}
-	
+
 	/**
-	 * 获取redis
+	 * 获取数据库驱动对象
+	 * @return \Database\Adapter
+	 */
+	protected final function getDatabase() {
+		return $this->database;
+	}
+
+	/**
+	 * 获取redis对象
 	 * @param string $adapter 适配器名称，默认master
-	 * @return \Driver\Redis
+	 * @return \Storage\Redis
 	 */
 	protected final function getRedis($adapter = 'master') {
-		$config = $this->config['redis'][$adapter];
-		return \Storage\Redis::getInstance($config->host, $config->port, $config->db,
+		$config = $this->getDriverConfig("redis.{$adapter}");
+		return \Storage\Redis::getInstance($config->host, $config->port, $config->db, 
 			$config->auth, $config->timeout, $config->options);
 	}
 
 	/**
 	 * 设置要查询的字段
 	 * @param string $field 查询字符串列表
-	 * @return \Base\AbstractModel
-	*/
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
+	 */
 	public final function field($field) {
 		$this->sql['field'] = $field;
 		return $this;
 	}
-	
+
 	/**
 	 * 进行连接操作
 	 * @param string $table 要连接的表名
 	 * @param string $on 连接on条件
 	 * @param string $type LEFT|RIGHT|INNER 三种连接方式
-	 * @return \Base\AbstractModel
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public function join($table, $on, $type = 'LEFT') {
 		$this->sql['join'] = "{$type} JOIN {$table} ON {$on}";
 		return $this;
 	}
-	
+
 	/**
 	 * 拼接where子句
 	 * @params string|array $condition 要拼接的条件
-	 * @return \Base\AbstractModel
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public final function where($condition) {
 		$this->sql['where'] = "WHERE {$this->comCondition($condition)}";
 		return $this;
 	}
-	
+
 	/**
 	 * 拼接having子句
 	 * @params string|array $condition 要拼接的条件
-	 * @return \Base\AbstractModel
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public final function having($condition) {
 		$this->sql['having'] = "HAVING {$this->comCondition($condition)}";
 		return $this;
 	}
-	
+
 	/**
 	 * 拼接order子句
 	 * @param string $order 排序字符串
-	 * @return \Base\AbstractModel
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public final function order($order) {
 		$this->sql['order'] = "ORDER BY {$order}";
 		return $this;
 	}
-	
+
 	/**
 	 * 拼接group子句
 	 * @param string $group 分组字符串
-	 * @return \Base\AbstractModel
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public final function group($group) {
 		$this->sql['group'] = "GROUP BY {$group}";
 		return $this;
 	}
-	
+
 	/**
 	 * 拼接limit子句
 	 * @param int $offset 偏移量
-	 * @param int $limit 个数
-	 * @return \Base\AbstractModel
+	 * @param int $limit 个数，不传表示偏移量为0
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public final function limit($offset, $limit = NULL) {
 		if(!$limit) {
 			$limit = $offset;
 			$offset = 0;
 		}
-		$this->sql['values'][':limit_offset'] = $offset;
-		$this->sql['values'][':limit_number'] = $limit;
-		$this->sql["limit"] = "LIMIT :limit_offset, :limit_number";
+		$this->sql['values'][':limitOffset'] = $offset;
+		$this->sql['values'][':limitNumber'] = $limit;
+		$this->sql["limit"] = "LIMIT :limitOffset, :limitNumber";
 		return $this;
 	}
-	
+
 	/**
-	 * 加锁，在sql语句后面执行for update
-	 * @return \Base\AbstractModel
+	 * 加锁，在sql语句后面执行for update，必须开启事务才有效果
+	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public final function lock() {
 		$this->sql['lock'] = 'FOR UPDATE';
 		return $this;
 	}
-	
+
 	/**
 	 * 拼接条件子句
 	 * @param array 键值对数组
 	 * @param string where或者having
-	 * @return array|string
+	 * @return string
 	 */
 	protected final function comCondition($condition) {
 		static $interval;
-	
+
 		// 字符串转义一下
 		if(is_string($condition)) {
 			return addslashes($condition);
 		}
-	
+
 		$conds = array();
 		foreach($condition as $key=>$value) {
 			// false null array() "" 的时候全部过滤,0不过滤
 			if(!$value && !is_numeric($value)) {
 				continue;
 			}
-	
+			
 			// 去掉两边的空格
 			$key = trim($key);
-	
+			
 			// 操作类型
-			$operations = array(' B', ' NL', ' L', ' N', ' <>', ' >=', ' <=', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL);
+			$operations = array(
+				' B', ' NL', ' L', ' N', ' <>', ' >=', ' <=', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL
+			);
 			foreach($operations as $from=>$action) {
 				if($location = strpos($key, $action)) {
 					$origin = $key;
@@ -232,7 +236,7 @@ abstract class AbstractModel {
 					break;
 				}
 			}
-	
+
 			if($from == 0) {
 				// between...and
 				$conds[] = "`{$key}` BETWEEN :{$key}from{$interval} AND :{$key}to{$interval}";
@@ -271,13 +275,13 @@ abstract class AbstractModel {
 				$conds[] = "`{$key}`=:{$key}{$interval}";
 				$this->sql['values'][":{$key}{$interval}"] = $value;
 			}
-	
+			
 			$interval++;
 		}
-	
+		
 		return implode(' AND ', $conds);
 	}
-	
+
 	/**
 	 * 执行插入
 	 * @param array 待插入的数据
@@ -286,7 +290,9 @@ abstract class AbstractModel {
 	 */
 	public final function insert(array $data, $rowCount = FALSE) {
 		// 数据整理
-		$data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array($data);
+		$data = count($data) != count($data, COUNT_RECURSIVE) ? $data : array(
+			$data
+		);
 		// 设置插入的键
 		$this->sql['keys'] = array_keys($data[0]);
 		// 设置插入的值
@@ -312,7 +318,7 @@ abstract class AbstractModel {
 		// 结果返回
 		return $rowCount ? $this->rowCount() : $this->lastInsertId();
 	}
-	
+
 	/**
 	 * 执行删除
 	 * @return int 影响的行数;
@@ -327,7 +333,7 @@ abstract class AbstractModel {
 		// 返回结果
 		return $this->rowCount();
 	}
-	
+
 	/**
 	 * 执行查询,返回对象进行fetch操作
 	 * @param string $clear 清空条件信息
@@ -345,7 +351,7 @@ abstract class AbstractModel {
 		// 返回数据库操作对象
 		return $this->db;
 	}
-	
+
 	/**
 	 * 执行查询计划,输出<table></table>
 	 * @return void
@@ -359,7 +365,7 @@ abstract class AbstractModel {
 		$this->query($sql, $values);
 		// 清空数据
 		$this->resetSql();
-	
+		
 		// 返回数据库操作对象
 		$results = $this->db->fetchAll();
 		$keys = array_keys((array)$results[0]);
@@ -373,7 +379,7 @@ abstract class AbstractModel {
 		$table .= '</table>';
 		exit($table);
 	}
-	
+
 	/**
 	 * 执行更新
 	 * @param array $update 键值对数组
@@ -389,7 +395,7 @@ abstract class AbstractModel {
 				// 默认处理方式
 				$set = "`{$key}`=:{$key}";
 			}
-	
+			
 			$sets[] = $set;
 			$this->sql['values'][":{$key}"] = $val;
 		}
@@ -404,24 +410,14 @@ abstract class AbstractModel {
 		// 返回当前对象
 		return $this->rowCount();
 	}
-	
+
 	/**
 	 * 重置查询
 	 * @return void
 	 */
 	protected final function resetSql() {
 		$this->sql = array(
-			'field'=>'*',
-			'join'=>NULL,
-			'where'=>NULL,
-			'group'=>NULL,
-			'having'=>NULL,
-			'order'=>NULL,
-			'limit'=>NULL,
-			'lock'=>NULL,
-			'prepare'=>NULL,
-			'keys'=>NULL,
-			'values'=>array()
+			'field'=>'*', 'join'=>NULL, 'where'=>NULL, 'group'=>NULL, 'having'=>NULL, 'order'=>NULL, 'limit'=>NULL, 'lock'=>NULL, 'prepare'=>NULL, 'keys'=>NULL, 'values'=>array()
 		);
 	}
 
