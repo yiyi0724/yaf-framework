@@ -324,7 +324,7 @@ class Pay extends Base {
 	/**
 	 * jsapi支付
 	 * @param \weixin\pay\UnifiedOrder $unifiedOrderObject
-	 * @return string 支付封装的json字符串 
+	 * @return string 支付封装的json字符串
 	 */
 	public function jsapiPay(\weixin\pay\UnifiedOrder $unifiedOrderObject) {
 		$unifiedOrder->setTradeType('JSAPI');
@@ -343,35 +343,57 @@ class Pay extends Base {
 
 	/**
 	 * 执行微信订单查询
-	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2（普通订单查询）
-	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_5（退款订单查询）
-	 * @return void
+	 * @param \weixin\pay\Query $queryObject 订单查询对象
+	 * @return array 请参考微信查询订单接口
 	 */
-	public function query() {
-		// 检查要查询的订单号
-		foreach(array('transaction_id', 'out_trade_no', 'out_refund_no', 'refund_id') as $key) {
-			if(!empty($this->query[$key])) {
-				$isPass = TRUE;
-				break;
-			}
-		}
-		if(empty($isPass)) {
+	public function query(\weixin\pay\Query $queryObject) {
+		// 必须参数检查
+		$query = $queryObject->toArray();
+		if(!$query) {
 			$this->throws(1010, '请设置订单号');
 		}
-	
-		$this->query['appid'] = $this->appid;
-		$this->query['mch_id'] = $this->mchid;
-		$this->query['nonce_str'] = $this->strShuffle();
-		$this->query['sign'] = $this->sign($this->query);
-	
+
+		$query['appid'] = $this->getAppid();
+		$query['mch_id'] = $this->getMchid();
+		$query['nonce_str'] = $this->strShuffle();
+		$query['sign'] = $this->sign($query);
+
 		// xml编码
-		$params = $this->XmlEncode($this->query);
-		$this->query = array();
-	
-		// curl微信生成订单
-		$result = $this->post(\weixin\API::PAY_ORDER_QUERY, $params);
+		$query = $this->XmlEncode($query);
+
+		// 执行curl
+		$api = 'https://api.mch.weixin.qq.com/pay/orderquery';
+		$result = $this->post($api, $query);
 		$result = $this->verify($result);
-	
+
+		return $result;
+	}
+
+	/**
+	 * 执行微信退款订单查询
+	 * @param \weixin\pay\Query $queryObject 订单查询对象
+	 * @return array 请参考微信退款查询订单接口
+	 */
+	public function queryRefund(\weixin\pay\Query $queryObject) {
+		// 必须参数检查
+		$query = $queryObject->toArray();
+		if(!$query) {
+			$this->throws(1010, '请设置订单号');
+		}
+
+		$query['appid'] = $this->getAppid();
+		$query['mch_id'] = $this->getMchid();
+		$query['nonce_str'] = $this->strShuffle();
+		$query['sign'] = $this->sign($query);
+
+		// xml编码
+		$query = $this->XmlEncode($query);
+
+		// 执行curl
+		$api = 'https://api.mch.weixin.qq.com/pay/refundquery';
+		$result = $this->post($api, $query);
+		$result = $this->verify($result);
+
 		return $result;
 	}
 
@@ -384,18 +406,18 @@ class Pay extends Base {
 			$this->throws(1031, '请设置设置订单号');
 		}
 
-		$query['out_trade_no'] = $closeObject->getOutTradeNo();
-		$query['appid'] = $this->getAppid();
-		$query['mch_id'] = $this->getMchid();
-		$query['nonce_str'] = $this->strShuffle();
-		$query['sign'] = $this->sign($query);
+		$close['out_trade_no'] = $closeObject->getOutTradeNo();
+		$close['appid'] = $this->getAppid();
+		$close['mch_id'] = $this->getMchid();
+		$close['nonce_str'] = $this->strShuffle();
+		$close['sign'] = $this->sign($close);
 
 		// xml编码
-		$query = $this->XmlEncode($query);
+		$close = $this->XmlEncode($close);
 
 		// curl微信生成订单
 		$api = 'https://api.mch.weixin.qq.com/pay/closeorder';
-		$result = $this->post($api, $this->close);
+		$result = $this->post($api, $close);
 		$result = $this->verify($result);
 
 		return $result;
@@ -406,42 +428,69 @@ class Pay extends Base {
 	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
 	 * @return void
 	 */
-	public function refundOrder() {
-		$this->isUseCert(TRUE);
+	public function refund(\weixin\pay\Refund $refundObject) {
 		// 检查要查询的订单号
-		if(empty($this->refund['transaction_id']) && empty($this->refund['out_trade_no'])) {
+		if(!$refundObject->getTransactionId() && !$refundObject->getOutTradeNo()) {
 			$this->throws(1020, '请设置微信或者我司的订单号');
 		}
 		// 订单退款号检查
-		if(empty($this->refund['out_refund_no'])) {
+		if(!$refundObject->getOutRefundNo()) {
 			$this->throws(1021, '请设置退款订单号');
 		}
 		// 总金额检查
-		if(empty($this->refund['total_fee'])) {
+		if(!$refundObject->getTotalFee()) {
 			$this->throws(1022, '请设置总金额');
 		}
 		// 退款金额检查
-		if(empty($this->refund['refund_fee'])) {
+		if(!$refundObject->getRefundFee()) {
 			$this->throws(1023, '请设置退款金额');
 		}
 		// 操作人员检查
-		if(empty($this->refund['op_user_id'])) {
+		if(!$refundObject->getOpUserId()) {
 			$this->throws(1024, '请设置操作人员信息');
 		}
-	
+
 		// 拼接公共参数
-		$this->refund['appid'] = $this->appid;
-		$this->refund['mch_id'] = $this->mchid;
-		$this->refund['nonce_str'] = $this->strShuffle();
-		$this->refund['sign'] = $this->sign($this->refund);
-	
+		$refund = $refundObject->toArray();
+		$refund['appid'] = $this->getAppid();
+		$refund['mch_id'] = $this->getMchid();
+		$refund['nonce_str'] = $this->strShuffle();
+		$refund['sign'] = $this->sign($refund);
+
 		// xml编码
-		$this->refund = $this->XmlEncode($this->refund);
-	
-		// curl微信生成订单
-		$result = $this->post(\weixin\API::PAY_REFUND, $this->refund);
+		$refund = $this->XmlEncode($refund);
+
+		// 必须使用双向证书
+		$this->isUseCert(TRUE);
+		// 进行curl
+		$api = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
+		$result = $this->post($api, $refund);
 		$result = $this->verify($result);
 	
 		return $result;
+	}
+
+	/**
+	 * 微信支付回调验证，获取参数信息
+	 * @param boolean $isSigned 告知微信时是否需要签名
+	 * @return void
+	 */
+	public function notify($isSigned = FALSE) {
+		// 通知微信成功获取返回结果
+		$response = array('return_code'=>'SUCCESS', 'return_msg'=>'OK');
+		// 是否需要进行签名
+		if(!$isSigned) {
+			$response['sign'] = $this->sign($response);
+		}
+
+		// 输出收到信息给微信
+		echo $this->xmlEncode($response);
+
+		// 数据来源检查
+		$results = $this->verify(file_get_contents('php://input'));
+		// 将价格转成元（微信的坑）
+		$results['total_fee'] /= 100;
+	
+		return $results;
 	}
 }

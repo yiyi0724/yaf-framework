@@ -53,10 +53,11 @@ class UnifiedOrder {
 
 	/**
 	 * 获取价格
-	 * @return string
+	 * @return number
 	 */
 	public function getTotalFee() {
-		return $this->get('total_fee');
+		$totalFee = $this->get('total_fee', 0);
+		return $totalFee/100;
 	}
 
 	/**
