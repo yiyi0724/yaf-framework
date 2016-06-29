@@ -148,20 +148,20 @@ class Pay extends Base {
 	 */
 	private function get($url) {
 		$ch = curl_init();
-	
+
 		// 初始化设置
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 500);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($curl, CURLOPT_URL, $url);
-	
+
 		// 如果有配置代理这里就设置代理
 		if($this->getProxyHost() && $this->getProxyPort()) {
 			curl_setopt($ch, CURLOPT_PROXY, $this->getProxyHost());
 			curl_setopt($ch, CURLOPT_PROXYPORT, $this->getProxyPort());
 		}
-	
+
 		// 设置证书, cert 与 key 分别属于两个.pem文件
 		if($this->getIsUseCert()) {
 			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
@@ -169,10 +169,10 @@ class Pay extends Base {
 			curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
 			curl_setopt($ch, CURLOPT_SSLKEY, __DIR__ . '/apiclient_key.pem');
 		}
-	
+
 		$result = curl_exec($curl);
 		curl_close($curl);
-	
+
 		return $result;
 	}
 
@@ -209,7 +209,7 @@ class Pay extends Base {
 	 */
 	private function post($url, $params) {
 		$ch = curl_init();
-	
+
 		// 初始化设置
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -219,13 +219,13 @@ class Pay extends Base {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-	
+
 		// 如果有配置代理这里就设置代理
 		if($this->getProxyHost() && $this->getProxyPort()) {
 			curl_setopt($ch, CURLOPT_PROXY, $this->proxyHost);
 			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxyPort);
 		}
-	
+
 		// 设置证书, cert 与 key 分别属于两个.pem文件
 		if($this->getIsUseCert()) {
 			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
@@ -233,7 +233,7 @@ class Pay extends Base {
 			curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
 			curl_setopt($ch, CURLOPT_SSLKEY, __DIR__ . '/certificate/apiclient_key.pem');
 		}
-	
+
 		// 获取结果
 		$result = curl_exec($ch);
 		curl_close($ch);
@@ -249,58 +249,58 @@ class Pay extends Base {
 	private function verify($result) {
 		// 数据来源检查
 		if(!$result) {
-			$this->throws(1090, '来源非法');
+			$this->throws(1000, '来源非法');
 		}
-	
+
 		// 把数据转成xml
 		$result = $this->xmlDecode($result);
-	
+
 		// 签名检查
 		if($this->sign($result) !== $result['sign']) {
-			$this->throws(1091, '签名不正确');
+			$this->throws(1001, '签名不正确');
 		}
-	
+
 		// 微信方通信是否成功
 		if($result['return_code'] != 'SUCCESS') {
-			$this->throws(1092, $data['return_msg']);
+			$this->throws(1002, $data['return_msg']);
 		}
-	
+
 		// 微信业务处理是否失败
 		if(isset($result['result_code']) && $result['result_code'] == 'FAIL') {
-			$this->throws(1093, $result['err_code_des']);
+			$this->throws(1003, $result['err_code_des']);
 		}
-	
+
 		return $result;
 	}
 
 	/**
 	 * 统一下单
 	 *　@param \weixin\pay\UnifiedOrder $unifiedOrderObject 统一下单对象
-	 * @return void
+	 * @return array 请参考微信统一下单参数列表
 	 */
 	public function unifiedOrder(\weixin\pay\UnifiedOrder $unifiedOrderObject) {
 		// 必传参数检查
 		if(!$unifiedOrderObject->getOutTradeNo()) {
-			$this->throws(1000, '请设置订单号');
+			$this->throws(1004, '请设置订单号');
 		} 
 		if(!$unifiedOrderObject->getTotalFee()) {
-			$this->throws(1001, '请设置价格');
+			$this->throws(1005, '请设置价格');
 		}
 		if(!$unifiedOrderObject->getBody()) {
-			$this->throws(1002, '请设置商品描述信息');
+			$this->throws(1006, '请设置商品描述信息');
 		}
 		if(!in_array($unifiedOrderObject->getTradeType(), array('JSAPI', 'NATIVE', 'APP', 'WAP'))) {
-			$this->throws(1003, "请设置交易类型");
+			$this->throws(1007, "请设置交易类型");
 		}
 		if(!$unifiedOrderObject->getNotifyUrl()) {
-			$this->throws(1003, "请设通知地址");
+			$this->throws(1008, "请设通知地址");
 		}
 		// 业务参数检查
 		if($unifiedOrderObject->getTradeType() == 'JSAPI' && !$unifiedOrderObject->getOpenid()) {
-			$this->throws(1004, '请设置openid');
+			$this->throws(1009, '请设置openid');
 		}
 		if($unifiedOrderObject->getTradeType() == 'NAVITE' && $unifiedOrderObject->getProductId()) {
-			$this->throws(1005, '请设置product_id');
+			$this->throws(1010, '请设置product_id');
 		}
 
 		// 支付参数整合
@@ -309,10 +309,10 @@ class Pay extends Base {
 		$order['mch_id'] = $this->getMchid();
 		$order['nonce_str'] = $this->strShuffle();
 		$order['sign'] = $this->sign($order);
-	
+
 		// xml编码
 		$order = $this->XmlEncode($order);
-	
+
 		// curl微信生成订单
 		$api = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
 		$result = $this->post($api, $order);
@@ -324,23 +324,21 @@ class Pay extends Base {
 	/**
 	 * jsapi支付
 	 * @param \weixin\pay\UnifiedOrder $unifiedOrderObject
-	 * @return string
+	 * @return string 支付封装的json字符串 
 	 */
-	public function jsPay(\weixin\pay\UnifiedOrder $unifiedOrderObject) {
+	public function jsapiPay(\weixin\pay\UnifiedOrder $unifiedOrderObject) {
 		$unifiedOrder->setTradeType('JSAPI');
 		$unifiedOrder->setDeviceInfo('WEB');
 		$result = $this->unifiedOrder($unifiedOrderObject);
-	
-		// 支付信息，由微信js进行调用
-		$this->setTimeStamp(time());
-	
+
+		// 支付信息
 		$jsPays['appId'] = $this->getAppid();
 		$jsPays['nonceStr'] = $this->strShuffle();
 		$jsPays['signType'] = 'MD5';
 		$jsPays['package'] = "prepay_id={$result['prepay_id']}";
 		$jsPays['paySign'] = $this->sign($jsPays);
-	
-		return $jsPays;
+
+		return json_encode($jsPays);
 	}
 
 	/**

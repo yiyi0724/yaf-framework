@@ -6,9 +6,6 @@ class API {
 	// 获取微信公众号access_token
 	const GET_ACCESS_TOKEN = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
 	
-	// 获取微信公众号的jsapi_ticket
-	const GET_JSAPI_TICKET = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi';
-	
 	// 微信自动帮助生成二维码图片地址
 	const CREATE_QRCODE = 'http://paysdk.weixin.qq.com/example/qrcode.php?data=%s';
 	

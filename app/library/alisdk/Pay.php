@@ -193,6 +193,7 @@ class Pay {
 	 * 抛出异常信息
 	 * @param int $code 异常码
 	 * @param code $message 异常信息
+	 * @return void
 	 * @throws Exception
 	 */
 	public function throws($code, $message) {
@@ -288,6 +289,7 @@ class Pay {
 	 * 同步|异步回调验证
 	 * @param \alisdk\pay\Notify $notifyObject 回调对象
 	 * @return void
+	 * @throws \alisdk\Exception
 	 */
 	private function notify(\alisdk\pay\Notify $notifyObject) {
 		// 签名结果检查
