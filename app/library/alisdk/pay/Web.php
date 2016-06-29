@@ -30,7 +30,7 @@ class Web {
 	 * @return string
 	 */
 	public function getOutTradeNo() {
-		return $this->order['out_trade_no'];
+		return $this->get('out_trade_no');
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Web {
 	 * @return string
 	 */
 	public function getSubject() {
-		return $this->order['subject'];
+		return $this->get('subject');
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Web {
 	 * @return number
 	 */
 	public function getTotalFee() {
-		return $this->order['total_fee'];
+		return $this->get('total_fee');
 	}
 
 	/**
@@ -84,7 +84,7 @@ class Web {
 	 * @return string
 	 */
 	public function getBuyerId() {
-		return $this->order['buyer_id'];
+		return $this->get('buyer_id');
 	}
 
 	/**
@@ -102,7 +102,7 @@ class Web {
 	 * @return string
 	 */
 	public function getBuyerEmail() {
-		return $this->order['buyer_email'];
+		return $this->get('buyer_email');
 	}
 
 	/**
@@ -120,7 +120,7 @@ class Web {
 	 * @return string
 	 */
 	public function getBuyerAccountName() {
-		return $this->order['buyer_account_name'];
+		return $this->get('buyer_account_name');
 	}
 
 	/**
@@ -138,7 +138,7 @@ class Web {
 	 * @return number
 	 */
 	public function getPrice() {
-		return $this->order['price'];
+		return $this->get('price');
 	}
 
 	/**
@@ -156,7 +156,7 @@ class Web {
 	 * @return number
 	 */
 	public function getQuantity() {
-		return $this->order['quantity'];
+		return $this->get('quantity');
 	}
 
 	/**
@@ -174,7 +174,7 @@ class Web {
 	 * @return string
 	 */
 	public function getBody() {
-		return $this->order['body'];
+		return $this->get('body');
 	}
 
 	/**
@@ -192,7 +192,7 @@ class Web {
 	 * @return string
 	 */
 	public function getShowUrl() {
-		return $this->order['show_url'];
+		return $this->get('show_url');
 	}
 
 	/**
@@ -210,7 +210,7 @@ class Web {
 	 * @return string
 	 */
 	public function getPaymethod() {
-		return $this->order['paymethod'];
+		return $this->get('paymethod');
 	}
 
 	/**
@@ -230,7 +230,7 @@ class Web {
 	 * @return string
 	 */
 	public function getEnablePaymethod() {
-		return $this->order['enable_paymethod'];
+		return $this->get('enable_paymethod');
 	}
 
 	/**
@@ -250,7 +250,7 @@ class Web {
 	 * @return string
 	 */
 	public function getAntiPhishingKey() {
-		return $this->order['anti_phishing_key'];
+		return $this->get('anti_phishing_key');
 	}
 
 	/**
@@ -270,7 +270,7 @@ class Web {
 	 * @return string
 	 */
 	public function getExterInvokeIp() {
-		return $this->order['exter_invoke_ip'];
+		return $this->get('exter_invoke_ip');
 	}
 
 	/**
@@ -288,7 +288,7 @@ class Web {
 	 * @return string
 	 */
 	public function getExtraCommonParam() {
-		return $this->order['extra_common_param'];
+		return $this->get('extra_common_param');
 	}
 
 	/**
@@ -311,7 +311,7 @@ class Web {
 	 * @return string
 	 */
 	public function getItBPay() {
-		return $this->order['it_b_pay'];
+		return $this->get('it_b_pay');
 	}
 
 	/**
@@ -330,7 +330,7 @@ class Web {
 	 * @return string
 	 */
 	public function getToken() {
-		return $this->order['token'];
+		return $this->get('token');
 	}
 
 	/**
@@ -356,7 +356,7 @@ class Web {
 	 * @return　string
 	 */
 	public function getQrPayMode() {
-		return $this->order['qr_pay_mode'];
+		return $this->get('qr_pay_mode');
 	}
 
 	/**
@@ -375,7 +375,7 @@ class Web {
 	 * @return number
 	 */
 	public function getQrcodeWidth() {
-		return $this->order['qrcode_width'];
+		return $this->get('qrcode_width');
 	}
 
 	/**
@@ -393,7 +393,7 @@ class Web {
 	 * @return number
 	 */
 	public function getNeedBuyerRealnamed() {
-		return $this->order['need_buyer_realnamed'];
+		return $this->get('need_buyer_realnamed');
 	}
 
 	/**
@@ -411,7 +411,7 @@ class Web {
 	 * @return number
 	 */
 	public function getPromoParam() {
-		return $this->order['promo_param'];
+		return $this->get('promo_param');
 	}
 
 	/**
@@ -433,7 +433,7 @@ class Web {
 	 * @return string
 	 */
 	public function getHbFqParam() {
-		return $this->order['hb_fq_param'];
+		return $this->get('hb_fq_param');
 	}
 
 	/**
@@ -451,14 +451,24 @@ class Web {
 	 * @return int
 	 */
 	public function getGoodsType() {
-		return $this->order['goods_type'];
+		return $this->get('goods_type');
 	}
 
 	/**
-	 * 获取订单的所有信息
+	 * 把所有设置过的属性封装成数组
 	 * @return array
 	 */
-	public function getOrder() {
+	public function toArray() {
 		return $this->order;
+	}
+
+	/**
+	 * 封装get方法，防止notice报错
+	 * @param string $key 键名
+	 * @param string $default　默认值
+	 * @return string|number|null
+	 */
+	private function get($key, $default = NULL) {
+		return isset($this->order[$key]) ? $this->order[$key] : $default;
 	}
 }

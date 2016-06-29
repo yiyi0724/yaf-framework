@@ -49,38 +49,4 @@ class Query extends Base {
 	public function setRefundId($refundId) {
 		$this->refund['refund_id'] = $refundId;
 	}
-
-	/**
-	 * 执行微信订单查询
-	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2（普通订单查询）
-	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_5（退款订单查询）
-	 * @return void
-	 */
-	public function queryOrder() {
-		// 检查要查询的订单号
-		foreach(array('transaction_id', 'out_trade_no', 'out_refund_no', 'refund_id') as $key) {
-			if(!empty($this->query[$key])) {
-				$isPass = TRUE;
-				break;
-			}
-		}
-		if(empty($isPass)) {
-			$this->throws(1010, '请设置订单号');
-		}
-
-		$this->query['appid'] = $this->appid;
-		$this->query['mch_id'] = $this->mchid;
-		$this->query['nonce_str'] = $this->strShuffle();
-		$this->query['sign'] = $this->sign($this->query);
-		
-		// xml编码
-		$params = $this->XmlEncode($this->query);
-		$this->query = array();
-		
-		// curl微信生成订单
-		$result = $this->post(\weixin\API::PAY_ORDER_QUERY, $params);		
-		$result = $this->verify($result);
-		
-		return $result;
-	}
 }

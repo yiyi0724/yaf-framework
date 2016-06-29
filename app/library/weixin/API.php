@@ -30,14 +30,9 @@ class API {
 	// 获取用户的access_token
 	const UESR_ACCESS_TOKEN = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code';
 	
-	// 支付统一下单
-	const PAY_UNIFIED_ORDER = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
-	
 	// 支付订单查询
 	const PAY_ORDER_QUERY = 'https://api.mch.weixin.qq.com/pay/orderquery';
 	
-	// 关闭支付订单
-	const PAY_CLOSE_ORDER = 'https://api.mch.weixin.qq.com/pay/closeorder';
 
 	// 支付退款
 	const PAY_REFUND = 'https://api.mch.weixin.qq.com/secapi/pay/refund';

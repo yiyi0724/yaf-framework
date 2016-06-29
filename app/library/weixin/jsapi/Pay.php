@@ -71,22 +71,5 @@ class Pay extends Base {
 	public function getPreparyPay() {
 		
 	}
-	/**
-	 * js支付
-	 * @return array 微信支付需要的json信息
-	 */
-	public function payment() {
-		$result = $this->getUnifiedOrder()->payment();
 
-		// 支付信息，由微信js进行调用
-		$this->setTimeStamp(time());
-
-		$jsPays['appId'] = $this->getAppid();
-		$jsPays['nonceStr'] = $this->strShuffle();
-		$jsPays['signType'] = 'MD5';
-		$jsPays['package'] = "prepay_id={$this->getUnifiedOrder()->getPrepayId()}";
-		$jsPays['paySign'] = $this->sign($jsPays);
-
-		return $jsPays;
-	}
 }

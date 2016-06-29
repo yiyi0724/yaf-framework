@@ -30,7 +30,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getOutTradeNo() {
-		return $this->order['out_trade_no'];
+		return $this->get('out_trade_no');
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getSubject() {
-		return $this->order['subject'];
+		return $this->get('subject');
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Wap {
 	 * @return number
 	 */
 	public function getTotalFee() {
-		return $this->order['total_fee'];
+		return $this->get('total_fee');
 	}
 
 	/**
@@ -84,7 +84,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getShowUrl() {
-		return $this->order['show_url'];
+		return $this->get('show_url');
 	}
 
 	/**
@@ -102,7 +102,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getBody() {
-		return $this->order['body'];
+		return $this->get('body');
 	}
 
 	/**
@@ -125,7 +125,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getItBPay() {
-		return $this->order['it_b_pay'];
+		return $this->get('it_b_pay');
 	}
 
 	/**
@@ -146,7 +146,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getExternToken() {
-		return $this->order['extern_token'];
+		return $this->get('extern_token');
 	}
 
 	/**
@@ -165,7 +165,7 @@ class Wap {
 	 * @return number
 	 */
 	public function getOtherFee() {
-		return $this->order['otherfee'];
+		return $this->get('otherfee');
 	}
 
 	/**
@@ -185,7 +185,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getAirticket() {
-		return $this->order['airticket'];
+		return $this->get('airticket');
 	}
 
 	/**
@@ -203,7 +203,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getRnCheck() {
-		return $this->order['rn_check'];
+		return $this->get('rn_check');
 	}
 
 	/**
@@ -223,7 +223,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getBuyerCertNo() {
-		return $this->order['buyer_cert_no'];
+		return $this->get('buyer_cert_no');
 	}
 
 	/**
@@ -242,7 +242,7 @@ class Wap {
 	 * @return　string
 	 */
 	public function getBuyerRealName() {
-		return $this->order['buyer_real_name'];
+		return $this->get('buyer_real_name');
 	}
 
 	/**
@@ -261,7 +261,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getScene() {
-		return $this->order['scene'];
+		return $this->get('scene');
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Wap {
 	 * @return string
 	 */
 	public function getHbFqParam() {
-		return $this->order['hb_fq_param'];
+		return $this->get('hb_fq_param');
 	}
 
 	/**
@@ -301,14 +301,24 @@ class Wap {
 	 * @return int
 	 */
 	public function getGoodsType() {
-		return $this->order['goods_type'];
+		return $this->get('goods_type');
 	}
 
 	/**
-	 * 获取订单的所有信息
+	 * 将设置过的属性封装成数组
 	 * @return array
 	 */
-	public function getOrder() {
+	public function toArray() {
 		return $this->order;
+	}
+
+	/**
+	 * 封装get方法，防止notice报错
+	 * @param string $key 键名
+	 * @param string $default　默认值
+	 * @return string|number|null
+	 */
+	private function get($key, $default = NULL) {
+		return isset($this->order[$key]) ? $this->order[$key] : $default;
 	}
 }

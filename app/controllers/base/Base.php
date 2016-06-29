@@ -14,7 +14,6 @@ abstract class BaseController extends Controller_Abstract {
 
 	/**
 	 * 参数绑定
-	 * 
 	 * @param string $key 键
 	 * @param mixed $value 值
 	 * @return void
@@ -53,7 +52,7 @@ abstract class BaseController extends Controller_Abstract {
 		$view->display("error/{$template}.phtml");
 		exit();
 	}
-	
+
 	/**
 	 * 输出<script></script>标签
 	 * @param string $content 要输出的script执行代码
@@ -90,9 +89,11 @@ abstract class BaseController extends Controller_Abstract {
 		// 输入数据源
 		$request = $this->getRequest();
 		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
-
+		
 		// 获取检查规则
-		list($controller, $action) = array(CONTROLLER . 'Form', ACTION . 'Input');
+		list($controller, $action) = array(
+			CONTROLLER . 'Form', ACTION . 'Input'
+		);
 		if(is_file(FORM_FILE) && require (FORM_FILE)) {
 			if(!method_exists($controller, $action)) {
 				return array();

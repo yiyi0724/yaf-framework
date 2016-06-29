@@ -46,12 +46,6 @@ class Pay {
 	protected $returnUrl = NULL;
 
 	/**
-	 * 证书地址
-	 * @var string
-	 */
-	protected $certificate = __DIR__ . '/pay/certificate/cacert.pem';
-
-	/**
 	 * 构造函数
 	 * @param string $partner 合作者id
 	 * @param string $key	  合作者密钥
@@ -170,36 +164,18 @@ class Pay {
 	}
 
 	/**
-	 * 设置证书路径
-	 * @param string $certificate 证书完整路径
-	 * @return Pay $this 返回当前对象进行连贯操作
-	 */
-	public function setCertificate($certificate) {
-		$this->certificate = $certificate;
-		return $this;
-	}
-
-	/**
-	 * 获取完整证书路径
-	 * @return string
-	 */
-	public function getCertificate() {
-		return $this->certificate;
-	}
-
-	/**
 	 * 数据进行签名
 	 * @param array $params 参数列表
 	 * @return string 签名字符串
 	 */
-	private function sign($params) {
+	private function sign(array $params) {
 		// 删除不进行签名的字段
 		foreach($params as $key=>$value) {
 			if(in_array($key, array('sign', 'sign_type')) || !$value) {
 				unset($params[$key]);
 			}
 		}
-		
+
 		// 进行排序
 		ksort($params);
 
@@ -248,7 +224,7 @@ class Pay {
 		}
 
 		// 整合订单信息
-		$order = $webObject->getOrder();
+		$order = $webObject->toArray();
 		$order['service'] = 'create_direct_pay_by_user';
 		$order['seller_id'] = $this->getPartner();
 		$order['partner'] = $this->getPartner();
@@ -265,7 +241,7 @@ class Pay {
 	}
 
 	/**
-	 * wap新版本支付
+	 * wap本支付
 	 * @param \alisdk\pay\Wap $wapObject wap支付数据对象
 	 * @return array action=>请求地址, params=>请求附加参数数组
 	 * @throws \alisdk\Exception
@@ -292,7 +268,7 @@ class Pay {
 		}
 
 		// 整合订单信息
-		$order = $wapObject->getOrder();
+		$order = $wapObject->toArray();
 		$order['service'] = 'alipay.wap.create.direct.pay.by.user';
 		$order['seller_id'] = $this->getPartner();
 		$order['partner'] = $this->getPartner();
@@ -326,7 +302,7 @@ class Pay {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // 返回输出结果
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE); // SSL证书认证
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 严格认证
-		curl_setopt($ch, CURLOPT_CAINFO, $this->getCertificate()); // 证书地址
+		curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/pay/certificate/cacert.pem'); // 证书地址
 		$result = curl_exec($ch);
 		curl_close($ch);
 		if(!preg_match("/true$/i", $result)) {

@@ -33,13 +33,20 @@ class ErrorController extends \base\BaseController {
 	}
 
 	/**
+	 * 数据错误提示
+	 */
+	private function showFormError() {
+		
+	}
+	
+	/**
 	 * 显示提示
 	 * @param \Exception $exception 异常对象
 	 * @return void
 	 */
 	private function showNotify($exception) {
 		if(IS_AJAX) {
-			$this->jsonp($exception->getMessage(), 1001+$exception->getCode());
+			$this->jsonp($exception->getMessage(), 1001);
 		} else {
 			$this->notify($exception->getMessage(), 'notify');
 		}

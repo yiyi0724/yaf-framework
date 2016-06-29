@@ -6,46 +6,29 @@
  */
 namespace weixin\pay;
 
-class Close extends Base {
+class Close {
 
 	/**
-	 * 查询数组
-	 * @var array
+	 * 订单号，我司订单号或者微信订单号
+	 * @var string
 	 */
-	private $close = array();
+	private $outTradeNo;
 
 	/**
 	 * 设置订单号，我司的订单号,out_trade_no和transaction_id二选一
 	 * @param string $outTradeNo 订单号
-	 * @return void
+	 * @return Close $this 返回当前对象进行连贯操作
 	 */
 	public function setOutTradeNo($outTradeNo) {
-		$this->close['out_trade_no'] = $outTradeNo;
+		$this->outTradeNo = $outTradeNo;
+		return $this;
 	}
 
 	/**
-	 * 执行微信订单查询
-	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_3
-	 * @return void
+	 * 获取要查询的订单号
+	 * @return string
 	 */
-	public function closeOrder() {
-		// 存在微信订单号，则删除我司订单号
-		if($this->close['out_trade_no']) {
-			$this->throws(1031, '请设置设置订单号');
-		}
-		
-		$this->close['appid'] = $this->appid;
-		$this->close['mch_id'] = $this->mchid;
-		$this->close['nonce_str'] = $this->strShuffle();
-		$this->close['sign'] = $this->sign($this->close);
-		
-		// xml编码
-		$this->close = $this->XmlEncode($this->close);
-		
-		// curl微信生成订单
-		$result = $this->post(\weixin\API::PAY_CLOSE_ORDER, $this->close);
-		$result = $this->verify($result);
-		
-		return $result;
+	public function getOutTradeNo() {
+		return $this->outTradeNo;
 	}
 }

@@ -9,12 +9,6 @@ namespace weixin;
 abstract class Base {
 
 	/**
-	 * access_token缓存键
-	 * @var string
-	 */
-	const ACCESS_TOKEN_KEY = 'weixin.access.token.%s';
-
-	/**
 	 * 公众号appid
 	 * @var string
 	 */
@@ -41,10 +35,11 @@ abstract class Base {
 	/**
 	 * 设置公众号appiid
 	 * @param string $appid 公众号appid
-	 * @return void
+	 * @return Base $this 返回当前对象进行连贯操作
 	 */
-	public function setAppid($appid) {
+	protected function setAppid($appid) {
 		$this->appid = $appid;
+		return $this;
 	}
 
 	/**
@@ -58,10 +53,11 @@ abstract class Base {
 	/**
 	 * 设置公众号appSecret
 	 * @param string $appSecret 公众号Secret
-	 * @return void
+	 * @return Base $this 返回当前对象进行连贯操作
 	 */
-	public function setAppSecret($appSecret) {
+	protected function setAppSecret($appSecret) {
 		$this->appSecret = $appSecret;
+		return $this;
 	}
 
 	/**
@@ -75,10 +71,11 @@ abstract class Base {
 	/**
 	 * 设置存储对象
 	 * @param \storage\Adapter $storage 存储对象
-	 * @return void
+	 * @return Base $this 返回当前对象进行连贯操作
 	 */
-	public function setStorage($storage) {
+	protected function setStorage(\storage\Adapter $storage) {
 		$this->storage = $storage;
+		return $this;
 	}
 
 	/**
@@ -91,31 +88,32 @@ abstract class Base {
 
 	/**
 	 * 设置公众号的access_token
-	 * @return boolean
+	 * @return Base $this 返回当前对象进行连贯操作
 	 */
 	protected function setAccessToken() {
 		// 缓存appid的键
-		$cacheKey = sprintf(self::ACCESS_TOKEN_KEY, $this->getAppid());
+		$cacheKey = sprintf('weixin.access_token.%s', $this->getAppid());
 
 		// 之前获取的还没有到期
-		if($this->accessToken = $this->storage->get($cacheKey)) {
-			return TRUE;
+		$this->accessToken = $this->getStorage()->get($cacheKey);
+		if(!$this->accessToken) {
+			// 请求access_token
+			$api = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
+			$result = json_decode($this->get(sprintf($api, $this->getAppid(), $this->getAppSecret())));
+
+			// 请求如果有误
+			if(isset($result->errcode)) {
+				$this->throws($result->errcode, $result->errmsg);
+			}
+
+			// 缓存access_token
+			$this->getStorage()->set($cacheKey, $result->access_token, $result->expires_in);
+
+			// 设置变量
+			$this->accessToken = $result->access_token;
 		}
 
-		// 走微信接口进行请求
-		$url = sprintf(API::GET_ACCESS_TOKEN, $this->getAppid(), $this->getAppSecret());
-		$result = json_decode($this->get($url));
-		if(isset($result->errcode)) {
-			$this->throws($result->errcode, $result->errmsg);
-		}
-
-		// 缓存access_token
-		$this->storage->set($cacheKey, $result->access_token, $result->expires_in);
-		
-		// 设置变量
-		$this->accessToken = $result->access_token;
-		
-		return TRUE;
+		return $this;
 	}
 
 	/**
@@ -137,7 +135,7 @@ abstract class Base {
 			$xml .= is_numeric($value) ? "<{$key}>{$value}</{$key}>" : "<{$key}><![CDATA[{$value}]]></{$key}>";
 		}
 		$xml .= "</xml>";
-		
+
 		return $xml;
 	}
 
@@ -152,32 +150,7 @@ abstract class Base {
 		if(!$result) {
 			$this->throws(1990, 'XML数据无法解析');
 		}
-		return json_decode(json_encode($result));
-	}
-
-	/**
-	 * 生成sign签名
-	 * @param array|\stdClass $params 原始数据
-	 * @return string
-	 */
-	protected function sign($params) {
-		// 签名步骤零：过滤非法数据
-		foreach($params as $key=>$value) {
-			if($key == 'sign' || !$value || is_array($value)) {
-				unset($params[$key]);
-			}
-		}
-		// 签名步骤一：按字典序排序参数并生成请求串
-		ksort($params);
-		$sign = urldecode(http_build_query($params));
-		// 签名步骤二：在string后加入KEY
-		$sign .= "&key={$this->key}";
-		// 签名步骤三：MD5加密
-		$sign = md5($sign);
-		// 签名步骤四：所有字符转为大写
-		$sign = strtoupper($sign);
-		// 返回签名
-		return $sign;
+		return json_decode(json_encode($result), TRUE);
 	}
 
 	/**
@@ -204,7 +177,7 @@ abstract class Base {
 		curl_setopt($curl, CURLOPT_TIMEOUT, 500);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($curl, CURLOPT_URL, $url);		
+		curl_setopt($curl, CURLOPT_URL, $url);
 		$result = curl_exec($curl);
 		curl_close($curl);
 		return $result;
@@ -253,6 +226,6 @@ abstract class Base {
 	 * @return void
 	 */
 	protected function throws($code, $message) {
-		throw new \weixin\Exception($message, $code);
+		throw new Exception($message, $code);
 	}
 }
