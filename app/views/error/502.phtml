@@ -1,0 +1,17 @@
+<?php $this->layout('header.phtml', array('title'=>'服务器帅炸了〒▽〒'));?>
+<?php if(!$error['env']):?>
+<dl class="dl-horizontal">
+  <dt>Error No:</dt>
+  <dd><?php echo $error["code"];?></dd>
+  <dt>Message:</dt>
+  <dd><?php echo $error["message"];?></dd>
+  <dt>File:</dt>
+  <dd><?php echo $error["file"];?></dd>
+  <dt>Line:</dt>
+  <dd><?php echo $error["line"];?></dd>
+  <dt>Trace:</dt>
+  <dd><pre><?php echo $error["traceAsString"];?></pre></dd>
+</dl>
+<?php endif;?>
+<h1 class="text-center">系统发生错误</h1>
+<?php $this->layout('footer.phtml')?>

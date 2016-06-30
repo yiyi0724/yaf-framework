@@ -12,7 +12,7 @@ class Close {
 	 * 订单号，我司订单号或者微信订单号
 	 * @var string
 	 */
-	private $outTradeNo;
+	protected $outTradeNo;
 
 	/**
 	 * 设置订单号，我司的订单号,out_trade_no和transaction_id二选一

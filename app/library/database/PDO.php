@@ -86,7 +86,7 @@ class PDO extends Adapter {
 	 * @param array $params 参数
 	 * @return void
 	 */
-	private function debug($sql, array $params = array()) {
+	public function debug($sql, array $params = array()) {
 		echo "{$sql}<hr/><pre>";
 		print_r($params);
 		foreach($params as $key=>$placeholder) {

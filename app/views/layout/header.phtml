@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title><?php echo empty($title) ?  '标题' : $title; ?></title>
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit"/>
+<?php if(!empty($metas)) { foreach($metas as $meta): #meta_start?>
+<meta name="<?php echo $meta['name']?>" content="<?php echo $meta['content'] ;?>"/>
+<?php endforeach; }; #meta_end?>
+<link href="<?php echo WWW_STYLE;?>common/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<?php if(!empty($styles)) { foreach($styles as $style): #样式_start?>
+<link href="<?php echo WWW_STYLE.$style; ?>" rel="stylesheet" type="text/css" />
+<?php endforeach; }; #样式_end?>
+<script src="<?php echo WWW_SCRIPT;?>common/jquery.min.js"></script>
+<script src="<?php echo WWW_SCRIPT;?>common/bootstrap.min.js"></script>
+<?php if(!empty($scripts)) { foreach($scripts as $script): #脚本_start?>
+<script type="text/javascript" src="<?php echo WWW_SCRIPT.$script; ?>"></script>
+<?php endforeach; }; #脚本_end?>
+<!--[if lt IE9]> 
+<script src="<?php echo WWW_SCRIPT;?>common/html5.js"></script>
+<![endif]-->
+</head>
+<body>

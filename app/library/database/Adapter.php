@@ -64,5 +64,5 @@ abstract class Adapter {
 	 * @param array  $params 参数
 	 * @return void
 	 */
-	abstract private function debug($sql, array $params = array());
+	abstract public function debug($sql, array $params = array());
 }

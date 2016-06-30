@@ -1,10 +1,10 @@
 <?php
 
 /**
- * 模型基类
+ * 模型基类（基于mysql数据库）
  * @author enychen
  */
-namespace Base;
+namespace base;
 
 use \Yaf\Config\Ini;
 
@@ -50,7 +50,7 @@ abstract class AbstractModel {
 	 * 构造函数,加载配置
 	 * @return void
 	 */
-	public final function __construct($adapter = 'master') {
+	public function __construct($adapter = 'master') {
 		$this->setDriverConfig();
 		$this->setDatabase($adapter);
 	}
@@ -89,7 +89,7 @@ abstract class AbstractModel {
 	 */
 	protected final function setDatabase($adapter) {
 		$config = $this->getDriverConfig("database.{$adapter}");
-		$driver = "\\Database\\{$this->database}";
+		$dbDriver = "\\database\\{$this->database}";
 		$this->database = $dbDriver::getInstance($config->type, $config->host, $config->port, 
 			$config->dbname, $config->charset, $config->username, $config->password);
 	}
@@ -427,5 +427,14 @@ abstract class AbstractModel {
 		$pagitor['lists'] = $lists;
 
 		return $pagitor;
+	}
+
+	/**
+	 * 抛出异常
+	 * @param unknown $message
+	 * @throws Exception
+	 */
+	public function throws($message) {
+		throw new ExceptionModel($message);
 	}
 }

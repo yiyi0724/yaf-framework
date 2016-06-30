@@ -10,16 +10,12 @@ class ErrorController extends \base\BaseController {
 	 * 公共错误处理方法
 	 * @return boolean
 	 */
-	public function errorAction() {
-		$exception = $this->getRequest()->getException();
+	public function errorAction($exception) {
 		switch(get_class($exception)) {
-			case 'service\Exception\FormException':
-				// 数据错误
-				$this->showFormError($exception);
-				break;
 			case 'service\Exceptions\NotifyException':
+			case 'base\ExceptionModel':
 				// 通知错误
-				$this->showNotify($exception);
+				$this->showNotify($exception); 
 				break;
 			case 'service\Exceptions\RedirectException':
 				// 进行url跳转
@@ -33,25 +29,13 @@ class ErrorController extends \base\BaseController {
 	}
 
 	/**
-	 * 数据错误提示
-	 */
-	private function showFormError() {
-		
-	}
-	
-	/**
 	 * 显示提示
 	 * @param \Exception $exception 异常对象
 	 * @return void
 	 */
 	private function showNotify($exception) {
-		if(IS_AJAX) {
-			$this->jsonp($exception->getMessage(), 1001);
-		} else {
-			$this->notify($exception->getMessage(), 'notify');
-		}
-
-		exit();
+		$this->assign('message', $exception->getMessage());
+		$this->template('error');
 	}
 
 	/**
@@ -73,12 +57,11 @@ class ErrorController extends \base\BaseController {
 		// 线上环境
 		if(\Yaf\ENVIRON == 'product') {
 			// 线上环境报错
-			$errorInfo['message'] = '服务器出错了，请稍后重试';
+			$errorInfo = array('message'=>'服务器出错了，请稍后重试');
 		}
-		
 
-		// 结果输出
-		IS_AJAX ? $this->jsonp($errorInfo, 1003) : $this->notify($errorInfo, '502');
-		exit();
+		// 保存信息
+		$this->assign('error', $errorInfo);
+		$this->template('502');
 	}
 }

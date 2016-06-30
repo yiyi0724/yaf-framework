@@ -1,11 +1,13 @@
 <?php
 
+
 use \Yaf\Config\Ini;
+use \Yaf\Dispatcher;
 use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
-use \Yaf\Dispatcher;
 use \Yaf\Request_Abstract;
 use \Yaf\Response_Abstract;
+use \traits\response\Response;
 
 /**
  * 行为插件
@@ -22,6 +24,8 @@ class HandlerPlugin extends Plugin_Abstract {
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		// 常量注册
 		$this->initConst($request);
+		// 输出初始化
+		$this->initResponse($request);
 	}
 
 	/**
@@ -36,7 +40,6 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('IS_POST', $request->isPost());
 		define('IS_PUT', $request->isPut());
 		define('IS_DELETE', $request->getServer('REQUEST_METHOD') == 'DELETE');
-		define('IS_SCRIPT', $request->get('callback'));
 
 		// 模块信息常量定义
 		define('CONTROLLER_NAME', $request->getControllerName());
@@ -45,12 +48,28 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('MODULE_PATH', sprintf("%smodules%s%s%s", APP_PATH, DS, $request->getModuleName(), DS));
 		define('COMMON_VIEW_PATH', sprintf('%sviews%s', APP_PATH, DS));
 		define('MODULE_VIEW_PATH', sprintf("%sviews%s", MODULE_PATH, DS));
-		define('FORM_FILE', sprintf("%sforms%s%s.php", MODULE_PATH, DS, strtolower(CONTROLLER_NAME)));
 
 		// RESOURCE常量定义
 		$constIni = new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON);
 		foreach($constIni as $key=>$value) {
 			define(strtoupper($key), $value);
 		}
+	}
+
+	/**
+	 * 常量注册
+	 * @param Request_Abstract $request 请求对象
+	 * @return void
+	 */
+	public function initResponse(Request_Abstract $request) {
+		// 回调验证
+		$callback = $request->get('callback');
+		$callback = $callback && preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback) ? $callback : NULL;
+		// 输出格式
+		$format = strtolower($request->get('format'));
+		$format = $format ? : (IS_AJAX ? ($callback ? 'jsonp' : 'json') : NULL);
+		// 设置响应
+		Response::setFormat($format);
+		Response::setCallback($callback);
 	}
 }

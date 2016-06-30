@@ -22,7 +22,7 @@ class Adapter implements View_Interface {
 	 * 构造函数
 	 */
 	public function __construct() {
-		$this->engine = new View(NULL);
+		$this->engine = new Response(NULL);
 	}
 
 	/**
@@ -42,7 +42,6 @@ class Adapter implements View_Interface {
 	 * @return string
 	 */
 	public function display($tpl, $tpl_vars = NULL) {
-		$this->setScriptPath(VIEW_PATH);
 		return $this->engine->display($tpl, $tpl_vars);
 	}
 

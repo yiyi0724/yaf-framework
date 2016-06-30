@@ -8,8 +8,21 @@ namespace traits\response;
 
 use \Yaf\Application;
 use \Yaf\View\Simple;
+use traits\Form;
 
-class View extends Simple {
+class Response extends Simple {
+
+	/**
+	 * 输出格式
+	 * @var string
+	 */
+	protected static $format = NULL;
+	
+	/**
+	 * 针对jsonp格式的回调函数名
+	 * @var string
+	 */
+	protected static $callback = NULL;
 
 	/**
 	 * 视图数据
@@ -18,12 +31,46 @@ class View extends Simple {
 	protected $_tpl_vars = array();
 
 	/**
+	 * 设置输出格式
+	 * @param string $format 输出格式
+	 * @return void
+	 */
+	public static function setFormat($format) {
+		self::$format = $format;
+	}
+	
+	/**
+	 * 获取输出格式
+	 * @return string
+	 */
+	public static function getFormat() {
+		return self::$format;
+	}
+	
+	/**
+	 * 设置jsonp格式的回调函数名
+	 * @param string $callback 回调函数名
+	 * @return void
+	 */
+	public static function setCallback($callback) {
+		self::$callback = $callback;
+	}
+	
+	/**
+	 * 获取jsonp格式的回调函数名
+	 * @return string
+	 */
+	public static function getCallback() {
+		return self::$callback;
+	}
+
+	/**
 	 * 加载公共layout模板
 	 * @param string $tpl 模板名称
 	 * @param array $tpl_vars 视图数据
 	 */
 	public function layout($tpl, array $tpl_vars = array()) {
-		$this->setScriptPath(rtrim(COMMON_VIEW_PATH, DS));
+		$this->setScriptPath(COMMON_VIEW_PATH . 'layout');
 		return parent::render($tpl, $tpl_vars);
 	}
 
@@ -34,7 +81,7 @@ class View extends Simple {
 	 * @return void
 	 */
 	public function moduleLayout($tpl, array $tpl_vars = array()) {
-		$this->setScriptPath(rtrim(MODULE_VIEW_PATH, DS));
+		$this->setScriptPath(MODULE_VIEW_PATH . 'layout');
 		return parent::render($tpl, $tpl_vars);
 	}
 
@@ -65,29 +112,19 @@ class View extends Simple {
 	 */
 	protected final function response($tpl, $tplVars, $callback) {
 		// 合并参数
-		if(is_array($tplVars)) {
-			$tplVars = array_merge($this->_tpl_vars, $tplVars);
-		}
+		$tplVars = array_merge($this->_tpl_vars, (is_null($tplVars) ? array() : $tplVars));
 		// 获取接受对象
 		$accept = Application::app()->getDispatcher()->getRequest()->getServer('HTTP_ACCEPT');
 		switch(TRUE) {
-			case stripos($accept, 'text/javascript') !== FALSE:
-			case stripos($accept, 'application/javascript') !== FALSE:
-				// jsonp返回
-				$tplVars['callback'] = IS_SCRIPT;
-			case stripos($accept, 'text/json') !== FALSE:
-			case stripos($accept, 'application/json') !== FALSE:
-				// json返回
+			case in_array(self::getFormat(), array('json', 'jsonp')):
 				$this->jsonp($tplVars);
 				break;
 			default:
-				// 页面输出
-				$this->setScriptPath(rtrim(MODULE_VIEW_PATH, DS));
-				return parent::$callback($tpl, $tplVars);
+				parent::$callback($tpl, $tplVars);
 				break;
 		}
 	}
-	
+
 	/**
 	 * json|jsonp数据输出
 	 * 1001 - 正确弹框提示
@@ -102,19 +139,28 @@ class View extends Simple {
 	 * @param int $code 通用代码
 	 * @return void
 	 */
-	protected final function jsonp(array $output) {
+	protected final function jsonp($output) {
 		$json['message'] = $output;
 		$json['action'] = isset($action['action']);
 		$json = json_encode($json);
 	
 		$header = 'application/json';
-		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', IS_SCRIPT)) {
+		if($callback = self::getCallback()) {
 			$header = 'text/javascript';
-			$json = "{$jsonp}({$json})";
+			$json = "{$callback}({$json})";
 		}
-
+	
 		Application::app()->getDispatcher()->disableView();
 		header("Content-type: {$header}; charset=UTF-8");
 		exit($json);
+	}
+
+	/**
+	 * 输出<script></script>标签
+	 * @param string $content 要输出的script执行代码
+	 * @return void
+	 */
+	protected final function scriptTab($content) {
+		exit("<script type='text/javascript'>{$content}</script>");
 	}
 }

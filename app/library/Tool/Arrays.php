@@ -6,8 +6,8 @@
  */
 namespace Tool;
 
-class Arrays
-{
+class Arrays {
+
 	/**
 	 * 二维数组转一维数组
 	 * @param array $lists 二维数组
@@ -15,14 +15,26 @@ class Arrays
 	 * @param bool $unique 过滤重复选项
 	 * @return void
 	 */
-	protected static function toOneDimensions($lists, $key, $unique = TRUE)
-	{
+	public static function toOneDimensions($lists, $key, $unique = TRUE) {
 		$rescurise = array();
-		foreach($lists as $key=>$list)
-		{
+		foreach($lists as $key=>$list) {
 			$rescurise[] = $list[$key];
 		}
-	
+		
 		return $unique ? array_unique($rescurise) : $rescurise;
+	}
+
+	/**
+	 * 对象转成数组
+	 * @param mixed $obj 所有的对象
+	 * @return array
+	 */
+	public static function objectToArray($obj){
+		$arr = is_object($obj) ? get_object_vars($obj) : $obj;
+		if(is_array($arr)){
+			return array_map(__METHOD__, $arr);
+		}else{
+			return $arr;
+		}
 	}
 }
