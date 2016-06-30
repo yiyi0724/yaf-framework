@@ -17,6 +17,12 @@ abstract class AbstractModel {
 	protected $config = NULL;
 
 	/**
+	 * 配置适配器名称
+	 * @var string
+	 */
+	protected $adapter = 'master';
+
+	/**
 	 * 数据库驱动适配器
 	 * @var \Database\Adapter
 	 */
@@ -50,9 +56,9 @@ abstract class AbstractModel {
 	 * 构造函数,加载配置
 	 * @return void
 	 */
-	public function __construct($adapter = 'master') {
+	public function __construct() {
 		$this->setDriverConfig();
-		$this->setDatabase($adapter);
+		$this->setDatabase($this->getAdapter());
 	}
 
 	/**
@@ -63,6 +69,14 @@ abstract class AbstractModel {
 		return $this->table;
 	}
 
+	/**
+	 * 获取配置适配器
+	 * @return string
+	 */
+	public final function getAdapter() {
+		return $this->adapter;
+	}
+	
 	/**
 	 * 设置驱动配置信息
 	 * @return AbstractModel
@@ -114,6 +128,38 @@ abstract class AbstractModel {
 	}
 
 	/**
+	 * 开启事务
+	 * @return boolean
+	 */
+	public function begin() {
+		return $this->getDatabase()->beginTransaction();
+	}
+
+	/**
+	 * 提交事务
+	 * @return boolean
+	 */
+	public function commit() {
+		return $this->getDatabase()->commit();
+	}
+
+	/**
+	 * 回滚事务
+	 * @return boolean
+	 */
+	public function rollback() {
+		return $this->getDatabase()->commit();
+	}
+
+	/**
+	 * 判断是否在事务中
+	 * @return bool
+	 */
+	public function in() {
+		return $this->getDatabase()->inTransaction();
+	}
+
+	/**
 	 * 设置要查询的字段
 	 * @param string $field 查询字符串列表
 	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
@@ -140,8 +186,18 @@ abstract class AbstractModel {
 	 * @params string|array $condition 要拼接的条件
 	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
-	public final function where($condition) {
-		$this->sql['where'] = "WHERE {$this->comCondition($condition)}";
+	public final function where() {
+		$result = $placeholder = array();
+		$args = func_get_args();
+		if(count($args) > 1) {
+			preg_match_all('/\:[a-zA-Z][a-zA-Z0-9]*/', $args[0], $result);
+			$result = $result[0];
+			for($i=0, $len=count($result); $i<$len; $i++) {
+				$placeholder["{$result[$i]}"] = $args[$i+1];
+			}
+		}
+		$this->sql['where'] = "WHERE {$args[0]}";
+		$this->sql['values'] = array_merge($this->sql['values'], $placeholder);
 		return $this;
 	}
 
@@ -304,13 +360,13 @@ abstract class AbstractModel {
 		// 插入对应的预处理值
 		$preValues = implode(',', $this->sql['prepare']);
 		// 插入语句
-		$sql = "INSERT INTO {$this->table}{$preKeys} VALUES {$preValues}";
+		$sql = "INSERT INTO {$this->getTable()}{$preKeys} VALUES {$preValues}";
 		// 执行sql语句
 		$this->query($sql, $this->sql['values']);
 		// 清空数据
 		$this->resetSql();
 		// 结果返回
-		return $this->getDatabase()->lastInsertId();
+		return $this->getLastInsertId();
 	}
 
 	/**
@@ -319,31 +375,31 @@ abstract class AbstractModel {
 	 */
 	public final function delete() {
 		// 拼接sql语句
-		$sql = "DELETE FROM {$this->table} {$this->sql['where']}{$this->sql['order']}{$this->sql['limit']}";
+		$sql = "DELETE FROM {$this->getTable()} {$this->sql['where']}{$this->sql['order']}{$this->sql['limit']}";
 		// 执行sql语句
 		$this->query($sql, $this->sql['values']);
 		// 清空数据
 		$this->resetSql();
 		// 返回结果
-		return $this->getDatabase()->rowCount();
+		return $this->getAffectRow();
 	}
 
 	/**
 	 * 执行查询,返回对象进行fetch操作
-	 * @param string $clear 清空条件信息
-	 * @return \Database\Adapter
+	 * @param boolean $clear 是否清空
+	 * @return AbstractModel
 	 */
 	public final function select($clear = TRUE) {
 		// 局部释放变量
 		extract($this->sql);
 		// 拼接sql语句
-		$sql = "SELECT {$field} FROM {$this->table} {$join} {$where} {$group} {$having} {$order} {$limit} {$lock}";
+		$sql = "SELECT {$field} FROM {$this->getTable()} {$join} {$where} {$group} {$having} {$order} {$limit} {$lock}";
 		// 执行sql语句
 		$this->query($sql, $values);
 		// 清空数据
 		$clear and $this->resetSql();
 		// 返回数据库操作对象
-		return $this->getDatabase();
+		return $this;
 	}
 
 	/**
@@ -368,13 +424,13 @@ abstract class AbstractModel {
 		// set语句
 		$sets = implode(',', $sets);
 		// sql语句
-		$sql = "UPDATE {$this->table} SET {$sets} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
+		$sql = "UPDATE {$this->getTable()} SET {$sets} {$this->sql['where']} {$this->sql['order']} {$this->sql['limit']}";
 		// 执行sql语句
 		$this->query($sql, $this->sql['values']);
 		// 清空数据
 		$this->resetSql();
 		// 返回当前对象
-		return $this->getDatabase()->rowCount();
+		return $this->getAffectRow();
 	}
 
 	/**
@@ -408,6 +464,46 @@ abstract class AbstractModel {
 	}
 
 	/**
+	 * 获取上次插入的id值
+	 * @return int
+	 */
+	public function getLastInsertId() {
+		return $this->getDatabase()->lastInsertId();
+	}
+
+	/**
+	 * 获取影响的行数
+	 * @return int
+	 */
+	public function getAffectRow() {
+		return $this->getDatabase()->rowCount();
+	}
+
+	/**
+	 * 查询结果获取全部
+	 * @return array
+	 */
+	public function fetchAll() {
+		return $this->getDatabase()->fetchAll();
+	}
+
+	/**
+	 * 查询结果获取一行
+	 * @return array
+	 */
+	public function fetchRow() {
+		return $this->getDatabase()->fetch();
+	}
+
+	/**
+	 * 查询结果获取一个值
+	 * @return string|null|false|number
+	 */
+	public function fetchOne() {
+		return $this->getDatabase()->fetchColumn();
+	}
+	
+	/**
 	 * 分页获取信息
 	 * @param int $page 当前页
 	 * @param int $number 每页几条
@@ -428,7 +524,7 @@ abstract class AbstractModel {
 
 		return $pagitor;
 	}
-
+	
 	/**
 	 * 抛出异常
 	 * @param unknown $message

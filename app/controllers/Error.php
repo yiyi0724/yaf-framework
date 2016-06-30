@@ -34,7 +34,7 @@ class ErrorController extends \base\BaseController {
 	 * @return void
 	 */
 	private function showNotify($exception) {
-		$this->assign('message', $exception->getMessage());
+		$this->assign('error', $exception->getMessage());
 		$this->template('error');
 	}
 

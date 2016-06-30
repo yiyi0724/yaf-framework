@@ -142,6 +142,7 @@ class PDO extends Adapter {
 			case 'fetch':
 			case 'fetchColumn':
 			case 'rowCount':
+				$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
 				$result = $this->stmt->$method();
 				break;
 			default:
