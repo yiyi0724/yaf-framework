@@ -100,7 +100,7 @@ class ErrorController extends \base\BaseController {
 	 * @return void
 	 */
 	private function systemException(\Exception $exception) {
-		if(\Yaf\ENVIRON != 'product') {
+		if(\Yaf\ENVIRON == 'product') {
 			// 线上环境
 			$error = NULL;
 			$message = '502 Server Error';

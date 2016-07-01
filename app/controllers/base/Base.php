@@ -12,10 +12,10 @@ use \Yaf\Controller_Abstract;
 abstract class BaseController extends Controller_Abstract {
 
 	/**
-	 * 获取请求对象
+	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */
-	public function getRequest() {
+	public function getValidRequest() {
 		return \traits\Request::getInstance();
 	}
 
@@ -71,7 +71,7 @@ abstract class BaseController extends Controller_Abstract {
 		$json['data'] = $data;
 		$json = json_encode($json);
 
-		$callback = parent::getRequest()->get('callback');
+		$callback = $this->getRequest()->get('callback');
 		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback)) {
 			// jsonp
 			exit("<script type='text/javascript'>{$callback}({$json})</script>");
