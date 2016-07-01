@@ -47,7 +47,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param array|int $data 如果是post请输入数组，如果是location请输入301|302|303|307,get则进行忽略
 	 * @return void
 	 */
-	public final function redirect($url, $method = 'location', $other = array()) {
+	public final function redirect($url, $method = 'get', $other = array()) {
 		IS_AJAX ? $this->jsonp($url, 1010) : \network\Location::$method($url, $other);
 	}
 }

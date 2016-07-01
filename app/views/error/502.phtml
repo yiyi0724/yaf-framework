@@ -1,5 +1,5 @@
 <?php $this->commonLayout('header.phtml', array('title'=>'服务器帅炸了〒▽〒'));?>
-<?php if(!$error['env']):?>
+<?php if(isset($error['env'])):?>
 <dl class="dl-horizontal">
   <dt>Error No:</dt>
   <dd><?php echo $error["code"];?></dd>
@@ -13,5 +13,5 @@
   <dd><pre><?php echo $error["traceAsString"];?></pre></dd>
 </dl>
 <?php endif;?>
-<h1 class="text-center">系统发生错误</h1>
+<h1 class="text-center"><?php echo $error["message"];?></h1>
 <?php $this->commonLayout('footer.phtml')?>

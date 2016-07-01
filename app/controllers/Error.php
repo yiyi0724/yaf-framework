@@ -22,16 +22,16 @@ class ErrorController extends \base\BaseController {
 				$this->showNotifyException($exception);
 				break;
 			case 'traits\RedirectException':
-				// 进行url跳转
+				// 302页面跳转
 				$this->showRedirectException($exception);
 				break;
 			case 'traits\ForbiddenException':
-				// 禁止访问
+				// 403禁止访问
 				$this->showForbiddenException($exception);
 				break;
 			case 'traits\NotFoundException':
 			case 'Yaf\Exception\LoadFailed\Controller':
-				// 404输出
+				// 404找不到资源
 				$this->showNotFoundException($exception);
 				break;
 			default:
@@ -47,6 +47,7 @@ class ErrorController extends \base\BaseController {
 	 */
 	private function showFormException(\traits\FormException $exception) {
 		$error = $exception->getError();
+		$this->template('form');
 	}
 
 	/**
@@ -64,7 +65,7 @@ class ErrorController extends \base\BaseController {
 	 * @param unknown $exception
 	 */
 	private function showRedirectException($exception) {
-		$this->redirect($exception->getMessage(), 'get');
+		$this->redirect($exception->getMessage());
 	}
 
 	/**
@@ -75,7 +76,7 @@ class ErrorController extends \base\BaseController {
 	}
 
 	/**
-	 * 找不到页面操作
+	 * 找不到页面操作(402)
 	 */
 	private function showNotFoundException($exception) {
 		$this->template('404');
@@ -87,22 +88,18 @@ class ErrorController extends \base\BaseController {
 	 * @return void
 	 */
 	private function systemException(\Exception $exception) {
-		// 整理数据
-		$errorInfo['method'] = $_SERVER['REQUEST_METHOD'];
-		$errorInfo['params'] = $_REQUEST;
-		$errorInfo['env'] = \Yaf\ENVIRON == 'product';
-		$errorInfo['code'] = $exception->getCode();
-		$errorInfo['file'] = $exception->getFile();
-		$errorInfo['message'] = $exception->getMessage();
-		$errorInfo['line'] = $exception->getLine();
-		$errorInfo['traceAsString'] = $exception->getTraceAsString();
-		
 		// 线上环境
 		if(\Yaf\ENVIRON == 'product') {
-			// 线上环境报错
-			$errorInfo = array(
-				'message'=>'服务器出错了，请稍后重试'
-			);
+			$errorInfo = array('message'=>'502 Server Error');
+		} else {
+			$errorInfo['method'] = $_SERVER['REQUEST_METHOD'];
+			$errorInfo['params'] = $_REQUEST;
+			$errorInfo['env'] = \Yaf\ENVIRON == 'product';
+			$errorInfo['code'] = $exception->getCode();
+			$errorInfo['file'] = $exception->getFile();
+			$errorInfo['message'] = $exception->getMessage();
+			$errorInfo['line'] = $exception->getLine();
+			$errorInfo['traceAsString'] = $exception->getTraceAsString();
 		}
 		
 		// 保存信息
