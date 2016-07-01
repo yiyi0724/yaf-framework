@@ -39,41 +39,42 @@ class Request {
 	 * @return void
 	 */
 	public static function getInstance($putOrDelete = array()) {
-		// 创建单例对象
 		if(!self::$instance instanceof self) {
+			// 创建单例对象
 			self::$instance = new self();
-		}
-		
-		// PUT和DETELE方法支持
-		if(IS_PUT || IS_DELETE) {
-			parse_str(file_get_contents('php://input'), $putOrDelete);
-		}
-		
-		// 输入数据源
-		$request = Application::app()->getDispatcher()->getRequest();
-		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
-		
-		// 获取检查规则
-		$controller = sprintf('%sForm', CONTROLLER_NAME);
-		$action = sprintf('%sAction', ACTION_NAME);
-		$validFile = sprintf('%sforms%s%s.php', MODULE_PATH, DS, $controller);
-		
-		if(is_file($validFile)) {
-			require ($validFile);
-			if(method_exists($controller, $action)) {
-				$rules = $controller::$action();
-				$fromTrait = new Form();
-				$fromTrait->setRequestMethod($request->getMethod());
-				$fromTrait->setRules($rules);
-				$fromTrait->setParams($params);
-				if($errors = $fromTrait->fliter()) {
-					throw new \Exception(json_encode($errors));
-				}
-				$params = $fromTrait->getSuccess();
+			
+			// PUT和DETELE方法支持
+			if(IS_PUT || IS_DELETE) {
+				parse_str(file_get_contents('php://input'), $putOrDelete);
 			}
+			
+			// 输入数据源
+			$request = Application::app()->getDispatcher()->getRequest();
+			$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
+			
+			// 获取检查规则
+			$controller = sprintf('%sForm', CONTROLLER_NAME);
+			$action = sprintf('%sAction', ACTION_NAME);
+			$validFile = sprintf('%sforms%s%s.php', MODULE_PATH, DS, $controller);
+			
+			if(is_file($validFile)) {
+				require ($validFile);
+				if(method_exists($controller, $action)) {
+					$rules = $controller::$action();
+					$fromTrait = new Form();
+					$fromTrait->setRequestMethod($request->getMethod());
+					$fromTrait->setRules($rules);
+					$fromTrait->setParams($params);
+					if($errors = $fromTrait->fliter()) {
+						throw new FormException($errors);
+					}
+					$params = $fromTrait->getSuccess();
+				}
+			}
+			
+			self::$instance->setParams($params);
 		}
 		
-		self::$instance->setParams($params);
 		return self::$instance;
 	}
 

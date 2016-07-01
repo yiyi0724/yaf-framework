@@ -65,7 +65,7 @@ class view extends Simple {
 	 * @param array $tpl_vars 视图数据
 	 */
 	public function commonLayout($tpl, array $tpl_vars = array()) {
-		$this->setScriptPath(COMMON_VIEW_PATH . 'layout');
+		$this->setScriptPath(sprintf('%slayout', COMMON_VIEW_PATH));
 		echo parent::render($tpl, $tpl_vars);
 	}
 
@@ -76,7 +76,7 @@ class view extends Simple {
 	 * @return void
 	 */
 	public function moduleLayout($tpl, array $tpl_vars = array()) {
-		$this->setScriptPath(MODULE_VIEW_PATH . 'layout');
+		$this->setScriptPath(sprintf('%slayout', MODULE_VIEW_PATH));
 		echo parent::render($tpl, $tpl_vars);
 	}
 
@@ -111,9 +111,7 @@ class view extends Simple {
 		// 获取接受对象
 		$accept = Application::app()->getDispatcher()->getRequest()->getServer('HTTP_ACCEPT');
 		switch(TRUE) {
-			case in_array(self::getFormat(), array(
-			'json', 'jsonp'
-				)):
+			case in_array(self::getFormat(), array('json', 'jsonp')):
 				$this->jsonp($tplVars);
 				break;
 			default:

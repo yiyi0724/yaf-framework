@@ -10,7 +10,9 @@ class IndexController extends \base\WwwController {
 	 * 网站首页
 	 */
 	public function indexAction() {
-
+		
+		throw new \traits\RedirectException('http://www.baidu.com');
+		
 		\traits\Request::getInstance();	
 
 		$test = new \test\UserinfomationModel();
