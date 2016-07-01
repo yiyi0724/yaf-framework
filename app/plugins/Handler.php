@@ -24,8 +24,6 @@ class HandlerPlugin extends Plugin_Abstract {
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		// 常量注册
 		$this->initConst($request);
-		// 输出初始化
-		$this->initView($request);
 	}
 
 	/**
@@ -54,22 +52,5 @@ class HandlerPlugin extends Plugin_Abstract {
 		foreach($constIni as $key=>$value) {
 			define(strtoupper($key), $value);
 		}
-	}
-
-	/**
-	 * 常量注册
-	 * @param Request_Abstract $request 请求对象
-	 * @return void
-	 */
-	public function initView(Request_Abstract $request) {
-		// 回调验证
-		$callback = $request->get('callback');
-		$callback = $callback && preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback) ? $callback : NULL;
-		// 输出格式
-		$format = strtolower($request->get('format'));
-		$format = $format ? : (IS_AJAX ? ($callback ? 'jsonp' : 'json') : NULL);
-		// 设置响应
-		View::setFormat($format);
-		View::setCallback($callback);
 	}
 }

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * 逻辑组件基类
+ * @author enychen
+ */
 namespace services\base;
 
 class Base {

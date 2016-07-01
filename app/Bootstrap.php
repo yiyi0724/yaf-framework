@@ -70,7 +70,7 @@ class Bootstrap extends Bootstrap_Abstract {
 	 * @param \Yaf\Dispatcher $dispatcher 分发对象
 	 * @return void
 	 */
-	public function _initView(Dispatcher $dispatcher) {
+	public function _initResponse(Dispatcher $dispatcher) {
 		$dispatcher->setView(new Response());
 	}
 }
