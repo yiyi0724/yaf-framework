@@ -8,7 +8,8 @@ class IndexForm {
 	 */
 	public static function indexAction() {
 		return array(
-			'p'=>array('GET', 'int', TRUE, '页码有误', ['min'=>1], 1), 
+			'p'=>array('GET', 'int', FALSE, '页码有误', ['min'=>1], 1),
+			'id'=>array('GET', 'int', TRUE, 'id有误', ['min'=>1]),
 		);
 	}
 }

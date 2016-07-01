@@ -6,6 +6,8 @@
  */
 namespace traits;
 
+use \Tool\Is;
+
 class Form {
 
 	/**

@@ -13,6 +13,14 @@ use \Yaf\Controller_Abstract;
 abstract class BaseController extends Controller_Abstract {
 
 	/**
+	 * 获取请求对象
+	 * @return \traits\Request 请求封装对象
+	 */
+	public function getRequest() {
+		return \traits\Request::getInstance();
+	}
+
+	/**
 	 * 参数绑定
 	 * @param string $key 键
 	 * @param mixed $value 值

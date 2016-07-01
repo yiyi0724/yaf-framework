@@ -47,6 +47,9 @@ class ErrorController extends \base\BaseController {
 	 */
 	private function showFormException(\traits\FormException $exception) {
 		$error = $exception->getError();
+		echo '<pre>';
+		print_r($error);
+		exit;
 		$this->template('form');
 	}
 

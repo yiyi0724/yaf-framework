@@ -71,7 +71,7 @@ class Request {
 					$params = $fromTrait->getSuccess();
 				}
 			}
-			
+
 			self::$instance->setParams($params);
 		}
 		
