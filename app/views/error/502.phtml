@@ -1,4 +1,4 @@
-<?php $this->layout('header.phtml', array('title'=>'服务器帅炸了〒▽〒'));?>
+<?php $this->commonLayout('header.phtml', array('title'=>'服务器帅炸了〒▽〒'));?>
 <?php if(!$error['env']):?>
 <dl class="dl-horizontal">
   <dt>Error No:</dt>
@@ -14,4 +14,4 @@
 </dl>
 <?php endif;?>
 <h1 class="text-center">系统发生错误</h1>
-<?php $this->layout('footer.phtml')?>
+<?php $this->commonLayout('footer.phtml')?>

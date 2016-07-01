@@ -1,13 +1,13 @@
 <?php
 
 
+use \traits\View;
 use \Yaf\Config\Ini;
 use \Yaf\Dispatcher;
 use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
 use \Yaf\Response_Abstract;
-use \traits\response\Response;
 
 /**
  * 行为插件
@@ -25,7 +25,7 @@ class HandlerPlugin extends Plugin_Abstract {
 		// 常量注册
 		$this->initConst($request);
 		// 输出初始化
-		$this->initResponse($request);
+		$this->initView($request);
 	}
 
 	/**
@@ -61,7 +61,7 @@ class HandlerPlugin extends Plugin_Abstract {
 	 * @param Request_Abstract $request 请求对象
 	 * @return void
 	 */
-	public function initResponse(Request_Abstract $request) {
+	public function initView(Request_Abstract $request) {
 		// 回调验证
 		$callback = $request->get('callback');
 		$callback = $callback && preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback) ? $callback : NULL;
@@ -69,7 +69,7 @@ class HandlerPlugin extends Plugin_Abstract {
 		$format = strtolower($request->get('format'));
 		$format = $format ? : (IS_AJAX ? ($callback ? 'jsonp' : 'json') : NULL);
 		// 设置响应
-		Response::setFormat($format);
-		Response::setCallback($callback);
+		View::setFormat($format);
+		View::setCallback($callback);
 	}
 }

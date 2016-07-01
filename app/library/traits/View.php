@@ -1,23 +1,18 @@
 <?php
 
-/**
- * 自定义视图对象
- * @author enychen
- */
-namespace traits\response;
+namespace traits;
 
 use \Yaf\Application;
 use \Yaf\View\Simple;
-use traits\Form;
 
-class Response extends Simple {
+class view extends Simple {
 
 	/**
 	 * 输出格式
 	 * @var string
 	 */
 	protected static $format = NULL;
-	
+
 	/**
 	 * 针对jsonp格式的回调函数名
 	 * @var string
@@ -34,11 +29,11 @@ class Response extends Simple {
 	 * 设置输出格式
 	 * @param string $format 输出格式
 	 * @return void
-	 */
+	*/
 	public static function setFormat($format) {
 		self::$format = $format;
 	}
-	
+
 	/**
 	 * 获取输出格式
 	 * @return string
@@ -46,7 +41,7 @@ class Response extends Simple {
 	public static function getFormat() {
 		return self::$format;
 	}
-	
+
 	/**
 	 * 设置jsonp格式的回调函数名
 	 * @param string $callback 回调函数名
@@ -55,7 +50,7 @@ class Response extends Simple {
 	public static function setCallback($callback) {
 		self::$callback = $callback;
 	}
-	
+
 	/**
 	 * 获取jsonp格式的回调函数名
 	 * @return string
@@ -116,7 +111,9 @@ class Response extends Simple {
 		// 获取接受对象
 		$accept = Application::app()->getDispatcher()->getRequest()->getServer('HTTP_ACCEPT');
 		switch(TRUE) {
-			case in_array(self::getFormat(), array('json', 'jsonp')):
+			case in_array(self::getFormat(), array(
+			'json', 'jsonp'
+				)):
 				$this->jsonp($tplVars);
 				break;
 			default:
@@ -142,13 +139,13 @@ class Response extends Simple {
 		$json['message'] = $output;
 		$json['action'] = isset($action['action']);
 		$json = json_encode($json);
-	
+
 		$header = 'application/json';
 		if($callback = self::getCallback()) {
 			$header = 'text/javascript';
 			$json = "{$callback}({$json})";
 		}
-	
+
 		Application::app()->getDispatcher()->disableView();
 		header("Content-type: {$header}; charset=UTF-8");
 		exit($json);

@@ -9,7 +9,10 @@ class IndexController extends \base\WwwController {
 	/**
 	 * 网站首页
 	 */
-	public function indexAction() {		
+	public function indexAction() {
+
+		\traits\Request::getInstance();	
+
 		$test = new \test\UserinfomationModel();
 		$pagitor = $test->where('uid=:uid and status=:status', 1, 0)->order('uid DESC')->page(1, 15);
 		

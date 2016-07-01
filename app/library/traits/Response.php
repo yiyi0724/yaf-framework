@@ -1,16 +1,15 @@
 <?php
 
 /**
- * 自定义视图接口
+ * 自定义响应对象
  * @author enychen
  */
-namespace traits\response;
+namespace traits;
 
 use \Yaf\Application;
-use \Yaf\View\Simple;
 use \Yaf\View_Interface;
 
-class Adapter implements View_Interface {
+class Response implements View_Interface {
 
 	/**
 	 * 视图引擎
@@ -22,7 +21,7 @@ class Adapter implements View_Interface {
 	 * 构造函数
 	 */
 	public function __construct() {
-		$this->engine = new Response(NULL);
+		$this->engine = new View(NULL);
 	}
 
 	/**
@@ -72,3 +71,4 @@ class Adapter implements View_Interface {
 		$this->engine->getScriptPath();
 	}
 }
+

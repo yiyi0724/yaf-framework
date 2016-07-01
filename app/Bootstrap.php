@@ -10,7 +10,7 @@ use Yaf\Dispatcher;
 use Yaf\Config\Ini;
 use Yaf\Application;
 use Yaf\Bootstrap_Abstract;
-use \traits\response\Adapter;
+use \traits\Response;
 
 class Bootstrap extends Bootstrap_Abstract {
 
@@ -71,6 +71,6 @@ class Bootstrap extends Bootstrap_Abstract {
 	 * @return void
 	 */
 	public function _initView(Dispatcher $dispatcher) {
-		$dispatcher->setView(new Adapter());
+		$dispatcher->setView(new Response());
 	}
 }
