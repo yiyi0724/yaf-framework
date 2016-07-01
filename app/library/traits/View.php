@@ -5,7 +5,6 @@
  */
 namespace traits;
 
-use \Yaf\Application;
 use \Yaf\View\Simple;
 
 class view extends Simple {

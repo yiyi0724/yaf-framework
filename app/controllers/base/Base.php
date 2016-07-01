@@ -6,8 +6,6 @@
  */
 namespace base;
 
-use \Yaf\Session;
-use \Yaf\Config\Ini;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 
@@ -72,14 +70,15 @@ abstract class BaseController extends Controller_Abstract {
 		$json['message'] = $message;
 		$json['data'] = $data;
 		$json = json_encode($json);
-		
-		if($callback = $this->getRequest()->get('callback')) {
-			//jsonp
+
+		$callback = parent::getRequest()->get('callback');
+		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback)) {
+			// jsonp
 			exit("<script type='text/javascript'>{$callback}({$json})</script>");
 		} else {
 			// json
 			header("Content-type: application/json; charset=UTF-8");
 			exit($json);
-		}		
+		}
 	}
 }

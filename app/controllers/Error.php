@@ -46,8 +46,14 @@ class ErrorController extends \base\BaseController {
 	 * @param \traits\FormException $exception 表单异常对象
 	 */
 	private function showFormException(\traits\FormException $exception) {
-		$this->assign('error', $exception->getError());
-		$this->template('form');
+		switch(TRUE) {
+			case IS_AJAX:
+				$this->json(FALSE, '数据有误', $exception->getError());
+				break;
+			default:
+				$this->assign('error', $exception->getError());
+				$this->template('form');
+		}
 	}
 
 	/**
@@ -56,8 +62,14 @@ class ErrorController extends \base\BaseController {
 	 * @return void
 	 */
 	private function showNotifyException($exception) {
-		$this->assign('error', $exception->getMessage());
-		$this->template('notify');
+		switch(TRUE) {
+			case IS_AJAX:
+				$this->json(FALSE, $exception->getMessage());
+				break;
+			default:
+				$this->assign('error', $exception->getMessage());
+				$this->template('notify');
+		}
 	}
 
 	/**
@@ -88,22 +100,30 @@ class ErrorController extends \base\BaseController {
 	 * @return void
 	 */
 	private function systemException(\Exception $exception) {
-		// 线上环境
-		if(\Yaf\ENVIRON == 'product') {
-			$error['message'] = '502 Server Error';
+		if(\Yaf\ENVIRON != 'product') {
+			// 线上环境
+			$error = NULL;
+			$message = '502 Server Error';
+			// 日志记录
+			error_log(sprintf($exception));
 		} else {
-			$error['method'] = $_SERVER['REQUEST_METHOD'];
-			$error['params'] = $_REQUEST;
+			// 开发环境
+			$message = $exception->getMessage();
 			$error['env'] = \Yaf\ENVIRON == 'product';
 			$error['code'] = $exception->getCode();
 			$error['file'] = $exception->getFile();
-			$error['message'] = $exception->getMessage();
 			$error['line'] = $exception->getLine();
 			$error['traceAsString'] = $exception->getTraceAsString();
 		}
-		
-		// 保存信息
-		$this->assign('error', $error);
-		$this->template('502');
+
+		switch(TRUE) {
+			case IS_AJAX:
+				$this->json(FALSE, $message, $error);
+				break;
+			default:
+				$this->assign('message', $message);
+				$this->assign('error', $error);
+				$this->template('502');
+		}
 	}
 }

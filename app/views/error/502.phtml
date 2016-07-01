@@ -4,7 +4,7 @@
   <dt>Error No:</dt>
   <dd><?php echo $error["code"];?></dd>
   <dt>Message:</dt>
-  <dd><?php echo $error["message"];?></dd>
+  <dd><?php echo $message;?></dd>
   <dt>File:</dt>
   <dd><?php echo $error["file"];?></dd>
   <dt>Line:</dt>
@@ -13,5 +13,5 @@
   <dd><pre><?php echo $error["traceAsString"];?></pre></dd>
 </dl>
 <?php endif;?>
-<h1 class="text-center"><?php echo $error["message"];?></h1>
+<h1 class="text-center"><?php echo $message;?></h1>
 <?php $this->commonLayout('footer.phtml')?>
