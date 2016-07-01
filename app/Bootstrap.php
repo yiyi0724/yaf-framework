@@ -39,7 +39,7 @@ class Bootstrap extends Bootstrap_Abstract {
 	 * @return void
 	 */
 	public function _initLoader(Dispatcher $dispatcher) {
-		Loader::getInstance(rtrim(APP_PATH, '/'))->registerLocalNamespace('service');
+		Loader::getInstance(rtrim(APP_PATH, '/'))->registerLocalNamespace('services');
 	}
 
 	/**
