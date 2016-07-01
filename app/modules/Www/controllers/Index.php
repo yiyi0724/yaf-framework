@@ -11,7 +11,7 @@ class IndexController extends \base\WwwController {
 	 */
 	public function indexAction() {
 		
-		throw new \traits\RedirectException('http://www.baidu.com');
+		throw new \traits\ForbiddenException('http://www.baidu.com');
 		
 		\traits\Request::getInstance();	
 
