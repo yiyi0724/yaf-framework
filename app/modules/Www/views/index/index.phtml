@@ -2,20 +2,22 @@
 <?php $this->commonLayout('header.phtml'); ?>
 <h1 class="text-center">网站首页测试样式，Hello World</h1>
 <table class="table table-bordered table-hover">
-  <tr class="danger">
-    <th>用户id</th>
-    <th>昵称</th>
-    <th>头像</th>
-    <th>性别</th>
-    <th>电话</th>
-    <th>邮箱</th>
-    <th>状态</th>
-    <th>注册时间</th>
-    <th>ip地址</th>
-  </tr>
+  <thead>
+  	<tr class="danger">
+    	<th>用户id</th>
+    	<th>昵称</th>
+    	<th>头像</th>
+    	<th>性别</th>
+    	<th>电话</th>
+    	<th>邮箱</th>
+    	<th>状态</th>
+    	<th>注册时间</th>
+    	<th>ip地址</th>
+  	</tr>
+  <thead>
   <?php foreach($pagitor['lists'] as $list):?>
   <tbody>
-  	<tr class="">
+  	<tr>
      	<td><?php echo $list['uid'];?></td>
 	    <td><?php echo $list['nickname'];?></td>
 	    <td><?php echo $list['avatar'];?></td>
