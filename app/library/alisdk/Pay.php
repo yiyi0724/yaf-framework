@@ -194,10 +194,10 @@ class Pay {
 	 * @param int $code 异常码
 	 * @param code $message 异常信息
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function throws($code, $message) {
-		throw new Exception($message, $code);
+		throw new \Exception($message, $code);
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Pay {
 		$order['sign'] = $this->sign($order);
 
 		// 组装地址
-		$api = 'https://mapi.alipay.com/gateway.do?_input_charset=%s';
+		$api = 'https://mapi.alipay.com/gateway.do';
 		return array('action'=>sprintf($api, $this->getInputCharset()), 'params'=>$order);
 	}
 
@@ -281,7 +281,7 @@ class Pay {
 		$order['sign'] = $this->sign($order);
 
 		// 组装地址
-		$api = 'https://mapi.alipay.com/gateway.do?_input_charset=%s';
+		$api = 'https://mapi.alipay.com/gateway.do';
 		return array('action'=>sprintf($api, $this->getInputCharset()), 'params'=>$order);
 	}
 
@@ -291,7 +291,7 @@ class Pay {
 	 * @return void
 	 * @throws \alisdk\Exception
 	 */
-	private function notify(\alisdk\pay\Notify $notifyObject) {
+	public function notify(\alisdk\pay\Notify $notifyObject) {
 		// 签名结果检查
 		if(!$notifyObject->getSign() || ($notifyObject->getSign() != $this->sign($notifyObject->getParams()))) {
 			$this->throws(2090, '签名不正确');

@@ -106,6 +106,11 @@ abstract class AbstractModel {
 		$dbDriver = "\\database\\{$this->database}";
 		$this->database = $dbDriver::getInstance($config->type, $config->host, $config->port, 
 			$config->dbname, $config->charset, $config->username, $config->password);
+
+		// 设置调试模式
+		if(\Yaf\ENVIRON != 'product') {
+			$this->database->setIsDebug(TRUE);
+		}
 	}
 
 	/**

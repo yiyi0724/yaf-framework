@@ -224,8 +224,9 @@ abstract class Base {
 	 * @param int $code 错误代码
 	 * @param string $message 错误信息
 	 * @return void
+	 * @throws \Exception
 	 */
 	protected function throws($code, $message) {
-		throw new Exception($message, $code);
+		throw new \Exception($message, $code);
 	}
 }
