@@ -183,21 +183,23 @@ abstract class AbstractModel {
 
 	/**
 	 * 拼接where子句
-	 * @params string|array $condition 要拼接的条件
 	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
-	public final function where() {
+	public final function where($condition) {
 		$result = $placeholder = array();
 		$args = func_get_args();
-		if(count($args) > 1) {
-			preg_match_all('/\:[a-zA-Z][a-zA-Z0-9]*/', $args[0], $result);
-			$result = $result[0];
-			for($i=0, $len=count($result); $i<$len; $i++) {
-				$placeholder["{$result[$i]}"] = $args[$i+1];
+		if(count($args) >= 0) {
+			if(count($args) > 1) {
+				preg_match_all('/\:[a-zA-Z][a-zA-Z0-9]*/', $args[0], $result);
+				$result = $result[0];
+				for($i=0, $len=count($result); $i<$len; $i++) {
+					$placeholder["{$result[$i]}"] = $args[$i+1];
+				}
 			}
+			$this->sql['where'] = "WHERE {$args[0]}";
+			$this->sql['values'] = array_merge($this->sql['values'], $placeholder);
 		}
-		$this->sql['where'] = "WHERE {$args[0]}";
-		$this->sql['values'] = array_merge($this->sql['values'], $placeholder);
+
 		return $this;
 	}
 
@@ -386,8 +388,8 @@ abstract class AbstractModel {
 
 	/**
 	 * 执行查询,返回对象进行fetch操作
-	 * @param boolean $clear 是否清空
-	 * @return AbstractModel
+	 * @param boolean $clear 是否清空条件信息，默认是
+	 * @return AbstractModel $this 返回当前对象进行连贯操作
 	 */
 	public final function select($clear = TRUE) {
 		// 局部释放变量
@@ -502,24 +504,24 @@ abstract class AbstractModel {
 	public function fetchOne() {
 		return $this->getDatabase()->fetchColumn();
 	}
-	
+
 	/**
 	 * 分页获取信息
 	 * @param int $page 当前页
 	 * @param int $number 每页几条
 	 * @return array 分页信息
 	 */
-	public function paging($page = 1, $number = 15) {
+	public function page($page = 1, $number = 15) {
 		// 获取本页数据
 		$this->limit(abs($page - 1) * $number, $number);
 		$lists = $this->select(FALSE)->fetchAll();
 
 		// 获取分页数量
 		$this->field('COUNT(*)');
-		$total = $this->select()->fetchColumn();
+		$total = $this->select()->fetchOne();
 
 		// 输出分页
-		$pagitor = \Network\Page::showCenter($page, $number, $total, 6);
+		$pagitor = \network\Page::showCenter($page, $number, $total, 6);
 		$pagitor['lists'] = $lists;
 
 		return $pagitor;

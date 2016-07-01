@@ -69,9 +69,9 @@ class Response extends Simple {
 	 * @param string $tpl 模板名称
 	 * @param array $tpl_vars 视图数据
 	 */
-	public function layout($tpl, array $tpl_vars = array()) {
+	public function commonLayout($tpl, array $tpl_vars = array()) {
 		$this->setScriptPath(COMMON_VIEW_PATH . 'layout');
-		return parent::render($tpl, $tpl_vars);
+		echo parent::render($tpl, $tpl_vars);
 	}
 
 	/**
@@ -82,7 +82,7 @@ class Response extends Simple {
 	 */
 	public function moduleLayout($tpl, array $tpl_vars = array()) {
 		$this->setScriptPath(MODULE_VIEW_PATH . 'layout');
-		return parent::render($tpl, $tpl_vars);
+		echo parent::render($tpl, $tpl_vars);
 	}
 
 	/**
@@ -120,8 +120,7 @@ class Response extends Simple {
 				$this->jsonp($tplVars);
 				break;
 			default:
-				parent::$callback($tpl, $tplVars);
-				break;
+				return parent::$callback($tpl, $tplVars);
 		}
 	}
 

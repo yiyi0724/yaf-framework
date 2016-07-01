@@ -12,12 +12,12 @@ class ErrorController extends \base\BaseController {
 	 */
 	public function errorAction($exception) {
 		switch(get_class($exception)) {
-			case 'service\Exceptions\NotifyException':
+			case 'service\Exceptions\Notify':
 			case 'base\ExceptionModel':
 				// 通知错误
 				$this->showNotify($exception); 
 				break;
-			case 'service\Exceptions\RedirectException':
+			case 'service\Exceptions\Redirect':
 				// 进行url跳转
 				$this->redirect($exception->getMessage(), 'get');
 				break;

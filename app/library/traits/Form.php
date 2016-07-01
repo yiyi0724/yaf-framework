@@ -168,4 +168,43 @@ class Form {
 	public function getError() {
 		return $this->error;
 	}
+	
+	/**
+	 * 参数整合，清空全局变量，进行数据校验
+	 * @param \Yaf\Request_Abstract $request 请求对象
+	 * @param array $putOrDelete put和delete方法支持存放数组
+	 * @return void
+	 */
+	public static function inputFliter($putOrDelete = array()) {
+		// PUT和DETELE方法支持
+		if(IS_PUT || IS_DELETE) {
+			parse_str(file_get_contents('php://input'), $putOrDelete);
+		}
+	
+		// 输入数据源
+		$request = $this->getRequest();
+		$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
+	
+		// 获取检查规则
+		list($controller, $action) = array(
+			CONTROLLER . 'Form', ACTION . 'Input'
+		);
+		if(is_file(FORM_FILE) && require (FORM_FILE)) {
+			if(!method_exists($controller, $action)) {
+				return array();
+			}
+			$rules = $controller::$action();
+			$formLib = new \security\Form();
+			$formLib->setRequestMethod($request->getMethod());
+			$formLib->setRules($rules);
+			$formLib->setParams($params);
+			if($error = $formLib->fliter()) {
+				IS_AJAX ? $this->jsonp($error, 1020) : $this->notify($error);
+				exit();
+			}
+			$params = $formLib->getSuccess();
+		}
+	
+		return $params;
+	}
 }

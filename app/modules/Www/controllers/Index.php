@@ -3,19 +3,16 @@
 /**
  * 网站默认控制器
  * @author enychen
- *
  */
 class IndexController extends \base\WwwController {
 
 	/**
 	 * 网站首页
 	 */
-	public function indexAction() {
+	public function indexAction() {		
 		$test = new \test\UserinfomationModel();
-		$result = $test->where('uid=:uid and status=:status', 1, 0)->update()->fetchAll();
-
-		echo '<pre>';
-		print_r($result);
-		exit;
+		$pagitor = $test->where('uid=:uid and status=:status', 1, 0)->order('uid DESC')->page(1, 15);
+		
+		$this->assign('page', $pagitor);
 	}
 }
