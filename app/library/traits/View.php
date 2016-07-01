@@ -109,7 +109,6 @@ class view extends Simple {
 		// 合并参数
 		$tplVars = array_merge($this->_tpl_vars, (is_null($tplVars) ? array() : $tplVars));
 		// 获取接受对象
-		$accept = Application::app()->getDispatcher()->getRequest()->getServer('HTTP_ACCEPT');
 		switch(TRUE) {
 			case in_array(self::getFormat(), array('json', 'jsonp')):
 				$this->jsonp($tplVars);
@@ -120,22 +119,13 @@ class view extends Simple {
 	}
 
 	/**
-	 * json|jsonp数据输出
-	 * 1001 - 正确弹框提示
-	 * 1002 - 警告弹框提示
-	 * 1003 - 错误弹框提示
-	 * 1010 - url地址跳转
-	 * 1011 - 正确弹框并跳转
-	 * 1012 - 警告弹框并跳转
-	 * 1013 - 错误弹框并跳转
-	 * 1020 - 表单错误
+	 * json|jsonp数据输出s
 	 * @param int|string|array $output 要输出的数据
-	 * @param int $code 通用代码
 	 * @return void
 	 */
 	protected final function jsonp($output) {
-		$json['message'] = $output;
-		$json['action'] = isset($action['action']);
+		$json = $output;
+		$json['status'] = empty($json['error']);
 		$json = json_encode($json);
 
 		$header = 'application/json';

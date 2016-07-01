@@ -46,10 +46,7 @@ class ErrorController extends \base\BaseController {
 	 * @param \traits\FormException $exception 表单异常对象
 	 */
 	private function showFormException(\traits\FormException $exception) {
-		$error = $exception->getError();
-		echo '<pre>';
-		print_r($error);
-		exit;
+		$this->assign('error', $exception->getError());
 		$this->template('form');
 	}
 
@@ -93,20 +90,20 @@ class ErrorController extends \base\BaseController {
 	private function systemException(\Exception $exception) {
 		// 线上环境
 		if(\Yaf\ENVIRON == 'product') {
-			$errorInfo = array('message'=>'502 Server Error');
+			$error['message'] = '502 Server Error';
 		} else {
-			$errorInfo['method'] = $_SERVER['REQUEST_METHOD'];
-			$errorInfo['params'] = $_REQUEST;
-			$errorInfo['env'] = \Yaf\ENVIRON == 'product';
-			$errorInfo['code'] = $exception->getCode();
-			$errorInfo['file'] = $exception->getFile();
-			$errorInfo['message'] = $exception->getMessage();
-			$errorInfo['line'] = $exception->getLine();
-			$errorInfo['traceAsString'] = $exception->getTraceAsString();
+			$error['method'] = $_SERVER['REQUEST_METHOD'];
+			$error['params'] = $_REQUEST;
+			$error['env'] = \Yaf\ENVIRON == 'product';
+			$error['code'] = $exception->getCode();
+			$error['file'] = $exception->getFile();
+			$error['message'] = $exception->getMessage();
+			$error['line'] = $exception->getLine();
+			$error['traceAsString'] = $exception->getTraceAsString();
 		}
 		
 		// 保存信息
-		$this->assign('error', $errorInfo);
+		$this->assign('error', $error);
 		$this->template('502');
 	}
 }
