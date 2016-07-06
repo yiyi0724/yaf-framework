@@ -15,7 +15,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */
-	public function getValidRequest() {
+	public function getRequest() {
 		return \traits\Request::getInstance();
 	}
 
@@ -71,7 +71,7 @@ abstract class BaseController extends Controller_Abstract {
 		$json['data'] = $data;
 		$json = json_encode($json);
 
-		$callback = $this->getRequest()->get('callback');
+		$callback = Application::app()->getDispatcher()->getRequest()->get('callback');
 		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback)) {
 			// jsonp
 			exit("<script type='text/javascript'>{$callback}({$json})</script>");

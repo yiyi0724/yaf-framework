@@ -1,13 +1,13 @@
 <?php
 
 /**
- * 微信SDK用户类
+ * 微信SDK用户类信息
  * @author enychen
  * @method
  */
-namespace weixin\user;
+namespace weixin;
 
-class Base extends \weixin\Base {
+class User extends Base {
 
 	/**
 	 * 获取的用户信息, 成功获取后, 将包含如下字段（snsapi_userinfo方式，如果是snsapi_base，则只有获取到access_token，openid）
@@ -30,6 +30,38 @@ class Base extends \weixin\Base {
 		$this->setAppSecret($appSecret);
 		$this->setAccessToken();
 	}
+	
+	/**
+	 * 执行用户跳转登录
+	 * @return void
+	 */
+	public function authToLogin(\weixin\user\Login $loginObject) {
+		// 必备参数
+		if(!$loginObject->getRedirectUri()) {
+			$this->throws(1200, '请设置回调地址');
+		}
+		if(!$loginObject->getScope() || !in_array($loginObject->getScope(), array('snsapi_userinfo', 'snsapi_base', 'snsapi_login'))) {
+			$this->throws(1201, 'scope不正确');
+		}
+		if(!$loginObject->getState()) {
+			$this->throws(1202, '请设置state');
+		}
+		
+		$this->check();
+		$url = sprintf(\weixin\API::USER_SCAN_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
+		header("Location: {$url}");
+		exit();
+	}
+	
+	/**
+	 * 公众号跳转登录
+	 * @return void
+	 */
+	public function jumpMp() {
+		$url = sprintf(\weixin\API::USER_MP_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
+		header("Location: {$url}");
+		exit();
+	}
 
 	/**
 	 * 跳转到用户授权页面，让用户进行授权
@@ -39,13 +71,11 @@ class Base extends \weixin\Base {
 	 * @return void
 	 */
 	public function getUserAuthCode($redirectUri, $scope, $state) {
-		$url = sprintf(API::GET_USER_CODE, $this->appid, urlencode($redirectUri), $scope, $state);
+		$url = sprintf(API::GET_USER_CODE, $this->getAppid(), urlencode($redirectUri), $scope, $state);
 		header('location:' . $requestUrl);
 		exit();
 	}
 
-
-	
 	/**
 	 * 刷新用户的access_token
 	 * @return void
@@ -57,10 +87,10 @@ class Base extends \weixin\Base {
 		if(isset($result->errcode)) {
 			throw new \weixin\Exception($result->errmsg, $result->errcode);
 		}
-
+		
 		$this->info = $result;
 	}
-	
+
 	/**
 	 * 用户的access_token是否已经过期
 	 * @return bool TRUE表示过期, FALSE表示未过期
@@ -70,7 +100,7 @@ class Base extends \weixin\Base {
 		if(!$this->info) {
 			throw new \weixin\Exception('请先进行获取用户令牌操作');
 		}
-
+		
 		$url = sprintf(API::IS_EXPIRE_USER_ACCESS_TOKEN, $this->info->access_token, $this->info->openid);
 		$result = json_decode($this->get($url));
 		if($result->errcode != 0) {
@@ -79,7 +109,7 @@ class Base extends \weixin\Base {
 		
 		return $result->errmsg != 'ok';
 	}
-	
+
 	/**
 	 * 获取用户的具体信息（当scope为snsapi_userinfo的时候才可以获取）
 	 * @param string $language 国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
