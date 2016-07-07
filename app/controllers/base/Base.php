@@ -6,10 +6,20 @@
  */
 namespace base;
 
+use \Yaf\Session;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 
 abstract class BaseController extends Controller_Abstract {
+
+	/**
+	 * 全局初始化
+	 * @return void
+	 */
+	public function init() {
+		// 定义用户uid信息
+		defined('UID') or define('UID', intval(Session::getInstance()->get('user.uid')));
+	}
 
 	/**
 	 * 获取经过验证请求对象
@@ -80,5 +90,17 @@ abstract class BaseController extends Controller_Abstract {
 			header("Content-type: application/json; charset=UTF-8");
 			exit($json);
 		}
+	}
+
+	/**
+	 * 输出调试信息
+	 * @param mixed $content 调试内容
+	 * @return void
+	 */
+	protected function debug($content) {
+		echo '<pre>';
+		print_r($content);
+		echo '</pre>';
+		exit;
 	}
 }

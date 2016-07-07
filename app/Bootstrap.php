@@ -9,8 +9,8 @@ use \traits\Route;
 use Yaf\Dispatcher;
 use Yaf\Config\Ini;
 use Yaf\Application;
-use Yaf\Bootstrap_Abstract;
 use \traits\Response;
+use Yaf\Bootstrap_Abstract;
 
 class Bootstrap extends Bootstrap_Abstract {
 

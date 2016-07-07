@@ -6,6 +6,12 @@
  */
 class IndexController extends \base\WwwController {
 
+	public function loginAction() {
+		
+		
+		exit;
+	}
+	
 	/**
 	 * 网站首页
 	 */
@@ -13,7 +19,7 @@ class IndexController extends \base\WwwController {
 		// 测试样例
 		$request = $this->getRequest();
 		$test = new \test\UserinfomationModel();
-		$pagitor = $test->where('uid=:uid and status=:status', $request->get('id'), 0)->order('uid DESC')->pagitor($request->get('p'), 15);
+		$pagitor = $test->order('uid DESC')->pagitor($request->get('p'), 15);
 		$this->assign('pagitor', $pagitor);
 	}
 }
