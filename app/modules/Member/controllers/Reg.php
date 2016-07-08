@@ -1,10 +1,10 @@
 <?php
 
 /**
- * 网站默认控制器
+ * 注册控制器
  * @author enychen
  */
-class IndexController extends \base\WwwController {
+class RegController extends \base\WwwController {
 
 	/**
 	 * 网站首页
@@ -15,5 +15,12 @@ class IndexController extends \base\WwwController {
 		$test = new \test\UserinfomationModel();
 		$pagitor = $test->order('uid DESC')->pagitor($request->get('p'), 15);
 		$this->assign('pagitor', $pagitor);
+	}
+
+	/**
+	 * 增加用户
+	 */
+	public function addAction() {
+		$request = $this->getRequest();
 	}
 }

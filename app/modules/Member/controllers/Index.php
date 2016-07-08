@@ -6,6 +6,12 @@
  */
 class IndexController extends \base\WwwController {
 
+	public function loginAction() {
+		$request = $this->getRequest();
+		
+		exit;
+	}
+	
 	/**
 	 * 网站首页
 	 */

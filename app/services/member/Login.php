@@ -21,10 +21,22 @@ class Login extends Base {
 	protected $password;
 
 	/**
-	 * 是否记住登录
-	 * @var bool
+	 * oauth登录用户的来源
+	 * @var string
 	 */
-	protected $isRemember = TRUE;
+	protected $from = NULL;
+
+	/**
+	 * oauth登录用户的唯一key
+	 * @var string
+	 */
+	protected $openid = NULL;
+
+	/**
+	 * 微信登录的附加参数
+	 * @var string
+	 */
+	protected $unionid = '';
 
 	/**
 	 * 设置账号
@@ -63,52 +75,25 @@ class Login extends Base {
 	}
 
 	/**
-	 * 设置是否登录
-	 * @param bool $isRemember 是否进行登录
+	 * 设置用户的openid
+	 * @param string $openid 唯一key
 	 * @return Login $this 返回当前对象进行连贯操作
 	 */
-	public function setIsRemember($isRemember) {
-		$this->isRemember = (bool)$isRemember;
-		return $this;
-	}
-
-	/**
-	 * 获取是否登录
-	 * @return string
-	 */
-	public function getIsRemember() {
-		return $this->isRemember;
+	public function setOpenid() {
+		
 	}
 
 	/**
 	 * 本站登录
 	 */
-	public function local() {
+	public function todo() {
 	}
 
-	/**
-	 * 手机登录
-	 */
-	public function mobile() {
-	}
-
-	/**
-	 * 第三方登录
-	 */
-	public function oauth() {
+	protected function oauthLogin() {
 		
 	}
 
-	/**
-	 * 是否记住登录（默认记住一个月）
-	 * @return void
-	 */
-	protected function rememberLogin() {
-		if(UID) {
-			$config = $this->getConfig('cookie');
-			$encrypt = \security\Encryption::encrypt(array('uid'=>UID), 'yyq');
-			setcookie(self::COOKIE_REMEMBER_KEY, $encrypt, time() + 2592000, $config->path, 
-				$config->domain, $config->secure, $config->httponly);
-		}
+	protected function localLogin() {
+		
 	}
 }

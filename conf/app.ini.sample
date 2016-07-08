@@ -16,12 +16,6 @@ runtime.session.cookie_lifetime			= 0
 runtime.session.cookie_httponly 		= 1
 ;runtime.session.gc_maxlifetime 		= 1440
 
-;[关于cookie的设置]
-cookie.path							 	= '/'
-cookie.domain							= '.enychen.com';
-cookie.secure							= 0
-cookie.httponly							= 1
-
 [test:product]
 ;测试环境配置
 

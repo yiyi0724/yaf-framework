@@ -21,6 +21,12 @@ class Base extends \services\base\Base {
 	const COOKIE_REMEMBER_KEY = '_r';
 
 	/**
+	 * 是否记住登录
+	 * @var bool
+	 */
+	protected $isRemember = TRUE;
+
+	/**
 	 * 定义一个常量UID，如果uid获取不到则为0，否则为具体的数字
 	 * @return void
 	 */
@@ -43,11 +49,43 @@ class Base extends \services\base\Base {
 	}
 
 	/**
+	 * 设置是否登录
+	 * @param bool $isRemember 是否进行登录
+	 * @return Login $this 返回当前对象进行连贯操作
+	 */
+	public function setIsRemember($isRemember) {
+		$this->isRemember = (bool)$isRemember;
+		return $this;
+	}
+	
+	/**
+	 * 获取是否登录
+	 * @return string
+	 */
+	public function getIsRemember() {
+		return $this->isRemember;
+	}
+
+	/**
 	 * 加密密码
 	 * @param string $password 待加密的密码
 	 * @return string
 	 */
 	protected function encryptPassword($password) {
 		return md5(sha1(md5($password . MEMBER_PASSWORD_KEY, TRUE)));
+	}
+
+	/**
+	 * 是否记住登录（默认记住一个月）
+	 * @return void
+	 */
+	protected function rememberLogin() {
+		if(!defined('UID')) {
+			return;
+		}
+
+		$encrypt = \security\Encryption::encrypt(array('uid'=>UID), 'yyq');
+		setcookie(self::COOKIE_REMEMBER_KEY, $encrypt, time() + 2592000, '/',
+			$this->getConfig('runtime.session.cookie_domain'), FALSE, TRUE);
 	}
 }
