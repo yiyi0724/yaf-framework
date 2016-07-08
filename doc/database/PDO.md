@@ -12,7 +12,7 @@ $username = 'root';
 $password = '123456';
 $charset = utf8;
 // 单例模式获取对象
-$mysql = \database\Mysql::getInstance($type, $host, $port, $dbname, $charset, $username, $password);
+$pdo = \database\PDO::getInstance($type, $host, $port, $dbname, $charset, $username, $password);
 ```
 
 ### 内置方法
@@ -36,7 +36,7 @@ $mysql = \database\Mysql::getInstance($type, $host, $port, $dbname, $charset, $u
  * @param array  $params sql语句预绑定参数，默认是array()
  * @return \Driver\Mysql 返回当前对象
  */
-$mysql->query($sql, $params = array());
+$pdo->query($sql, $params = array());
 ```
 ###### 调试sql语句并结束程序
 ```php
@@ -45,68 +45,68 @@ $mysql->query($sql, $params = array());
  * @param array  $params sql语句预绑定参数，默认是array()
  * @return void
  */
-$mysql->debug($sql, $params = array());
+$pdo->debug($sql, $params = array());
 ```
 ###### 开启事务:
 ```php
 /**
  * @return boolean 开启成功返回TRUE
  */
-$mysql->beginTransaction();
+$pdo->beginTransaction();
 ```
 ###### 是否已经开启过事务:
 ```php
 /**
  * @return boolean 在一个事务内返回TRUE
  */
-$mysql->inTransaction();
+$pdo->inTransaction();
 ```
 ###### 提交事务:
 ```php
 /**
  * @return boolean 事务提交成功返回TRUE
  */
-$mysql->commit();
+$pdo->commit();
 ```
 ###### 回滚事务:
 ```php
 /**
  * @return boolean 事务回滚成功返回TRUE
  */
-$mysql->rollback();
+$pdo->rollback();
 ```
 ###### 获取上次插入的id:
 ```php
 /**
  * @return int 返回新插入的id
  */
-$mysql->lastInsertId();
+$pdo->lastInsertId();
 ```
 ###### 获取影响的行数:
 ```php
 /**
  * @return int 返回影响的行数
  */
-$mysql->rowCount();
+$pdo->rowCount();
 ```
 ###### select获取所有:
 ```php
 /**
  * @return array 返回selec的所有行
  */
-$mysql->fetchAll();
+$pdo->fetchAll();
 ```
 ###### select获取一行:
 ```php
 /**
  * @return array 返回selec的一行
  */
-$mysql->fetch();
+$pdo->fetch();
 ```
 ###### select获取一个值:
 ```php
 /**
  * @return array 返回selec的一个值
  */
-$mysql->fetchColumn();
+$pdo->fetchColumn();
 ```
