@@ -11,14 +11,12 @@ use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 
 abstract class BaseController extends Controller_Abstract {
-
-	/**
-	 * 全局初始化
-	 * @return void
-	 */
+	
 	public function init() {
-		// 定义用户uid信息
-		defined('UID') or define('UID', intval(Session::getInstance()->get('user.uid')));
+		// 定义UID常量
+		$memberServices = new \services\member\Base();
+		$memberServices->initUid();
+
 	}
 
 	/**

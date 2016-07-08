@@ -1,6 +1,9 @@
 <?php
 
-
+/**
+ * 行为插件
+ * @author enychen
+ */
 use \traits\View;
 use \Yaf\Config\Ini;
 use \Yaf\Dispatcher;
@@ -9,10 +12,6 @@ use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
 use \Yaf\Response_Abstract;
 
-/**
- * 行为插件
- * @author enychen
- */
 class HandlerPlugin extends Plugin_Abstract {
 
 	/**

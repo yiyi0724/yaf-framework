@@ -12,6 +12,14 @@ admin_style 	= "/admin/style/"
 admin_script 	= "/admin/script/"
 admin_image 	= "/admin/image/"
 
+;[加密密钥]
+member_remember_key = 'YnffiMFe+/faRi2fpNEPxXqil1LdiE3+/t'
+member_reg_key = 'YuiPN2em+/fPE3Im5efE+/FA1EF9mvn+/tnNmi'
+;resources.secure.salt.resetpasswd = 'Y#nfiP/+FIme$IOfoOll/+YqE1NFNnmE3'
+;resources.secure.salt.bindemail = 'Ynl/+YqE1NFnfiP/+FImeNmn3E'
+;resources.secure.salt.resetcofferpasswd = 'YmeEi9//+FImeFIi9/ol/+YqE1NFnfETr3E'
+;resources.sync.quicklogin.sign = 'Om52Im+I9/oAeETYbe4m1EFf+/5eefEiml'
+;resources.sync.quicklogin.salt = 'Im+I9/poAeET4m1Y5eeOEFf+/52YjInEil'
 
 [test:product]
 ;测试环境配置
