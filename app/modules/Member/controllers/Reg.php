@@ -16,12 +16,4 @@ class RegController extends \base\MemberController {
 		$pagitor = $test->order('uid DESC')->pagitor($request->get('p'), 15);
 		$this->assign('pagitor', $pagitor);
 	}
-
-	/**
-	 * 增加用户
-	 */
-	public function addAction() {
-		$request = $this->getRequest();
-		$loginService = new \services\member\Login();
-	}
 }
