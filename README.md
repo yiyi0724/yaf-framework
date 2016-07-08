@@ -5,4 +5,4 @@
 - 框架目前还在完善当中
 
 ## 内置类库使用说明
-	[点击这里](https://github.com/enychen/yaf-framework/tree/master/doc)
+   [点击这里查看:)](https://github.com/enychen/yaf-framework/tree/master/doc)
