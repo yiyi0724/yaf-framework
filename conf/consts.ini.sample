@@ -6,12 +6,6 @@ www_style 		= "/www/css/"
 www_script 		= "/www/js/"
 www_image 		= "/www/img/"
 
-;[后台样式]
-admin_domain 	= "http://www.enychen.com/"
-admin_style 	= "/admin/style/"
-admin_script 	= "/admin/script/"
-admin_image 	= "/admin/image/"
-
 ;[加密密钥]
 member_remember_key = 'YnffiMFe+/faRi2fpNEPxXqil1LdiE3+/t'
 member_reg_key = 'YuiPN2em+/fPE3Im5efE+/FA1EF9mvn+/tnNmi'
@@ -28,4 +22,3 @@ member_reg_key = 'YuiPN2em+/fPE3Im5efE+/FA1EF9mvn+/tnNmi'
 [develop:product]
 ;开发环境配置
 www_domain 		= "http://www.local.enychen.com/"
-admin_domain 	= "http://www.local.enychen.com/"
