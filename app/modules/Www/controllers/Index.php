@@ -7,9 +7,6 @@
 class IndexController extends \base\WwwController {
 
 	public function loginAction() {
-		
-		
-		exit;
 	}
 	
 	/**

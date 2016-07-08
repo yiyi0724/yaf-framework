@@ -26,18 +26,28 @@ class Base extends \services\base\Base {
 	 */
 	public function initUid() {
 		if(!defined('UID')) {
-			try {				
+			try {
 				$uid = $this->getSession()->get(self::SESSION_UID_KEY);
-				if($remember = $this->getRequest()->getCookie(self::COOKIE_REMEMBER_KEY)) {
+				// session不存在uid，尝试从记住登录的cookie中获取
+				if(!$uid && ($remember = $this->getYafRequest()->getCookie(self::COOKIE_REMEMBER_KEY))) {
 					$remember = \security\Encryption::decrypt($remember, MEMBER_REMEMBER_KEY);
-					$this->getSession()->set('user.uid', $remember['uid']);
+					$this->getSession()->set(self::SESSION_UID_KEY, $remember['uid']);
 					$uid = $remember['uid'];
 				}
-				
+				// 常量定义
 				define('UID', intval($uid));
 			} catch (\Exception $e) {
 				exit('403 Forbidden');
 			}
 		}
+	}
+
+	/**
+	 * 加密密码
+	 * @param string $password 待加密的密码
+	 * @return string
+	 */
+	protected function encryptPassword($password) {
+		return md5(sha1(md5($password . MEMBER_PASSWORD_KEY, TRUE)));
 	}
 }

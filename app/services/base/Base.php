@@ -44,6 +44,10 @@ class Base {
 		return new Ini(CONF_PATH . "{$ini}.ini", \YAF\ENVIRON);
 	}
 
+	public function getYafRequest() {
+		return Application::app()->getDispatcher()->getRequest();
+	}
+	
 	/**
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
