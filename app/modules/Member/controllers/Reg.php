@@ -4,7 +4,7 @@
  * 注册控制器
  * @author enychen
  */
-class RegController extends \base\WwwController {
+class RegController extends \base\MemberController {
 
 	/**
 	 * 网站首页
@@ -22,5 +22,6 @@ class RegController extends \base\WwwController {
 	 */
 	public function addAction() {
 		$request = $this->getRequest();
+		$loginService = new \services\member\Login();
 	}
 }
