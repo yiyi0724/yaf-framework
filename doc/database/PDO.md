@@ -1,4 +1,4 @@
-## Mysql类使用说明
+## PDO类使用说明
 [源码地址](https://github.com/enychen/yaf-framework/blob/master/app/library/Driver/Mysql.php)
 
 ### 创建对象
@@ -12,7 +12,7 @@ $username = 'root';
 $password = '123456';
 $charset = utf8;
 // 单例模式获取对象
-$mysql = \Driver\Mysql::getInstance($driver);
+$mysql = \database\Mysql::getInstance($type, $host, $port, $dbname, $charset, $username, $password);
 ```
 
 ### 内置方法
