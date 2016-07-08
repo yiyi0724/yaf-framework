@@ -4,14 +4,13 @@
 ### 创建对象
 ```php
 // 数据库选项
-$driver = array(
-  'host'=>'127.0.0.1',
-  'port'=>3306,
-  'dbname'=>'test',
-  'username'=>'root',
-  'password'=>123456,
-  'charset'=>'utf8',
-);
+$type = 'mysql';
+$host = '127.0.0.1';
+$port = 3306;
+$dbname = 'test';
+$username = 'root';
+$password = '123456';
+$charset = utf8;
 // 单例模式获取对象
 $mysql = \Driver\Mysql::getInstance($driver);
 ```
