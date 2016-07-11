@@ -32,12 +32,10 @@ class PDO extends Adapter {
 	 * @param string $dsn 	   数据库连接dsn信息
 	 * @param string $username 数据库连接用户
 	 * @param string $password 数据库连接密码
-	 * @return void
 	 */
 	protected final function __construct($dsn, $username, $password) {
 		$options = array(
-			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,
-			\PDO::ATTR_TIMEOUT=>30
+			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION, \PDO::ATTR_TIMEOUT=>30
 		);
 		$this->pdo = new \PDO($dsn, $username, $password, $options);
 	}
@@ -125,30 +123,74 @@ class PDO extends Adapter {
 	}
 
 	/**
-	 * 简单回调pdo对象方法
-	 * @param string $method 函数名
-	 * @return mixed
+	 * 开启事务
+	 * @return boolean
 	 */
-	public function __call($method, $args) {
-		switch($method) {
-			case 'beginTransaction':
-			case 'inTransaction':
-			case 'commit':
-			case 'rollback':
-			case 'lastInsertId':
-				$result = $this->pdo->$method();
-				break;
-			case 'fetchAll':
-			case 'fetch':
-			case 'fetchColumn':
-			case 'rowCount':
-				$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
-				$result = $this->stmt->$method();
-				break;
-			default:
-				throw new \PDOException("Call to undefined \database\PDO::{$method}()");
-		}
-		
-		return $result;
+	public function beginTransaction() {
+		return $this->pdo->beginTransaction();
+	}
+
+	/**
+	 * 判断是否在事务内
+	 * @return boolean
+	 */
+	public function inTransaction() {
+		return $this->pdo->inTransaction();
+	}
+
+	/**
+	 * 提交事务
+	 * @return boolean
+	 */
+	public function commitTransaction() {
+		return $this->pdo->commit();
+	}
+
+	/**
+	 * 回滚事务
+	 * @return boolean
+	 */
+	public function rollbackTransaction() {
+		return $this->pdo->rollback();
+	}
+
+	/**
+	 * 获取上一次插入的id
+	 * @return int
+	 */
+	public function getLastInsertId() {
+		return $this->pdo->lastInsertId();
+	}
+
+	/**
+	 * 获取影响的行数
+	 * @return int
+	 */
+	public function getAffectRowCount() {
+		return $this->stmt->rowCount();
+	}
+
+	/**
+	 * 获取select的所有结果
+	 * @return array
+	 */
+	public function fetchAll() {
+		return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+	}
+
+	/**
+	 * 获取select的一行结果
+	 * @return array
+	 */
+	public function fetchRow() {
+		return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+	}
+
+	/**
+	 * 获取select的一个结果
+	 * @return string
+	 */
+	public function fetchOne() {
+		return $this->stmt->fetchColumn(\PDO::FETCH_ASSOC);
 	}
 }

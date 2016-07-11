@@ -388,7 +388,7 @@ abstract class AbstractModel {
 		// 清空数据
 		$this->resetSql();
 		// 返回结果
-		return $this->getAffectRow();
+		return $this->getAffectRowCount();
 	}
 
 	/**
@@ -437,7 +437,7 @@ abstract class AbstractModel {
 		// 清空数据
 		$this->resetSql();
 		// 返回当前对象
-		return $this->getAffectRow();
+		return $this->getAffectRowCount();
 	}
 
 	/**
@@ -476,15 +476,15 @@ abstract class AbstractModel {
 	 * @return int
 	 */
 	public function getLastInsertId() {
-		return $this->getDatabase()->lastInsertId();
+		return $this->getDatabase()->getLastInsertId();
 	}
 
 	/**
 	 * 获取影响的行数
 	 * @return int
 	 */
-	public function getAffectRow() {
-		return $this->getDatabase()->rowCount();
+	public function getAffectRowCount() {
+		return $this->getDatabase()->getAffectRowCount();
 	}
 
 	/**
@@ -500,7 +500,7 @@ abstract class AbstractModel {
 	 * @return array
 	 */
 	public function fetchRow() {
-		return $this->getDatabase()->fetch();
+		return $this->getDatabase()->fetchRow();
 	}
 
 	/**
@@ -508,7 +508,7 @@ abstract class AbstractModel {
 	 * @return string|null|false|number
 	 */
 	public function fetchOne() {
-		return $this->getDatabase()->fetchColumn();
+		return $this->getDatabase()->fetchOne();
 	}
 
 	/**
@@ -531,14 +531,5 @@ abstract class AbstractModel {
 		$pagitor['lists'] = $lists;
 
 		return $pagitor;
-	}
-	
-	/**
-	 * 抛出异常
-	 * @param unknown $message
-	 * @throws Exception
-	 */
-	public function throws($message) {
-		throw new ExceptionModel($message);
 	}
 }

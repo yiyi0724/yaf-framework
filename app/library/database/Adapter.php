@@ -65,4 +65,58 @@ abstract class Adapter {
 	 * @return void
 	 */
 	abstract public function debug($sql, array $params = array());
+
+	/**
+	 * 开启事务
+	 * @return boolean
+	 */
+	abstract public function beginTransaction();
+
+	/**
+	 * 判断是否在事务内
+	 * @return boolean
+	 */
+	abstract public function inTransaction();
+
+	/**
+	 * 提交事务
+	 * @return boolean
+	 */
+	abstract public function commitTransaction();
+
+	/**
+	 * 回滚事务
+	 * @return boolean
+	 */
+	abstract public function rollbackTransaction();
+
+	/**
+	 * 获取上一次插入的id
+	 * @return int
+	 */
+	abstract public function getLastInsertId();
+
+	/**
+	 * 获取影响的行数
+	 * @return int
+	 */
+	abstract public function getAffectRowCount();
+
+	/**
+	 * 获取select的所有结果
+	 * @return array
+	 */
+	abstract public function fetchAll();
+
+	/**
+	 * 获取select的一行结果
+	 * @return array
+	 */
+	abstract public function fetchRow();
+
+	/**
+	 * 获取select的一个结果
+	 * @return string
+	 */
+	abstract public function fetchOne();
 }
