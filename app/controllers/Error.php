@@ -48,7 +48,7 @@ class ErrorController extends \base\BaseController {
 	private function showFormException(\traits\FormException $exception) {
 		switch(TRUE) {
 			case IS_AJAX:
-				$this->json(FALSE, '数据有误', $exception->getError());
+				$this->json(FALSE, '数据有误', array('formError'=>$exception->getError()));
 				break;
 			default:
 				$this->assign('error', $exception->getError());
@@ -77,21 +77,40 @@ class ErrorController extends \base\BaseController {
 	 * @param unknown $exception
 	 */
 	private function showRedirectException($exception) {
-		$this->redirect($exception->getMessage());
+		switch(TRUE) {
+			case IS_AJAX:
+				$this->json(FALSE, '进行跳转', array('url'=>$exception->getMessage()));
+				break;
+			default:
+				$this->redirect($exception->getMessage(), 'location');
+				exit;
+		}
 	}
 
 	/**
 	 * 禁止访问操作(403)
 	 */
 	private function showForbiddenException($exception) {
-		$this->template('403');
+		switch(TRUE) {
+			case IS_AJAX:
+				header('HTTP/1.1 403 Forbidden');
+				exit;
+			default:
+				$this->template('403');
+		}
 	}
 
 	/**
-	 * 找不到页面操作(402)
+	 * 找不到页面操作(404)
 	 */
 	private function showNotFoundException($exception) {
-		$this->template('404');
+		switch(TRUE) {
+			case IS_AJAX:
+				header('HTTP/1.1 404 Not Found');
+				exit;
+			default:
+				$this->template('404');
+		}
 	}
 
 	/**
@@ -115,7 +134,7 @@ class ErrorController extends \base\BaseController {
 			$error['line'] = $exception->getLine();
 			$error['traceAsString'] = $exception->getTraceAsString();
 		}
-
+		
 		switch(TRUE) {
 			case IS_AJAX:
 				$this->json(FALSE, $message, $error);

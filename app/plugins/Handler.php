@@ -4,10 +4,7 @@
  * 行为插件
  * @author enychen
  */
-use \traits\View;
 use \Yaf\Config\Ini;
-use \Yaf\Dispatcher;
-use \Yaf\Application;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
 use \Yaf\Response_Abstract;
@@ -21,7 +18,6 @@ class HandlerPlugin extends Plugin_Abstract {
 	 * @return void
 	 */
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
-		// 常量注册
 		$this->initConst($request);
 	}
 
@@ -37,7 +33,7 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('IS_POST', $request->isPost());
 		define('IS_PUT', $request->isPut());
 		define('IS_DELETE', $request->getServer('REQUEST_METHOD') == 'DELETE');
-
+		
 		// 模块信息常量定义
 		define('CONTROLLER_NAME', $request->getControllerName());
 		define('ACTION_NAME', $request->getActionName());
@@ -45,10 +41,9 @@ class HandlerPlugin extends Plugin_Abstract {
 		define('MODULE_PATH', sprintf("%smodules%s%s%s", APP_PATH, DS, $request->getModuleName(), DS));
 		define('COMMON_VIEW_PATH', sprintf('%sviews%s', APP_PATH, DS));
 		define('MODULE_VIEW_PATH', sprintf("%sviews%s", MODULE_PATH, DS));
-
-		// RESOURCE常量定义
-		$constIni = new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON);
-		foreach($constIni as $key=>$value) {
+		
+		// 自定义常量定义
+		foreach(new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON) as $key=>$value) {
 			define(strtoupper($key), $value);
 		}
 	}

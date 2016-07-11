@@ -66,7 +66,7 @@ class Bootstrap extends Bootstrap_Abstract {
 	}
 
 	/**
-	 * 自定义视图对象
+	 * 自定义响应对象
 	 * @param \Yaf\Dispatcher $dispatcher 分发对象
 	 * @return void
 	 */

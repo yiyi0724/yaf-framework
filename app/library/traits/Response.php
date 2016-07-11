@@ -6,7 +6,6 @@
  */
 namespace traits;
 
-use \Yaf\Application;
 use \Yaf\View_Interface;
 
 class Response implements View_Interface {
@@ -21,7 +20,24 @@ class Response implements View_Interface {
 	 * 构造函数
 	 */
 	public function __construct() {
-		$this->engine = new View(NULL);
+		$this->setEngine(new View(NULL));
+	}
+
+	/**
+	 * 设置视图响应对象
+	 * @param \traits\View $engine 视图引擎对象
+	 * @return void
+	 */
+	public function setEngine(\traits\View $engine) {
+		$this->engine = $engine;
+	}
+
+	/**
+	 * 获取视图响应对象
+	 * @return \traits\View $engine 视图引擎对象
+	 */
+	public function getEngine() {
+		return $this->engine;
 	}
 
 	/**
@@ -31,7 +47,7 @@ class Response implements View_Interface {
 	 * @return string
 	 */
 	public function render($tpl, $tpl_vars = NULL) {
-		return $this->engine->render($tpl, $tpl_vars);
+		return $this->getEngine()->render($tpl, $tpl_vars);
 	}
 
 	/**
@@ -41,7 +57,7 @@ class Response implements View_Interface {
 	 * @return string
 	 */
 	public function display($tpl, $tpl_vars = NULL) {
-		return $this->engine->display($tpl, $tpl_vars);
+		return $this->getEngine()->display($tpl, $tpl_vars);
 	}
 
 	/**
@@ -51,7 +67,7 @@ class Response implements View_Interface {
 	 * @return void
 	 */
 	public function assign($name, $value = NULL) {
-		$this->engine->assign($name, $value);
+		$this->getEngine()->assign($name, $value);
 	}
 
 	/**
@@ -60,7 +76,7 @@ class Response implements View_Interface {
 	 * @return void
 	 */
 	public function setScriptPath($view_directory) {
-		$this->engine->setScriptPath($view_directory);
+		$this->getEngine()->setScriptPath($view_directory);
 	}
 
 	/**
@@ -68,7 +84,6 @@ class Response implements View_Interface {
 	 * @return string
 	 */
 	public function getScriptPath() {
-		$this->engine->getScriptPath();
+		$this->getEngine()->getScriptPath();
 	}
 }
-
