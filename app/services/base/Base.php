@@ -44,6 +44,10 @@ class Base {
 		return new Ini(CONF_PATH . "{$ini}.ini", \YAF\ENVIRON);
 	}
 
+	/**
+	 * 获取默认未进行验证的内置请求对象
+	 * @return \Yaf\Request_Abstract
+	 */
 	public function getYafRequest() {
 		return Application::app()->getDispatcher()->getRequest();
 	}

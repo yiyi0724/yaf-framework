@@ -43,7 +43,8 @@ class Base extends \services\base\Base {
 				// 常量定义
 				define('UID', intval($uid));
 			} catch (\Exception $e) {
-				exit('403 Forbidden');
+				header('HTTP/1.1 403 Forbidden');
+				exit;
 			}
 		}
 	}

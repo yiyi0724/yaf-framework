@@ -15,25 +15,6 @@ use Yaf\Bootstrap_Abstract;
 class Bootstrap extends Bootstrap_Abstract {
 
 	/**
-	 * 修改php.ini的默认配置
-	 * @param Yaf\Dispatcher $dispatcher 分发对象
-	 * @return void
-	 */
-	public function _initRuntime(Dispatcher $dispatcher) {
-		if($runtime = Application::app()->getConfig()->get('runtime')) {
-			foreach($runtime->toArray() as $prefix=>$suffix) {
-				if(is_array($suffix)) {
-					foreach($suffix as $option=>$value) {
-						ini_set("{$prefix}.{$option}", $value);
-					}
-				} else {
-					ini_set($prefix, $suffix);
-				}
-			}
-		}
-	}
-
-	/**
 	 * 自定义逻辑加载类
 	 * @param Yaf\Dispatcher $dispatcher 分发对象
 	 * @return void
@@ -72,5 +53,24 @@ class Bootstrap extends Bootstrap_Abstract {
 	 */
 	public function _initResponse(Dispatcher $dispatcher) {
 		$dispatcher->setView(new Response());
+	}
+
+	/**
+	 * 修改php.ini的默认配置
+	 * @param Yaf\Dispatcher $dispatcher 分发对象
+	 * @return void
+	 */
+	public function _initRuntime(Dispatcher $dispatcher) {
+		if($runtime = Application::app()->getConfig()->get('runtime')) {
+			foreach($runtime->toArray() as $prefix=>$suffix) {
+				if(is_array($suffix)) {
+					foreach($suffix as $option=>$value) {
+						ini_set("{$prefix}.{$option}", $value);
+					}
+				} else {
+					ini_set($prefix, $suffix);
+				}
+			}
+		}
 	}
 }

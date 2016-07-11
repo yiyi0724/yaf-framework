@@ -122,7 +122,7 @@ class ErrorController extends \base\BaseController {
 		if(\Yaf\ENVIRON == 'product') {
 			// 线上环境
 			$error = NULL;
-			$message = '502 Server Error';
+			$message = '服务器出问题了';
 			// 日志记录
 			error_log(sprintf($exception));
 		} else {
