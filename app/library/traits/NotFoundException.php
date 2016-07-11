@@ -1,10 +1,10 @@
 <?php
 
-namespace traits;
-
 /**
- * 找不到信息异常
+ * 404异常
  * @author enychen
  */
+namespace traits;
+
 class NotFoundException extends \Exception {
 }

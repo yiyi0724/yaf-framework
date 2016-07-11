@@ -65,7 +65,7 @@ class Form {
 	 * @return void
 	 */
 	public function setRequestMethod($requestMethod) {
-		$this->requestMethod = $requestMethod;
+		$this->requestMethod = strtoupper($requestMethod);
 	}
 
 	/**

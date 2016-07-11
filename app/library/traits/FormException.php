@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 自定义数据错误
+ * 表单异常
  * @author enychen
  */
 namespace traits;
