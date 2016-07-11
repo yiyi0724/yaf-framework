@@ -1,6 +1,6 @@
 <?php
 
-namespace Tool;
+namespace tool;
 
 class IsFrom {
 

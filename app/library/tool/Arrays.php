@@ -4,7 +4,7 @@
  * 数组操作封装
  * @author enychen
  */
-namespace Tool;
+namespace tool;
 
 class Arrays {
 
