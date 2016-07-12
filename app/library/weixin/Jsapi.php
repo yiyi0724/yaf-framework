@@ -42,7 +42,7 @@ abstract class Jsapi extends Base {
 
 	/**
 	 * 设置jsapi_ticket票据
-	 * @return jsapi $this 返回当前对象进行连贯操作
+	 * @return Jsapi $this 返回当前对象进行连贯操作
 	 */
 	private function setJsApiTicket() {
 		// 缓存appid的键
@@ -78,7 +78,7 @@ abstract class Jsapi extends Base {
 	/**
 	 * 生成js_ticket需要的当前url地址，不包括#部分
 	 * @var string $url url地址
-	 * @return jsapi $this 返回当前对象进行连贯操作
+	 * @return Jsapi $this 返回当前对象进行连贯操作
 	 */
 	public function setUrl($url) {
 		$this->url = $url;
@@ -96,7 +96,7 @@ abstract class Jsapi extends Base {
 	/**
 	 * jsapi_ticket要验证的接口
 	 * @param array $jsapiList 接口名称
-	 * @return void
+	 * @return Jsapi $this 返回当前对象进行连贯操作
 	 */
 	public function setJsApiList(array $jsapiList) {
 		$this->jsapiList = array_value($jsapiList);
@@ -105,7 +105,7 @@ abstract class Jsapi extends Base {
 
 	/**
 	 * 获取jsapi要验证的接口
-	 * @return multitype:
+	 * @return array
 	 */
 	public function getJsapiList() {
 		return $this->jsapiList;

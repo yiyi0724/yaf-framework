@@ -220,10 +220,10 @@ abstract class Base {
 
 	/**
 	 * 获取微信推送的消息
-	 * @return array
+	 * @return string xml格式数据
 	 */
 	public function getPush() {
-		return $this->xmlDecode(file_get_contents('php://input'));
+		return file_get_contents('php://input');
 	}
 
 	/**

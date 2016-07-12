@@ -34,10 +34,12 @@ class User extends Base {
 	}
 	
 	/**
-	 * 执行用户跳转登录
+	 * 用户跳转登录
+	 * @param \weixin\user\Login $loginObject 登录对象
 	 * @return void
+	 * @throws \Exception
 	 */
-	public function authToLogin(\weixin\user\Login $loginObject) {
+	public function authLogin(\weixin\user\Login $loginObject) {
 		// 必备参数
 		if(!$loginObject->getRedirectUri()) {
 			$this->throws(1200, '请设置回调地址');
@@ -48,34 +50,34 @@ class User extends Base {
 		if(!$loginObject->getState()) {
 			$this->throws(1202, '请设置state');
 		}
-		
-		$this->check();
-		$url = sprintf(\weixin\API::USER_SCAN_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
-		header("Location: {$url}");
-		exit();
-	}
-	
-	/**
-	 * 公众号跳转登录
-	 * @return void
-	 */
-	public function jumpMp() {
-		$url = sprintf(\weixin\API::USER_MP_LOGIN, $this->appid, $this->redirectUri, $this->scope, $this->state);
+
+		// api选择
+		if($loginObject->getScope() == 'snsapi_log') {
+			// 网页扫码登录
+			$api = 'https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect';
+		} else {
+			// 微信h5网站授权登录
+			$api = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect';
+		}
+
+		$url = sprintf($api, $this->getAppid(), $loginObject->getRedirectUri(), $loginObject->getScope(), $loginObject->getState());
 		header("Location: {$url}");
 		exit();
 	}
 
 	/**
-	 * 跳转到用户授权页面，让用户进行授权
-	 * @param string $redirectUri 回调的地址, 无需urlencode后再传递
-	 * @param string $scope 授权方式: snsapi_userinfo|获取用户信息,需用户授权;  snsapi_base|直接跳转无需授权,只拿到用户的open_id
-	 * @param string $state 防止csrf
-	 * @return void
+	 * 获取用户的access_token
+	 * @param string $code 用户跳转授权后回调附带的参数
+	 * @return array
 	 */
-	public function getUserAuthCode($redirectUri, $scope, $state) {
-		$url = sprintf(API::GET_USER_CODE, $this->getAppid(), urlencode($redirectUri), $scope, $state);
-		header('location:' . $requestUrl);
-		exit();
+	public function getUserAccessToken($code){
+		$api = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code';	
+		$result = json_decode($this->get(sprintf($api, $this->getAppid(), $this->getAppSecret(), $code)), TRUE);
+		if(isset($result['errcode'])){
+			$this->throws(1, $result['errmsg']);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -84,7 +86,8 @@ class User extends Base {
 	 * @throws \Exception
 	 */
 	public function refreshUserAccessToken() {
-		$url = sprintf(API::REFRESH_USER_ACCESS_TOKEN, $this->appid, $this->info->refresh_token);
+		$api = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s';
+		$url = sprintf($api, $this->getAppid(), $this->info->refresh_token);
 		$result = json_decode($this->get($url));
 		if(isset($result->errcode)) {
 			throw new \weixin\Exception($result->errmsg, $result->errcode);

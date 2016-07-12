@@ -20,4 +20,10 @@ class Message extends Base {
 		$this->setStorage($storage);
 		$this->setAccessToken();
 	}
+
+	/**
+	 * 获取消息对象
+	 */
+	public function getMessage() {
+	}
 }

@@ -142,6 +142,31 @@ class Pay extends Base {
 	}
 
 	/**
+	 * 生成sign签名
+	 * @param array $params 原始数据
+	 * @return string
+	 */
+	private function sign($params) {
+		// 签名步骤零：过滤非法数据
+		foreach($params as $key=>$value) {
+			if($key == 'sign' || !$value || is_array($value)) {
+				unset($params[$key]);
+			}
+		}
+		// 签名步骤一：按字典序排序参数并生成请求串
+		ksort($params);
+		$sign = urldecode(http_build_query($params));
+		// 签名步骤二：在string后加入KEY
+		$sign .= "&key={$this->getKey()}";
+		// 签名步骤三：MD5加密
+		$sign = md5($sign);
+		// 签名步骤四：所有字符转为大写
+		$sign = strtoupper($sign);
+		// 返回签名
+		return $sign;
+	}
+
+	/**
 	 * 发送get请求
 	 * @param string $url 请求地址
 	 * @return string
@@ -174,31 +199,6 @@ class Pay extends Base {
 		curl_close($curl);
 
 		return $result;
-	}
-
-	/**
-	 * 生成sign签名
-	 * @param array $params 原始数据
-	 * @return string
-	 */
-	private function sign($params) {
-		// 签名步骤零：过滤非法数据
-		foreach($params as $key=>$value) {
-			if($key == 'sign' || !$value || is_array($value)) {
-				unset($params[$key]);
-			}
-		}
-		// 签名步骤一：按字典序排序参数并生成请求串
-		ksort($params);
-		$sign = urldecode(http_build_query($params));
-		// 签名步骤二：在string后加入KEY
-		$sign .= "&key={$this->getKey()}";
-		// 签名步骤三：MD5加密
-		$sign = md5($sign);
-		// 签名步骤四：所有字符转为大写
-		$sign = strtoupper($sign);
-		// 返回签名
-		return $sign;
 	}
 
 	/**
@@ -237,38 +237,6 @@ class Pay extends Base {
 		// 获取结果
 		$result = curl_exec($ch);
 		curl_close($ch);
-	
-		return $result;
-	}
-
-	/**
-	 * 回调数据进行检查
-	 * @param string $xml字符串数据
-	 * @return array xml解码后的数组
-	 */
-	private function verify($result) {
-		// 数据来源检查
-		if(!$result) {
-			$this->throws(1000, '来源非法');
-		}
-
-		// 把数据转成xml
-		$result = $this->xmlDecode($result);
-
-		// 签名检查
-		if($this->sign($result) !== $result['sign']) {
-			$this->throws(1001, '签名不正确');
-		}
-
-		// 微信方通信是否成功
-		if($result['return_code'] != 'SUCCESS') {
-			$this->throws(1002, $data['return_msg']);
-		}
-
-		// 微信业务处理是否失败
-		if(isset($result['result_code']) && $result['result_code'] == 'FAIL') {
-			$this->throws(1003, $result['err_code_des']);
-		}
 
 		return $result;
 	}
@@ -471,9 +439,41 @@ class Pay extends Base {
 	}
 
 	/**
+	 * 回调数据进行检查
+	 * @param string $xml字符串数据
+	 * @return array xml解码后的数组
+	 */
+	private function verify($result) {
+		// 数据来源检查
+		if(!$result) {
+			$this->throws(1000, '来源非法');
+		}
+	
+		// 把数据转成xml
+		$result = $this->xmlDecode($result);
+	
+		// 签名检查
+		if($this->sign($result) !== $result['sign']) {
+			$this->throws(1001, '签名不正确');
+		}
+	
+		// 微信方通信是否成功
+		if($result['return_code'] != 'SUCCESS') {
+			$this->throws(1002, $data['return_msg']);
+		}
+	
+		// 微信业务处理是否失败
+		if(isset($result['result_code']) && $result['result_code'] == 'FAIL') {
+			$this->throws(1003, $result['err_code_des']);
+		}
+
+		return $result;
+	}
+
+	/**
 	 * 微信支付回调验证，获取参数信息
 	 * @param boolean $isSigned 告知微信时是否需要签名
-	 * @return void
+	 * @return array
 	 */
 	public function notify($isSigned = FALSE) {
 		// 通知微信成功获取返回结果
@@ -487,9 +487,7 @@ class Pay extends Base {
 		echo $this->xmlEncode($response);
 
 		// 数据来源检查
-		$results = $this->verify(file_get_contents('php://input'));
-		// 将价格转成元（微信的坑）
-		$results['total_fee'] /= 100;
+		$results = $this->verify($this->getPush());
 	
 		return $results;
 	}
