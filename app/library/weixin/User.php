@@ -16,9 +16,9 @@ class User extends Base {
 	 * 	refresh_token	用户刷新access_token
 	 * 	openid			用户唯一标识，请注意，在未关注公众号时，用户访问公众号的网页，也会产生一个用户和公众号唯一的OpenID
 	 * 	scope			用户授权的作用域，使用逗号（,）分隔
-	 * @var \stdClass
+	 * @var array
 	 */
-	protected $info = NULL;
+	protected $userAccessToken = NULL;
 
 	/**
 	 * 创建微信用户对象
@@ -32,7 +32,16 @@ class User extends Base {
 		$this->setStorage($storage);
 		$this->setAccessToken();
 	}
-	
+
+	/**
+	 * 设置获取用户的access_token
+	 * @param array $userAccessToken
+	 * @return void
+	 */
+	protected function saveUserAccessToken($userAccessToken) {
+		$this->userAccessToken = $userAccessToken;
+	}
+
 	/**
 	 * 用户跳转登录
 	 * @param \weixin\user\Login $loginObject 登录对象
@@ -71,71 +80,43 @@ class User extends Base {
 	 * @return array
 	 */
 	public function getUserAccessToken($code){
+		// 获取用户的access_token
 		$api = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code';	
 		$result = json_decode($this->get(sprintf($api, $this->getAppid(), $this->getAppSecret(), $code)), TRUE);
 		if(isset($result['errcode'])){
 			$this->throws(1, $result['errmsg']);
 		}
 
+		// 暂存请求信息
+		$this->saveUserAccessToken($result);
+
 		return $result;
-	}
-
-	/**
-	 * 刷新用户的access_token
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function refreshUserAccessToken() {
-		$api = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s';
-		$url = sprintf($api, $this->getAppid(), $this->info->refresh_token);
-		$result = json_decode($this->get($url));
-		if(isset($result->errcode)) {
-			throw new \weixin\Exception($result->errmsg, $result->errcode);
-		}
-		
-		$this->info = $result;
-	}
-
-	/**
-	 * 用户的access_token是否已经过期
-	 * @return bool TRUE表示过期, FALSE表示未过期
-	 * @throws \Exception
-	 */
-	public function getUserAccessTokenIsExpire() {
-		if(!$this->info) {
-			throw new \weixin\Exception('请先进行获取用户令牌操作');
-		}
-		
-		$url = sprintf(API::IS_EXPIRE_USER_ACCESS_TOKEN, $this->info->access_token, $this->info->openid);
-		$result = json_decode($this->get($url));
-		if($result->errcode != 0) {
-			throw new \weixin\Exception($result->errmsg, $result->errcode);
-		}
-		
-		return $result->errmsg != 'ok';
 	}
 
 	/**
 	 * 获取用户的具体信息（当scope为snsapi_userinfo的时候才可以获取）
 	 * @param string $language 国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
-	 * @return \stdClass 用户信息
+	 * @return array 用户信息
 	 * @throws \Exception
 	 */
 	public function getUserinfo($language = 'zh-CN') {
-		if(!$this->info) {
-			throw new \weixin\Exception('请先进行获取用户令牌操作');
+		if(!$this->userAccessToken) {
+			$this->throws(1, '请先进行获取用户令牌操作');
 		}
-		
-		if(empty($this->info->scope) || ($this->info->scope->scope != 'snsapi_userinfo')) {
-			throw new \weixin\Exception('获取用户信息权限不足');
+		if(empty($this->userAccessToken->scope) || ($this->info->userAccessToken->scope != 'snsapi_userinfo')) {
+			$this->throws(1, '获取用户信息权限不足');
 		}
-		
-		$url = sprintf(API::GET_ACCESS_TOKEN, $this->info->access_token, $this->info->openid, $language);
-		$result = json_decode($this->get($url));
-		if(isset($result->errcode)) {
-			throw new \weixin\Exception($result->errmsg, $result->errcode);
+
+		$api = 'https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=%s';
+		$url = sprintf($api, $this->userAccessToken->access_token, $this->userAccessToken->openid, $language);
+		$result = json_decode($this->get($url), TRUE);
+		if(isset($result['errcode'])) {
+			$this->throws(2, $result['errmsg']);
 		}
-		
+
+		// 整合2个数据
+		$result = array_merge($this->userAccessToken, $result);
+
 		return $result;
 	}
 }
