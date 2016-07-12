@@ -310,7 +310,7 @@ class Http {
 		// 设置curl选项
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_POST, TRUE);
-		$tshi->setCurlOpt(CURLOPT_POSTFIELDS, $send);
+		$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
 		
 		return $this->send();
 	}
@@ -352,14 +352,14 @@ class Http {
 			if($decode == static::DECODE_XML) {
 				$result = @simplexml_load_string($result, 'SimpleXMLElement', LIBXML_NOCDATA);
 				if(!$result) {
-					throw new \Exception('XML Decode Error', 99002);
+					throw new \Exception('xml数据解析失败');
 				}
 				$result = json_encode($result);
 			}			
 			// json解析
 			$result = json_decode($result, TRUE);
 			if(json_last_error() || !is_array($result)) {
-				throw new \Exception('Decode Error', 99002);
+				throw new \Exception('数据解析失败');
 			}
 		}
 

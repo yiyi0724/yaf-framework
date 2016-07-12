@@ -4,7 +4,7 @@
  * HTTP头信息汇总类
  * @author enychen
  */
-namespace Network;
+namespace network;
 
 class Header {
 
@@ -18,14 +18,22 @@ class Header {
 	}
 
 	/**
-	 * 跨域的访问控制
+	 * 跨域的访问控制可以跨域的域名
 	 * @static
 	 * @param string $domain 允许进行跨域的域名，多个域名用,隔开
 	 * @return void
 	 */
-	public static function AccessControl($domain) {
+	public static function accessControlAllowOrigin($domain = '*') {
 		header("Access-Control-Allow-Origin: {$domain}");
-		header('Access-Control-Allow-Headers: X-Requested-With,X_Requested_With');
+	}
+
+	/**
+	 * 如果存在跨域自定义头信息，需要输出头信息控制
+	 * @param string $headers 多个头信息，用逗号隔开
+	 * @return void
+	 */
+	public static function accessControlAllowHeaders($headers) {
+		header("Access-Control-Allow-Headers: {$headers}");
 	}
 
 	/**

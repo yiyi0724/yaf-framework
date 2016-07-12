@@ -1,13 +1,19 @@
 <?php
 
 /**
- * redis驱动类
+ * redis存储类
  * @author enychen
  * @version 1.0
  */
 namespace storage;
 
 class Redis extends Adapter {
+
+	/**
+	 * 单例对象
+	 * @var Redis
+	 */
+	protected static $pool;
 
 	/**
 	 * redis对象
@@ -37,6 +43,17 @@ class Redis extends Adapter {
 	}
 
 	/**
+	 * 单例获取redis
+	 */
+	public static function getInstance($host, $port, $db, $timeout, $auth, $options) {
+		if(empty(static::$pool["{$host}:{$port}"])) {
+			static::$pool["{$host}:{$port}"] = new static($host, $port, $db, $timeout, $auth, $options);
+		}
+		
+		return static::$pool["{$host}:{$port}"];
+	}
+
+	/**
 	 * 设置键值
 	 * @param string $key 键
 	 * @param mixed $value 值
@@ -56,6 +73,10 @@ class Redis extends Adapter {
 	public function get($key, $default = NULL) {
 		$value = $this->redis->get($key);
 		return $value === FALSE ? $default : $value;
+	}
+
+	public function del($key) {
+		return $this->redis->del($key);
 	}
 
 	/**

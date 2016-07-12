@@ -21,17 +21,20 @@ class IndexController extends \base\WwwController {
 	 */
 	public function menuAction() {
 		try {
-			$http = new \network\Http();
-			$http->setUrl('http://www.test.com');
-			$http->setDecode(\network\Http::DECODE_JSON);
-			$result = $http->delete(array('username'=>15959375069));
+			$redis = \storage\Redis::getInstance('127.0.0.1', '6379', 0, 10, NULL, array());
+			$wxMenu = new \weixin\Menu(WEIXIN_APPID, WEIXIN_APPSECRET, $redis);
+			$data['button'][] = array('type'=>'click', 'name'=>'大傻逼', 'key'=>'V1001_TODAY_MUSIC');
+			$data['button'][] = array('name'=>'杨艳琴', 'sub_button'=>array(
+				array('type'=>'view', 'name'=>'是的没错', 'url'=>'http://www.soso.com/'),
+				array('type'=>'view', 'name'=>'咋滴啊', 'url'=>'http://note.enychen.com/'),
+			));
+			$wxMenu->create($data);
 			
-			echo '<pre>';
-			print_r($result);
-			exit;
 		} catch (\Exception $e) {
-			exit($http->getOriginResult());
+			echo 1;exit;
 		}
 
+		
+		exit;
 	}
 }

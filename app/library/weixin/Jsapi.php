@@ -31,7 +31,6 @@ abstract class Jsapi extends Base {
 	 * @param string $appid 公众号appid
 	 * @param string $appSecret 公众号appSecret
 	 * @param \storage\Adapter $storage 存储对象
-	 * @return void
 	 */
 	public function __construct($appid, $appSecret, \storage\Adapter $storage) {
 		$this->setAppid($appid);
@@ -54,7 +53,7 @@ abstract class Jsapi extends Base {
 		if(!$this->jsapiTicket) {
 			$api = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi';
 			$result = json_decode($this->get(sprintf($api, $this->getAccessToken())), TRUE);
-			if($result->errcode != 0) {
+			if($result->errcode) {
 				$this->throws(1101, $result->errmsg);
 			}
 

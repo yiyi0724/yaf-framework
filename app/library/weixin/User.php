@@ -21,13 +21,15 @@ class User extends Base {
 	protected $info = NULL;
 
 	/**
-	 * web网站用户
-	 * @param unknown $appid
-	 * @param unknown $appSecret
+	 * 创建微信用户对象
+	 * @param string $appid 公众号appid
+	 * @param string $appSecret 公众号appSecret
+	 * @param \storage\Adapter $storage 存储对象
 	 */
-	public function __construct($appid, $appSecret) {
+	public function __construct($appid, $appSecret, \storage\Adapter $storage) {
 		$this->setAppid($appid);
 		$this->setAppSecret($appSecret);
+		$this->setStorage($storage);
 		$this->setAccessToken();
 	}
 	

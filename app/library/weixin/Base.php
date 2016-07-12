@@ -100,7 +100,6 @@ abstract class Base {
 			// 请求access_token
 			$api = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
 			$result = json_decode($this->get(sprintf($api, $this->getAppid(), $this->getAppSecret())));
-
 			// 请求如果有误
 			if(isset($result->errcode)) {
 				$this->throws($result->errcode, $result->errmsg);
@@ -174,12 +173,12 @@ abstract class Base {
 	protected function get($url) {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 500);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 500);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($curl, CURLOPT_URL, $url);
-		$result = curl_exec($curl);
-		curl_close($curl);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		$result = curl_exec($ch);
+		curl_close($ch);
 		return $result;
 	}
 
@@ -217,6 +216,14 @@ abstract class Base {
 		sort($signArr, SORT_STRING);
 		$signArr = sha1(implode($signArr));
 		return $signArr === $signature;
+	}
+
+	/**
+	 * 获取微信推送的消息
+	 * @return array
+	 */
+	public function getPush() {
+		return $this->xmlDecode(file_get_contents('php://input'));
 	}
 
 	/**
