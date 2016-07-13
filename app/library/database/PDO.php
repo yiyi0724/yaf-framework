@@ -85,6 +85,7 @@ class PDO extends Adapter {
 	 * @return void
 	 */
 	public function debug($sql, array $params = array()) {
+		echo '<h1>Database SQL Error:</h1>';
 		echo "{$sql}<hr/><pre>";
 		print_r($params);
 		foreach($params as $key=>$placeholder) {
