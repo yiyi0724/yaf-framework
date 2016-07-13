@@ -27,13 +27,17 @@ class Redirect {
 	 * @return void
 	 */
 	public static function getWithoutReferer($url, $code = NULL) {
-		isset(static::$headers[$code]) and header(static::$header[$code]);
+		// 附加状态码
+		if(isset(static::$headers[$code])) {
+			header(static::$header[$code]);
+		}
+		// 进行跳转
 		header("Location: {$url}");
 		exit();
 	}
 
 	/**
-	 * 带HTTP_REFERER的get方式页面跳转
+	 * 带HTTP_REFERER的get方式页面跳转(使用<meta>进行跳转)
 	 * @param string $url 跳转地址
 	 * @return void
 	 */
@@ -42,7 +46,7 @@ class Redirect {
 	}
 
 	/**
-	 * 带HTTP_REFERER的post方式页面跳转
+	 * 带HTTP_REFERER的post方式页面跳转(使用<form>进行跳转)
 	 * @param string $url 跳转地址
 	 * @param array $data 附加参数
 	 * @return void
