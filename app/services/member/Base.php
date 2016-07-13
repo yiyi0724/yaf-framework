@@ -80,13 +80,12 @@ class Base extends \services\base\Base {
 	 * 是否记住登录（默认记住一个月）
 	 * @return void
 	 */
-	protected function rememberLogin() {
+	protected function rememberLogin($time = 2592000) {
 		if(!defined('UID')) {
 			return;
 		}
 
-		$encrypt = \security\Encryption::encrypt(array('uid'=>UID), 'yyq');
-		setcookie(self::COOKIE_REMEMBER_KEY, $encrypt, time() + 2592000, '/',
-			$this->getConfig('runtime.session.cookie_domain'), FALSE, TRUE);
+		$encrypt = \security\Encryption::encrypt(array('uid'=>UID), MEMBER_REMEMBER_KEY);
+		setcookie(self::COOKIE_REMEMBER_KEY, $encrypt, time() + $time, '/', NULL, FALSE, TRUE);
 	}
 }

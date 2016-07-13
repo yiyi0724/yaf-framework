@@ -14,7 +14,8 @@ class IP {
 	 * @param boolean $ip2long 是否转换成为整形, 默认是
 	 * @return int|string
 	 */
-	public static function get($ip2long = TRUE) {
+	public static function getClientIP($ip2long = TRUE) {
+		// 获取ip地址
 		if(getenv('HTTP_X_REAL_IP')) {
 			$ip = getenv('HTTP_X_REAL_IP');
 		} else if(getenv('HTTP_X_FORWARDED_FOR')) {
@@ -24,6 +25,9 @@ class IP {
 		} else {
 			$ip = getenv('REMOTE_ADDR');
 		}
+		
+		// 合法性检查
+		$ip = (ip2long($ip) !== FALSE) ? $ip : '0.0.0.0';
 		
 		return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
 	}
