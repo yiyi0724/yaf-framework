@@ -1,10 +1,10 @@
 [product]
 ;线上环境配置
 ;[前台样式]
-www_domain 		= "http://www.enychen.com/"
-www_style 		= "/www/css/"
-www_script 		= "/www/js/"
-www_image 		= "/www/img/"
+web_domain 		= "http://www.enychen.com/"
+web_style 		= "/www/css/"
+web_script 		= "/www/js/"
+web_image 		= "/www/img/"
 
 ;[加密密钥]
 member_remember_key = ''
@@ -16,4 +16,4 @@ member_reg_key = ''
 
 [develop:product]
 ;开发环境配置
-www_domain 		= "http://www.local.enychen.com/"
+web_domain 		= "http://www.local.enychen.com/"
