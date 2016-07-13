@@ -36,17 +36,6 @@ abstract class BaseController extends Controller_Abstract {
 	}
 
 	/**
-	 * 页面跳转
-	 * @param string $url 要跳转的url地址
-	 * @param string $method 跳转方式，location-使用http头信息跳转, get-使用<meta>跳转，post-使用<form>跳转
-	 * @param array|int $data 如果是post请输入数组，如果是location请输入301|302|303|307,get则进行忽略
-	 * @return void
-	 */
-	public final function redirect($url, $method = 'get', $other = array()) {
-		\network\Location::$method($url, $other);
-	}
-
-	/**
 	 * 参数绑定
 	 * @param string $key 键
 	 * @param mixed $value 值

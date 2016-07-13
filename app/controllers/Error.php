@@ -82,7 +82,8 @@ class ErrorController extends \base\BaseController {
 				$this->json(FALSE, '进行跳转', array('url'=>$exception->getMessage()));
 				break;
 			default:
-				$this->redirect($exception->getMessage(), 'location');
+				// 进行跳转
+				\network\Redirect::getWithoutReferer($exception->getMessage());
 				exit;
 		}
 	}

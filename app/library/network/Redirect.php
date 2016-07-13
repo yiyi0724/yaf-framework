@@ -7,7 +7,7 @@
  */
 namespace Network;
 
-class Location {
+class Redirect {
 
 	/**
 	 * 跳转头信息
@@ -26,7 +26,7 @@ class Location {
 	 * @param int $code 跳转状态码
 	 * @return void
 	 */
-	public static function location($url, $code = NULL) {
+	public static function getWithoutReferer($url, $code = NULL) {
 		isset(static::$headers[$code]) and header(static::$header[$code]);
 		header("Location: {$url}");
 		exit();
@@ -37,7 +37,7 @@ class Location {
 	 * @param string $url 跳转地址
 	 * @return void
 	 */
-	public static function get($url) {
+	public static function getWithReferer($url) {
 		exit("<meta http-equiv=\"refresh\" content=\"0;url={$url}\">");
 	}
 

@@ -212,7 +212,7 @@ class Http {
 			$cookie = implode('; ', $format);
 		}		
 		$this->setCurlopt(CURLOPT_COOKIE, $cookie);
-		
+
 		return $this;
 	}
 
@@ -226,7 +226,7 @@ class Http {
 		// 设置请求的地址
 		$url = $send ? sprintf('%s?%s', $this->getUrl(), urldecode(http_build_query($send))) : $this->getUrl();
 		$this->setCurlOpt(CURLOPT_URL, $url);
-		
+
 		// 执行请求
 		return $this->send();
 	}
@@ -242,7 +242,7 @@ class Http {
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_POST, TRUE);
 		$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
-		
+
 		// 执行请求
 		return $this->send();
 	}
@@ -257,7 +257,7 @@ class Http {
 		// 设置curl信息
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
-		
+
 		// 可选参数信息
 		if($send) {
 			$send = http_build_query($send);
@@ -306,12 +306,12 @@ class Http {
 				}
 			}
 		}
-		
+
 		// 设置curl选项
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_POST, TRUE);
 		$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
-		
+
 		return $this->send();
 	}
 	
