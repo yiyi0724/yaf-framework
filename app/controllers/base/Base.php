@@ -17,9 +17,6 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		// 定义UID常量
-		$memberServices = new \services\member\Base();
-		$memberServices->initUid();
 	}
 
 	/**
