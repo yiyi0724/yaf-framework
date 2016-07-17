@@ -528,7 +528,7 @@ abstract class AbstractModel {
 
 
 		// 输出分页
-		$pagitorLib = new \network\Page($page, $total);
+		$pagitorLib = new \network\Pagitor($page, $total);
 		$pagitorLib->setPerNumber($number);
 		$pagitor = $pagitorLib->showCenter();
 
