@@ -5,48 +5,107 @@
  * @author enychen
  * @version 1.0
  */
-namespace Network;
+namespace network;
 
 class Page {
 
+	protected $page = 1;
+
+	protected $total = 0;
+
+	protected $perNumber = 10;
+
+	protected $perButton = 10;
+
+	protected $build;
+
+	/**
+	 * 构造函数
+	 * @param int $page 当前页数
+	 * @param int $total 总条数
+	 */
+	public function __construct($page, $total) {
+		$this->setPage($page);
+		$this->setTotal($total);
+		$this->init();
+	}
+
+	public function setPage($page) {
+		$this->page = $page;
+		return $this;
+	}
+
+	public function getPage() {
+		return $this->page;
+	}
+
+	public function setTotal($total) {
+		$this->total = $total;
+		return $this;
+	}
+
+	public function getTotal() {
+		return $this->total;
+	}
+
+	public function setPerNumber($perNumber) {
+		$this->perNumber = $perNumber;
+		return $this;
+	}
+
+	public function getPerNumber() {
+		return $this->perNumber;
+	}
+
+	public function setPerButton($perButton) {
+		$this->perButton = $perButton;
+		return $this;
+	}
+
+	public function getPerButton() {
+		return $this->perButton;
+	}
+
+	public function setBuild($build) {
+		$this->build = $build;
+		return $this;
+	}
+
+	public function getBuild() {
+		return $this->build;
+	}
+
 	/**
 	 * 初始化分页信息
-	 * @static
-	 * @param int $number 每页显示的条数
-	 * @param int $count 总共有几条
-	 * @param int $button 一共要显示几页的按钮,默认10个
+	 * @return void
 	 */
-	protected static function init($page, $limit, $count, $button = 10) {
+	protected function init() {
 		// 初始化参数
-		$build['page'] = $page;
+		$build['page'] = $this->getPage();
 		$build['url'] = str_replace($_SERVER['QUERY_STRING'], NULL, $_SERVER['REQUEST_URI']);
 		unset($_REQUEST['page']);
-		$build['url'] .= sprintf("%s%sp=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : NULL));
+		$build['url'] .= sprintf("%s%spage=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : NULL));
 		// 总共几条
-		$build['count'] = $count;
+		$build['count'] = $this->getTotal();
 		// 每页显示的条数
-		$build['limit'] = $limit;
+		$build['limit'] = $this->getPerNumber();
 		// 一共有几页
-		$build['pageTotal'] = ceil($count / $limit);
+		$build['pageTotal'] = ceil($build['count'] / $build['limit']);
 		// 一共几个按钮
-		$build['button'] = $button;
+		$build['button'] = $this->getPerButton();
 		// 是否超过
 		$build['over'] = $build['page'] > $build['pageTotal'];
 		// 返回
-		return $build;
+		$this->setBuild($build);
 	}
 
 	/**
 	 * 模式一:居中显示前后的分页
-	 * @param int $page 当前第几页
-	 * @param int $limit 每页几条
-	 * @param int $count 共几条
-	 * @param int $button 显示的button个数
 	 * @return array 分页的信息
 	 */
-	public static function showCenter($page, $limit, $count, $button = 10) {
+	public function showCenter() {
 		// 初始化参数
-		$build = static::init($page, $limit, $count, $button);
+		$build = $this->getBuild();
 		
 		// 是否超过
 		if(!$build['over']) {

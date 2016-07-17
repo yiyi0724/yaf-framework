@@ -520,15 +520,17 @@ abstract class AbstractModel {
 	public function pagitor($page = 1, $number = 15) {
 		// 获取本页数据
 		$this->limit(abs($page - 1) * $number, $number);
-		$lists = $this->select(FALSE)->fetchAll();
+		$pagitor['list'] = $this->select(FALSE)->fetchAll();
 
 		// 获取分页数量
 		$this->field('COUNT(*)');
 		$total = $this->select()->fetchOne();
 
+
 		// 输出分页
-		$pagitor = \network\Page::showCenter($page, $number, $total, 6);
-		$pagitor['lists'] = $lists;
+		$pagitorLib = new \network\Page($page, $total);
+		$pagitorLib->setPerNumber($number);
+		$pagitor = $pagitorLib->showCenter();
 
 		return $pagitor;
 	}

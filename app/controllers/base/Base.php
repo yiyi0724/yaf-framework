@@ -13,13 +13,6 @@ use \Yaf\Controller_Abstract;
 abstract class BaseController extends Controller_Abstract {
 
 	/**
-	 * 控制器初始化
-	 * @return void
-	 */
-	public function init() {
-	}
-
-	/**
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */

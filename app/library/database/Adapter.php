@@ -38,18 +38,6 @@ abstract class Adapter {
 	}
 
 	/**
-	 * 单例获取数据库对象
-	 * @param string $type	   	数据库类型，如mysql,sqlite
-	 * @param string $host	  	数据库地址
-	 * @param string $port		数据库端口
-	 * @param string $charset	数据库字符集
-	 * @param string $username 	数据库连接用户
-	 * @param string $password 	数据库连接密码
-	 * @return \database\driver\Adapter 具体某种驱动对象
-	 */
-	abstract public static function getInstance($type, $host, $port, $dbname, $charset, $username, $password);
-
-	/**
 	 * 执行sql语句
 	 * @throws \PDOException
 	 * @param string $sql	 sql语句

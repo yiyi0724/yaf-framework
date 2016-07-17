@@ -29,6 +29,7 @@ class Header {
 
 	/**
 	 * 如果存在跨域自定义头信息，需要输出头信息控制
+	 * @static
 	 * @param string $headers 多个头信息，用逗号隔开
 	 * @return void
 	 */

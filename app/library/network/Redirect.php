@@ -5,7 +5,7 @@
  * @author enychen
  * @version 1.0
  */
-namespace Network;
+namespace network;
 
 class Redirect {
 
@@ -22,8 +22,9 @@ class Redirect {
 
 	/**
 	 * 头信息跳转
+	 * @static
 	 * @param string $url 跳转地址
-	 * @param int $code 跳转状态码
+	 * @param int $code 跳转状态码，可选
 	 * @return void
 	 */
 	public static function getWithoutReferer($url, $code = NULL) {
@@ -38,6 +39,7 @@ class Redirect {
 
 	/**
 	 * 带HTTP_REFERER的get方式页面跳转(使用<meta>进行跳转)
+	 * @static
 	 * @param string $url 跳转地址
 	 * @return void
 	 */
@@ -47,6 +49,7 @@ class Redirect {
 
 	/**
 	 * 带HTTP_REFERER的post方式页面跳转(使用<form>进行跳转)
+	 * @static
 	 * @param string $url 跳转地址
 	 * @param array $data 附加参数
 	 * @return void
