@@ -515,9 +515,10 @@ abstract class AbstractModel {
 	 * 分页获取信息
 	 * @param int $page 当前页
 	 * @param int $number 每页几条
+	 * @param int @button 按钮个数
 	 * @return array 分页信息
 	 */
-	public function pagitor($page = 1, $number = 15) {
+	public function pagitor($page = 1, $number = 15, $button = 6) {
 		// 获取本页数据
 		$this->limit(abs($page - 1) * $number, $number);
 		$pagitor['list'] = $this->select(FALSE)->fetchAll();
