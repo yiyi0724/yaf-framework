@@ -217,22 +217,6 @@ class Http {
 	}
 
 	/**
-	 * 设置使用ssl
-	 * @param boolean $verifyPeer 是否使用ssl
-	 * @param $caInfo 如果使用ssl，则请传入证书绝对路径
-	 * @return Http $this 返回当前对象进行连贯操作
-	 */
-	public function setSSL($verifyPeer, $caInfo = NULL) {
-		$this->setCurlOpt(CURLOPT_SSL_VERIFYPEER, $verifyPeer);
-		if($verifyPeer) {
-			// 严格认证
-			$this->setCurlOpt(CURLOPT_SSL_VERIFYHOST, 2);
-			// 证书地址
-			$this->setCurlOpt(CURLOPT_CAINFO, $caInfo);
-		}
-	}
-
-	/**
 	 * 执行get请求
 	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
