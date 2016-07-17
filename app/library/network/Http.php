@@ -211,20 +211,37 @@ class Http {
 			}
 			$cookie = implode('; ', $format);
 		}		
-		$this->setCurlopt(CURLOPT_COOKIE, $cookie);
+		$this->setCurlOpt(CURLOPT_COOKIE, $cookie);
 
 		return $this;
 	}
 
 	/**
+	 * 设置使用ssl
+	 * @param boolean $verifyPeer 是否使用ssl
+	 * @param $caInfo 如果使用ssl，则请传入证书绝对路径
+	 * @return Http $this 返回当前对象进行连贯操作
+	 */
+	public function setSSL($verifyPeer, $caInfo = NULL) {
+		$this->setCurlOpt(CURLOPT_SSL_VERIFYPEER, $verifyPeer);
+		if($verifyPeer) {
+			// 严格认证
+			$this->setCurlOpt(CURLOPT_SSL_VERIFYHOST, 2);
+			// 证书地址
+			$this->setCurlOpt(CURLOPT_CAINFO, $caInfo);
+		}
+	}
+
+	/**
 	 * 执行get请求
-	 * @param array $send 附加参数
+	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function get(array $send = array()) {
+	public function get($send = array()) {
 		// 设置请求的地址
-		$url = $send ? sprintf('%s?%s', $this->getUrl(), urldecode(http_build_query($send))) : $this->getUrl();
+		$send = is_array($send) ? urldecode(http_build_query($send)) : $send;
+		$url = $send ? sprintf('%s?%s', $this->getUrl(), $send) : $this->getUrl();
 		$this->setCurlOpt(CURLOPT_URL, $url);
 
 		// 执行请求
@@ -233,11 +250,11 @@ class Http {
 
 	/**
 	 * 执行post请求
-	 * @param array $send 附加参数
+	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function post(array $send = array()) {
+	public function post($send = array()) {
 		// 设置curl信息
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_POST, TRUE);
@@ -249,18 +266,18 @@ class Http {
 
 	/**
 	 * 执行put请求
-	 * @param array $send 附加参数
+	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function put(array $send = array()) {		
+	public function put($send = array()) {
 		// 设置curl信息
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
 
 		// 可选参数信息
 		if($send) {
-			$send = http_build_query($send);
+			$send = is_array($send) ? http_build_query($send) : $send;
 			$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
 			$this->setCurlOpt(CURLOPT_HTTPHEADER, array(sprintf('Content-Length: %d', strlen($send))));
 		}
@@ -271,18 +288,18 @@ class Http {
 
 	/**
 	 * 执行delete请求
-	 * @param array $send 附加参数
+	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function delete(array $send = array()) {
+	public function delete($send = array()) {
 		// 设置curl信息
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'DELETE');
 
 		// 可选参数信息
 		if($send) {
-			$send = http_build_query($send);
+			$send = is_array($send) ? http_build_query($send) : $send;
 			$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
 			$this->setCurlOpt(CURLOPT_HTTPHEADER, array(sprintf('Content-Length: %d', strlen($send))));
 		}
@@ -326,7 +343,7 @@ class Http {
 
 		// 设置请求的选项信息
 		$this->setCurlOpt(CURLOPT_RETURNTRANSFER, $this->getIsReturn());
-		$this->setCurlOpt(CURLOPT_HEADER, $this->getUrl());
+		$this->setCurlOpt(CURLOPT_HEADER, $this->getIsUserHeader());
 		$this->setCurlOpt(CURLOPT_TIMEOUT, $this->getTimeout());
 		foreach($this->getCurlOpt() as $option=>$value) {
 			curl_setopt($curl, $option, $value);
@@ -334,17 +351,19 @@ class Http {
 
 		// 执行请求并关闭
 		$result = curl_exec($curl);
+		if($result === FALSE) {
+			$curlError = curl_error($curl);
+			$curlNo = curl_errno($curl);
+		}
+		// 关闭curl
 		curl_close($curl);
-
 		// 操作失败
 		if($result === FALSE) {
-			throw new \Exception('Curl Exec Error');
+			throw new \Exception($curlError, $curlNo);
 		}
 
 		// 保存原始数据
-		if($this->getIsReturn()) {
-			$this->setOriginResult($result);
-		}
+		$this->setOriginResult($result);
 
 		// 进行解析
 		if($decode = $this->getDecode()) {
