@@ -5,13 +5,14 @@
  * @author enychen
  * @version 1.0
  */
-namespace Network;
+namespace network;
 
 class IP {
 
 	/**
 	 * 获取客户端的IP
-	 * @param boolean $ip2long 是否转换成为整形, 默认是
+	 * @static
+	 * @param boolean $ip2long 是否转换成为整形, 默认进行转换
 	 * @return int|string
 	 */
 	public static function getClientIP($ip2long = TRUE) {
