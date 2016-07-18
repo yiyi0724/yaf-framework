@@ -43,7 +43,7 @@ class Http {
 	 * 默认超时时间
 	 * @var int
 	 */
-	protected $timeout = 30;
+	protected $timeout = 5;
 
 	/**
 	 * 默认结果返回
@@ -299,21 +299,33 @@ class Http {
 	 * @throws \Exception
 	 */
 	public function upload(array $send) {
-		// 上传文件兼容性检查
+		// 设置curl选项
+		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
+		$this->setCurlOpt(CURLOPT_POST, TRUE);
+		$this->setCurlOpt(CURLOPT_POSTFIELDS, $this->toCURLFile($send));
+
+		return $this->send();
+	}
+
+	/**
+	 * 兼容上传（兼容@和CURLFile）
+	 * @param array $send 待上传的文件
+	 * @return array
+	 */
+	protected function toCURLFile($send) {
 		if(class_exists('\CURLFile')) {
 			foreach($send as $key=>$value) {
-				if(substr($value, 0, 1) == '@') {
+				if(is_array($send[$key])) {
+					// 递归检查
+					$send[$key] = $this->toCURLFile($send[$key]);
+				} else if(substr($value, 0, 1) == '@') {
+					// 存在要上传的文件
 					$send[$key] = new \CURLFile(substr($value, 1));
 				}
 			}
 		}
 
-		// 设置curl选项
-		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
-		$this->setCurlOpt(CURLOPT_POST, TRUE);
-		$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
-
-		return $this->send();
+		return $send;
 	}
 	
 	/**
@@ -329,10 +341,10 @@ class Http {
 		$this->setCurlOpt(CURLOPT_RETURNTRANSFER, $this->getIsReturn());
 		$this->setCurlOpt(CURLOPT_HEADER, $this->getIsUserHeader());
 		$this->setCurlOpt(CURLOPT_TIMEOUT, $this->getTimeout());
-		foreach($this->getCurlOpt() as $option=>$value) {
-			curl_setopt($curl, $option, $value);
-		}
-
+		
+		// 设置curl选项
+		@curl_setopt_array($curl, $this->getCurlOpt());
+		
 		// 执行请求并关闭
 		$result = curl_exec($curl);
 		if($result === FALSE) {
