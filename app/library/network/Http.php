@@ -343,7 +343,7 @@ class Http {
 		$this->setCurlOpt(CURLOPT_TIMEOUT, $this->getTimeout());
 		
 		// 设置curl选项
-		@curl_setopt_array($curl, $this->getCurlOpt());
+		curl_setopt_array($curl, $this->getCurlOpt());
 		
 		// 执行请求并关闭
 		$result = curl_exec($curl);
