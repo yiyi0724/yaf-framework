@@ -7,7 +7,7 @@
  */
 namespace weixin;
 
-class User extends Base {
+class Login extends Base {
 
 	/**
 	 * 获取的用户信息, 成功获取后, 将包含如下字段（snsapi_userinfo方式，如果是snsapi_base，则只有获取到access_token，openid）
