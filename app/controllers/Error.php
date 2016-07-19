@@ -30,6 +30,7 @@ class ErrorController extends \base\BaseController {
 				$this->showForbiddenException($exception);
 				break;
 			case 'traits\NotFoundException':
+			case 'Yaf\Exception\LoadFailed\Action':
 			case 'Yaf\Exception\LoadFailed\Controller':
 				// 404找不到资源
 				$this->showNotFoundException($exception);

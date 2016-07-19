@@ -47,7 +47,6 @@ class Pagitor {
 	public function __construct($page, $total) {
 		$this->setPage($page);
 		$this->setTotal($total);
-		$this->setBuild();
 	}
 
 	/**
@@ -160,7 +159,7 @@ class Pagitor {
 	 */
 	public function showCenter() {
 		// 初始化参数
-		$build = $this->getBuild();
+		$build = $this->setBuild()->getBuild();
 		
 		// 是否超过
 		if(!$build['over']) {

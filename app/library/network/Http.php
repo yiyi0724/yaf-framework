@@ -11,13 +11,13 @@ class Http {
 
 	/**
 	 * json解析
-	 * @var const
+	 * @var int
 	 */
 	const DECODE_JSON = 1;
 
 	/**
 	 * xml解析
-	 * @var const
+	 * @var int
 	 */
 	const DECODE_XML = 2;
 

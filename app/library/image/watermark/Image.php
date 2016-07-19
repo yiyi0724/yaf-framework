@@ -59,6 +59,14 @@ class Image {
 	}
 
 	/**
+	 * 获取信息
+	 * @param string $key
+	 */
+	public function getWaterImage($key = NULL) {
+		return $key && isset($this->waterImage[$key]) ? $this->waterImage[$key] : NULL;
+	}
+
+	/**
 	 * 设置源图
 	 * @param string $srcImage 原始图片绝对路径
 	 * @return Watermark $this 返回当前对象进行连贯操作
