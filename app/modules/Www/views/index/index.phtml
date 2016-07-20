@@ -1,38 +1,377 @@
-<div class="container-fluid">
-<?php $this->commonLayout('header'); ?>
-<h1 class="text-center">网站首页测试样式，Hello World</h1>
-<table class="table table-bordered table-hover">
-  <thead>
-  	<tr>
-    	<th>#</th>
-    	<th>昵称</th>
-    	<th>头像</th>
-    	<th>性别</th>
-    	<th>电话</th>
-    	<th>邮箱</th>
-    	<th>状态</th>
-    	<th>注册时间</th>
-    	<th>ip地址</th>
-  	</tr>
-  <thead>
-  <?php foreach($pagitor['lists'] as $list):?>
-  <tbody>
-  	<tr <?php echo $list['status'] ? 'class="warning"' : NULL;?>>
-     	<td><?php echo $list['uid'];?></td>
-	    <td><?php echo $list['nickname'];?></td>
-	    <td><?php echo $list['avatar'];?></td>
-	    <td><?php echo $list['gender'];?></td>
-	    <td><?php echo $list['mobile'];?></td>
-	    <td><?php echo $list['email'];?></td>
-	    <td><?php echo $list['status'];?></td>
-	    <td><?php echo $list['regtime'];?></td>
-	    <td><?php echo $list['regip'];?></td>
-  	</tr>
-  </tbody>
-  <?php endforeach;?>
-</table>
-<?php $this->commonLayout('page'); ?>
-</div>
-<div>
-</div>
-<?php $this->commonLayout('footer'); ?>
+<?php $this->commonLayout('header.phtml');?>
+	<div class="page-container">
+
+		<div class="sidebar-menu" style="min-height: 139px;">
+			<header class="logo-env">
+				<div class="logo">
+					<a href="http://op.youlaohu.com/admin/"><img width="120" alt="Logo"
+						src="./管理后台_files/logo3.png"></a>
+				</div>
+				<div class="sidebar-collapse">
+					<a class="sidebar-collapse-icon with-animation"
+						href="http://op.youlaohu.com/admin/#"> <i class="entypo-menu"></i>
+					</a>
+				</div>
+			</header>
+			<div id="mainClass" class="main-class">
+				<p class="curr">
+					<span>游老虎 </span>
+				</p>
+				<p>
+					<span>用户 </span>
+				</p>
+				<p>
+					<span>帮助 </span>
+				</p>
+				<p>
+					<span>日志 </span>
+				</p>
+				<p>
+					<span>设置 </span>
+				</p>
+				<p>
+					<span>数据 </span>
+				</p>
+				<p>
+					<span>微信 </span>
+				</p>
+			</div>
+			<ul class="main-menu" style="display: block;">
+				<li class="root-level has-sub active opened"><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-magnet"></i>
+						<span>运营商</span>
+				</a>
+					<ul class="visible">
+						<li><a href="http://op.youlaohu.com/admin/h5operator/list/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5operator/edit/"> <span>添加</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-dribbble"></i>
+						<span>游戏</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/h5game/list/"> <span>游戏列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5game/edit/"> <span>游戏添加</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5game/play/"> <span>用户游戏记录</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5game/category/"> <span>游戏分类列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5game/rank/"> <span>游戏排行榜</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-direction"></i>
+						<span>小游戏</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/h5sgame/list/"> <span>小游戏列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5sgame/edit/"> <span>小游戏添加</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-direction"></i>
+						<span>apk游戏</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/apkgame/list/"> <span>apk游戏列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/apkgame/edit/"> <span>apk游戏添加</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i
+						class="entypo-paper-plane"></i> <span>幻灯片管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/h5carousel/list/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5carousel/edit/"> <span>添加</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-leaf"></i>
+						<span>礼包管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/h5gift/list/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5gift/edit/"> <span>添加</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5gift/usergift/"> <span>用户礼包</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-docs"></i>
+						<span>财务管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/h5financial/recharge/">
+								<span>充值列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5financial/finance/"> <span>用户财务</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5financial/financelog/">
+								<span>财务变更日志</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5financial/goldcoin/">
+								<span>用户金币</span>
+						</a></li>
+						<li><a
+							href="http://op.youlaohu.com/admin/h5financial/goldcoinlog/"> <span>金币变更日志</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-tag"></i> <span>推广管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/h5promotion/list/"> <span>推广列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5promotion/edit/"> <span>推广添加</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5promotion/channel/"> <span>渠道列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5promotion/activity/">
+								<span>活动公众号列表</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-cloud"></i>
+						<span>公告管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/h5notice/list/"> <span>公告列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/h5notice/edit/"> <span>添加</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-cloud"></i>
+						<span>热搜词管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/hotsearchwords/list/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/hotsearchwords/edit/"> <span>添加</span>
+						</a></li>
+					</ul></li>
+			</ul>
+			<ul class="main-menu">
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-users"></i>
+						<span>用户管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/user/list/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/user/count/"> <span>统计</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-login"></i>
+						<span>7日登录</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/logins/list/"> <span>7日登录列表数据</span>
+						</a></li>
+					</ul></li>
+			</ul>
+			<ul class="main-menu">
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-archive"></i>
+						<span>栏目管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/category/list/"> <span>所有栏目列表</span>
+						</a></li>
+						<li><a
+							href="http://op.youlaohu.com/admin/category/list/?parentid=1"> <span>活动公告</span>
+						</a></li>
+						<li><a
+							href="http://op.youlaohu.com/admin/article/list/?parentid=6"> <span>常见问题</span>
+						</a></li>
+						<li><a
+							href="http://op.youlaohu.com/admin/category/list/?parentid=2"> <span>平台设置</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-feather"></i>
+						<span>信息反馈管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/feedback/list/"> <span>列表</span>
+						</a></li>
+					</ul></li>
+			</ul>
+			<ul class="main-menu">
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-docs"></i>
+						<span>用户日志</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/userlog/userlog/"> <span>查看用户日志</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/userlog/finance/"> <span>查看财务日志</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/userlog/integral/"> <span>查看积分日志</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/userlog/adminlog/"> <span>查看管理员日志</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-cog"></i> <span>消息管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/message/list/"> <span>查看消息列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/message/add/"> <span>发送消息</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-menu"></i>
+						<span>队列管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/queue/list"> <span>查看队列列表</span>
+						</a></li>
+					</ul></li>
+			</ul>
+			<ul class="main-menu">
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-user"></i>
+						<span>管理员</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/administrator/list/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/administrator/group/"> <span>管理员组</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-key"></i> <span>权限管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/purview/list/"> <span>后台菜单</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/purview/add/"> <span>添加</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-cog"></i> <span>系统设置</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/systemset/list/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/systemset/link/"> <span>链接管理</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-key"></i> <span>API授权管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/apiauth/"> <span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/apiauth/add"> <span>添加</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-flashlight"></i>
+						<span>保留词管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/keepname/list/"> <span>保留词列表</span>
+						</a></li>
+					</ul></li>
+			</ul>
+			<ul class="main-menu">
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-users"></i>
+						<span>渠道数据</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/count/user/"> <span>用户汇总</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/count/pay/"> <span>财务汇总</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/count/login/"> <span>登录汇总</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-doc"></i> <span>红包数据</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/redpackage/index/"> <span>领取统计</span>
+						</a></li>
+					</ul></li>
+			</ul>
+			<ul class="main-menu">
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-menu"></i>
+						<span>自定义菜单</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/weixinmenu/index/"> <span>菜单列表</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-users"></i>
+						<span>账号管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/weixinaccount/code/"> <span>二维码推广</span>
+						</a></li>
+					</ul></li>
+				<li class="root-level has-sub "><a
+					href="http://op.youlaohu.com/admin/#"> <i class="entypo-docs"></i>
+						<span>素材管理</span>
+				</a>
+					<ul class="">
+						<li><a href="http://op.youlaohu.com/admin/weixinmaterial/index/">
+								<span>列表</span>
+						</a></li>
+						<li><a href="http://op.youlaohu.com/admin/weixinmaterial/add/"> <span>添加</span>
+						</a></li>
+					</ul></li>
+			</ul>
+
+		</div>
+		<div class="main-content">
+			<style>
+.img-circle {
+	border-radius: 0;
+}
+</style>
+			<div class="row">
+				<div class="col-md-6 col-sm-8 clearfix">
+					<ul class="user-info pull-left pull-none-xsm">
+						<li class="profile-info dropdown"><a class="dropdown-toggle"
+							data-toggle="dropdown" href="http://op.youlaohu.com/admin/#"> <img
+								class="img-circle" width="44" alt="" src="./管理后台_files/50.png">
+								陈晓波
+						</a>
+							<ul class="dropdown-menu">
+								<li class="caret"></li>
+								<li><a
+									href="http://op.youlaohu.com/admin/administrator/password/"> <i
+										class="entypo-lock"></i> 修改密码
+								</a></li>
+								<li><a href="http://op.youlaohu.com/admin/#"> <i
+										class="entypo-doc-text"></i> 日志
+								</a></li>
+								<li><a href="http://op.youlaohu.com/admin/logout/"> <i
+										class="entypo-logout"></i> 退出
+								</a></li>
+							</ul></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>

@@ -1,17 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html>
 <head>
-<title><?php echo empty($title) ?  '标题' : $title; ?></title>
-<meta charset="UTF-8">
-<meta name="renderer" content="webkit"/>
-<?php if(!empty($metas)) { foreach($metas as $meta): #meta_start?>
-<meta name="<?php echo $meta['name']?>" content="<?php echo $meta['content'] ;?>"/>
-<?php endforeach; }; #meta_end?>
-<?php if(!empty($styles)) { foreach($styles as $style): #样式_start?>
-<link href="<?php echo WWW_STYLE.$style; ?>" rel="stylesheet" type="text/css" />
-<?php endforeach; }; #样式_end?>
-<?php if(!empty($scripts)) { foreach($scripts as $script): #脚本_start?>
-<script type="text/javascript" src="<?php echo WWW_SCRIPT.$script; ?>"></script>
-<?php endforeach; }; #脚本_end?>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<title>管理后台</title>
+<link rel="stylesheet" type="text/css"
+	href="./管理后台_files/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+	href="./管理后台_files/neon-core.min.css">
+<link rel="stylesheet" type="text/css"
+	href="./管理后台_files/neon-theme.min.css">
+<link rel="stylesheet" type="text/css"
+	href="./管理后台_files/neon-forms.min.css">
+<link rel="stylesheet" type="text/css"
+	href="./管理后台_files/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="./管理后台_files/entypo.css">
+<link rel="stylesheet" type="text/css" href="./管理后台_files/custom.css">
+<script type="text/javascript" src="./管理后台_files/jquery.js"></script>
+<script type="text/javascript" src="./管理后台_files/bootstrap.min.js"></script>
+<script type="text/javascript" src="./管理后台_files/custom.js"></script>
 </head>
-<body>
+<body class="page-body loaded" style="">
