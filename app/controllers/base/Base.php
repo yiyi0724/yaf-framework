@@ -12,6 +12,12 @@ use \Yaf\Controller_Abstract;
 
 abstract class BaseController extends Controller_Abstract {
 
+	public function init() {
+		// 读取侧边栏信息
+		$menuService = new \services\menu\Lists();
+		$this->assign('menus', $menuService->getLists());
+	}
+	
 	/**
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象

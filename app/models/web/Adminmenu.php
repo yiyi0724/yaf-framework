@@ -4,13 +4,13 @@
  * 案例模型，用于参考
  * @author enychen
  */
-namespace example;
+namespace web;
 
-class ExampleModel extends \base\AbstractModel {
+class AdminmenuModel extends \base\AbstractModel {
 
 	/**
 	 * 表名
 	 * @var string
 	 */
-	protected $table = 'table_name';
+	protected $table = 'admin_menu';
 }
