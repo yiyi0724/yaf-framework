@@ -1,10 +1,10 @@
 <?php
 
 /**
- * 网站默认控制器
+ * 用户列表控制器
  * @author enychen
  */
-class IndexController extends \base\BaseController {
+class MemberController extends \base\BaseController {
 
 	/**
 	 * 网站首页
