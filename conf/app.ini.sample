@@ -3,7 +3,7 @@
 ;[项目配置]
 application.directory 					= APP_PATH
 application.dispatcher.catchException 	= True
-application.modules 					= "Index,Www"
+application.modules 					= "Index,Www,Account"
 
 ;[修改php.ini的配置]
 ;runtime.display_errors					= 1

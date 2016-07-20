@@ -18,17 +18,22 @@
 		<?php endforeach;?>
 	</div>
 	<?php foreach($menus as $menu):?>
-	<ul class="main-menu <?php echo strcasecmp(MODULE_NAME, $menu['module']) ? NULL : 'block';?>">
+	<?php $isModule = !strcasecmp(MODULE_NAME, $menu['module']); ?>
+	<ul class="main-menu <?php echo $isModule ? 'block' : 'none';?>">
 		<?php if(isset($menu['children'])):foreach($menu['children'] as $value):?>
-		<li class="root-level has-sub active opened">
+		<?php $isController = !strcasecmp(CONTROLLER_NAME, $value['controller']); ?>
+		<li class="root-level <?php echo isset($value['children']) ? 'has-sub' : NULL;?> <?php echo $isModule && $isController ? 'active opened' : NULL;?>">
 			<a href="<?php echo $value['url'];?>"> <i class="<?php echo $value['icon']?>"></i><span><?php echo $value['name'];?></span></a>
-			<?php if(isset($value['children'])):foreach($value['children'] as $last):?>
-			<ul class="<?php echo strcasecmp(CONTROLLER_NAME, $value['controller']) ? NULL : 'visible';?>">
-				<li>
+			<?php if(isset($value['children'])):?>
+			<ul <?php echo $isModule && $isController ? 'class="visible"' : NULL;?>>
+				<?php foreach($value['children'] as $last):?>
+				<?php $isAction = !strcasecmp($last['action'], ACTION_NAME)?>
+				<li class="<?php echo $isModule && $isController && $isAction ? 'active' : NULL;?>">
 					<a href="<?php echo $last['url']?>"> <span><?php echo $last['name'];?></span></a>
 				</li>
+				<?php endforeach;?>
 			</ul>
-			<?php endforeach;endif;?>
+			<?php endif;?>
 		</li>
 		<?php endforeach;endif;?>
 	</ul>

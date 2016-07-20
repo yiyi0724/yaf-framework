@@ -13,17 +13,14 @@ i.active{color:#0073B7}
 i.disabled{color:#CCC}
 .table-bordered > thead > tr > th{color:#333}
 .dataTables_wrapper table thead tr th{font-weight:200}
-.page-container .sidebar-menu .main-menu{padding-left:40px;display:none}
+.page-container .sidebar-menu .main-menu{padding-left:40px}
 .main-class{position:absolute;left:0;top:102px;width:40px;overflow:hidden}
 .main-class p{color: #fff;-webkit-transition:color 250ms ease-in-out,background-color 250ms ease-in-out;-moz-transition:color 250ms ease-in-out,background-color 250ms ease-in-out;transition:color 250ms ease-in-out,background-color 250ms ease-in-out;margin:0;background:#383c43;padding: 8px 0;width:40px;margin-bottom: 2px}
 .main-class p:hover,.main-class .curr{background-color:#449a74}
 .main-class span{display:block;width:18px;margin:0 auto;line-height:20px;cursor: pointer;font-size:14px}
 .page-container .sidebar-menu .logo-env>div>a{padding:4px 0 0 34px}
 .block{display:block}
-
-
-
-
+.none{display:none}
 
 
 
