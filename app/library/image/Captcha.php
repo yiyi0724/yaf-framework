@@ -166,8 +166,8 @@ class Captcha {
 	 * 获取字体大小
 	 * @return int
 	 */
-	protected function getFontSize($size = 4) {
-		return $this->getHeight() / $size * 1.8;
+	protected function getFontSize($size = 2) {
+		return $this->getHeight() / $size;
 	}
 
 	/**
@@ -194,7 +194,7 @@ class Captcha {
 		}
 
  		// 画星星
- 		$length = floor(($this->getWidth() + $this->getHeight()) / 3);
+ 		$length = floor(($this->getWidth() + $this->getHeight()) / 2);
 		for($i = 0; $i <$length; $i++) {
 			$color = imagecolorallocate($canvas, mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255));
 			imagettftext($canvas, 9, 0, mt_rand(5, $this->getWidth()), mt_rand(10, $this->getHeight()), $color, $font, '.');
