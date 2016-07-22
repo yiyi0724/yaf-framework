@@ -24,7 +24,7 @@ class Captcha extends Base {
 	/**
 	 * 验证码比较
 	 * @param string $key 键名
-	 * @param string $code 传递过来的code
+	 * @param string $code 用户输入的值
 	 * @return boolean
 	 */
 	public function compare($key, $code) {
