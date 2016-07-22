@@ -19,7 +19,7 @@ class ImageController extends \base\BaseController {
 
 		// 生成验证码
 		$captcha = new CaptchaLib();
-		$captcha->setFont('TimesNewRomanBold.ttf')->setCanvasBgColor(48, 54, 65)->show();
+		$captcha->setCanvasBgColor(55, 62, 74)->show();
 
 		// 保存验证码
 		$captchaService = new CaptchaService();
