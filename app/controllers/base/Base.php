@@ -20,16 +20,16 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		// 读取侧边栏信息
-		$this->assign('menus', MenuService::getLists());
-		
+		// 初始化管理员信息
 		try {
-			// 初始化管理员信息
 			$adminInfoService = new AdminInfoService();
 			$adminInfoService->init()->check();
 		} catch(RedirectException $e) {
 			$this->redirect($e->getMessage());
-		}	
+		}
+
+		// 读取侧边栏信息
+		$this->assign('menus', MenuService::getLists());
 	}
 	
 	/**
