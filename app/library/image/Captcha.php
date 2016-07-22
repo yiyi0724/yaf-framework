@@ -39,6 +39,12 @@ class Captcha {
 	protected $canvas = NULL;
 
 	/**
+	 * 画布背景颜色
+	 * @var array
+	 */
+	protected $canvasBgColor = array(255, 255, 255);	
+
+	/**
 	 * 设置验证码长度
 	 * @param int $width 验证码长度
 	 * @return Captcha $this 返回当前对象进行连贯操作
@@ -101,7 +107,8 @@ class Captcha {
 	 */
 	protected function setCanvas() {
 		$this->canvas = imagecreatetruecolor($this->getWidth(), $this->getHeight());		
-		$bgColor = imagecolorallocate($this->canvas, 255, 255, 255);
+		$bgColor = $this->getCanvasBgColor();
+		$bgColor = imagecolorallocate($this->canvas, $bgColor[0], $bgColor[1], $bgColor[2]);
 		imagefilledrectangle($this->canvas, 0, 0, $this->getWidth(), $this->getHeight(), $bgColor);
 		imagecolortransparent($this->canvas, $bgColor);
 		return $this;
@@ -113,6 +120,28 @@ class Captcha {
 	 */
 	protected function getCanvas() {
 		return $this->canvas;
+	}
+
+	/**
+	 * 设置画布背景颜色
+	 * @param int $red 红色
+	 * @param int $yellow 黄色
+	 * @param int $blue 蓝色
+	 * @return Captcha $this 返回当前对象进行连贯操作 
+	 */
+	public function setCanvasBgColor($red, $yellow, $blue) {
+		$this->canvasBgColor[0] = $red;
+		$this->canvasBgColor[1] = $yellow;
+		$this->canvasBgColor[2] = $blue;
+		return $this;
+	}
+
+	/**
+	 * 获取画布背景颜色
+	 * @return array
+	 */
+	public function getCanvasBgColor() {
+		return $this->canvasBgColor;
 	}
 
 	/**
