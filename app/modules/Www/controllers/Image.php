@@ -1,33 +1,31 @@
 <?php
 
-use \image\Captcha as CaptchaLib;
-use \services\common\Captcha as CaptchaService;
-
 /**
  * 图片控制器
  * @author enychen
  */
-class ImageController extends \base\BaseController {
 
-	/**
-	 * 重置登录页面
-	 * @return void
-	 */
-	public function init() {
-		$this->disView();
-	}
+use \image\Captcha as CaptchaLib;
+use \services\common\Captcha as CaptchaService;
+
+class ImageController extends \base\BaseController {
 
 	/**
 	 * 输出验证码
 	 * @return void
 	 */
 	public function captchaAction() {
+		$request = $this->getVailRequest();
+
 		// 生成验证码
 		$captcha = new CaptchaLib();
-		$captcha->setCanvasBgColor(55, 62, 74)->show();
+		$captcha->setFont('TimesNewRomanBold.ttf')->setCanvasBgColor(48, 54, 65)->show();
 
 		// 保存验证码
 		$captchaService = new CaptchaService();
-		$captchaService->set(CaptchaService::LOGIN_KEY, $captcha->getCode());
+		$captchaService->set($request->get('channel'), $captcha->getCode());
+
+		// 关闭视图
+		$this->disView();
 	}
 }

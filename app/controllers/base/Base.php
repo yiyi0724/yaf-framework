@@ -14,23 +14,6 @@ use \services\common\Menu as MenuService;
 use \services\admin\Info as AdminInfoService;
 
 abstract class BaseController extends Controller_Abstract {
-
-	/**
-	 * 初始化
-	 * @return void
-	 */
-	public function init() {
-		// 初始化管理员信息
-		try {
-			$adminInfoService = new AdminInfoService();
-			$adminInfoService->init()->check();
-		} catch(RedirectException $e) {
-			$this->redirect($e->getMessage());
-		}
-
-		// 读取侧边栏信息
-		$this->assign('menus', MenuService::getLists());
-	}
 	
 	/**
 	 * 获取经过验证请求对象
