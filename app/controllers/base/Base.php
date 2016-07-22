@@ -6,7 +6,6 @@
  */
 namespace base;
 
-use \Yaf\Session;
 use \traits\Request;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
