@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<title>Eny.Inc 后台管理系统</title>
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-core.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-theme.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-forms.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>entypo.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>custom.css">
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>jquery.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>custom.js"></script>
+</head>
+    <body class="page-body login-page login-form-fall loaded login-form-fall-init">
+        <div class="login-container">
+            <div class="login-header login-caret">
+                <div class="login-content">
+                    <a href="http://op.youlaohu.com/admin/login#" class="logo">
+                        <img alt="Logo" src="<?php echo WEB_IMAGE ;?>logo3.png">
+                    </a>
+                    <p class="description">做最牛逼的产品</p>
+                </div>
+            </div>
+            <div class="login-form">
+                <div class="login-content">
+                    
+                    <form id="form_login" role="form" method="post" novalidate="novalidate">
+                        <div class="form-group">
+                            <div class="input-group focused">
+                                <div class="input-group-addon">
+                                    <i class="entypo-user"></i>
+                                </div>
+                                <input type="email" placeholder="Email" id="username" name="email" class="form-control" tabindex="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="entypo-key"></i>
+                                </div>
+                                <input type="password" placeholder="Password" id="password" name="password" class="form-control" tabindex="2">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon"></div>
+                                <input id="checkCode" class="form-control" autocomplete="off" type="text" name="captcha[code]" tabindex="3" placeholder="验证码" maxlength="6">
+                                <input type="hidden" name="captcha[key]" value="6d42d77b3804a851a3cfff9f20ab6171">
+                                <img class="checkImg" src="/www/image/captcha" width="122" height="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block btn-login" type="submit">
+                                登录
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    
+
+</body></html>
