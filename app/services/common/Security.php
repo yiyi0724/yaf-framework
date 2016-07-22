@@ -6,14 +6,10 @@
  */
 namespace services\common;
 
-class Security extends \services\base\Base {
+use \services\base\Base;
 
-	/**
-	 * 登录验证码
-	 * @var string
-	 */
-	const LOGIN_KEY = 'login';
-	
+class Security extends Base {
+
 	/**
 	 * 保存验证码
 	 * @param string $key 键名

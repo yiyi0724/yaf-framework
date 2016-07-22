@@ -7,8 +7,12 @@
 namespace base;
 
 use \Yaf\Session;
+use \traits\Request;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
+use \traits\RedirectException;
+use \services\common\Menu as MenuService;
+use \services\admin\Info as AdminInfoService;
 
 abstract class BaseController extends Controller_Abstract {
 
@@ -18,8 +22,15 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	public function init() {
 		// 读取侧边栏信息
-		$menuService = new \services\common\Menu();
-		$this->assign('menus', $menuService->getLists());
+		$this->assign('menus', MenuService::getLists());
+		
+		try {
+			// 初始化管理员信息
+			$adminInfoService = new AdminInfoService();
+			$adminInfoService->init()->check();
+		} catch(RedirectException $e) {
+			$this->redirect($e->getMessage());
+		}	
 	}
 	
 	/**
@@ -27,7 +38,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return \traits\Request 请求封装对象
 	 */
 	public function getVailRequest() {
-		return \traits\Request::getInstance();
+		return Request::getInstance();
 	}
 
 	/**

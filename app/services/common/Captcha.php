@@ -6,13 +6,9 @@
  */
 namespace services\common;
 
-class Captcha extends \services\base\Base {
+use \services\base\Base;
 
-	/**
-	 * 登录验证码键
-	 * @var string
-	 */
-	const LOGIN_KEY = 'login';
+class Captcha extends Base {
 	
 	/**
 	 * 保存验证码
@@ -31,6 +27,8 @@ class Captcha extends \services\base\Base {
 	 * @return boolean
 	 */
 	public function compare($key, $code) {
-		return !strcasecmp($this->getSession()->get($key), $code);
+		$isMatch = !strcasecmp($this->getSession()->get($key), $code);
+		$this->getSession()->del($key);
+		return $isMatch;
 	}
 }
