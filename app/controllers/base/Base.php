@@ -6,7 +6,7 @@
  */
 namespace base;
 
-use \Yaf\Session;
+use \traits\Request;
 use \Yaf\Application;
 use \Yaf\Controller_Abstract;
 
@@ -17,7 +17,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return \traits\Request 请求封装对象
 	 */
 	public function getVailRequest() {
-		return \traits\Request::getInstance();
+		return Request::getInstance();
 	}
 
 	/**
