@@ -1,84 +1,94 @@
 <?php
 
 /**
- * 输出验证码
- * @author chenxb
+ * 验证码类
+ * @author enychen
  */
 namespace Image;
 
 class Captcha {
 
 	/**
-	 * 构造函数
-	 * @param int $width 图片长度
-	 * @param int $heigh 图片宽度
-	 * @param int $length 字符个数
-	 * @return void
+	 * 图片长度
+	 * @var int
 	 */
-	public function __construct($width = 100, $height = 40, $length = 4) {
-		// 保存初始化值
+	protected $width = 100;
+
+	/**
+	 * 图片宽度
+	 * @var int
+	 */
+	protected $height = 40;
+
+	/**
+	 * 字体
+	 * @var string
+	 */
+	protected $font = 'Elephant.ttf';
+	
+	/**
+	 * 验证码内容
+	 * @var string
+	 */
+	protected $code = NULL;
+
+	/**
+	 * 画布
+	 * @var resource
+	 */
+	protected $canvas = NULL;
+
+	/**
+	 * 设置验证码长度
+	 * @param int $width 验证码长度
+	 * @return Captcha $this 返回当前对象进行连贯操作
+	 */
+	public function setWidth($width) {
 		$this->width = $width;
+		return $this;
+	}
+
+	/**
+	 * 获取验证码长度
+	 * @return int
+	 */
+	public function getWidth() {
+		return $this->width;
+	}
+
+	/**
+	 * 设置验证码宽度
+	 * @param int $height 验证码宽度
+	 * @return Captcha $this 返回当前对象进行连贯操作
+	 */
+	public function setHeight($height) {
 		$this->height = $height;
-		$this->length = $length;
-		$this->image = imagecreatetruecolor($width, $height);
-		$this->font = __DIR__ . '/Fonts/Elephant.ttf';
-		$this->fontSize = $height / $length * 1.8;
-		$this->backgroundColor = imagecolorallocate($this->image, 255, 255, 255);
-		$this->code = $this->star = $this->line = NULL;
-		
-		// 生成随机码
-		$this->getRandomCode();
+		return $this;
 	}
 
 	/**
-	 * 获取随机验证码
-	 * @return void
+	 * 获取验证码宽度
+	 * @return int
 	 */
-	protected function getRandomCode() {
-		$charset = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789';
-		for($i = 0; $i < $this->length; $i++) {
-			$this->code .= $charset[mt_rand(0, 56)];
+	public function getHeight() {
+		return $this->height;
+	}
+
+	/**
+	 * 设置验证码内容
+	 * @return Captcha $this 返回当前对象进行连贯操作
+	 */
+	protected function setCode() {
+		if(mt_rand(0, 1)) {
+			$this->code = substr(str_shuffle('abcdefghijkmnpqrstuvwxyzABCDEFJHIJKLMNPQRSTUVWXYZ'), 4, 4);
+		} else {
+			$this->code = (string)mt_rand(1000, 9999);
 		}
+		return $this;
 	}
 
 	/**
-	 * 生成干扰星星
-	 * @param int $star 星星个数
-	 * @return void
-	 */
-	public function setStar($star = 100) {
-		$this->star = $star;		
-	}
-	
-	/**
-	 * 生成干扰线
-	 * @param int $star 星星个数
-	 * @return void
-	 */
-	public function setLine($line = 1) {
-		$this->line = $line;
-	}
-	
-	/**
-	 * 设置字体
-	 * @param string $font 字体名称，包含后缀
-	 * @return void
-	 */
-	public function setFont($font) {
-		$this->font = __DIR__ . "/Fonts/{$font}";
-	}
-	
-	/**
-	 * 更改字体大小
-	 * @param int $fontSize 字体大小值
-	 * @return void
-	 */
-	public function setFontSize($fontSize) {
-		$this->fontSize = $fontSize;
-	}
-
-	/**
-	 * 获取生成的验证码
+	 * 获取验证码内容
 	 * @return string
 	 */
 	public function getCode() {
@@ -86,52 +96,84 @@ class Captcha {
 	}
 
 	/**
-	 * 设置背景颜色
+	 * 设置画布
+	 * @return Captcha $this 返回当前对象进行连贯操作
 	 */
-	public function setBackgroundColor($red, $green, $blue) {
-		$this->backgroundColor = imagecolorallocate($this->image, $red, $green, $blue);
+	protected function setCanvas() {
+		$this->canvas = imagecreatetruecolor($this->getWidth(), $this->getHeight());		
+		$bgColor = imagecolorallocate($this->canvas, 255, 255, 255);
+		imagefilledrectangle($this->canvas, 0, 0, $this->getWidth(), $this->getHeight(), $bgColor);
+		imagecolortransparent($this->canvas, $bgColor);
+		return $this;
+	}
+
+	/**
+	 * 获取画布
+	 * @return resource
+	 */
+	protected function getCanvas() {
+		return $this->canvas;
+	}
+
+	/**
+	 * 设置字体（字体文件必须放在\library\image\Fonts目录下）
+	 * @param string $font 只需要字体的名称，无需完整路径
+	 * @return Captcha $this 返回当前对象进行连贯操作
+	 */
+	public function setFont($font) {
+		$this->font = $font;
+		return $this;
+	}
+
+	/**
+	 * 获取字体
+	 * @return string
+	 */
+	public function getFont() {
+		return sprintf('%s%sFonts%s%s', __DIR__, DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $this->font);
+	}
+
+	/**
+	 * 获取字体大小
+	 * @return int
+	 */
+	protected function getFontSize($size = 4) {
+		return $this->getHeight() / $size * 1.8;
 	}
 
 	/**
 	 * 生成并输出验证码图片
 	 * @return void
 	 */
-	public function show() {		
-		// 填充颜色 && 透明颜色
-		imagefilledrectangle($this->image, 0, $this->height, $this->width, 0, $this->backgroundColor);
-		imagecolortransparent($this->image, $this->backgroundColor);
-
-		// 画星星
-		if($this->star) {
-			for($i = 0; $i < $this->star; $i++) {
-				$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
-				$result = imagestring($this->image, mt_rand(0, 5), mt_rand(0, $this->width), mt_rand(0, $this->height), '.', $color);
-			}
-		}
-
-		// 画干扰线
-		if($this->line) {
-			for($i = 0; $i < $this->line; $i++) {
-				$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
-				$result = imageline($this->image, mt_rand(0, $this->width-5), mt_rand($this->height*0.2, $this->height*0.8), 
-					mt_rand($this->width-5, $this->width), mt_rand(0, $this->height), $color);
-			}
-		}		
-
-		// 填充文字
-		$spacing = floor($this->width / $this->length);
-		$y = $this->height / 1.3;
-		for($i = 0, $len = strlen($this->code); $i < $len; $i++) {
-			$angle = mt_rand(-30, 30);
-			$x = $spacing * $i + mt_rand(2, 4);
-			$color = imagecolorallocate($this->image, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
-			imagettftext($this->image, $this->fontSize, $angle, $x, $y, $color, $this->font, $this->code[$i]);
-		}
+	public function show() {
+		// 初始化透明画布		
+		$canvas = $this->setCanvas()->getCanvas();
+		// 获取验证码
+		$code = $this->setCode()->getCode();
+		// 获取字体信息
+		$font =$this->getFont();
+		$fontSize = $this->getFontSize();
 		
+		// 填充文字
+		$spacing = floor($this->getWidth() / $this->getHeight());
+		for($i = 0, $len = strlen($code); $i < $len; $i++) {
+			$angle = mt_rand(-20, 20);
+			$x = ($i+0.3) * $this->getWidth()/4.5;
+			$y = ($this->getHeight() / 1.3) + mt_rand(2, 4);
+			$color = imagecolorallocate($canvas, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
+			imagettftext($canvas, $fontSize, $angle, $x, $y, $color, $font, $code[$i]);
+		}
+
+ 		// 画星星
+ 		$length = floor(($this->getWidth() + $this->getHeight()) / 3);
+		for($i = 0; $i <$length; $i++) {
+			$color = imagecolorallocate($canvas, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
+			imagettftext($canvas, 9, 0, mt_rand(5, $this->getWidth()), mt_rand(10, $this->getHeight()), $color, $font, '.');
+		}
+
 		// 输出
 		header('Content-type: image/png;charset=UTF-8');
-		imagepng($this->image);
-		// 销毁
-		imagedestroy($this->image);
+		imagepng($canvas);
+		imagedestroy($canvas);
 	}
 }
