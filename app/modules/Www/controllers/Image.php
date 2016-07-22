@@ -11,10 +11,11 @@ use \services\common\Captcha as CaptchaService;
 class ImageController extends \base\BaseController {
 
 	/**
-	 * 输出验证码
+	 * 输出验证码图片
 	 * @return void
 	 */
 	public function captchaAction() {
+		// 数据检查
 		$request = $this->getVailRequest();
 
 		// 生成验证码
