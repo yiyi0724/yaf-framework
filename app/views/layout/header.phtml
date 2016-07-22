@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-<title>Eny.Inc 后台管理系统</title>
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-core.min.css">
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-theme.min.css">
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-forms.min.css">
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>entypo.css">
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>custom.css">
-<script type="text/javascript" src="<?php echo WEB_SCRIPT?>jquery.js"></script>
-<script type="text/javascript" src="<?php echo WEB_SCRIPT?>bootstrap.min.js"></script>
-<script type="text/javascript" src="<?php echo WEB_SCRIPT?>custom.js"></script>
-</head>
+<?php $this->commonLayout('head')?>
 <body class="page-body loaded">
 	<div class="page-container">
 		<?php $this->commonLayout('menu');?>
@@ -22,20 +6,21 @@
 			<div class="row">
 				<div class="col-md-6 col-sm-8 clearfix">
 					<ul class="user-info pull-left pull-none-xsm">
-						<li class="profile-info dropdown"><a class="dropdown-toggle"
-							data-toggle="dropdown" href="javascirpt:;"> <img class="img-circle"
-								width="44" alt="" src="<?php echo WEB_IMAGE;?>50.png"> 陈晓波
-						</a>
+						<li class="profile-info dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="javascirpt:;"> <img class="img-circle" width="44" alt="" src="<?php echo WEB_IMAGE;?>50.png"> 陈晓波</a>
 							<ul class="dropdown-menu">
 								<li class="caret"></li>
-								<li><a href="#"> <i class="entypo-lock"></i> 修改密码
-								</a></li>
-								<li><a href="#"> <i class="entypo-doc-text"></i> 日志
-								</a></li>
-								<li><a href="#"> <i class="entypo-logout"></i> 退出
-								</a></li>
-							</ul></li>
+								<li>
+									<a href="#"> <i class="entypo-lock"></i> 修改密码</a>
+								</li>
+								<li>
+									<a href="#"> <i class="entypo-doc-text"></i> 日志</a>
+								</li>
+								<li>
+									<a href="#"> <i class="entypo-logout"></i> 退出</a>
+								</li>
+							</ul>
+						</li>
 					</ul>
 				</div>
 			</div>
-	

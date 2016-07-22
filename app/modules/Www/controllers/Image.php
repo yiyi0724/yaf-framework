@@ -1,5 +1,8 @@
 <?php
 
+use \image\Captcha as CaptchaLib;
+use \services\common\Captcha as CaptchaService;
+
 /**
  * 图片控制器
  * @author enychen
@@ -15,10 +18,16 @@ class ImageController extends \base\BaseController {
 	}
 
 	/**
-	 * 二维码
+	 * 输出验证码
+	 * @return void
 	 */
 	public function captchaAction() {
-		$captcha = new \image\Captcha();
-		$captcha->show();
+		// 生成验证码
+		$captcha = new CaptchaLib();
+		$captcha->setCanvasBgColor(55, 62, 74)->show();
+
+		// 保存验证码
+		$captchaService = new CaptchaService();
+		$captchaService->set(CaptchaService::LOGIN_KEY, $captcha->getCode());
 	}
 }

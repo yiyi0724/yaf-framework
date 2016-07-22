@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<title><?php echo isset($title) ? $title : '后台管理系统';?></title>
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-core.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-theme.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-forms.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>entypo.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>custom.css">
+<?php if(isset($styles)):foreach($styles as $style):?>
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE . $style; ?>">
+<?php endforeach;endif;?>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>jquery.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>custom.js"></script>
+<?php if(isset($scripts)):foreach($scripts as $script):?>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT.$script?>"></script>
+<?php endforeach;endif;?>
+</head>

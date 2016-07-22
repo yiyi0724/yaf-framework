@@ -189,14 +189,14 @@ class Captcha {
 			$angle = mt_rand(-20, 20);
 			$x = ($i+0.3) * $this->getWidth()/4.5;
 			$y = ($this->getHeight() / 1.3) + mt_rand(2, 4);
-			$color = imagecolorallocate($canvas, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
+			$color = imagecolorallocate($canvas, mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255));
 			imagettftext($canvas, $fontSize, $angle, $x, $y, $color, $font, $code[$i]);
 		}
 
  		// 画星星
  		$length = floor(($this->getWidth() + $this->getHeight()) / 3);
 		for($i = 0; $i <$length; $i++) {
-			$color = imagecolorallocate($canvas, mt_rand(0, 200), mt_rand(0, 200), mt_rand(0, 200));
+			$color = imagecolorallocate($canvas, mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255));
 			imagettftext($canvas, 9, 0, mt_rand(5, $this->getWidth()), mt_rand(10, $this->getHeight()), $color, $font, '.');
 		}
 
