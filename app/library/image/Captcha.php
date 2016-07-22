@@ -166,7 +166,7 @@ class Captcha {
 	 * 获取字体大小
 	 * @return int
 	 */
-	protected function getFontSize($size = 2) {
+	protected function getFontSize($size = 2.5) {
 		return $this->getHeight() / $size;
 	}
 
