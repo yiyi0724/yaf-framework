@@ -136,7 +136,7 @@ abstract class AbstractModel {
 	 * 开启事务
 	 * @return boolean
 	 */
-	public function begin() {
+	public final function beginTransaction() {
 		return $this->getDatabase()->beginTransaction();
 	}
 
@@ -144,23 +144,23 @@ abstract class AbstractModel {
 	 * 提交事务
 	 * @return boolean
 	 */
-	public function commit() {
-		return $this->getDatabase()->commit();
+	public final function commitTransaction() {
+		return $this->getDatabase()->commitTransaction();
 	}
 
 	/**
 	 * 回滚事务
 	 * @return boolean
 	 */
-	public function rollback() {
-		return $this->getDatabase()->commit();
+	public final function rollbackTransaction() {
+		return $this->getDatabase()->rollbackTransaction();
 	}
 
 	/**
 	 * 判断是否在事务中
 	 * @return bool
 	 */
-	public function in() {
+	public final function inTransaction() {
 		return $this->getDatabase()->inTransaction();
 	}
 
@@ -181,7 +181,7 @@ abstract class AbstractModel {
 	 * @param string $type LEFT|RIGHT|INNER 三种连接方式
 	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
-	public function join($table, $on, $type = 'LEFT') {
+	public final function join($table, $on, $type = 'LEFT') {
 		$this->sql['join'] = "{$type} JOIN {$table} ON {$on}";
 		return $this;
 	}
@@ -190,7 +190,7 @@ abstract class AbstractModel {
 	 * 拼接where子句
 	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
-	public final function where($condition) {
+	public final function where() {
 		$result = $placeholder = array();
 		$args = func_get_args();
 		if(count($args) >= 0) {
@@ -210,11 +210,23 @@ abstract class AbstractModel {
 
 	/**
 	 * 拼接having子句
-	 * @params string|array $condition 要拼接的条件
 	 * @return \Base\AbstractModel $this 返回当前对象进行连贯操作
 	 */
-	public final function having($condition) {
-		$this->sql['having'] = "HAVING {$this->comCondition($condition)}";
+	public final function having() {
+		$result = $placeholder = array();
+		$args = func_get_args();
+		if(count($args) >= 0) {
+			if(count($args) > 1) {
+				preg_match_all('/\:[a-zA-Z][a-zA-Z0-9]*/', $args[0], $result);
+				$result = $result[0];
+				for($i=0, $len=count($result); $i<$len; $i++) {
+					$placeholder["{$result[$i]}"] = $args[$i+1];
+				}
+			}
+			$this->sql['having'] = "HAVING {$args[0]}";
+			$this->sql['values'] = array_merge($this->sql['values'], $placeholder);
+		}
+
 		return $this;
 	}
 
@@ -262,84 +274,6 @@ abstract class AbstractModel {
 	public final function lock() {
 		$this->sql['lock'] = 'FOR UPDATE';
 		return $this;
-	}
-
-	/**
-	 * 拼接条件子句
-	 * @param array|string $condition 键值对数组或者字符串
-	 * @return string
-	 */
-	protected final function comCondition($condition) {
-		static $interval;
-
-		// 字符串转义一下
-		if(is_string($condition)) {
-			return addslashes($condition);
-		}
-
-		$conds = array();
-		foreach($condition as $key=>$value) {
-			// false null array() "" 的时候全部过滤,0不过滤
-			if(!$value && !is_numeric($value)) {
-				continue;
-			}
-			
-			// 去掉两边的空格
-			$key = trim($key);
-			
-			// 操作类型
-			$operations = array(' B', ' NL', ' L', ' N', ' <>', ' >=', ' <=', ' >', ' <', ' !=', ' !', ' &', ' ^', ' |', NULL);
-			foreach($operations as $from=>$action) {
-				if($location = strpos($key, $action)) {
-					$origin = $key;
-					$key = substr($key, 0, $location);
-					break;
-				}
-			}
-
-			if($from == 0) {
-				// between...and
-				$conds[] = "`{$key}` BETWEEN :{$key}from{$interval} AND :{$key}to{$interval}";
-				$this->sql['values'][":{$key}from{$interval}"] = $value[0];
-				$this->sql['values'][":{$key}to{$interval}"] = $value[1];
-			} else if($key == 'OR') {
-				// or
-				$or = array();
-				foreach($value as $orKey=>$orValue) {
-					$temp = is_array($orValue) ? $orValue : array(
-						$orKey=>$orValue
-					);
-					$or[] = $this->comCondition($temp);
-				}
-				$conds[] = "(" . implode(" OR ", $or) . ")";
-				continue;
-			} else if(is_array($value)) {
-				// in | not in
-				$expression = $from == 3 ? 'NOT IN' : 'IN';
-				foreach($value as $k=>$val) {
-					$temp[] = ":{$key}{$interval}_{$k}";
-					$this->sql['values'][":{$key}{$interval}_{$k}"] = $val;
-				}
-				$conds[] = "`{$key}` {$expression}(" . implode(',', $temp) . ")";
-			} else if(in_array($from, array(1, 2))) {
-				// like
-				$expression = $from == 2 ? 'LIKE' : 'NOT LIKE';
-				$conds[] = "`{$key}` {$expression} :{$key}{$interval}";
-				$this->sql['values'][":{$key}{$interval}"] = $value;
-			} else if(in_array($from, array(4, 5, 6, 7, 8, 9, 10, 11))) {
-				// > >= < <= != & ^ |
-				$conds[] = "`{$key}`{$operations[$from]} :{$key}{$interval}";
-				$this->sql['values'][":{$key}{$interval}"] = $value;
-			} else {
-				// =
-				$conds[] = "`{$key}`=:{$key}{$interval}";
-				$this->sql['values'][":{$key}{$interval}"] = $value;
-			}
-			
-			$interval++;
-		}
-		
-		return implode(' AND ', $conds);
 	}
 
 	/**
