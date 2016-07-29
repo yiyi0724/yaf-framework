@@ -7,7 +7,7 @@
  */
 namespace database;
 
-class PDO extends Adapter {
+class PDO {
 
 	/**
 	 * 对象池
@@ -28,6 +28,12 @@ class PDO extends Adapter {
 	protected $stmt;
 
 	/**
+	 * 是否进行调试
+	 * @var bool
+	 */
+	protected $isDebug = FALSE;
+
+	/**
 	 * 禁止直接创建构造函数
 	 * @param string $dsn 	   数据库连接dsn信息
 	 * @param string $username 数据库连接用户
@@ -38,6 +44,29 @@ class PDO extends Adapter {
 			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION, \PDO::ATTR_TIMEOUT=>30
 		);
 		$this->pdo = new \PDO($dsn, $username, $password, $options);
+	}
+
+	/**
+	 * 禁止对象克隆
+	 * @return void
+	 */
+	protected final function __clone() {
+	}
+
+	/**
+	 * 设置是否进行调试
+	 * @return void
+	 */
+	public function setIsDebug($isDebug) {
+		$this->isDebug = (bool)$isDebug;
+	}
+	
+	/**
+	 * 获取是否进行调试
+	 * @return boolean
+	 */
+	public function getIsDebug() {
+		return $this->isDebug;
 	}
 
 	/**
