@@ -15,7 +15,7 @@ abstract class AbstractModel {
 	 * 配置信息
 	 * @var \Yaf\Config\Ini
 	 */
-	protected $config = NULL;
+	protected static $config = NULL;
 
 	/**
 	 * 配置适配器名称
@@ -52,8 +52,8 @@ abstract class AbstractModel {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->setDriverConfig();
-		$this->setDatabase($this->getAdapter());
+		static::setConfig();
+		$this->setDatabase($this->adapter);
 	}
 
 	/**
@@ -65,30 +65,22 @@ abstract class AbstractModel {
 	}
 
 	/**
-	 * 获取配置适配器
-	 * @return string
-	 */
-	public final function getAdapter() {
-		return $this->adapter;
-	}
-	
-	/**
 	 * 设置驱动配置信息
-	 * @return AbstractModel
+	 * @return void
 	 */
-	protected final function setDriverConfig() {
-		$this->config = new Ini(CONF_PATH . 'driver.ini', \YAF\ENVIRON);
-		return $this;
+	protected static final function setConfig() {
+		if(!static::$config) {
+			static::$config = new Ini(CONF_PATH . 'driver.ini', \YAF\ENVIRON);
+		}
 	}
 
 	/**
 	 * 获取驱动配置信息
 	 * @param string $key 键
-	 * @param mixed $default 默认值
 	 * @return \Yaf\Config\Ini
 	 */
-	protected final function getDriverConfig($key, $default = NULL) {
-		return $this->config->get($key);
+	protected static final function getConfig($key) {
+		return static::$config->get($key);
 	}
 
 	/**
@@ -97,7 +89,7 @@ abstract class AbstractModel {
 	 * @return void
 	 */
 	protected final function setDatabase($adapter) {
-		$config = $this->getDriverConfig("database.{$adapter}");
+		$config = static::getConfig("database.{$adapter}");
 		$this->database = PDO::getInstance($config->type, $config->host, $config->port, 
 			$config->dbname, $config->charset, $config->username, $config->password);
 
@@ -121,7 +113,7 @@ abstract class AbstractModel {
 	 * @return \Storage\Redis
 	 */
 	protected final function getRedis($adapter = 'master') {
-		$config = $this->getDriverConfig("redis.{$adapter}");
+		$config = static::getConfig("redis.{$adapter}");
 		return \Storage\Redis::getInstance($config->host, $config->port, $config->db, 
 			$config->auth, $config->timeout, $config->options);
 	}
@@ -454,7 +446,6 @@ abstract class AbstractModel {
 		// 获取分页数量
 		$this->field('COUNT(*)');
 		$total = $this->select()->fetchOne();
-
 
 		// 输出分页
 		$pagitorLib = new \network\Pagitor($page, $total);
