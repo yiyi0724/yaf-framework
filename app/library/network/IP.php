@@ -32,4 +32,15 @@ class IP {
 		
 		return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
 	}
+
+	/**
+	 * 获取服务端的ip地址
+	 * @static
+	 * @param boolean $ip2long 是否转换成为整形, 默认进行转换
+	 * @return int|string
+	 */
+	public static function getServerIP($ip2long = TRUE) {
+		$ip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1';
+		return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
+	}
 }

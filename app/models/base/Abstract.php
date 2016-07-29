@@ -6,6 +6,7 @@
  */
 namespace base;
 
+use \database\PDO;
 use \Yaf\Config\Ini;
 
 abstract class AbstractModel {
@@ -21,12 +22,6 @@ abstract class AbstractModel {
 	 * @var string
 	 */
 	protected $adapter = 'master';
-
-	/**
-	 * 数据库驱动适配器
-	 * @var \Database\Adapter
-	 */
-	protected $database = 'PDO';
 
 	/**
 	 * 表名
@@ -103,8 +98,7 @@ abstract class AbstractModel {
 	 */
 	protected final function setDatabase($adapter) {
 		$config = $this->getDriverConfig("database.{$adapter}");
-		$dbDriver = "\\database\\{$this->database}";
-		$this->database = $dbDriver::getInstance($config->type, $config->host, $config->port, 
+		$this->database = PDO::getInstance($config->type, $config->host, $config->port, 
 			$config->dbname, $config->charset, $config->username, $config->password);
 
 		// 设置调试模式
