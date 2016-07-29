@@ -88,11 +88,10 @@ class Encryption {
 		$string = base64_decode(substr($string, 4));
 		// 解密原始串
 		$result = static::calculation($string, $secretCrypt);
-		// 返回参数
-		if((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) && substr($result, 10, 16) == substr(md5(substr($result, 26) . $secretB), 0, 16)) {
-			return substr($result, 26);
-		}
-		return NULL;
+		// 解析检查
+		$isExpire = substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0;
+		$isValid = substr($result, 10, 16) == substr(md5(substr($result, 26) . $secretB), 0, 16);
+		return $isExpire && $isValid ? substr($result, 26) : NULL;
 	}
 
 	/**
