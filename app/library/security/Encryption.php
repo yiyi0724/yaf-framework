@@ -13,7 +13,7 @@ class Encryption {
 	 * @static
 	 * @var string
 	 */
-	protected static $secret = 'enYcccMNE/+2FEIne@+/pfTew1cxbcool';
+	protected static $secret = 'enYccc*MNE~+2F^EIne@+pfTew1$cxb#cool';
 
 	/**
 	 * 密钥过期时间
@@ -63,8 +63,6 @@ class Encryption {
 	/**
 	 * 进行可逆加密
 	 * @param string $string 待加密字符串
-	 * @param string $secret 密钥，不传递使用类默认密钥
-	 * @param int $expire 密钥过期时间，0-表示不过期
 	 * @return string 返回加密后的字符串
 	 */
 	public static function encrypt($string) {
@@ -80,12 +78,10 @@ class Encryption {
 
 	/**
 	 * 进行可逆解密
-	 * @param unknown $string
-	 * @param string $key
-	 * @param number $expire
-	 * @return string|NULL
+	 * @param string $string 待解密的字符串
+	 * @return string|NULL 解密成功后返回字符串，失败返回NULL
 	 */
-	public static function decrypt($string, $secret = NULL, $expire = 0) {
+	public static function decrypt($string) {
 		// 计算密钥
 		list($secretB, $secretC, $secretCrypt) = static::getSecretCrypt($string, 'decode');
 		// 解析原始串
