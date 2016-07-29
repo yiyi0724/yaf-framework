@@ -73,7 +73,7 @@ class Encryption {
 		// 加密原始串
 		$result = static::calculation($string, $secretCrypt);
 		// 返回结果
-		return $secretC . str_replace('=', '', base64_encode($result));
+		return sprintf("%s%s", $secretC, str_replace('=', '', base64_encode($result)));
 	}
 
 	/**
