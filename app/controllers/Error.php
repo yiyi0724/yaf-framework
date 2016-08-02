@@ -65,7 +65,7 @@ class ErrorController extends \base\BaseController {
 	private function showNotifyException($exception) {
 		switch(TRUE) {
 			case IS_AJAX:
-				$this->json(FALSE, $exception->getMessage());
+				$this->json(FALSE, $exception->getMessage(), $exception->getCode());
 				break;
 			default:
 				$this->assign('error', $exception->getMessage());

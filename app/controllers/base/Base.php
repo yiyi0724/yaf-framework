@@ -58,10 +58,11 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param array $data 数据信息
 	 * @return void
 	 */
-	public final function json($status, $message, $data = NULL) {
+	public final function json($status, $message, $code, $data = NULL) {
 		$json['status'] = $status;
 		$json['message'] = $message;
 		$json['data'] = $data;
+		$json['code'] = $code;
 		$json = json_encode($json);
 
 		$callback = $this->getRequest()->get('callback');

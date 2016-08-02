@@ -28,6 +28,12 @@ class Http {
 	protected $url = NULL;
 
 	/**
+	 * 附加参数
+	 * @var string|array
+	 */
+	protected $params = array();
+
+	/**
 	 * 结果解析类型
 	 * @var int
 	 */
@@ -83,6 +89,24 @@ class Http {
 			throw new \Exception('请设置请求地址');
 		}
 		return $this->url;
+	}
+
+	/**
+	 * 设置要发送的附加参数
+	 * @param string|array $params 附加参数
+	 * @return Http $this 返回当前对象进行连贯操作
+	 */
+	public function setParams($params) {
+		$this->params = $params;
+		return $this;
+	}
+
+	/**
+	 * 获取
+	 * @return string|array
+	 */
+	public function getParams() {
+		return $this->params;
 	}
 
 	/**
@@ -218,12 +242,12 @@ class Http {
 
 	/**
 	 * 执行get请求
-	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function get($send = array()) {
+	public function get() {
 		// 设置请求的地址
+		$send = $this->getParams();
 		$send = is_array($send) ? urldecode(http_build_query($send)) : $send;
 		$url = $send ? sprintf('%s?%s', $this->getUrl(), $send) : $this->getUrl();
 		$this->setCurlOpt(CURLOPT_URL, $url);
@@ -234,15 +258,14 @@ class Http {
 
 	/**
 	 * 执行post请求
-	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function post($send = array()) {
+	public function post() {
 		// 设置curl信息
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_POST, TRUE);
-		$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
+		$this->setCurlOpt(CURLOPT_POSTFIELDS, $this->getParams());
 
 		// 执行请求
 		return $this->send();
@@ -250,17 +273,16 @@ class Http {
 
 	/**
 	 * 执行put请求
-	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function put($send = array()) {
+	public function put() {
 		// 设置curl信息
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
 
 		// 可选参数信息
-		if($send) {
+		if($send = $this->getParams()) {
 			$send = is_array($send) ? http_build_query($send) : $send;
 			$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
 			$this->setCurlOpt(CURLOPT_HTTPHEADER, array(sprintf('Content-Length: %d', strlen($send))));
@@ -272,17 +294,16 @@ class Http {
 
 	/**
 	 * 执行delete请求
-	 * @param array|string $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function delete($send = array()) {
+	public function delete() {
 		// 设置curl信息
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'DELETE');
 
 		// 可选参数信息
-		if($send) {
+		if($send = $this->getParams()) {
 			$send = is_array($send) ? http_build_query($send) : $send;
 			$this->setCurlOpt(CURLOPT_POSTFIELDS, $send);
 			$this->setCurlOpt(CURLOPT_HTTPHEADER, array(sprintf('Content-Length: %d', strlen($send))));
@@ -294,15 +315,14 @@ class Http {
 
 	/**
 	 * 执行upload请求
-	 * @param array $send 附加参数
 	 * @return array|string|boolean 根据情况返回信息
 	 * @throws \Exception
 	 */
-	public function upload(array $send) {
+	public function upload() {
 		// 设置curl选项
 		$this->setCurlOpt(CURLOPT_URL, $this->getUrl());
 		$this->setCurlOpt(CURLOPT_POST, TRUE);
-		$this->setCurlOpt(CURLOPT_POSTFIELDS, $this->toCURLFile($send));
+		$this->setCurlOpt(CURLOPT_POSTFIELDS, $this->toCURLFile($this->getParams()));
 
 		return $this->send();
 	}
