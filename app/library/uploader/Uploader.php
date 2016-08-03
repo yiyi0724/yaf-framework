@@ -1,30 +1,12 @@
 <?php
 
 /**
- * 文件上传类
+ * 文件上传基类
  * @author enychen
  */
-namespace file;
+namespace uploader;
 
-class Uploader {
-
-	/**
-	 * 表单控件名称
-	 * @var string
-	 */
-	protected $inputName = NULL;
-
-	/**
-	 * base64上传字符串
-	 * @var string
-	 */
-	protected $base64Str = NULL;
-
-	/**
-	 * 远程图片上传
-	 * @var string
-	 */
-	protected $pictureUrl = NULL;
+abstract class Uploader {
 
 	/**
 	 * 允许的类型
@@ -63,7 +45,7 @@ class Uploader {
 	 * @throws \Exception
 	 */
 	protected function throws($message, $code = 0) {
-		throw new \Exception($message, $code);
+		throw new \traits\NotifyException($message, $code);
 	}
 
 	/**
@@ -154,22 +136,6 @@ class Uploader {
 	}
 
 	/**
-	 * 移动文件到上传位置
-	 * @param string $tmpName 上传临时存放文件绝对路径
-	 * @throws \Exception
-	 * @return string 文件绝对路径
-	 */
-	protected function move($tmpFile) {
-		$fullFilename = $this->getFullFilename();
-		if(!@move_uploaded_file($tmpFile, $fullFilename)) {
-			@unlink($tmpFile);
-			$this->throws('系统发生错误，上传文件失败');
-		}
-		
-		return $fullFilename;
-	}
-
-	/**
 	 * 设置文件的后缀
 	 * @param string $filename 文件原始名称
 	 * @return Uploader $this 返回当前对象进行连贯操作
@@ -194,71 +160,7 @@ class Uploader {
 	protected function getFullFilename() {
 		return sprintf('%s%s%s', $this->getDirectory(), ($this->getFilename() ?  : uniqid() . mt_rand(100, 999)), $this->getExt());
 	}
-	
-	/**
-	 * 设置表单控件名称
-	 * @param string $inputName 表单控件名称
-	 * @return Uploader $this 返回当前对象进行连贯操作
-	 */
-	public function setInputName($inputName) {
-		if(empty($_FILES[$inputName])) {
-			$this->throws('上传文件不存在');
-		}
 
-		$this->inputName = $inputName;
-		return $this;
-	}
-
-	/**
-	 * 获取表单控件名称
-	 * @return string
-	 */
-	public function getInputName() {
-		if(!$this->inputName) {
-			throw new \Exception('请设置inputName');
-		}
-		return $this->inputName;
-	}
-
-	/**
-	 * 设置base64上传字符串
-	 * @param string $base64Str 字符串
-	 * @return Uploader $this 返回当前对象进行连贯操作
-	 */
-	public function setBase64Str($base64Str) {
-		$this->base64Str = $base64Str;
-		return $this;
-	}
-
-	/**
-	 * 获取base64上传字符串
-	 * @return string
-	 */
-	public function getBase64Str() {
-		if(!$this->base64Str) {
-			throw new \Exception('请设置base64Str');
-		}
-		return $this->base64Str;
-	}
-
-	/**
-	 * 设置远程图像地址
-	 * @param string $pictureUrl 远程图片地址
-	 * @return Uploader $this 返回当前对象进行连贯操作
-	 */
-	public function setPictureUrl($pictureUrl) {
-		$this->pictureUrl = $pictureUrl;
-		return $this;
-	}
-
-	/**
-	 * 获取远程图像地址
-	 * @return string
-	 */
-	public function getPictureUrl() {
-		return $this->pictureUrl;
-	}
-	
 	/**
 	 * 设置允许的文件格式
 	 * @param string $allowType 允许格式，多个用,隔开
@@ -302,9 +204,6 @@ class Uploader {
 	 * @return string
 	 */
 	public function getDirectory() {
-		if(!$this->directory) {
-			$this->throws('请设置directory');
-		}
 		return $this->directory;
 	}
 
@@ -320,7 +219,7 @@ class Uploader {
 
 	/**
 	 * 获取文件最大允许的大小
-	 * return int
+	 * @return int
 	 */
 	public function getMaxSize() {
 		return $this->maxSize;
@@ -342,102 +241,5 @@ class Uploader {
 	 */
 	public function getFilename() {
 		return $this->filename;
-	}
-
-	/**
-	 * 单文件上传
-	 * @return string 文件绝对路径
-	 */
-	public function single() {
-		// 获取上传的文件
-		$file = $_FILES[$this->getInputName()];
-		// 文件来源检查
-		$this->checkIsPost($file['tmp_name']);
-		// 文件上传是否有错误
-		$this->checkError($file['error']);
-		// 文件类型检查
-		$this->checkAllowType($file['tmp_name']);
-		// 文件大小检查
-		$this->checkFilesize($file['size']);
-		// 设置后缀名
-		$this->setExt($file['name']);
-		// 上传文件
-		return $this->move($file['tmp_name']);
-	}
-
-	/**
-	 * 多文件上传
-	 * @return array 文件绝对路径数组
-	 */
-	public function multiple() {
-		// 获取上传的文件
-		$lists = array();
-		if($files = $_FILES[$this->getInputName()]) {			
-			$filename = $this->getFilename();
-			for($i=0, $len=count($files['name']); $i<$len; $i++) {
-				// 文件来源检查
-				$this->checkIsPost($files['tmp_name'][$i]);
-				// 文件上传是否有错误
-				$this->checkError($files['error'][$i]);
-				// 文件类型检查
-				$this->checkAllowType($files['tmp_name'][$i]);
-				// 文件大小检查
-				$this->checkFilesize($files['size'][$i]);
-				// 设置保存名
-				$filename and $this->setFilename("{$filename}_{$i}");
-				// 设置后缀名
-				$this->setExt($files['name'][$i]);
-				// 上传文件
-				$lists[] = $this->move($files['tmp_name'][$i]);
-			}
-		}
-		return $lists;
-	}
-
-	/**
-	 * base64位图像上传
-	 * @return string 返回文件路径
-	 */
-	public function base64() {
-		//匹配出图片的格式
-		$isMatch = preg_match('/^(data:\s*image\/(\w+);base64,)/', $this->getBase64Str(), $result);
-		if(!$isMatch) {
-			$this->throws('没有文件被上传');
-		}
-		// 解析图片信息
-		$this->setExt("base64.{$result[2]}");
-		// 获取绝对路径文件名
-		$fullFilename = $this->getFullFilename();
-		// 保存图片
-		file_put_contents($fullFilename, base64_decode(str_replace($result[1], NULL, $this->getBase64Str())));
-		// 检查文件大小
-		$this->checkFilesize($fullFilename);
-		// 检查文件类型
-		$this->checkAllowType($fullFilename);
-		// 返回图像绝对路径
-		return $fullFilename;
-	}
-
-	/**
-	 * 通过url地址获取上传文件
-	 * @return boolean 上传成功返回TRUE
-	 */
-	public function url() {
-		$origin = @file_get_contents($this->getPictureUrl(), FALSE);
-		if(!$origin) {
-			$this->throws('图像地址有误');
-		}
-		// 解析图片信息
-		$this->setExt(basename($origin));
-		// 获取绝对路径文件名
-		$fullFilename = $this->getFullFilename();
-		// 保存图片
-		file_put_contents($fullFilename, $origin);
-		// 检查文件大小
-		$this->checkFilesize($fullFilename);
-		// 检查文件类型
-		$this->checkAllowType($fullFilename);
-		// 返回图像绝对路径
-		return $fullFilename;
 	}
 }
