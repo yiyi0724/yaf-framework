@@ -9,67 +9,17 @@ namespace security;
 class Encryption {
 
 	/**
-	 * 默认密钥
-	 * @static
-	 * @var string
-	 */
-	protected static $secret = 'enYccc*MNE~+2F^EIne@+pfTew1$cxb#cool';
-
-	/**
-	 * 密钥过期时间
-	 * @static
-	 * @var int
-	 */
-	protected static $expire = 0;
-
-	/**
-	 * 设置密钥
-	 * @static
-	 * @param string $secret
-	 * @return void
-	 */
-	public static function setSecret($secret) {
-		static::$secret = $secret;
-	}
-
-	/**
-	 * 获取密钥
-	 * @static
-	 * @return string
-	 */
-	public static function getSecret() {
-		return static::$secret;
-	}
-
-	/**
-	 * 设置过期时间
-	 * @static
-	 * @param int $expire 过期时间
-	 * @return void
-	 */
-	public static function setExpire($expire) {
-		static::$expire = time() + $expire;
-	}
-
-	/**
-	 * 获取过期时间
-	 * @static
-	 * @return int
-	 */
-	public static function getExpire() {
-		return static::$expire;
-	}
-
-	/**
 	 * 进行可逆加密
 	 * @param string $string 待加密字符串
+	 * @param string $secret 密钥
+	 * @param int $expire 过期时间，0-表示不过期
 	 * @return string 返回加密后的字符串
 	 */
-	public static function encrypt($string) {
+	public static function encrypt($string, $secret, $expire = 0) {
 		// 计算密钥
-		list($secretB, $secretC, $secretCrypt) = static::getSecretCrypt($string, 'encode');
+		list($secretB, $secretC, $secretCrypt) = static::getSecretCrypt($string, $secret, 'encode');
 		// 拼接原始串
-		$string = sprintf('%010d%s%s', static::getExpire(), substr(md5($string . $secretB), 0, 16), $string);
+		$string = sprintf('%010d%s%s', $expire, substr(md5($string . $secretB), 0, 16), $string);
 		// 加密原始串
 		$result = static::calculation($string, $secretCrypt);
 		// 返回结果
@@ -79,11 +29,13 @@ class Encryption {
 	/**
 	 * 进行可逆解密
 	 * @param string $string 待解密的字符串
+	 * @param string $secret 密钥
+	 * @param int $expire 过期时间，0-表示不过期
 	 * @return string|NULL 解密成功后返回字符串，失败返回NULL
 	 */
-	public static function decrypt($string) {
+	public static function decrypt($string, $secret, $expire = 0) {
 		// 计算密钥
-		list($secretB, $secretC, $secretCrypt) = static::getSecretCrypt($string, 'decode');
+		list($secretB, $secretC, $secretCrypt) = static::getSecretCrypt($string, $secret, 'decode');
 		// 解析原始串
 		$string = base64_decode(substr($string, 4));
 		// 解密原始串
@@ -97,11 +49,12 @@ class Encryption {
 	/**
 	 * 计算密钥
 	 * @param string $string 原始字符串
+	 * @param string $secret 密钥
 	 * @param string $operation encode-加密|decode-解密
 	 * @return array
 	 */
-	protected static function getSecretCrypt($string, $operation) {
-		$secret = md5(self::getSecret());
+	protected static function getSecretCrypt($string, $secret, $operation) {
+		$secret = md5($secret);
 		$secretA = md5(substr($secret, 0, 16));
 		$secretB = md5(substr($secret, 16, 16));
 		$secretC = strcasecmp($operation, 'decode') ? substr(md5(microtime()), -4) : substr($string, 0, 4);
