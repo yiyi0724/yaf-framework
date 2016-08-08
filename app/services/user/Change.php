@@ -54,7 +54,7 @@ class Change extends User {
 	 * @return Change $this 返回当前对象进行连贯操作
 	 */
 	public function changePassword($password) {
-		$this->change['lauth']['password'] = $password;
+		$this->change['lauth']['password'] = $this->getEnctypePassword($password);
 		return $this;
 	}
 
