@@ -454,8 +454,4 @@ abstract class AbstractModel {
 
 		return $pagitor;
 	}
-
-	public function supplement() {
-		
-	}
 }

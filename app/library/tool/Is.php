@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 表单规则类
+ * 判断值类
  * @author enychen
  */
 namespace tool;

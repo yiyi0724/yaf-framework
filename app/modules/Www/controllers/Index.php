@@ -4,18 +4,19 @@
  * 网站默认控制器
  * @author enychen
  */
+
+use \services\user\Information as InformationService;
+
 class IndexController extends \base\WwwController {
 
 	/**
 	 * 网站首页
 	 */
 	public function indexAction() {
+		$userInfoService = new InformationService(1);
 		
-		$userInfomationModel = new \example\ExampleModel();
-		$userLauthModel = new \example\ExampleModel();
-		$lists = $userInfomationModel->select()->fetchAll();		
-		echo '<pre>';
-		print_r($lists);
+		echo $userInfoService->getRegIP(),'<hr/>';
+		
 		exit;
 	}
 }
