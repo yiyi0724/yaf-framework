@@ -6,11 +6,11 @@
  */
 namespace example;
 
-class ExampleModel extends \base\AbstractModel {
+class userlauthModel extends \base\AbstractModel {
 
 	/**
 	 * 表名
 	 * @var string
 	 */
-	protected $table = 'user_infomation';
+	protected $table = 'user_lauth';
 }

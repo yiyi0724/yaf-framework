@@ -12,9 +12,9 @@ class Time {
 		$second = $second%86400;
 		
 		$result = $day ? "{$day}天" : NULL;
-		$result = (int)gmdate('H') ? sprintf("%s时", (int)gmdate('H')) : NULL;
-		$result = (int)gmdate('i') ? sprintf("%s分", (int)gmdate('i')) : NULL;
-		$result = (int)gmdate('s') ? sprintf("%s秒", (int)gmdate('s')) : NULL;
+		$result .= (int)gmdate('H') ? sprintf("%s时", (int)gmdate('H')) : NULL;
+		$result .= (int)gmdate('i') ? sprintf("%s分", (int)gmdate('i')) : NULL;
+		$result .= (int)gmdate('s') ? sprintf("%s秒", (int)gmdate('s')) : NULL;
 		
 		return $result;
 	}

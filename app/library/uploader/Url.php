@@ -24,7 +24,7 @@ abstract class Uploader {
 	 * @param string $pictureUrl 远程图片地址
 	 * @return Uploader $this 返回当前对象进行连贯操作
 	 */
-	public function setPictureUrl($pictureUrl) {
+	protected function setPictureUrl($pictureUrl) {
 		$this->pictureUrl = $pictureUrl;
 		return $this;
 	}
