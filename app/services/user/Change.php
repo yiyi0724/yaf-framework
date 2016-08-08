@@ -48,6 +48,10 @@ class Change extends User {
 		return $this->uid;
 	}
 
+	protected function setChange($table, $field) {
+		$this->change[$table]['password']
+	}
+
 	/**
 	 * 修改密码
 	 * @param string $password 密码
@@ -121,6 +125,17 @@ class Change extends User {
 	}
 
 	/**
+	 * 修改微信的openid
+	 * @param string $openid 微信的openid
+	 * @return Change $this 返回当前对象进行连贯操作
+	 */
+	public function changeWeixinOpenid($openid) {
+		$this->change['oauth']['oauth_id'] = $openid;
+		$this->change['where']['from'] = 'weixin';
+		return $this;
+	}
+
+	/**
 	 * 执行修改
 	 */
 	public function execute() {
@@ -143,7 +158,7 @@ class Change extends User {
 			// 修改第三方登录信息
 			if(isset($this->change['oauth'])) {
 				$userOauthModel = new \user\OauthModel();
-				$userOauthModel->where('uid=:uid', $this->getUid())->update($this->change['oauth']);
+				$userOauthModel->where('uid=:uid and from=:from', $this->getUid(), $this->change['where']['from'])->update($this->change['oauth']);
 			}
 
 			$uesrInformation->commitTransaction();
