@@ -147,6 +147,22 @@ class Is {
 	}
 
 	/**
+	 * 是否符合密码规则
+	 * @return boolean 检查通过返回TRUE
+	 */
+	public static function password($value) {
+		return (bool)(trim($value) && !is_numeric($value) && mb_strlen($value) > 5 && !preg_match('/^([a-zA-Z])\1*$/i', $value));
+	}
+
+	/**
+	 * 是否符合昵称规则
+	 * @return boolean 检查通过返回TRUE
+	 */
+	public static function nickname($value) {
+		return (bool)(trim($value) && mb_strwidth($value) <= 32);
+	}
+
+	/**
 	 * 使用自定义方法进行检查
 	 * @param string $value 待检查的值
 	 * @param string $callback 回调字符串

@@ -4,9 +4,9 @@
  * 用户本站登录模型
  * @author enychen
  */
-namespace www;
+namespace user;
 
-class UseroauthModel extends \base\AbstractModel {
+class OauthModel extends \base\AbstractModel {
 
 	/**
 	 * 表名

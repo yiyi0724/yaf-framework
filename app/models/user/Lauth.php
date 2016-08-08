@@ -4,13 +4,13 @@
  * 用户第三方登录模型
  * @author enychen
  */
-namespace www;
+namespace user;
 
-class UserlauthModel extends \base\AbstractModel {
+class LauthModel extends \base\AbstractModel {
 
 	/**
 	 * 表名
 	 * @var string
 	 */
-	protected $table = 'user_oauth';
+	protected $table = 'user_lauth';
 }

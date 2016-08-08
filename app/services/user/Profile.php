@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 用户信息逻辑类
+ * 用户信息逻辑类(100);
  * @author enychen
  */
 namespace services\user;
@@ -9,7 +9,7 @@ namespace services\user;
 use \tool\Is as IsLib;
 use \tool\Strings as StringsLib;
 
-class Information extends \services\base\Base {
+class Profile extends User {
 
 	/**
 	 * 用户id
@@ -49,8 +49,8 @@ class Information extends \services\base\Base {
 	protected function getInfomation($key) {
 		static $info;
 		if(!is_array($info)) {
-			$userInfomationModel = new \www\UserinformationModel();
-			$info = $userInfomationModel->where('id=:id', $this->getUid())->select()->fetchRow();
+			$userProfileModel = new \user\ProfileModel();
+			$info = $userProfileModel->where('id=:id', $this->getUid())->select()->fetchRow();
 		}
 
 		return isset($info[$key]) ? $info[$key] : NULL;
@@ -66,7 +66,7 @@ class Information extends \services\base\Base {
 		// 获取第三方登录信息
 		static $oInfo;
 		if(!is_array($oInfo)) {
-			$userOauthModel = new \www\UseroauthModel();
+			$userOauthModel = new \user\OauthModel();
 			$oInfo = $userOauthModel->select('uid=:uid', $this->getUid())->select()->fetchAll();
 		}
 		
@@ -90,7 +90,7 @@ class Information extends \services\base\Base {
 		// 获取登录信息
 		static $lInfo;
 		if(!is_array($lInfo)) {
-			$userLauthModel = new \www\UserlauthModel();
+			$userLauthModel = new \user\LauthModel();
 			$lInfo = $userLauthModel->where('uid:=:uid', $this->getUid())->select()->fetchAll();
 		}
 
