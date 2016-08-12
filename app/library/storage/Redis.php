@@ -3,15 +3,14 @@
 /**
  * redis存储类
  * @author enychen
- * @version 1.0
  */
 namespace storage;
 
 class Redis extends Adapter {
 
 	/**
-	 * 单例对象
-	 * @var Redis
+	 * 对象池
+	 * @var array
 	 */
 	protected static $pool;
 
@@ -22,10 +21,13 @@ class Redis extends Adapter {
 	protected $redis;
 
 	/**
-	 * 创建对象
-	 * @param array $driver 配置数组 host | port | timeout | auth | dbname | options
+	 * 构造函数
+	 * @param string $host 服务器地址
+	 * @param string $port 服务器端口
+	 * @param int $timeout 连接超时时间
+	 * @param string $auth 密码
+	 * @param string $options 可选配置
 	 * @throws \RedisException
-	 * @return void
 	 */
 	protected function __construct($host, $port, $timeout, $auth, array $options) {
 		// 创建redis对象
@@ -35,58 +37,66 @@ class Redis extends Adapter {
 			$this->redis->setOption(constant("\Redis::OPT_" . strtoupper($key)), $option);
 		}
 		// 持久性连接
-		$this->pconnect($host, $port, $timeout);
+		$this->redis->pconnect($host, $port, $timeout);
 		// 密码验证
-		$auth and $this->auth($auth);
+		$auth and $this->redis->auth($auth);
 	}
 
 	/**
-	 * 单例获取redis
+	 * 获取原生redis对象
+	 * @return \Redis
+	 */
+	public function getRedis() {
+		return $this->redis;
+	}
+
+	/**
+	 * 获取单例对象
+	 * @param string $host 服务器地址
+	 * @param string $port 服务器端口
+	 * @param int $timeout 连接超时时间
+	 * @param string $auth 密码
+	 * @param string $options 可选配置
+	 * @return Redis
 	 */
 	public static function getInstance($host, $port, $timeout, $auth, $options) {
-		if(empty(static::$pool["{$host}:{$port}"])) {
-			static::$pool["{$host}:{$port}"] = new static($host, $port, $timeout, $auth, $options);
+		$key = sprintf("%s:%s", $host, $port);
+		if(empty(static::$pool[$key])) {
+			static::$pool[$key] = new static($host, $port, $timeout, $auth, $options);
 		}
-		return static::$pool["{$host}:{$port}"];
+		return static::$pool[$key];
 	}
 
 	/**
-	 * 设置键值
-	 * @param string $key 键
-	 * @param mixed $value 值
-	 * @param int $expire 过期时间，默认为0表示不过期
-	 * @return bool 是否设置成功
+	 * 设置值并设置过期时间
+	 * @param string $key 键名
+	 * @param string $value 值
+	 * @param int $expire 过期时间
+	 * @return boolean 只会TRUE
 	 */
-	public function set($key, $value, $expire = 0) {
-		return $this->redis->set($key, $value) && $expire && $this->redis->expire($key, $expire);
+	public function setWithExpire($key, $value, $expire = 0) {
+		$this->getRedis()->set($key, $value);
+		$expire and $this->getRedis()->setExpire($key, $expire);
+		return TRUE;
 	}
 
 	/**
-	 * 设置键值
-	 * @param string $key 键
-	 * @param mixed $default 如果找不到这个键则删除
-	 * @return bool 是否设置成功
+	 * 获取并且检查过期时间
+	 * @param string $key 键名
+	 * @param int $expire 过期时间,此参数无用兼容基类而已
+	 * @return mixed 找到返回具体值，找不到返回FALSE
 	 */
-	public function get($key, $default = NULL) {
-		$value = $this->redis->get($key);
-		return $value === FALSE ? $default : $value;
-	}
-
-	public function del($key) {
-		return $this->redis->del($key);
+	public function getWithExpire($key, $expire = 0) {
+		return $this->getRedis()->get($key);
 	}
 
 	/**
-	 * 静态调用方式
+	 * 回调原生redis的方法
 	 * @param string $method 方法名
 	 * @param array $args 参数
 	 * @return mixed
 	 */
 	public function __call($method, $args) {
-		try {
-			return call_user_func_array(array($this->redis, $method), $args);
-		} catch(\RedisException $e) {
-			return FALSE;
-		}
+		return call_user_func_array(array($this->getRedis(), $method), $args);
 	}
 }
