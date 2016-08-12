@@ -19,7 +19,8 @@ use \traits\ForbiddenException;
 class Base {
 
 	/**
-	 * 加载ini文件
+	 * ini文件
+	 * @var array
 	 */
 	public static $inis = array();
 
@@ -43,7 +44,8 @@ class Base {
 	/**
 	 * 加载ini配置文件
 	 * @param string $ini 文件名，不需要包含.ini后缀
-	 * @return \Yaf\Config\Ini ini对象
+	 * @param string $key 配置键名
+	 * @return mixed ini对象或者具体的值，找不到返回NULL
 	 */
 	public final function getIni($ini, $key = NULL) {
 		if(!self::$inis[$ini]) {
