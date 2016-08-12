@@ -19,6 +19,11 @@ use \traits\ForbiddenException;
 class Base {
 
 	/**
+	 * 加载ini文件
+	 */
+	public static $inis = array();
+
+	/**
 	 * 获取session对象
 	 * @return \Yaf\Session
 	 */
@@ -40,16 +45,32 @@ class Base {
 	 * @param string $ini 文件名，不需要包含.ini后缀
 	 * @return \Yaf\Config\Ini ini对象
 	 */
-	public final function getIni($ini) {
-		return new Ini(sprintf("%s%s.ini", CONF_PATH, $ini), \YAF\ENVIRON);
+	public final function getIni($ini, $key = NULL) {
+		if(!self::$inis[$ini]) {
+			self::$inis[$ini] = new Ini(sprintf("%s%s.ini", CONF_PATH, $ini), \YAF\ENVIRON);
+		}
+		return $key ? self::$inis[$ini]->get($key) : self::$inis[$ini];
 	}
 
 	/**
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */
-	public function getRequest() {
+	public final function getRequest() {
 		return Request::getInstance();
+	}
+
+	/**
+	 * 获取redis对象
+	 * @param int $db 几号数据库，默认0
+	 * @param string $adapter 适配器名称，默认master
+	 * @return \storage\Redis redis的封装对象
+	 */
+	public final function getRedis($db = 0, $adapter = 'master') {
+		$c = $this->getIni('driver', sprintf("redis.%s", $adapter));
+		$redis = \storage\Redis::getInstance($c->host, $c->port, $c->auth, $c->timeout, $c->options->toArray());
+		$redis->select($db);
+		return $redis;
 	}
 
 	/**

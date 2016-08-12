@@ -27,7 +27,7 @@ class Redis extends Adapter {
 	 * @throws \RedisException
 	 * @return void
 	 */
-	protected function __construct($host, $port, $db, $timeout, $auth, array $options) {
+	protected function __construct($host, $port, $timeout, $auth, array $options) {
 		// 创建redis对象
 		$this->redis = new \Redis();
 		// 选项设置
@@ -38,18 +38,15 @@ class Redis extends Adapter {
 		$this->pconnect($host, $port, $timeout);
 		// 密码验证
 		$auth and $this->auth($auth);
-		// 选择数据库
-		$this->select($db);
 	}
 
 	/**
 	 * 单例获取redis
 	 */
-	public static function getInstance($host, $port, $db, $timeout, $auth, $options) {
+	public static function getInstance($host, $port, $timeout, $auth, $options) {
 		if(empty(static::$pool["{$host}:{$port}"])) {
-			static::$pool["{$host}:{$port}"] = new static($host, $port, $db, $timeout, $auth, $options);
+			static::$pool["{$host}:{$port}"] = new static($host, $port, $timeout, $auth, $options);
 		}
-		
 		return static::$pool["{$host}:{$port}"];
 	}
 

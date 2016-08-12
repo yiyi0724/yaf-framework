@@ -53,7 +53,7 @@ abstract class AbstractModel {
 	 */
 	public function __construct() {
 		static::setConfig();
-		$this->setDatabase($this->adapter);
+		$this->setDatabase($this->getAdpater());
 	}
 
 	/**
@@ -65,13 +65,19 @@ abstract class AbstractModel {
 	}
 
 	/**
+	 * 获取数据库适配信息
+	 * @return string
+	 */
+	public function getAdpater() {
+		return $this->adapter;
+	}
+
+	/**
 	 * 设置驱动配置信息
 	 * @return void
 	 */
 	protected static final function setConfig() {
-		if(!static::$config) {
-			static::$config = new Ini(CONF_PATH . 'driver.ini', \YAF\ENVIRON);
-		}
+		static::$config = static::$config ? : new Ini(sprintf("%sdriver.ini", CONF_PATH), \YAF\ENVIRON);
 	}
 
 	/**
@@ -89,7 +95,7 @@ abstract class AbstractModel {
 	 * @return void
 	 */
 	protected final function setDatabase($adapter) {
-		$config = static::getConfig("database.{$adapter}");
+		$config = static::getConfig(sprintf("database%s", $adapter));
 		$this->database = PDO::getInstance($config->type, $config->host, $config->port, 
 			$config->dbname, $config->charset, $config->username, $config->password);
 
@@ -105,17 +111,6 @@ abstract class AbstractModel {
 	 */
 	protected final function getDatabase() {
 		return $this->database;
-	}
-
-	/**
-	 * 获取redis对象
-	 * @param string $adapter 适配器名称，默认master
-	 * @return \Storage\Redis
-	 */
-	protected final function getRedis($adapter = 'master') {
-		$config = static::getConfig("redis.{$adapter}");
-		return \Storage\Redis::getInstance($config->host, $config->port, $config->db, 
-			$config->auth, $config->timeout, $config->options);
 	}
 
 	/**
