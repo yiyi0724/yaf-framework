@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 用户信息逻辑类(100);
+ * 用户信息逻辑类(100)
  * @author enychen
  */
 namespace services\user;
@@ -33,10 +33,10 @@ class Profile extends User {
 	protected function setUid($uid) {
 		$this->uid = abs(intval($uid));
 		if(!$this->getInfomation('id')) {
-			$this->throwNotifyException('用户不存在', 10001);
+			$this->throwNotifyException(10001, '用户不存在');
 		}
 		if($this->getInfomation('status') != 'enable') {
-			$this->throwNotifyException('用户已经被冻结, 请联系客服', 10002);
+			$this->throwNotifyException(10002, '用户已经被冻结, 请联系客服');
 		}
 		return $this;
 	}

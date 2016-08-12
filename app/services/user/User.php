@@ -21,6 +21,6 @@ class User extends BaseService {
 	 * @return string
 	 */
 	public function getEnctypePassword($password) {
-		return md5(sha1(md5($password, TRUE)) . static::PASSWORD_SECRET);
+		return md5(sprintf("%s%s", sha1(md5(sprintf("%s%s", $password, time()), TRUE)), static::PASSWORD_SECRET));
 	}
 }

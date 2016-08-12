@@ -192,4 +192,24 @@ class Is {
 	public static function nickname($value) {
 		return (bool)(trim($value) && mb_strwidth($value) > 0 && mb_strwidth($value) < 33);
 	}
+
+	/**
+	 * 是否是中文
+	 * @static
+	 * @param string $value 待检查的值
+	 * @return boolean 检查通过返回TRUE
+	 */
+	public static function chinese($value) {
+		return (bool)(preg_match('/^[\x{4e00}-\x{9fa5}]+$/u', $value));
+	}
+
+	/**
+	 * 是否是域名
+	 * @static
+	 * @param string $value 待检查的值
+	 * @return boolean 检查通过返回TRUE
+	 */
+	public static function domain($value) {
+		return (bool)(preg_match('/([a-z0-9]+\.)*([a-z0-9][a-z0-9\-]*)\.([a-z]{2,9})/i', $value));
+	}
 }

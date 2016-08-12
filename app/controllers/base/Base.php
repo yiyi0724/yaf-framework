@@ -53,6 +53,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param boolean $status 结果状态
 	 * @param string $message 提示信息
 	 * @param array $data 数据信息
+	 * @param int $code 提示码
 	 * @return void
 	 */
 	public final function json($status, $message, $code, $data = NULL) {
@@ -67,13 +68,14 @@ abstract class BaseController extends Controller_Abstract {
 
 	/**
 	 * jsonp输出
-	 * @param string $callback 输出类型
+	 * @param string $callback 回调函数
 	 * @param boolean $status 结果状态
 	 * @param string $message 提示信息
+	 * @param int $code 提示码
 	 * @param array $data 数据信息
 	 * @return void
 	 */
-	public final function jsonp($callback, $status, $message, $code, $data = NULL) {
+	protected final function jsonp($callback, $status, $message, $code, $data = NULL) {
 		$json['status'] = $status;
 		$json['message'] = $message;
 		$json['data'] = $data;
@@ -87,10 +89,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param mixed $content 调试内容
 	 * @return void
 	 */
-	protected function debug($content) {
-		echo '<pre>';
-		print_r($content);
-		echo '</pre>';
-		exit;
+	protected final function debug($content) {
+		exit(sprintf("<pre>%s</pre>", print_r($content, TRUE)));
 	}
 }

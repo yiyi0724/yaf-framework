@@ -6,8 +6,6 @@
  */
 namespace services\user;
 
-use \tool\Is as IsLib;
-
 class Change extends User {
 
 	/**
@@ -133,6 +131,7 @@ class Change extends User {
 
 	/**
 	 * 执行修改
+	 * @return void
 	 */
 	public function execute() {
 		try {

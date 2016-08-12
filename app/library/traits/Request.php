@@ -60,15 +60,6 @@ class Request {
 		$this->setParams($params);
 	}
 
-	protected function setYafRequest() {
-		$this->yafRequest = Application::app()->getDispatcher()->getRequest();
-		return $this;
-	}
-
-	public function getYafRequest() {
-		return $this->yafRequest;
-	}
-
 	/**
 	 * 禁止克隆对象
 	 * @return void
@@ -77,24 +68,41 @@ class Request {
 	}
 
 	/**
-	 * 参数整合，清空全局变量，进行数据校验
-	 * @return void
+	 * 获取单例请求对象
+	 * @return Request $this 单例请求对象
 	 */
 	public static function getInstance() {
 		if(!self::$instance instanceof self) {
 			self::$instance = new self();
 		}
-
 		return self::$instance;
+	}
+
+	/**
+	 * 设置yaf的请求对象
+	 * @return Request $this 返回当前对象进行连贯操作
+	 */
+	protected function setYafRequest() {
+		$this->yafRequest = Application::app()->getDispatcher()->getRequest();
+		return $this;
+	}
+
+	/**
+	 * 获取yaf的请求对象
+	 * @return \Yaf\Request_Abstract
+	 */
+	public function getYafRequest() {
+		return $this->yafRequest;
 	}
 
 	/**
 	 * 设置所有的传递参数
 	 * @param array $params 传递参数
-	 * @return void
+	 * @return Request $this 返回当前对象进行连贯操作
 	 */
 	protected function setParams($params) {
 		$this->params = $params;
+		return $this;
 	}
 
 	/**
@@ -110,14 +118,15 @@ class Request {
 	 * @param string $key 参数键
 	 * @return mixed
 	 */
-	public function get($key) {
-		return $this->params[$key];
+	public function get($key, $default = NULL) {
+		return isset($this->params[$key]) ? $this->params[$key] : $default;
 	}
 
 	/**
-	 *  回调
-	 * @param unknown $method
-	 * @param unknown $args
+	 * 回调yaf内置的方法
+	 * @param string $method 请求的方法
+	 * @param array $args 附加参数
+	 * @return mixed
 	 */
 	public function __call($method, $args) {
 		return call_user_func_array(array($this->getYafRequest(), $method), $args);

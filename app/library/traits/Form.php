@@ -202,6 +202,7 @@ class Form {
 
 	/**
 	 * 检查过滤数据
+	 * @return void
 	 */
 	public function fliter() {
 		// 进行检查
