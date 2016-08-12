@@ -72,7 +72,7 @@ class Redis extends Adapter {
 	 * @param string $key 键名
 	 * @param string $value 值
 	 * @param int $expire 过期时间
-	 * @return boolean 只会TRUE
+	 * @return boolean 固定TRUE
 	 */
 	public function setWithExpire($key, $value, $expire = 0) {
 		$this->getRedis()->set($key, $value);
@@ -83,10 +83,9 @@ class Redis extends Adapter {
 	/**
 	 * 获取并且检查过期时间
 	 * @param string $key 键名
-	 * @param int $expire 过期时间,此参数无用兼容基类而已
 	 * @return mixed 找到返回具体值，找不到返回FALSE
 	 */
-	public function getWithExpire($key, $expire = 0) {
+	public function getWithExpire($key) {
 		return $this->getRedis()->get($key);
 	}
 

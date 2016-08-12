@@ -22,7 +22,7 @@ class Base {
 	 * ini文件
 	 * @var array
 	 */
-	public static $inis = array();
+	protected static $inis = array();
 
 	/**
 	 * 获取session对象
