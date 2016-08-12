@@ -17,7 +17,13 @@ class Request {
 	protected static $instance;
 
 	/**
-	 * 传递参数列表
+	 * yaf请求对象
+	 * @var \Yaf\Request_Abstract
+	 */
+	protected $yafRequest = NULL;
+
+	/**
+	  参数列表
 	 * @var array
 	 */
 	protected $params = array();
@@ -27,6 +33,40 @@ class Request {
 	 * @return void
 	 */
 	protected final function __construct() {
+		// PUT和DETELE方法支持
+		$putOrDelete = array();
+		if(IS_PUT || IS_DELETE) {
+			parse_str(file_get_contents('php://input'), $putOrDelete);
+		}
+
+		// 输入数据源
+		$this->setYafRequest(Application::app()->getDispatcher()->getRequest());
+		$params = array_merge($this->getYafRequest()->getParams(), $putOrDelete, $_REQUEST);
+
+		// 获取检查规则
+		$xml = sprintf('%sforms%s%s%s%s.xml', MODULE_PATH, DS, strtolower(CONTROLLER_NAME), DS, strtolower(ACTION_NAME));
+		if(is_file($xml)) {
+			// 读取xml文件
+			$simpleXMLElements = @simplexml_load_file($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+			if(!$simpleXMLElements) {
+				throw new \Exception("{$validFile}语法有误");
+			}
+			// 进行表单检查
+			$fromTrait = new Form($params, $this->getYafRequest()->getMethod());
+			$fromTrait->useXmlRule($simpleXMLElements)->fliter();
+			$params = $fromTrait->getSuccess();
+		}
+
+		$this->setParams($params);
+	}
+
+	protected function setYafRequest() {
+		$this->yafRequest = Application::app()->getDispatcher()->getRequest();
+		return $this;
+	}
+
+	public function getYafRequest() {
+		return $this->yafRequest;
 	}
 
 	/**
@@ -42,41 +82,9 @@ class Request {
 	 */
 	public static function getInstance() {
 		if(!self::$instance instanceof self) {
-			// 创建单例对象
 			self::$instance = new self();
-			
-			// PUT和DETELE方法支持
-			$putOrDelete = array();
-			if(IS_PUT || IS_DELETE) {
-				parse_str(file_get_contents('php://input'), $putOrDelete);
-			}
-
-			// 输入数据源
-			$request = Application::app()->getDispatcher()->getRequest();
-			$params = array_merge($request->getParams(), $putOrDelete, $_REQUEST);
-			
-			// 获取检查规则
-			$controller = sprintf('%sForm', CONTROLLER_NAME);
-			$action = sprintf('%sAction', ACTION_NAME);
-			$validFile = sprintf('%sforms%s%s.php', MODULE_PATH, DS, $controller);
-			if(is_file($validFile)) {
-				require ($validFile);
-				if(method_exists($controller, $action)) {
-					$rules = $controller::$action();
-					$fromTrait = new Form();
-					$fromTrait->setRequestMethod($request->getMethod());
-					$fromTrait->setRules($rules);
-					$fromTrait->setParams($params);
-					if($errors = $fromTrait->fliter()) {
-						throw new FormException($errors);
-					}
-					$params = $fromTrait->getSuccess();
-				}
-			}
-
-			self::$instance->setParams($params);
 		}
-		
+
 		return self::$instance;
 	}
 
@@ -103,22 +111,15 @@ class Request {
 	 * @return mixed
 	 */
 	public function get($key) {
-		return empty($this->params[$key]) ? NULL : $this->params[$key];
+		return $this->params[$key];
 	}
 
 	/**
-	 * 获取$_COOKIE的信息
-	 * @return string
+	 *  回调
+	 * @param unknown $method
+	 * @param unknown $args
 	 */
-	public function getCookie($key) {
-		return isset($_COOKIE[$key]) ? $_COOKIE[$key] : NULL;
-	}
-
-	/**
-	 * 获取$_SERVER的信息
-	 * @return string
-	 */
-	public function getServer() {
-		return isset($_SERVER[$key]) ? $_SERVER[$key] : NULL;
+	public function __call($method, $args) {
+		return call_user_func_array(array($this->getYafRequest(), $method), $args);
 	}
 }

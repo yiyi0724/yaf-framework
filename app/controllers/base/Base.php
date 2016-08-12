@@ -16,7 +16,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */
-	public function getVailRequest() {
+	public function getRequest() {
 		return Request::getInstance();
 	}
 
@@ -61,16 +61,25 @@ abstract class BaseController extends Controller_Abstract {
 		$json['data'] = $data;
 		$json['code'] = $code;
 		$json = json_encode($json);
+		header("Content-type: application/json; charset=UTF-8");
+		exit($json);
+	}
 
-		$callback = $this->getRequest()->get('callback');
-		if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $callback)) {
-			// jsonp
-			exit("<script type='text/javascript'>{$callback}({$json})</script>");
-		} else {
-			// json
-			header("Content-type: application/json; charset=UTF-8");
-			exit($json);
-		}
+	/**
+	 * jsonp输出
+	 * @param string $callback 输出类型
+	 * @param boolean $status 结果状态
+	 * @param string $message 提示信息
+	 * @param array $data 数据信息
+	 * @return void
+	 */
+	public final function jsonp($callback, $status, $message, $code, $data = NULL) {
+		$json['status'] = $status;
+		$json['message'] = $message;
+		$json['data'] = $data;
+		$json['code'] = $code;
+		$json = json_encode($json);
+		exit("<script type='text/javascript'>{$callback}({$json})</script>");
 	}
 
 	/**

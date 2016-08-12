@@ -6,3 +6,7 @@
 
 ## 内置类库使用说明
    [点击这里查看:)](https://github.com/enychen/yaf-framework/tree/master/doc)
+   
+## 全局code
+
+100001 获取微信access_token有误

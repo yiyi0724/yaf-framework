@@ -48,10 +48,6 @@ class Change extends User {
 		return $this->uid;
 	}
 
-	protected function setChange($table, $field) {
-		$this->change[$table]['password']
-	}
-
 	/**
 	 * 修改密码
 	 * @param string $password 密码
