@@ -2,10 +2,9 @@
 
 namespace File;
 
-class Log
-{
-	public static function record()
-	{
-		
+class Log {
+
+	public static function record() {
+	
 	}
 }

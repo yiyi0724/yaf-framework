@@ -20,7 +20,7 @@ class Bootstrap extends Bootstrap_Abstract {
 	 * @return void
 	 */
 	public function _initLoader(Dispatcher $dispatcher) {
-		Loader::getInstance(rtrim(APP_PATH, '/'))->registerLocalNamespace('services');
+		Loader::getInstance(rtrim(APP_PATH, DS))->registerLocalNamespace('services');
 	}
 
 	/**
@@ -34,7 +34,7 @@ class Bootstrap extends Bootstrap_Abstract {
 		// 自定义路由协议
 		$router->addRoute('enyRouter', new Route());
 		// 路由重写正则
-		$router->addConfig(new Ini(CONF_PATH . 'route.ini'));
+		$router->addConfig(new Ini(sprintf("%sroute.ini", CONF_PATH)));
 	}
 
 	/**

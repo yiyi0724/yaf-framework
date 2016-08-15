@@ -25,7 +25,7 @@ class Base64 extends Uploader {
 	 * @param string $base64Str 字符串
 	 * @return Uploader $this 返回当前对象进行连贯操作
 	 */
-	public function setBase64Str($base64Str) {
+	protected function setBase64Str($base64Str) {
 		$this->base64Str = $base64Str;
 		return $this;
 	}

@@ -9,6 +9,12 @@ namespace weixin;
 abstract class Base {
 
 	/**
+	 * 获取access_token的接口
+	 * @var string
+	 */
+	const ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
+	
+	/**
 	 * 公众号appid
 	 * @var string
 	 */
@@ -91,25 +97,33 @@ abstract class Base {
 	 * @return Base $this 返回当前对象进行连贯操作
 	 */
 	protected function setAccessToken() {
-		// 缓存appid的键
-		$cacheKey = sprintf('weixin.access_token.%s', $this->getAppid());
-
-		// 之前获取的还没有到期
-		$this->accessToken = $this->getStorage()->get($cacheKey);
 		if(!$this->accessToken) {
-			// 请求access_token
-			$api = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
-			$result = json_decode($this->get(sprintf($api, $this->getAppid(), $this->getAppSecret())));
-			// 请求如果有误
-			if(isset($result->errcode)) {
-				$this->throws($result->errcode, $result->errmsg);
+			// 从文件获取
+			$filename = sprintf('%s%stmp%s%s', __DIR__, DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $this->getAppid());
+			$isExpire = TRUE;
+			if(is_file($filename)) {
+				$tmpInfo = json_encode(file_get_contents($filename));
+				if(!json_last_error() && $tmpInfo->expire > time()) {
+					$this->accessToken = $tmpInfo->access_token;
+					$isExpire = FALSE;
+				}
 			}
 
-			// 缓存access_token
-			$this->getStorage()->set($cacheKey, $result->access_token, $result->expires_in);
-
-			// 设置变量
-			$this->accessToken = $result->access_token;
+			// 文件也过期
+			if($isExpire) {
+				// 请求access_token接口
+				$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_URL, $this->getAppid(), $this->getAppSecret())));
+				// 请求如果有误
+				if(isset($result->errcode)) {
+					$this->throws(100001, "{$result->errmsg}({$result->errcode})");
+				}
+				
+				$tmpInfo = json_encode(array('access_token'=>$result->access_token, 'expire'=>strtotime("+1 hours")));
+				// 缓存access_token
+				$this->getStorage()->set($cacheKey, $result->access_token, $result->expires_in);
+				// 设置变量
+				$this->accessToken = $result->access_token;
+			}
 		}
 
 		return $this;

@@ -26,148 +26,202 @@ class Form {
 	 * 请求方式
 	 * @var string
 	 */
-	protected $requestMethod;
+	protected $method = 'GET';
 
 	/**
-	 * 检查通过
+	 * 参数正确列表
 	 * @var array
 	 */
 	protected $success = array();
 
 	/**
-	 * 检查不通过
+	 * 参数错误列表
 	 * @var array
 	 */
 	protected $error = array();
 
 	/**
+	 * 构造函数
+	 * @param array $params 参数列表
+	 * @param string $method 请求方式的检查
+	 */
+	public function __construct(array $params, $method = NULL) {
+		$this->setParams($params)->setMethod($method);
+	}
+
+	/**
+	 * 设置参数列表
+	 * @param array  $params 输入数据
+	 * @return Form $this 返回当前对象进行连贯操作
+	 */
+	protected function setParams(array $params) {
+		$this->params = $params;
+		return $this;
+	}
+
+	/**
+	 * 获取参数列表的某一个值
+	 * @param string $key 键名
+	 * @param string $default 默认值
+	 * @return mixed
+	 */
+	protected function getParams($key, $default = NULL) {
+		return isset($this->params[$key]) ? $this->params[$key] : $default;
+	}
+
+	/**
 	 * 设置规则
 	 * @param array $rules
-	 * @return void
+	 * @return Form $this 返回当前对象进行连贯操作
 	 */
-	public function setRules(array $rules) {
-		$this->rules = $rules;
-	}
-
-	/**
-	 * 初始化规则
-	 * @param array 输入数据
-	 * @return array 规则数组
-	 * @return void
-	 */
-	public function setParams(array $params) {
-		$this->params = $params;
-	}
-
-	/**
-	 * 设置请求方式
-	 * @param array $requestMethod 请求方式：GET | POST | DELETE | PUT
-	 * @return void
-	 */
-	public function setRequestMethod($requestMethod) {
-		$this->requestMethod = strtoupper($requestMethod);
-	}
-
-	/**
-	 * 初始化验证规则
-	 * @param array $rules 原始规则数组
-	 * @return bool 是否有需要检查的数据
-	 */
-	protected function init($rules = array()) {
-		foreach($this->rules as $key=>$rule) {
-			if(strcasecmp($this->requestMethod, $rule[0])) {
+	protected function setRules(array $rules) {
+		foreach($rules as $index=>&$rule) {
+			// 参数过滤
+			if($rule['from'] != $this->getMethod()) {
+				unset($rules[$index]);
 				continue;
 			}
-			$rules[$key]['value'] = isset($this->params[$key]) ? $this->params[$key] : NULL;
-			$rules[$key]['method'] = $rule[1];
-			$rules[$key]['require'] = $rule[2];
-			$rules[$key]['notify'] = $rule[3];
-			$rules[$key]['options'] = isset($rule[4]) && is_array($rule[4]) ? $rule[4] : array();
-			$rules[$key]['default'] = isset($rule[5]) ? $rule[5] : NULL;
-			$rules[$key]['alias'] = isset($rule[6]) ? $rule[6] : NULL;
-		}
 
-		$this->rules = $rules;
-		return (bool)$rules;
-	}
+			// 整合待检查的值
+			$value = $this->getParams($rule['name']);
+			if(is_null($value) && isset($rule['default'])) {
+				$value = $rule['default'];
+				unset($rule['default']);
+			}
+			$rule['value'] = trim($value);
 
-	/**
-	 * 检查过滤数据
-	 * @return array 返回错误数组
-	 */
-	public function fliter() {
-		// 检查方式
-		if(!$this->requestMethod) {
-			throw new \Exception('Please set the request mode', 502);
-		}
-
-		// 是否需要检查参数
-		if($this->init()) {
-			foreach($this->rules as $key=>$rule) {
-				// 待检查的规则
-				$method = $rule['method'];
-
-				// 检查规则
-				if($rule['require'] && is_null($rule['value'])) {
-					// 是否必须
-					$this->setError($key, $rule['notify']);
-				} else if(!is_null($rule['value']) && !Is::$method($rule['value'], $rule['options'])) {
-					// 检查不通过
-					$this->setError($key, $rule['notify']);
-				} else {
-					// 检查通过
-					$this->setSuccess($key, $rule);
+			// 别名整合
+			$rule['origin'] = $rule['name'];
+			if(isset($rule['alias'])) {
+				$rule['origin'] = $rule['name'];
+				$rule['name'] = $rule['alias'];
+				unset($rule['alias']);
+			}
+	
+			// 扩展整理
+			$rule['options'] = array();
+			foreach($rule as $key=>$value) {
+				if(in_array($key, array('min', 'max', 'regular', 'exists', 'xss'))) {
+					switch(TRUE) {
+						case $key == 'exists':
+							$rule['options'][$key] = explode(',', $value);
+							break;
+						default:
+							$rule['options'][$key] = $value;
+					}
+					unset($rule[$key]);
 				}
 			}
 		}
 
-		return $this->getError();
+		$this->rules = $rules;
+		return $this;
 	}
 
 	/**
-	 * 保存检查通过的值
-	 * @param string $name 键名
+	 * 获取规则信息
+	 * @return array
+	 */
+	public function getRules() {
+		return $this->rules;
+	}
+
+	/**
+	 * 设置请求方式
+	 * @param array $method 请求方式：GET | POST | DELETE | PUT
+	 * @return Form $this 返回当前对象进行连贯操作
+	 */
+	public function setMethod($method) {
+		$this->method = strtolower($method);
+		return $this;
+	}
+
+	/**
+	 * 获取请求方式
+	 * @return string
+	 */
+	public function getMethod() {
+		return $this->method;
+	}
+
+	/**
+	 * 设置检查不通过的参数信息
 	 * @param array $rule 规则数组
-	 * @return void
+	 * @return Form $this 返回当前对象进行连贯操作
 	 */
-	protected function setSuccess($name, $rule) {
-		// 是否存在别名
-		$name = $rule['alias'] ? $rule['alias'] : $name;
+	protected function setError($rule) {
+		$this->error[$rule['origin']] = $rule['error'];
+		return $this;
+	}
 
-		// 是否填充默认值
-		if(is_null($rule['value']) && $rule['default']) {
-			$rule['value'] = $rule['default'];
-		}
+	/**
+	 * 获取检查不通过的参数信息
+	 * @return array 失败的数组
+	 */
+	public function getError() {
+		return $this->error;
+	}
 
-		// 不为空保存数据
+	/**
+	 * 设置检查通过的参数信息
+	 * @param array $rule 规则数组
+	 * @return Form $this 返回当前对象进行连贯操作
+	 */
+	protected function setSuccess($rule) {
 		if(!is_null($rule['value'])) {
-			$this->success[$name] = trim($rule['value']);
+			$this->success[$rule['name']] = $rule['value'];
 		}
+
+		return $this;
 	}
 
 	/**
-	 * 保存检查不通过的值
-	 * @param string $key  键名
-	 * @param string $notify 提示语
-	 * @return void
-	 */
-	protected function setError($key, $notify) {
-		$this->error[$key] = $notify;
-	}
-
-	/**
-	 * 验证通过的字段
-	 * @return array 通过的数组
+	 * 获取检查通过的参数信息
+	 * @return array
 	 */
 	public function getSuccess() {
 		return $this->success;
 	}
 
 	/**
-	 * 验证失败的字段
-	 * @return array 失败的数组
+	 * 使用xml的规则方式
+	 * @param \SimpleXMLElement $rules xml对象
+	 * @return Form $this 返回当前对象进行连贯操作
 	 */
-	public function getError() {
-		return $this->error;
+	public function useXmlRule(\SimpleXMLElement $rules) {
+		$temp = json_decode(json_encode($rules), TRUE);
+		$rules = array();
+		if(isset($temp['input'])) {
+			foreach($temp['input'] as $key=>$value) {
+				$rules[] = is_numeric($key) ? $value['@attributes'] : $value;
+			}
+		}
+		$this->setRules($rules);
+		return $this;
+	}
+
+	/**
+	 * 检查过滤数据
+	 * @return void
+	 */
+	public function fliter() {
+		// 进行检查
+		foreach($this->getRules() as $key=>$rule) {
+			$method = $rule['type'];
+			if($rule['require'] && is_null($rule['value'])) {
+				// 是否必须检查
+				$this->setError($rule);
+			} else if(!is_null($rule['value']) && !Is::$method($rule['value'], $rule['options'])) {
+				// 检查不通过
+				$this->setError($rule);
+			} else {
+				$this->setSuccess($rule);
+			}
+		}
+
+		// 数据有问题
+		if($errors = $this->getError()) {
+			throw new FormException($errors);
+		}
 	}
 }

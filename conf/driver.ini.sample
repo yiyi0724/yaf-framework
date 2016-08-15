@@ -13,7 +13,6 @@ database.master.password = ''
 ;redis数据库
 redis.master.host = '127.0.0.1'
 redis.master.port = 6379
-redis.master.db = 0
 redis.master.auth =
 redis.master.timeout = 30
 redis.master.options.prefix =

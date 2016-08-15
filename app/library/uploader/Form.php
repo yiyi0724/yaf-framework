@@ -46,7 +46,7 @@ class Form extends Uploader {
 	 * @param string $inputName 表单控件名称
 	 * @return Form $this 返回当前对象进行连贯操作
 	 */
-	public function setInputName($inputName) {
+	protected function setInputName($inputName) {
 		if(empty($_FILES[$inputName])) {
 			$this->throws('上传文件不存在');
 		}

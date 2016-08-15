@@ -19,6 +19,12 @@ use \traits\ForbiddenException;
 class Base {
 
 	/**
+	 * ini文件
+	 * @var array
+	 */
+	protected static $inis = array();
+
+	/**
 	 * 获取session对象
 	 * @return \Yaf\Session
 	 */
@@ -38,69 +44,78 @@ class Base {
 	/**
 	 * 加载ini配置文件
 	 * @param string $ini 文件名，不需要包含.ini后缀
-	 * @return \Yaf\Config\Ini ini对象
+	 * @param string $key 配置键名
+	 * @return mixed ini对象或者具体的值，找不到返回NULL
 	 */
-	public final function loadIni($ini) {
-		return new Ini(CONF_PATH . "{$ini}.ini", \YAF\ENVIRON);
+	public final function getIni($ini, $key = NULL) {
+		if(!self::$inis[$ini]) {
+			self::$inis[$ini] = new Ini(sprintf("%s%s.ini", CONF_PATH, $ini), \YAF\ENVIRON);
+		}
+		return $key ? self::$inis[$ini]->get($key) : self::$inis[$ini];
 	}
 
-	/**
-	 * 获取默认未进行验证的内置请求对象
-	 * @return \Yaf\Request_Abstract
-	 */
-	public function getYafRequest() {
-		return Application::app()->getDispatcher()->getRequest();
-	}
-	
 	/**
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */
-	public function getRequest() {
+	public final function getRequest() {
 		return Request::getInstance();
 	}
 
 	/**
-	 * 抛出禁止访问的异常
-	 * @param string $message 错误信息
+	 * 获取redis对象
+	 * @param int $db 几号数据库，默认0
+	 * @param string $adapter 适配器名称，默认master
+	 * @return \storage\Redis redis的封装对象
+	 */
+	public final function getRedis($db = 0, $adapter = 'master') {
+		$c = $this->getIni('driver', sprintf("redis.%s", $adapter));
+		$redis = \storage\Redis::getInstance($c->host, $c->port, $c->auth, $c->timeout, $c->options->toArray());
+		$redis->select($db);
+		return $redis;
+	}
+
+	/**
+	 * 抛出403的异常
 	 * @param number $code 错误码
+	 * @param string $message 错误信息
 	 * @throws ForbiddenException
 	 * @return void
 	 */
-	public function throwForbiddenException($message, $code = 0) {
+	public function throwForbiddenException($code, $message) {
 		throw new ForbiddenException($message, $code);
 	}
 
 	/**
 	 * 抛出404异常
-	 * @param string $message 错误信息
 	 * @param number $code 错误码
+	 * @param string $message 错误信息
 	 * @throws NotFoundException
 	 * @return void
 	 */
-	public function throwNotFoundException($message, $code = 0) {
+	public function throwNotFoundException($code, $message) {
 		throw new NotFoundException($message, $code);
 	}
 
 	/**
 	 * 抛出错误通知的异常
-	 * @param string $message 错误信息
 	 * @param number $code 错误码
+	 * @param string $message 错误信息
 	 * @throws NotifyException
 	 * @return void
 	 */
-	public function throwNotifyException($message, $code = 0) {
+	public function throwNotifyException($code, $message) {
 		throw new NotifyException($message, $code);
 	}
 
 	/**
 	 * 抛出进行跳转的异常
-	 * @param string $message 错误信息
 	 * @param number $code 错误码
+	 * @param string $message 错误信息
 	 * @throws RedirectException
 	 * @return void
 	 */
-	public function throwRedirectException($message, $code = 0) {
+	public function throwRedirectException($code, $message) {
 		throw new RedirectException($message, $code);
 	}
 }

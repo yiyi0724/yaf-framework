@@ -13,13 +13,13 @@ class FileLock {
 	 * 锁文件目录
 	 * @var string
 	 */
-	private $path = './locks/';
+	protected $path = './locks/';
 	
 	/**
 	 * 
 	 * @var unknown
 	 */
-	private $lockFile = NULL;
+	protected $lockFile = NULL;
 	
 	/**
 	 * 所有锁文件池
@@ -118,7 +118,7 @@ class FileLock {
 	 * 对已经上锁的全部资源进行解锁
 	 * @param boolean $delete 是否删除锁文件
 	 */
-	public static function unlocks($delete = TRUE) {
+	public static function unlocks($delete = FALSE) {
 		foreach($this->lockFiles as $key=>$lock) {
 			// 解锁
 			@flock($lock, LOCK_UN);
