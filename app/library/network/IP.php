@@ -15,7 +15,7 @@ class IP {
 	 * @param boolean $ip2long 是否转换成为整形, 默认进行转换
 	 * @return int|string
 	 */
-	public static function getClientIP($ip2long = TRUE) {
+	public static function client($ip2long = TRUE) {
 		// 获取ip地址
 		if(getenv('HTTP_X_REAL_IP')) {
 			$ip = getenv('HTTP_X_REAL_IP');
@@ -39,7 +39,7 @@ class IP {
 	 * @param boolean $ip2long 是否转换成为整形, 默认进行转换
 	 * @return int|string
 	 */
-	public static function getServerIP($ip2long = TRUE) {
+	public static function server($ip2long = TRUE) {
 		$ip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1';
 		return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
 	}

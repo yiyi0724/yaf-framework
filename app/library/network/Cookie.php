@@ -234,7 +234,7 @@ class Cookie {
 		$path = $this->getPath();
 		$expire = time() - $this->getExpire();
 		$domain = $this->getDomain();
-		$secure = isset($_SERVER['REQUEST_SCHEME']) && strcasecmp($_SERVER['REQUEST_SCHEME'], 'https');
+		$secure = isset($_SERVER['REQUEST_SCHEME']) && (!strcasecmp($_SERVER['REQUEST_SCHEME'], 'https'));
 		$httpOnly = $this->gethttpOnly();
 
 		// 进行删除
