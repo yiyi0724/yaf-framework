@@ -180,6 +180,13 @@ class Profile extends Base {
 	}
 
 	/**
+	 * 
+	 */
+	public function getPassword() {
+		
+	}
+
+	/**
 	 * 获取用户微信登录的唯一id
 	 * @return string|NULL
 	 */
