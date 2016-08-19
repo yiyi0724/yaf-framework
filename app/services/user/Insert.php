@@ -6,7 +6,7 @@
  */
 namespace services\user;
 
-class Change extends User {
+class Update extends Base {
 
 	/**
 	 * 用户id
