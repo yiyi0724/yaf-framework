@@ -134,32 +134,22 @@ class Update extends Base {
 	 * @return void
 	 */
 	public function execute() {
-		try {
+		// 修改用户信息表
+		if(isset($this->change['information'])) {
 			$uesrProfileModel = new \user\ProfileModel();
-			$uesrInformation->beginTransaction();
+			$uesrProfileModel->where('id=:uid', $this->getUid())->update($this->change['information']);
+		}
 
-			// 修改用户信息表
-			if(isset($this->change['information'])) {
-				// 设置where条件
-				$uesrInformation->where('id=:uid', $this->getUid())->update($this->change['information']);
-			}
-			
-			// 修改本站登录信息
-			if(isset($this->change['lauth'])) {
-				$userLauthModel = new \user\LauthModel();
-				$userLauthModel->where('uid=:uid', $this->getUid())->update($this->change['lauth']);
-			}
+		// 修改本站登录信息
+		if(isset($this->change['lauth'])) {
+			$userLauthModel = new \user\LauthModel();
+			$userLauthModel->where('uid=:uid', $this->getUid())->update($this->change['lauth']);
+		}
 
-			// 修改第三方登录信息
-			if(isset($this->change['oauth'])) {
-				$userOauthModel = new \user\OauthModel();
-				$userOauthModel->where('uid=:uid and from=:from', $this->getUid(), $this->change['where']['from'])->update($this->change['oauth']);
-			}
-
-			$uesrInformation->commitTransaction();
-		} catch(\Exception $e) {
-			$uesrInformation->rollbackTransaction();
-			throw $e;
+		// 修改第三方登录信息
+		if(isset($this->change['oauth'])) {
+			$userOauthModel = new \user\OauthModel();
+			$userOauthModel->where('uid=:uid and from=:from', $this->getUid(), $this->change['where']['from'])->update($this->change['oauth']);
 		}
 	}
 }

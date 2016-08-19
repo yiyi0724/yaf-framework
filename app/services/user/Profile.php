@@ -30,6 +30,14 @@ class Profile extends Base {
 	protected $local = array();
 
 	/**
+	 * 构造函数
+	 * @param int $uid 用户id
+	 */
+	public function __construct($uid) {
+		$this->setProfile($uid)->setOauth($uid)->setLocal($uid);
+	}
+
+	/**
 	 * 获取用户的附属信息（查找user_infomation表）
 	 * @param string $uid 用户uid
 	 * @return Select $this 返回当前对象进行连贯操作
@@ -38,8 +46,6 @@ class Profile extends Base {
 		$userProfileModel = new \user\ProfileModel();
 		if($profile = $userProfileModel->where('id=:id', $uid)->select()->fetchRow()) {
 			$this->profile = $profile;
-		} else {
-			$this->throwNotifyException(100001, '不存在的用户');
 		}
 
 		return $this;
@@ -178,9 +184,6 @@ class Profile extends Base {
 	 * @return string|NULL
 	 */
 	public function getWeixinOpenId() {
-		if(!$this->isBindWeixin()) {
-			$this->throwNotifyException(100002, '请先绑定微信');
-		}
 		return $this->oauth['weixin']['oauth_id'];
 	}
 
@@ -189,9 +192,6 @@ class Profile extends Base {
 	 * @return string|NULL
 	 */
 	public function getWeixinUnionId() {
-		if(!$this->isBindWeixin()) {
-			$this->throwNotifyException(100002, '请先绑定微信');
-		}
 		return $this->oauth['weixin']['union_id'];
 	}
 
@@ -233,14 +233,5 @@ class Profile extends Base {
 	 */
 	public function isBindWeibo() {
 		return isset($this->oauth['weibo']);
-	}
-
-	/**
-	 * 通过构造函数获取
-	 * @param int $uid 用户id
-	 * @throws \traits\NotifyException
-	 */
-	public function byUid($uid) {
-		$this->setProfile($uid)->setOauth($uid)->setLocal($uid);
 	}
 }

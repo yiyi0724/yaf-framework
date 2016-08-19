@@ -10,11 +10,6 @@ use \Yaf\Session;
 use \traits\Request;
 use \Yaf\Config\Ini;
 use \Yaf\Application;
-use \traits\FormException;
-use \traits\NotifyException;
-use \traits\NotFoundException;
-use \traits\RedirectException;
-use \traits\ForbiddenException;
 
 class Base {
 
@@ -73,49 +68,5 @@ class Base {
 		$redis = \storage\Redis::getInstance($c->host, $c->port, $c->auth, $c->timeout, $c->options->toArray());
 		$redis->select($db);
 		return $redis;
-	}
-
-	/**
-	 * 抛出403的异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws ForbiddenException
-	 * @return void
-	 */
-	public function throwForbiddenException($code, $message) {
-		throw new ForbiddenException($message, $code);
-	}
-
-	/**
-	 * 抛出404异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws NotFoundException
-	 * @return void
-	 */
-	public function throwNotFoundException($code, $message) {
-		throw new NotFoundException($message, $code);
-	}
-
-	/**
-	 * 抛出错误通知的异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws NotifyException
-	 * @return void
-	 */
-	public function throwNotifyException($code, $message) {
-		throw new NotifyException($message, $code);
-	}
-
-	/**
-	 * 抛出进行跳转的异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws RedirectException
-	 * @return void
-	 */
-	public function throwRedirectException($code, $message) {
-		throw new RedirectException($message, $code);
 	}
 }

@@ -1,165 +1,207 @@
 <?php
 
 /**
- * 用户信息修改逻辑(101)
+ * 用户信息逻辑类(100)
  * @author enychen
  */
 namespace services\user;
 
-class Update extends Base {
+use \network\IP as IPLib;
+
+class Insert extends Base {
 
 	/**
-	 * 用户id
-	 * @var int
+	 * 用户的信息
+	 * @var array
 	 */
-	protected $uid = NULL;
+	protected $profile = array();
 
 	/**
-	 * 要修改的信息
-	 * @var string
+	 * 第三方登录信息
+	 * @var array
 	 */
-	protected $change = array();
+	protected $oauth = array();
+
+	/**
+	 * 本站登录信息
+	 * @var array
+	 */
+	protected $local = array();
 
 	/**
 	 * 构造函数
-	 * @param int $uid 用户id
 	 */
-	public function __construct($uid) {
-		$this->setUid($uid);
+	public function __construct() {
+		$this->setRegIp(IPLib::client())->setRegTime(date('YmdHis'));
 	}
 
-	/**
-	 * 设置用户id
-	 * @param int $uid 用户id
-	 * @return Change $this 返回当前对象进行连贯操作
-	 */
-	protected function setUid($uid) {
-		$this->uid = abs(intval($uid));
+	public function setNickname($nickname) {
+		$this->profile['nickname'] = $nickname;
+		return $this;
+	}
+
+	public function setAvatar($avatar) {
+		$this->profile['avatar'] = $avatar;
+		return $this;
+	}
+
+	public function setGender($gender) {
+		$this->profile['gender'] = $gender;
+		return $this;
+	}
+
+	public function setMobile($mobile) {
+		$this->profile['mobile'] = $mobile;
+		$this->local['mobile']['username'] = $mobile;
 		return $this;
 	}
 
 	/**
-	 * 获取用户id
-	 * @return int
+	 * 设置用户注册邮箱
+	 * @param string $email 邮箱
+	 * @return \services\user\Insert
 	 */
-	public function getUid() {
-		return $this->uid;
+	public function setEmail($email) {
+		$this->profile['email'] = $email;
+		$this->local['email']['username'] = $email;
+		return $this;
 	}
 
 	/**
-	 * 修改密码
+	 * 设置用户状态，默认enable
+	 * @param string $status 注册状态
+	 * @return Insert $this 返回当前对象进行连贯操作
+	 */
+	public function setStatus($status) {
+		$this->profile['status'] = $status;
+		return $this;
+	}
+
+	/**
+	 * 设置注册时间
+	 * @param int $regTime 注册时间
+	 * @return Insert $this 返回当前对象进行连贯操作
+	 */
+	public function setRegTime($regTime) {
+		$this->profile['regtime'] = $regTime;
+		return $this;
+	}
+
+	/**
+	 * 设置注册ip
+	 * @param int $regIp 注册的ip地址
+	 * @return Insert $this 返回当前对象进行连贯操作
+	 */
+	public function setRegIp($regIp) {
+		$this->profile['regip'] = $regIp;
+		return $this;
+	}
+
+	/**
+	 * 设置注册密码
 	 * @param string $password 密码
-	 * @return Change $this 返回当前对象进行连贯操作
+	 * @return Insert $this 返回当前对象进行连贯操作
 	 */
-	public function changePassword($password) {
-		$this->change['lauth']['password'] = $this->getEnctypePassword($password);
+	public function setPassword($password) {
+		foreach(array('email', 'mobile', 'username') as $key=>$value) {
+			if(isset($this->local[$value])) {
+				$this->local[$value]['password'] = $password;
+			}
+		}
 		return $this;
 	}
 
 	/**
-	 * 修改昵称
-	 * @param string $nickname 用户昵称
-	 * @return Change $this 返回当前对象进行连贯操作
+	 * 设置qq登录信息
+	 * @param string $oauthId qq唯一id
+	 * @return Insert $this 返回当前对象进行连贯操作
 	 */
-	public function changeNickname($nickname) {
-		$this->change['information']['nickname'] = $nickname;
+	public function setOauthFromQQO($oauthId) {
+		$this->oauth['qq']['oauth_id'] = $oauthId;
 		return $this;
 	}
 
 	/**
-	 * 修改头像
-	 * @param string $avatar 头像地址
-	 * @return Change $this 返回当前对象进行连贯操作
+	 * 设置微信登录信息
+	 * @param string $oauthId 微信openid
+	 * @param string $unionId 微信unionid,可选
+	 * @return Insert $this 返回当前对象进行连贯操作
 	 */
-	public function changeAvatar($avatar) {
-		$this->change['information']['avatar'] = $avatar;
+	public function setOauthFromWeixin($oauthId, $unionId = '') {
+		$this->oauth['weixin']['oauth_id'] = $oauthId;
+		$this->oauth['weixin']['union_id'] = $unionId;
 		return $this;
 	}
 
 	/**
-	 * 修改性别
-	 * @param string $gender 男|女
-	 * @return Change $this 返回当前对象进行连贯操作
+	 * 设置微博登录信息
+	 * @param string $oauthId 微博唯一id
+	 * @return Insert $this 返回当前对象进行连贯操作
 	 */
-	public function changeGender($gender) {
-		$this->change['information']['gender'] = $gender;
+	public function setOauthFromWweibo($oauthId) {
+		$this->oauth['weibo']['oauth_id'] = $oauthId;
 		return $this;
 	}
 
 	/**
-	 * 修改用户状态
-	 * @param string $status enable|disable|deleted
-	 * @return Change $this 返回当前对象进行连贯操作
+	 * 检查网站注册是否有密码
+	 * @return boolean
 	 */
-	public function changeStatus($status) {
-		$this->change['information']['status'] = $status;
-		return $this;
+	protected function vaildLocal() {
+		foreach(array('email', 'mobile', 'username') as $key=>$value) {
+			if(isset($this->local[$value])) {
+				if(empty($this->local[$value]['password'])) {
+					return FALSE;
+				}
+			}
+		}
+		
+		return TRUE;
 	}
 
 	/**
-	 * 修改手机号
-	 * @param string $mobile 手机号码
-	 * @return Change $this 返回当前对象进行连贯操作
-	 */
-	public function changeMobile($mobile) {
-		$this->change['information']['mobile'] = $mobile;
-		$this->change['lauth']['mobile'] = $mobile;
-		return $this;
-	}
-
-	/**
-	 * 修改邮箱
-	 * @param string $email 邮箱地址
-	 * @return Change $this 返回当前对象进行连贯操作
-	 */
-	public function changeEmail($email) {
-		$this->change['information']['email'] = $email;
-		$this->change['lauth']['email'] = $mobile;
-		return $this;
-	}
-
-	/**
-	 * 修改微信的openid
-	 * @param string $openid 微信的openid
-	 * @return Change $this 返回当前对象进行连贯操作
-	 */
-	public function changeWeixinOpenid($openid) {
-		$this->change['oauth']['oauth_id'] = $openid;
-		$this->change['where']['from'] = 'weixin';
-		return $this;
-	}
-
-	/**
-	 * 执行修改
+	 * 执行入库
+	 * @throws \Exception
 	 * @return void
 	 */
 	public function execute() {
-		try {
-			$uesrProfileModel = new \user\ProfileModel();
-			$uesrInformation->beginTransaction();
+		// 必备参数检查
+		if(!$this->profile) {
+			throw new \Exception('请设置用户信息');
+		}
+		if(!$this->vaildLocal()) {
+			throw new \Exception('请设置密码');
+		}
+		if(!$this->local && !$this->oauth) {
+			throw new \Exception('请设置注册信息');
+		}
 
-			// 修改用户信息表
-			if(isset($this->change['information'])) {
-				// 设置where条件
-				$uesrInformation->where('id=:uid', $this->getUid())->update($this->change['information']);
-			}
-			
-			// 修改本站登录信息
-			if(isset($this->change['lauth'])) {
-				$userLauthModel = new \user\LauthModel();
-				$userLauthModel->where('uid=:uid', $this->getUid())->update($this->change['lauth']);
-			}
+		// 用户信息表入库
+		$uesrProfileModel = new \user\ProfileModel();
+		$id = $uesrProfileModel->insert($this->profile);
 
-			// 修改第三方登录信息
-			if(isset($this->change['oauth'])) {
-				$userOauthModel = new \user\OauthModel();
-				$userOauthModel->where('uid=:uid and from=:from', $this->getUid(), $this->change['where']['from'])->update($this->change['oauth']);
+		// 本站注册入库
+		if($this->local) {
+			$userLauthModel = new \user\LauthModel();
+			$insert = array();
+			foreach($this->local as $key=>$value) {
+				$value['uid'] = $id;
+				$value['from'] = $key;
+				$insert[] = $value;
 			}
+			$userLauthModel->insert($insert);
+		}
 
-			$uesrInformation->commitTransaction();
-		} catch(\Exception $e) {
-			$uesrInformation->rollbackTransaction();
-			throw $e;
+		// 第三方登录入库
+		if($this->oauth) {
+			$userOauthModel = new \user\OauthModel();
+			$insert = array();
+			foreach($this->local as $key=>$value) {
+				$value['uid'] = $id;
+				$value['from'] = $key;
+				$insert[] = $value;
+			}
+			$userOauthModel->insert($insert);
 		}
 	}
 }

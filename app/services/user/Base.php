@@ -2,12 +2,11 @@
 
 /**
  * 用户逻辑基类
+ * @author enychen
  */
 namespace services\user;
 
-use \services\base\Base as BaseService;
-
-class Base extends BaseService {
+class Base extends \services\base\Base {
 
 	/**
 	 * 加密密钥

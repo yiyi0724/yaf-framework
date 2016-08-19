@@ -8,7 +8,12 @@ namespace base;
 
 use \traits\Request;
 use \Yaf\Application;
+use \traits\FormException;
+use \traits\NotifyException;
 use \Yaf\Controller_Abstract;
+use \traits\NotFoundException;
+use \traits\RedirectException;
+use \traits\ForbiddenException;
 
 abstract class BaseController extends Controller_Abstract {
 
@@ -91,5 +96,49 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	protected final function debug($content) {
 		exit(sprintf("<pre>%s</pre>", print_r($content, TRUE)));
+	}
+
+	/**
+	 * 抛出403的异常
+	 * @param number $code 错误码
+	 * @param string $message 错误信息
+	 * @throws ForbiddenException
+	 * @return void
+	 */
+	public function throwForbiddenException($code, $message) {
+		throw new ForbiddenException($message, $code);
+	}
+	
+	/**
+	 * 抛出404异常
+	 * @param number $code 错误码
+	 * @param string $message 错误信息
+	 * @throws NotFoundException
+	 * @return void
+	 */
+	public function throwNotFoundException($code, $message) {
+		throw new NotFoundException($message, $code);
+	}
+	
+	/**
+	 * 抛出错误通知的异常
+	 * @param number $code 错误码
+	 * @param string $message 错误信息
+	 * @throws NotifyException
+	 * @return void
+	 */
+	public function throwNotifyException($code, $message) {
+		throw new NotifyException($message, $code);
+	}
+	
+	/**
+	 * 抛出进行跳转的异常
+	 * @param number $code 错误码
+	 * @param string $message 错误信息
+	 * @throws RedirectException
+	 * @return void
+	 */
+	public function throwRedirectException($code, $message) {
+		throw new RedirectException($message, $code);
 	}
 }
