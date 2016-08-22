@@ -177,4 +177,53 @@ class Refund {
 	private function get($key, $default = NULL) {
 		return isset($this->refund[$key]) ? $this->refund[$key] : $default;
 	}
+
+
+	/**
+	 * 执行微信订单退款
+	 * 文档地址：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
+	 * @return void
+	 */
+	public function refund(\weixin\pay\Refund $refundObject) {
+		// 检查要查询的订单号
+		if(!$refundObject->getTransactionId() && !$refundObject->getOutTradeNo()) {
+			$this->throws(1020, '请设置微信或者我司的订单号');
+		}
+		// 订单退款号检查
+		if(!$refundObject->getOutRefundNo()) {
+			$this->throws(1021, '请设置退款订单号');
+		}
+		// 总金额检查
+		if(!$refundObject->getTotalFee()) {
+			$this->throws(1022, '请设置总金额');
+		}
+		// 退款金额检查
+		if(!$refundObject->getRefundFee()) {
+			$this->throws(1023, '请设置退款金额');
+		}
+		// 操作人员检查
+		if(!$refundObject->getOpUserId()) {
+			$this->throws(1024, '请设置操作人员信息');
+		}
+	
+		// 拼接公共参数
+		$refund = $refundObject->toArray();
+		$refund['appid'] = $this->getAppid();
+		$refund['mch_id'] = $this->getMchid();
+		$refund['nonce_str'] = $this->strShuffle();
+		$refund['sign'] = $this->sign($refund);
+	
+		// xml编码
+		$refund = $this->XmlEncode($refund);
+	
+		// 必须使用双向证书
+		$this->isUseCert(TRUE);
+		// 进行curl
+		$api = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
+		$result = $this->post($api, $refund);
+		$result = $this->verify($result);
+	
+		return $result;
+	}
+	
 }

@@ -31,4 +31,30 @@ class Close {
 	public function getOutTradeNo() {
 		return $this->outTradeNo;
 	}
+	
+	/**
+	 * 关闭订单
+	 * @return void
+	 */
+	public function close(\weixin\pay\Close $closeObject) {
+		if(!$closeObject->getOutTradeNo()) {
+			$this->throws(1031, '请设置设置订单号');
+		}
+	
+		$close['out_trade_no'] = $closeObject->getOutTradeNo();
+		$close['appid'] = $this->getAppid();
+		$close['mch_id'] = $this->getMchid();
+		$close['nonce_str'] = $this->strShuffle();
+		$close['sign'] = $this->sign($close);
+	
+		// xml编码
+		$close = $this->XmlEncode($close);
+	
+		// curl微信生成订单
+		$api = 'https://api.mch.weixin.qq.com/pay/closeorder';
+		$result = $this->post($api, $close);
+		$result = $this->verify($result);
+	
+		return $result;
+	}
 }

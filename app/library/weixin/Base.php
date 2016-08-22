@@ -12,7 +12,7 @@ abstract class Base {
 	 * 获取access_token的接口
 	 * @var string
 	 */
-	const ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
+	const ACCESS_TOKEN_API = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
 	
 	/**
 	 * 公众号appid
@@ -98,29 +98,18 @@ abstract class Base {
 	 */
 	protected function setAccessToken() {
 		if(!$this->accessToken) {
-			// 从文件获取
-			$filename = sprintf('%s%stmp%s%s', __DIR__, DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $this->getAppid());
-			$isExpire = TRUE;
-			if(is_file($filename)) {
-				$tmpInfo = json_encode(file_get_contents($filename));
-				if(!json_last_error() && $tmpInfo->expire > time()) {
-					$this->accessToken = $tmpInfo->access_token;
-					$isExpire = FALSE;
-				}
-			}
-
-			// 文件也过期
-			if($isExpire) {
+			$cacheKey = sprintf("access.token.%s", $this->getAppid());
+			// 尝试从本地获取下
+			$accessToken = $this->getStorage()->getWithExpire($cacheKey);
+			if(!$accessToken) {
 				// 请求access_token接口
-				$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_URL, $this->getAppid(), $this->getAppSecret())));
+				$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_API, $this->getAppid(), $this->getAppSecret())));
 				// 请求如果有误
 				if(isset($result->errcode)) {
-					$this->throws(100001, "{$result->errmsg}({$result->errcode})");
+					$this->throws(1000991, "{$result->errmsg}({$result->errcode})");
 				}
-				
-				$tmpInfo = json_encode(array('access_token'=>$result->access_token, 'expire'=>strtotime("+1 hours")));
 				// 缓存access_token
-				$this->getStorage()->set($cacheKey, $result->access_token, $result->expires_in);
+				$this->getStorage()->setWithExpire($cacheKey, $result->access_token, 7000);
 				// 设置变量
 				$this->accessToken = $result->access_token;
 			}
@@ -142,7 +131,7 @@ abstract class Base {
 	 * @param array $params 要发送的数组
 	 * @return string xml字符串
 	 */
-	protected function XmlEncode(array $params) {
+	protected function xmlEncode(array $params) {
 		$xml = "<xml>";
 		foreach($params as $key=>$value) {
 			$xml .= is_numeric($value) ? "<{$key}>{$value}</{$key}>" : "<{$key}><![CDATA[{$value}]]></{$key}>";
@@ -161,7 +150,7 @@ abstract class Base {
 		libxml_disable_entity_loader(true);
 		$result = @simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if(!$result) {
-			$this->throws(1990, 'XML数据无法解析');
+			$this->throws(1000992, 'XML数据无法解析');
 		}
 		return json_decode(json_encode($result), TRUE);
 	}
@@ -228,8 +217,7 @@ abstract class Base {
 	public function checkSignature($signature, $timestamp, $nonce, $token) {
 		$signArr = array($token, $timestamp, $nonce);
 		sort($signArr, SORT_STRING);
-		$signArr = sha1(implode($signArr));
-		return $signArr === $signature;
+		return sha1(implode($signArr)) === $signature;
 	}
 
 	/**
