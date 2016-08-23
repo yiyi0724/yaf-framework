@@ -4,7 +4,7 @@
  * 微信订单查询
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
 class QueryRefund extends Base {
 
@@ -93,7 +93,7 @@ class QueryRefund extends Base {
 		// 必须参数检查
 		$queryRefund = $this->toArray();
 		if(!$queryRefund) {
-			$this->throws(1000021, '请设置订单号');
+			$this->throws(1000119, '请设置订单号');
 		}
 		// 数据参数准备
 		$queryRefund['appid'] = $this->getAppid();
@@ -104,7 +104,7 @@ class QueryRefund extends Base {
 
 		// 执行curl
 		$result = $this->post(self::QUERY_REFUND_API, $query);
-		$this->verify($result);
+		$this->checkSignature($result);
 
 		return $this->xmlDecode($result);
 	}

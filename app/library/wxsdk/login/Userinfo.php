@@ -1,8 +1,10 @@
 <?php
+
 /**
- * 获取用户的access_token
+ * 用户授权登录后的信息获取
+ * @author enychen
  */
-namespace \weixin\user;
+namespace wxsdk\login;
 
 class Userinfo extends Base {
 
@@ -23,7 +25,7 @@ class Userinfo extends Base {
 	 * @var string
 	 */
 	const USER_USERINFO = 'https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=%s';
-	
+
 	/**
 	 * 用户验证后返回的code码
 	 * @var string
@@ -61,13 +63,24 @@ class Userinfo extends Base {
 	protected $scope = NULL;
 
 	/**
+	 * 构造函数
+	 * @param string $code 微信回调附加的值
+	 * @param string $appid 公众号唯一凭证，不传默认为：WEIXIN_APPID
+	 * @param string $appSecret 公众号唯一密钥，不传默认为：WEIXIN_APPSECRET
+	 * @throws \wxsdk\WxException
+	 */
+	public function __construct($code, $appid = NULL, $appSecret = NULL) {
+		parent::__construct($appid, $appSecret);
+		$this->setCode($code)->setUserAccessToken();
+	}
+
+	/**
 	 * 设置code码
 	 * @param string $code code码
 	 * @return Userinfo $this 返回当前对象进行连贯操作
 	 */
-	public function setCode($code) {
+	protected function setCode($code) {
 		$this->code = $code;
-		$this->setUserAccessToken();
 		return $this;
 	}
 
@@ -83,7 +96,7 @@ class Userinfo extends Base {
 		// 获取用户的access_token
 		$result = json_decode($this->get(sprintf(self::USER_ACCESS_TOKEN_API, $this->getAppid(), $this->getAppSecret(), $this->getCode())));
 		if(isset($result->errcode)){
-			$this->throws(1000094, "{$result->errmsg}({$result->errcode})");
+			$this->throws(100024, "{$result->errmsg}({$result->errcode})");
 		}
 		// 保存回调信息
 		$this->setUserinfo($result);
@@ -99,7 +112,7 @@ class Userinfo extends Base {
 		if($this->expire < time() && $this->refreshToken) {
 			$result = json_decode($this->get(sprintf(self::USER_REFRESH_TOKEN_API, $this->getAppid(), $this->refreshToken)));
 			if(isset($result->errcode)){
-				$this->throws(1000094, "{$result->errmsg}({$result->errcode})");
+				$this->throws(100028, "{$result->errmsg}({$result->errcode})");
 			}
 			$this->setUserinfo($result);
 		}
@@ -119,10 +132,18 @@ class Userinfo extends Base {
 		$this->scope = $result->scope;
 	}
 
+	/**
+	 * 获取登录作用域
+	 * @return string
+	 */
 	public function getScope() {
 		return $this->scope;
 	}
 
+	/**
+	 * 获取用户的openid信息
+	 * @return string
+	 */
 	public function getOpenid() {
 		return $this->openid;
 	}
@@ -130,21 +151,21 @@ class Userinfo extends Base {
 	/**
 	 * 获取用户的具体信息（当scope为snsapi_userinfo的时候才可以获取）
 	 * @param string $language 国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
-	 * @return array 用户信息 openid | nickname | sex | province | city | country | headimgurl | privilege | unionid
-	 * @throws \Exception
+	 * @return array 用户信息，包含如下键：openid，nickname，sex，province，city，country，headimgurl，privilege，unionid
+	 * @throws \wxsdk\WxException
 	 */
 	public function getUserinfo($language = 'zh-CN') {
 		if(!$this->getUserAccessToken()) {
-			$this->throws(1000095, '请先进行获取用户令牌操作');
+			$this->throws(100025, '请先进行获取用户令牌操作');
 		}
 		if($this->getScope() != 'snsapi_userinfo') {
-			$this->throws(1000096, '获取用户信息权限不足');
+			$this->throws(100026, '获取用户信息权限不足');
 		}
 
 		$url = sprintf(self::USER_USERINFO, $this->getUserAccessToken(), $this->getOpenid(), $language);
 		$result = json_decode($this->get($url), TRUE);
 		if(isset($result['errcode'])) {
-			$this->throws(1000097, "{$result['errmsg']}({$result['errcode']})");
+			$this->throws(100027, "{$result['errmsg']}({$result['errcode']})");
 		}
 
 		return $result;

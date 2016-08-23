@@ -4,7 +4,7 @@
  * 文件存储类
  * @author enychen
  */
-namespace weixin\storage;
+namespace wxsdk\storage;
 
 class File extends Adapter {
 

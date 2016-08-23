@@ -4,7 +4,7 @@
  * 微信支付结果通知
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
 class Result extends Base {
 
@@ -16,8 +16,12 @@ class Result extends Base {
 
 	/**
 	 * 构造函数
+	 * @throws \wxsdk\WxException
 	 */
 	public function __construct() {
+		$data = $this->getPush();
+		$this->checkSignature($data);
+		$this->setData($this->xmlDecode($data));
 	}
 
 	protected function setData($data) {
@@ -34,23 +38,13 @@ class Result extends Base {
 	}
 
 	/**
-	 * 检查回调信息是否正确
+	 * 通知微信已经收到通知，让微信不再通知
+	 * @param string $isSign 通知内容是否进行加密
 	 * @return void
 	 */
-	public function verify() {
-		$data = $this->getPush();
-		$this->checkSignature($data);
-		$this->setData($this->xmlDecode($data));
-	}
-
-	/**
-	 * 通知微信已经收到通知，让微信不在通知
-	 * @param string $needSign 通知内容是否进行加密
-	 * @return void
-	 */
-	public function response($needSign = FALSE) {
+	public function response($isSign = FALSE) {
 		$response = array('return_code'=>'SUCCESS', 'return_msg'=>'OK');
-		if($needSign) {
+		if($isSign) {
 			$response['sign'] = $this->sign($response);
 		}
 		echo $this->toXml($response);

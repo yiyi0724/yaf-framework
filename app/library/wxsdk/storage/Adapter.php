@@ -4,7 +4,7 @@
  * 存储基类
  * @author enychen
  */
-namespace weixin\storage;
+namespace wxsdk\storage;
 
 abstract class Adapter {
 

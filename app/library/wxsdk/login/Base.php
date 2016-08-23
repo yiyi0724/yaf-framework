@@ -3,7 +3,7 @@
  * 微信网站用户登录
  * @author enychen
  */
-namespace weixin\login;
+namespace wxsdk\login;
 
-class Base extends \weixin\Base {
+class Base extends \wxsdk\Base {
 }

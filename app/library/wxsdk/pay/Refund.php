@@ -4,7 +4,7 @@
  * 微信支付退款
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
 class Refund extends Base {
 	
@@ -162,28 +162,29 @@ class Refund extends Base {
 
 	/**
 	 * 执行微信订单退款
-	 * @return void
+	 * @return array 参考：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
+	 * @throws \wxsdk\WxException
 	 */
 	public function execute() {
 		// 检查要查询的订单号
 		if(!$this->getTransactionId() && !$this->getOutTradeNo()) {
-			$this->throws(1000041, '请设置微信或者我司的订单号');
+			$this->throws(1000112, '请设置微信或者我司的订单号');
 		}
 		// 订单退款号检查
 		if(!$this->getOutRefundNo()) {
-			$this->throws(1000042, '请设置退款订单号');
+			$this->throws(1000113, '请设置退款订单号');
 		}
 		// 总金额检查
 		if(!$this->getTotalFee()) {
-			$this->throws(1000043, '请设置总金额');
+			$this->throws(1000114, '请设置总金额');
 		}
 		// 退款金额检查
 		if(!$this->getRefundFee()) {
-			$this->throws(1000044, '请设置退款金额');
+			$this->throws(1000115, '请设置退款金额');
 		}
 		// 操作人员检查
 		if(!$this->getOpUserId()) {
-			$this->throws(1000045, '请设置操作人员信息');
+			$this->throws(1000116, '请设置操作人员信息');
 		}
 	
 		// 拼接公共参数
@@ -199,7 +200,7 @@ class Refund extends Base {
 		// 必须使用双向证书
 		$this->setUseCert();
 		$result = $this->post(self::REFUND_API, $refund);
-		$this->verify($result);
+		$this->checkSignature($result);
 
 		return $this->xmlDecode($result);
 	}

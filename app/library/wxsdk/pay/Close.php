@@ -4,7 +4,7 @@
  * 关闭微信订单
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
 class Close extends Base {
 
@@ -34,11 +34,12 @@ class Close extends Base {
 	
 	/**
 	 * 关闭订单
-	 * @return void
+	 * @return array 参考：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_3
+	 * @throws \wxsdk\WxException
 	 */
-	public function close() {
+	public function execute() {
 		if(!$this->getOutTradeNo()) {
-			$this->throws(1031, '请设置设置订单号');
+			$this->throws(1000117, '请设置设置订单号');
 		}
 
 		// 准备数据
@@ -51,7 +52,7 @@ class Close extends Base {
 	
 		// curl微信生成订单
 		$result = $this->post(self::CLOSE_API, $close);
-		verify($result);
+		$this->checkSignature($result);
 	
 		return $this->xmlDecode($result);
 	}

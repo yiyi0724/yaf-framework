@@ -4,7 +4,7 @@
  * 微信订单查询
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
 class Query extends Base {
 
@@ -53,11 +53,12 @@ class Query extends Base {
 	/**
 	 * 执行微信订单查询
 	 * @return array 请参考微信查询订单接口 https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_2
+	 * @throws \wxsdk\WxException
 	 */
 	public function execute() {
 		// 必须参数检查
 		if(!$this->getOutTradeNo() && !$this->getTransactionId()) {
-			$this->throws(1000021, '请设置订单号');
+			$this->throws(1000118, '请设置订单号');
 		}
 
 		// 数据准备

@@ -4,7 +4,7 @@
  * 微信用户登录认证
  * @access enychen
  */
-namespace weixin\login;
+namespace wxsdk\login;
 
 class Login extends Base {
 
@@ -98,15 +98,15 @@ class Login extends Base {
 	/**
 	 * 扫描二维码登录
 	 * @return void
-	 * @throws \weixin\WeixinException
+	 * @throws \wxsdk\WxException
 	 */
 	public function scanQrcode() {
 		// 必传参数
 		if(!$this->getRedirectUri()) {
-			$this->throws(1000091, '请设置回调地址');
+			$this->throws(100021, '请设置回调地址');
 		}
 		if(!$this->getState()) {
-			$this->throws(1000092, '请设置state');
+			$this->throws(100022, '请设置state');
 		}
 
 		// 进行跳转
@@ -119,18 +119,18 @@ class Login extends Base {
 	/**
 	 * 微信app登录
 	 * @return void
-	 * @throws \weixin\WeixinException
+	 * @throws \wxsdk\WxException
 	 */
 	public function oauth() {
 		// 必传参数
 		if(!$this->getRedirectUri()) {
-			$this->throws(1000091, '请设置回调地址');
+			$this->throws(100021, '请设置回调地址');
 		}
 		if(!$this->getState()) {
-			$this->throws(1000092, '请设置state');
+			$this->throws(100022, '请设置state');
 		}
 		if(!in_array($this->getScope(), array('snsapi_userinfo', 'snsapi_base'))) {
-			$this->throws(1000093, '请设置作用域');
+			$this->throws(100023, '请设置作用域');
 		}
 
 		// 进行跳转

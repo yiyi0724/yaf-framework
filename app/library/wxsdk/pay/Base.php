@@ -4,9 +4,9 @@
  * 微信支付SDK基类
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
-class Base extends \weixin\Base {
+class Base extends \wxsdk\Base {
 
 	/**
 	 * 商户号id
@@ -46,13 +46,14 @@ class Base extends \weixin\Base {
 
 	/**
 	 * 构造函数
-	 * @param string $appid 公众号appid
-	 * @param string $mchid 商户id
-	 * @param string $key 商户密钥
+	 * @param string $appid 公众号appid，不传递默认使用配置文件信息
+	 * @param string $mchid 商户id，不传递默认使用配置文件信息
+	 * @param string $key 商户密钥，不传递默认使用配置文件信息
 	 */
 	public function __construct($appid = NULL, $mchid = NULL, $key = NULL) {
 		parent::__construct($appid);
-		$this->setMchid($mchid ? : WEIXIN_PAY_MCH_ID)->setKey($key ? : WEIXIN_PAY_KEY);
+		$this->setMchid($mchid ? : WEIXIN_PAY_MCH_ID);
+		$this->setKey($key ? : WEIXIN_PAY_KEY);
 	}
 
 	/**
@@ -149,7 +150,7 @@ class Base extends \weixin\Base {
 	 * @param array $params 原始数据
 	 * @return string
 	 */
-	protected function sign($params) {
+	protected function sign(array $params) {
 		// 签名步骤零：过滤非法数据
 		foreach($params as $key=>$value) {
 			if($key == 'sign' || !$value || is_array($value)) {
@@ -248,12 +249,12 @@ class Base extends \weixin\Base {
 	 * 检查curl返回的结果是否合法
 	 * @param string $result xml字符串数据
 	 * @return void
-	 * @throws \weixin\WeixinException
+	 * @throws \wxsdk\WxException
 	 */
 	protected function checkSignature($result) {
 		// 数据来源检查
 		if(!$result) {
-			$this->throws(1000011, '来源非法');
+			$this->throws(100011, '来源非法');
 		}
 
 		// 把数据转成xml
@@ -261,17 +262,17 @@ class Base extends \weixin\Base {
 
 		// 签名检查
 		if($this->sign($result) !== $result['sign']) {
-			$this->throws(1000012, '签名不正确');
+			$this->throws(100012, '签名不正确');
 		}
 
 		// 微信方通信是否成功
 		if($result['return_code'] != 'SUCCESS') {
-			$this->throws(1000013, $data['return_msg']);
+			$this->throws(100013, $data['return_msg']);
 		}
 
 		// 微信业务处理是否失败
 		if(isset($result['result_code']) && $result['result_code'] == 'FAIL') {
-			$this->throws(1000014, $result['err_code_des']);
+			$this->throws(100014, $result['err_code_des']);
 		}
 	}
 

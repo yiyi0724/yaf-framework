@@ -4,7 +4,7 @@
  * 统一下单
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
 class UnifiedOrder extends Base {
 
@@ -305,12 +305,12 @@ class UnifiedOrder extends Base {
 	/**
 	 * jsapi支付
 	 * @return string 支付封装的json字符串
-	 * @throws \Exception 下单失败抛出异常
+	 * @throws \wxsdk\WxException
 	 */
 	public function jsapi() {
 		// 必须的业务参数检查
 		if(!$this->getOpenid()) {
-			$this->throws(10000110, '请设置openid');
+			$this->throws(1000110, '请设置openid');
 		}
 
 		// 设置参数信息
@@ -333,12 +333,12 @@ class UnifiedOrder extends Base {
 	/**
 	 * 扫码支付
 	 * @return string 二维码参数值
-	 * @throws \Exception
+	 * @throws \wxsdk\WxException
 	 */
 	public function native() {
 		// 必须的业务参数检查
 		if($this->getProductId()) {
-			$this->throws(10000111, '请设置product_id');
+			$this->throws(1000111, '请设置product_id');
 		}
 		
 		// 设置参数信息
@@ -352,8 +352,8 @@ class UnifiedOrder extends Base {
 
 	/**
 	 * app支付
-	 * @return array
-	 * @throws \Exception
+	 * @return array 针对app调用封装好的参数列表
+	 * @throw \wxsdk\WxException
 	 */
 	public function app() {
 		// 设置参数信息
@@ -376,24 +376,24 @@ class UnifiedOrder extends Base {
 	/**
 	 * 统一下单，使用回调地址
 	 * @return array https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
-	 * @throws \Exception 下单失败抛出异常
+	 * @throws \wxsdk\WxException
 	 */
 	protected function executeHaveNotify() {
 		// 必传参数检查
 		if(!$this->getOutTradeNo()) {
-			$this->throws(1000015, '请设置订单号');
+			$this->throws(100015, '请设置订单号');
 		}
 		if(!$this->getTotalFee()) {
-			$this->throws(1000016, '请设置价格');
+			$this->throws(100016, '请设置价格');
 		}
 		if(!$this->getBody()) {
-			$this->throws(1000017, '请设置商品描述信息');
+			$this->throws(100017, '请设置商品描述信息');
 		}
 		if(!in_array($this->getTradeType(), array('JSAPI', 'NATIVE', 'APP', 'WAP'))) {
-			$this->throws(1000018, "请设置交易类型");
+			$this->throws(100018, "请设置交易类型");
 		}
 		if(!$this->getNotifyUrl()) {
-			$this->throws(1000019, "请设通知地址");
+			$this->throws(100019, "请设通知地址");
 		}
 
 		// 支付参数整合

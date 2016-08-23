@@ -4,7 +4,7 @@
  * 微信SDK基类
  * @author enychen
  */
-namespace weixin;
+namespace wxsdk;
 
 abstract class Base {
 
@@ -40,8 +40,8 @@ abstract class Base {
 
 	/**
 	 * 构造函数
-	 * @param string $appid 公众号唯一凭证，不传默认为Config::APPID
-	 * @param string $appSecret 公众号唯一密钥，不传默认为 Config::STORAGE
+	 * @param string $appid 公众号唯一凭证，不传默认为：WEIXIN_APPID
+	 * @param string $appSecret 公众号唯一密钥，不传默认为：WEIXIN_APPSECRET
 	 */
 	public function __construct($appid = NULL, $appSecret = NULL) {
 		// 加载默认配置
@@ -113,6 +113,7 @@ abstract class Base {
 	/**
 	 * 设置公众号的access_token
 	 * @return Base $this 返回当前对象进行连贯操作
+	 * @throws WxException
 	 */
 	protected function setAccessToken() {
 		$cacheKey = sprintf("access.token.%s", $this->getAppid());
@@ -123,7 +124,7 @@ abstract class Base {
 			$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_API, $this->getAppid(), $this->getAppSecret())));
 			// 请求如果有误
 			if(isset($result->errcode)) {
-				$this->throws(1000991, "{$result->errmsg}({$result->errcode})");
+				$this->throws(100991, "{$result->errmsg}({$result->errcode})");
 			}
 			// 缓存access_token
 			$this->getStorage()->setWithExpire($cacheKey, $result->access_token, 7000);
@@ -161,12 +162,13 @@ abstract class Base {
 	 * 将xml字符串转成数组
 	 * @param string $xml xml字符串
 	 * @return array 解析后的数组
+	 * @throws WxException
 	 */
 	protected function xmlDecode($xml) {
 		libxml_disable_entity_loader(true);
 		$result = @simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if(!$result) {
-			$this->throws(1000992, 'XML数据无法解析');
+			$this->throws(100992, 'XML数据无法解析');
 		}
 		return json_decode(json_encode($result), TRUE);
 	}
@@ -228,12 +230,15 @@ abstract class Base {
 	 * @param string $timestamp 时间戳
 	 * @param string $nonce	 	随机数
 	 * @param string $token		在微信平台设定的token值
-	 * @return boolean
+	 * @return void
+	 * @throws WxException
 	 */
 	public function checkSignature($signature, $timestamp, $nonce, $token) {
 		$signArr = array($token, $timestamp, $nonce);
 		sort($signArr, SORT_STRING);
-		return sha1(implode($signArr)) === $signature;
+		if(sha1(implode($signArr)) !== $signature) {
+			$this->throws(100993, '签名不正确');
+		}
 	}
 
 	/**
@@ -249,16 +254,9 @@ abstract class Base {
 	 * @param int $code 错误代码
 	 * @param string $message 错误信息
 	 * @return void
-	 * @throws WeixinException
+	 * @throws WxException
 	 */
 	protected function throws($code, $message) {
-		throw new WeixinException($message, $code);
+		throw new WxException($message, $code);
 	}
-}
-
-/**
- * 微信异常对象
- * @author enychen
- */
-class WeixinException extends \Exception {
 }
