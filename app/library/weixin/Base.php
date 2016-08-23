@@ -34,9 +34,27 @@ abstract class Base {
 
 	/**
 	 * 存储对象
-	 * @var \storage\Adapter
+	 * @var storage\Adapter
 	 */
 	protected $storage = NULL;
+
+	/**
+	 * 构造函数
+	 * @param string $appid 公众号唯一凭证，不传默认为Config::APPID
+	 * @param string $appSecret 公众号唯一密钥，不传默认为 Config::STORAGE
+	 */
+	public function __construct($appid = NULL, $appSecret = NULL) {
+		// 加载默认配置
+		require_once(sprintf("%s/Config.php", __DIR__));
+		// 设置必须参数
+		$this->setAppid($appid ? : WEIXIN_APPID);
+		$this->setAppSecret($appid ? $appSecret : WEIXIN_APPSECRET);
+		// 设置保存对象
+		$storageClass = sprintf("storage/%s", WEIXIN_STORAGE);
+		$this->setStorage(new $storageClass($this->getAppid()));
+		// 设置access_token
+		$this->getAppSecret() and $this->setAccessToken();
+	}
 
 	/**
 	 * 设置公众号appiid
@@ -76,17 +94,17 @@ abstract class Base {
 
 	/**
 	 * 设置存储对象
-	 * @param \storage\Adapter $storage 存储对象
+	 * @param \weixin\storage\Adapter $storage 存储对象
 	 * @return Base $this 返回当前对象进行连贯操作
 	 */
-	protected function setStorage(\storage\Adapter $storage) {
+	protected function setStorage(storage\Adapter $storage) {
 		$this->storage = $storage;
 		return $this;
 	}
 
 	/**
 	 * 获取存储对象
-	 * @return \storage\Adapter
+	 * @return \weixin\storage\Adapter
 	 */
 	public function getStorage() {
 		return $this->storage;
@@ -97,22 +115,20 @@ abstract class Base {
 	 * @return Base $this 返回当前对象进行连贯操作
 	 */
 	protected function setAccessToken() {
-		if(!$this->accessToken) {
-			$cacheKey = sprintf("access.token.%s", $this->getAppid());
-			// 尝试从本地获取下
-			$accessToken = $this->getStorage()->getWithExpire($cacheKey);
-			if(!$accessToken) {
-				// 请求access_token接口
-				$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_API, $this->getAppid(), $this->getAppSecret())));
-				// 请求如果有误
-				if(isset($result->errcode)) {
-					$this->throws(1000991, "{$result->errmsg}({$result->errcode})");
-				}
-				// 缓存access_token
-				$this->getStorage()->setWithExpire($cacheKey, $result->access_token, 7000);
-				// 设置变量
-				$this->accessToken = $result->access_token;
+		$cacheKey = sprintf("access.token.%s", $this->getAppid());
+		// 尝试从本地获取下
+		$accessToken = $this->getStorage()->get($cacheKey);
+		if(!$accessToken) {
+			// 请求access_token接口
+			$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_API, $this->getAppid(), $this->getAppSecret())));
+			// 请求如果有误
+			if(isset($result->errcode)) {
+				$this->throws(1000991, "{$result->errmsg}({$result->errcode})");
 			}
+			// 缓存access_token
+			$this->getStorage()->setWithExpire($cacheKey, $result->access_token, 7000);
+			// 设置变量
+			$this->accessToken = $result->access_token;
 		}
 
 		return $this;
@@ -233,9 +249,16 @@ abstract class Base {
 	 * @param int $code 错误代码
 	 * @param string $message 错误信息
 	 * @return void
-	 * @throws \Exception
+	 * @throws WeixinException
 	 */
 	protected function throws($code, $message) {
-		throw new \Exception($message, $code);
+		throw new WeixinException($message, $code);
 	}
+}
+
+/**
+ * 微信异常对象
+ * @author enychen
+ */
+class WeixinException extends \Exception {
 }

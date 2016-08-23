@@ -50,8 +50,9 @@ class Base extends \weixin\Base {
 	 * @param string $mchid 商户id
 	 * @param string $key 商户密钥
 	 */
-	public function __construct($appid, $mchid, $key) {
-		$this->setAppid($appid)->setMchid($mchid)->setKey($key);
+	public function __construct($appid = NULL, $mchid = NULL, $key = NULL) {
+		parent::__construct($appid);
+		$this->setMchid($mchid ? : WEIXIN_PAY_MCH_ID)->setKey($key ? : WEIXIN_PAY_KEY);
 	}
 
 	/**
@@ -205,7 +206,7 @@ class Base extends \weixin\Base {
 
 	/**
 	 * 发送post请求
-	 * @param string $url  url地址
+	 * @param string $url url地址
 	 * @param string $params 需要post的xml字符串数据
 	 * @return string
 	 */
@@ -244,10 +245,10 @@ class Base extends \weixin\Base {
 	}
 
 	/**
-	 * 检查签名是否正确
+	 * 检查curl返回的结果是否合法
 	 * @param string $result xml字符串数据
 	 * @return void
-	 * @throws \Exception 如果数据异常抛出错误
+	 * @throws \weixin\WeixinException
 	 */
 	protected function checkSignature($result) {
 		// 数据来源检查

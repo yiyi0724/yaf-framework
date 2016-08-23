@@ -89,19 +89,18 @@ class QueryRefund extends Base {
 	 * 执行微信退款订单查询
 	 * @return array https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_5
 	 */
-	public function queryRefund() {
+	public function execute() {
 		// 必须参数检查
-		if(!$this->toArray()) {
+		$queryRefund = $this->toArray();
+		if(!$queryRefund) {
 			$this->throws(1000021, '请设置订单号');
 		}
-
-		// 数据准备
-		$queryRefund = $this->toArray();
+		// 数据参数准备
 		$queryRefund['appid'] = $this->getAppid();
 		$queryRefund['mch_id'] = $this->getMchid();
 		$queryRefund['nonce_str'] = $this->strShuffle();
 		$queryRefund['sign'] = $this->sign($query);
-		$query = $this->XmlEncode($query);
+		$query = $this->xmlEncode($query);
 
 		// 执行curl
 		$result = $this->post(self::QUERY_REFUND_API, $query);

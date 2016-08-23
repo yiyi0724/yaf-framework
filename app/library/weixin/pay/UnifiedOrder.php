@@ -361,7 +361,7 @@ class UnifiedOrder extends Base {
 
 		// 执行公共调用
 		$result = $this->executeHaveNotify($unifiedOrderObject);
-		
+
 		// 封装返回数据
 		$app['appid'] = $this->getAppid();
 		$app['partnerid'] = $this->getMchid();
