@@ -6,7 +6,7 @@
  */
 namespace wxsdk\login;
 
-class Login extends Base {
+class Oauth extends Base {
 
 	/**
 	 * 二维码扫描登录接口
@@ -37,6 +37,14 @@ class Login extends Base {
 	 * @var string
 	 */
 	protected $state = NULL;
+
+	/**
+	 * 构造函数
+	 * @param string $appid 公众号唯一凭证，不传默认为：WEIXIN_APPID
+	 */	
+	public function __construct($appid = NULL) {
+		parent::__construct($appid, NULL);
+	}
 
 	/**
 	 * 设置作用域，必须

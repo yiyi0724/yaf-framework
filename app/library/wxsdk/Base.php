@@ -50,7 +50,7 @@ abstract class Base {
 		$this->setAppid($appid ? : WEIXIN_APPID);
 		$this->setAppSecret($appid ? $appSecret : WEIXIN_APPSECRET);
 		// 设置保存对象
-		$storageClass = sprintf("storage/%s", WEIXIN_STORAGE);
+		$storageClass = sprintf("wxsdk\storage\%s", WEIXIN_STORAGE);
 		$this->setStorage(new $storageClass($this->getAppid()));
 		// 设置access_token
 		$this->getAppSecret() and $this->setAccessToken();

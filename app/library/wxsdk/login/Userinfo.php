@@ -158,7 +158,7 @@ class Userinfo extends Base {
 		if(!$this->getUserAccessToken()) {
 			$this->throws(100025, '请先进行获取用户令牌操作');
 		}
-		if($this->getScope() != 'snsapi_userinfo') {
+		if($this->getScope() == 'snsapi_base') {
 			$this->throws(100026, '获取用户信息权限不足');
 		}
 
