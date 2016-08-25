@@ -1,12 +1,12 @@
 <?php
 
 /**
- * 案例模型，用于参考
+ * 后台栏目模型
  * @author enychen
  */
-namespace web;
+namespace admin;
 
-class AdminmenuModel extends \base\AbstractModel {
+class MenuModel extends \base\AbstractModel {
 
 	/**
 	 * 表名

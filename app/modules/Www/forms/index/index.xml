@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<form>
-	<input name="id" from="get" type="number" require="1" error="id值有误" min="0" max="1" />
-	<input name="page" from="get" type="number" require="0" error="页码有误"  default="1" alias="id >" />
-</form>

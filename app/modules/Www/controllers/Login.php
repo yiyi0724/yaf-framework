@@ -5,32 +5,46 @@
  * @author enychen
  */
 
+use \services\common\Captcha as CaptchaService;
+use \services\admin\Login as AdminLoginService;
 use \services\common\Security as SecurityService;
 
-class LoginController extends \base\BaseController {
-
-	/**
-	 * 重置初始化
-	 * @return void
-	 */
-	public function init() {
-		// 已经登录
-		(defined('ADMIN_UID') && ADMIN_UID) and $this->redirect('/');
-	}
+class LoginController extends \base\AdminController {
 
 	/**
 	 * 登录页面
 	 * @return void
 	 */
 	public function indexAction() {
+		if(defined('ADMIN_UID')) {
+			$this->redirect('/');
+		}
+		
 		$securityService = new SecurityService();
 		$securityService->set('login', uniqid());
 	}
 
 	/**
 	 * 进行登录
-	 * @return void
 	 */
-	public function doAction() {
+	public function apiAction() {
+		$request = $this->getRequest();
+
+		// 访问路径检查
+		if(!$request->isPost() || !$request->isXmlHttpRequest()) {
+			$this->json(FALSE, '非法访问', 1101);
+		}
+		
+		// 保存验证码
+		if(!CaptchaService::compare('login', $request->get('captcha'))) {
+			$this->json(FALSE, '验证码有误', 1102);
+		}
+
+		// 账号密码检查
+		if(!AdminLoginService::fromAP($request->get('account'), $request->get('password'))) {
+			$this->json(FALSE, '账号或密码有误', 1103);
+		}
+		
+		$this->json(TRUE, '登录成功', 1100);
 	}
 }

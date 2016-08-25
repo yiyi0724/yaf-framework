@@ -15,10 +15,10 @@ class Captcha extends Base {
 	 * 生成验证码图片并将验证码值保存到session
 	 * @return boolean
 	 */
-	public function create($key) {
+	public static function create($key) {
 		$captcha = new CaptchaLib();
 		$captcha->setCanvasBgColor(55, 62, 74)->show();
-		return $this->getSession()->set($key, $captcha->getCode());
+		return self::getSession()->set($key, $captcha->getCode());
 	}
 
 	/**
@@ -27,9 +27,10 @@ class Captcha extends Base {
 	 * @param string $code 用户输入的值
 	 * @return boolean
 	 */
-	public function compare($key, $code) {
-		$isMatch = !strcasecmp($this->getSession()->get($key), $code);
-		$this->getSession()->del($key);
+	public static function compare($key, $code) {
+		$session = self::getSession();
+		$isMatch = !strcasecmp($session->get($key), $code);
+		$session->del($key);
 		return $isMatch;
 	}
 }

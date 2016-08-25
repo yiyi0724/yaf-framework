@@ -14,14 +14,7 @@ class ImageController extends \base\BaseController {
 	 * @return void
 	 */
 	public function captchaAction() {
-		// 数据检查
-		$request = $this->getVailRequest();
-
-		// 保存验证码
-		$captchaService = new CaptchaService();
-		$captchaService->create($request->get('channel'));
-
-		// 关闭视图
 		$this->disView();
+		CaptchaService::create($this->getRequest()->get('channel'));
 	}
 }

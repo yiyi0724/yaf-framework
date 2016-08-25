@@ -9,34 +9,33 @@
 				<p class="description">Eny.Inc</p>
 			</div>
 		</div>
-		<div class="login-form">
+		<div class="login-form" id="vue-login">
 			<div class="login-content">
-				<form id="form_login" role="form" method="post">
-					<div class="form-group">	
-						<div class="input-group focused">
-							<div class="input-group-addon"><i class="entypo-user"></i></div>
-							<input type="email" placeholder="账号" id="username" name="email" class="form-control" tabindex="1">
-						</div>
+				<div class="form-group">
+					<div class="input-group focused">
+						<div class="input-group-addon"><i class="entypo-user"></i></div>
+						<input v-model="account" type="email" placeholder="账号" id="username" name="email" class="form-control" tabindex="1">
 					</div>
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-addon"><i class="entypo-key"></i></div>
-							<input type="password" placeholder="密码" id="password" name="password" class="form-control" tabindex="2">
-						</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="entypo-key"></i></div>
+						<input v-model="password" type="password" placeholder="密码" id="password" name="password" class="form-control" tabindex="2">
 					</div>
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-addon"><i class="entypo-feather"></i></div>
-							<input id="checkCode" class="form-control" autocomplete="off" type="text" name="captcha[code]" tabindex="3" placeholder="验证码" maxlength="4">
-							<img class="checkImg" src="/image/captcha/?channel=login" width="122" height="50">
-						</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="entypo-feather"></i></div>
+						<input v-model="captcha" id="checkCode" class="form-control" autocomplete="off" type="text" name="captcha[code]" tabindex="3" placeholder="验证码" maxlength="4">
+						<img v-on:click="changeCaptcha" class="checkImg"  v-bind:src="captchaUrl" width="122" height="50">
 					</div>
-					<div class="form-group">
-						<button class="btn btn-primary btn-block btn-login" type="submit">登录</button>
-					</div>
-				</form>
+				</div>
+				<div class="form-group">
+					<button v-on:click="submitForm" class="btn btn-primary btn-block btn-login">登录</button>
+				</div>
 			</div>
 		</div>
 	</div>
+	<?php $this->commonLayout('component/alert')?>
 </body>
-<?php $this->commonLayout('foot')?>
+<?php $this->commonLayout('foot', array('scripts'=>array('modules/www/login/index.js')))?>

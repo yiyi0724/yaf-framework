@@ -178,7 +178,7 @@ class Is {
 	 * @return boolean 检查通过返回TRUE
 	 */
 	public static function password($value) {
-		return (bool)(trim($value) && !is_numeric($value) && mb_strlen($value) > 5 && preg_match('/^([a-zA-Z])\1*$/i', $value));
+		return (bool)(trim($value) && !is_numeric($value) && mb_strlen($value) > 5);
 	}
 
 	/**

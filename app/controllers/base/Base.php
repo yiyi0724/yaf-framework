@@ -14,8 +14,6 @@ use \Yaf\Controller_Abstract;
 use \traits\NotFoundException;
 use \traits\RedirectException;
 use \traits\ForbiddenException;
-use \services\common\Menu as MenuService;
-use \services\admin\Info as AdminInfoService;
 
 abstract class BaseController extends Controller_Abstract {
 	
@@ -110,7 +108,7 @@ abstract class BaseController extends Controller_Abstract {
 	public function throwForbiddenException($code, $message) {
 		throw new ForbiddenException($message, $code);
 	}
-	
+
 	/**
 	 * 抛出404异常
 	 * @param number $code 错误码

@@ -95,7 +95,7 @@ abstract class AbstractModel {
 	 * @return void
 	 */
 	protected final function setDatabase($adapter) {
-		$config = static::getConfig(sprintf("database%s", $adapter));
+		$config = static::getConfig(sprintf("database.%s", $adapter));
 		$this->database = PDO::getInstance($config->type, $config->host, $config->port, 
 			$config->dbname, $config->charset, $config->username, $config->password);
 

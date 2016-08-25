@@ -5,25 +5,16 @@
  * @author enychen
  */
 
-use \services\admin\Info as AdminInfoService;
+use \services\admin\Login as AdminLoginService;
 
-class LogoutController extends \base\BaseController {
+class LogoutController extends \base\AdminController {
 
-	/**
-	 * 重写初始化
-	 * @return void
-	 */
-	public function init() {		
-	}
-	
 	/**
 	 * 登出方法
 	 * @return void
 	 */
 	public function indexAction() {
-		$adminInfoService = new AdminInfoService();
-		$adminInfoService->clear();
+		AdminLoginService::clear();
 		$this->redirect('\login');
-		exit;
 	}
 }

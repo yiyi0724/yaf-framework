@@ -49,7 +49,7 @@ class ErrorController extends \base\BaseController {
 	private function showFormException(\traits\FormException $exception) {
 		switch(TRUE) {
 			case IS_AJAX:
-				$this->json(FALSE, '数据有误', array('formError'=>$exception->getError()));
+				$this->json(FALSE, '表单数据有误', 991, $exception->getError());
 				break;
 			default:
 				$this->assign('error', $exception->getError());
