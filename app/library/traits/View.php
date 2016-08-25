@@ -32,6 +32,11 @@ class view extends Simple {
 		echo parent::render("{$tpl}.phtml", $tpl_vars);
 	}
 
+	public function component($tpl, array $tpl_vars = array()) {
+		$this->setScriptPath(sprintf('%scomponent', COMMON_VIEW_PATH));
+		echo parent::render("{$tpl}.phtml", $tpl_vars);
+	}
+
 	/**
 	 * 简化isset($data) ? $data : NULL的作用
 	 * @param array $data 数组数据

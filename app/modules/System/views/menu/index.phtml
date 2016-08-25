@@ -1,0 +1,12 @@
+<?php $this->commonLayout('header');?>
+<?php $this->component('table')?>
+<?php $this->component('alert')?>
+<script>
+tableComponent.initTitles('UID', '称谓').initLists([
+	{ id : 10000, nickname : 'yyq' },
+	{ id : 10000, nickname : 'yyq' },
+	{ id : 10000, nickname : 'yyq' },
+	{ id : 10000, nickname : 'yyq' }
+]).initTotalCount(10).initTotalPage(1);
+</script>
+<?php $this->commonLayout('footer');?>

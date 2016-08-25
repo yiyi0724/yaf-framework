@@ -1,0 +1,71 @@
+<div id="vue-table" class="dataTables_wrapper">
+	<table id="dataTable-user"
+		class="table table-condensed table-bordered table-hover">
+		<thead>
+			<tr>
+				<th class="text-center" v-for="title in titles">{{ title.text }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr v-for="list in lists">
+				<td v-for="value in list" class="text-center">{{{ value }}}</td>
+			</tr>			
+		</tbody>
+	</table>
+	<div v-if="totalCount" class="row">
+		<div class="col-xs-6 col-left">
+			<div class="dataTables_info">
+				<span>{{ totalCount }}</span> 条, 共 <span>{{ totalPage }}</span> 页
+			</div>
+		</div>
+		<div class="col-xs-6 col-right">
+			<div class="dataTables_paginate paging_bootstrap">
+				<ul v-if="totalPage" class="pagination pagination-sm">
+					<li class="first"><a href="/admin/user/list/"> <i class="entypo-to-start"></i></a></li>
+					<li class="active"><a href="/admin/user/list/?page=1">1</a></li>
+					<li><a href="/admin/user/list/?page=2">2</a></li>
+					<li><a href="/admin/user/list/?page=3">3</a></li>
+					<li><a href="/admin/user/list/?page=4">4</a></li>
+					<li class="last"><a href="/admin/user/list/?page=2105"> <i class="entypo-to-end"></i></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var tableComponent = new Vue({
+	el : '#vue-table',
+	data : {
+		titles : [],
+		lists : [],
+		pages : [],
+		totalCount : 0,
+		totalPage : 0
+	},
+	methods : {
+		initTitles : function() {
+			this.titles = [];
+			for(var i in arguments) {
+				this.titles[i] = { text : arguments[i] }
+			}
+			return this;
+		},
+		initLists : function(data) {
+			this.lists = data;
+			return this;
+		},
+		initTotalCount : function(totalCount) {
+			this.totalCount = totalCount;
+			return this;
+		},
+		initTotalPage : function(totalPage) {
+			this.totalPage = totalPage;
+			return this;
+		},
+		initPages : function(pages) {
+			this.pages = pages;
+			return this;
+		}
+	}
+});
+</script>

@@ -164,7 +164,7 @@ class Is {
 	 * @return boolean 检查通过返回TRUE
 	 */
 	public static function username($value) {
-		return (bool)(trim($value) && preg_match('/^[a-zA-Z_][a-zA-Z_-]+$/i', $value) && mb_strlen($value) > 3 && mb_strlen($value) < 17);
+		return (bool)(trim($value) && preg_match('/^[a-zA-Z_][a-zA-Z0-9_-]+$/i', $value) && mb_strlen($value) > 3 && mb_strlen($value) < 17);
 	}
 
 	/**
