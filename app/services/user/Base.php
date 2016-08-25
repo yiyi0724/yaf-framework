@@ -2,18 +2,17 @@
 
 /**
  * 用户逻辑基类
+ * @author enychen
  */
 namespace services\user;
 
-use \services\base\Base as BaseService;
-
-class User extends BaseService {
+class Base extends \services\base\Base {
 
 	/**
 	 * 加密密钥
 	 * @var string
 	 */
-	const PASSWORD_SECRET = 'p&fH^sdfb%NXuYmJ&@.+%$@126aERFdv';
+	const PASSWORD_SECRET = 'p&fH^sdfb%NXuY95867235mJ&@.+%$@126aERFdv';
 
 	/**
 	 * 获取加密的密码

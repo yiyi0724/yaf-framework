@@ -4,15 +4,15 @@
  * 微信支付退款
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
-class Refund {
-
+class Refund extends Base {
+	
 	/**
-	 * 查询数组
-	 * @var array
+	 * 支付退款接口
+	 * @var string
 	 */
-	private $refund = array();
+	const REFUND_API = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
 	
 	/**
 	 * 设置终端设备号(门店号或收银设备ID), 可选
@@ -20,7 +20,7 @@ class Refund {
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setDeviceInfo($deviceInfo) {
-		$this->refund['device_info'] = $deviceInfo;
+		$this->info['device_info'] = $deviceInfo;
 		return $this;
 	}
 
@@ -29,7 +29,7 @@ class Refund {
 	 * @return string
 	 */
 	public function getDeviceInfo() {
-		return $this->get('device_info');
+		return $this->getInfo('device_info');
 	}
 
 	/**
@@ -38,7 +38,7 @@ class Refund {
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setTransactionId($transactionId) {
-		$this->refund['transaction_id'] = $transactionId;
+		$this->info['transaction_id'] = $transactionId;
 		return $this;
 	}
 
@@ -47,7 +47,7 @@ class Refund {
 	 * @return string
 	 */
 	public function getTransactionId() {
-		return $this->get('transaction_id');
+		return $this->getInfo('transaction_id');
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Refund {
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setOutTradeNo($outTradeNo) {
-		$this->refund['out_trade_no'] = $outTradeNo;
+		$this->info['out_trade_no'] = $outTradeNo;
 		return $this;
 	}
 
@@ -65,7 +65,7 @@ class Refund {
 	 * @return string
 	 */
 	public function getOutTradeNo() {
-		return $this->get('out_trade_no');
+		return $this->getInfo('out_trade_no');
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Refund {
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setOutRefundNo($outRefundNo) {
-		$this->refund['out_refund_no'] = $outRefundNo;
+		$this->info['out_refund_no'] = $outRefundNo;
 		return $this;
 	}
 
@@ -83,16 +83,16 @@ class Refund {
 	 * @return string
 	 */
 	public function getOutRefundNo() {
-		return $this->get('out_refund_no');
+		return $this->getInfo('out_refund_no');
 	}
 
 	/**
-	 * 设置订单的总金额，必须
-	 * @param number $totalFee 退款的总金额
+	 * 设置订单的总金额（内部会自动转成分），必须
+	 * @param number $totalFee 退款的总金额，单位：元
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setTotalFee($totalFee) {
-		$this->refund['total_fee'] = $totalFee * 100;
+		$this->info['total_fee'] = $totalFee * 100;
 		return $this;
 	}
 
@@ -101,7 +101,7 @@ class Refund {
 	 * @return number
 	 */
 	public function getTotalFee() {
-		$totalFee = $this->get('total_fee', 0);
+		$totalFee = $this->getInfo('total_fee');
 		return $totalFee/100;
 	}
 
@@ -111,7 +111,7 @@ class Refund {
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setRefundFee($refundFee) {
-		$this->refund['refund_fee'] = $refundFee * 100;
+		$this->info['refund_fee'] = $refundFee * 100;
 		return $this;
 	}
 
@@ -120,7 +120,7 @@ class Refund {
 	 * @return number
 	 */
 	public function getRefundFee() {
-		$totalFee = $this->get('refund_fee', 0);
+		$totalFee = $this->getInfo('refund_fee');
 		return $totalFee/100;
 	}
 	
@@ -130,7 +130,7 @@ class Refund {
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setRefundFeeType($refundFeeType) {
-		$this->refund['refund_fee_type'] = $refundFeeType;
+		$this->info['refund_fee_type'] = $refundFeeType;
 		return $this;
 	}
 
@@ -139,7 +139,7 @@ class Refund {
 	 * @return string
 	 */
 	public function setRefundFeeType() {
-		return $this->get('refund_fee_type');
+		return $this->getInfo('refund_fee_type');
 	}
 
 	/**
@@ -148,7 +148,7 @@ class Refund {
 	 * @return Refund $this 返回当前对象进行连贯操作
 	 */
 	public function setOpUserId($opUserId) {
-		$this->refund['op_user_id'] = $opUserId;
+		$this->info['op_user_id'] = $opUserId;
 		return $this;
 	}
 
@@ -157,24 +157,52 @@ class Refund {
 	 * @return string
 	 */
 	public function getOpUserId() {
-		return $this->get('op_user_id');
+		return $this->getInfo('op_user_id');
 	}
 
 	/**
-	 * 将设置过的属性封装到数组
-	 * @return array
+	 * 执行微信订单退款
+	 * @return array 参考：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_4
+	 * @throws \wxsdk\WxException
 	 */
-	public function toArray() {
-		return $this->refund;
-	}
+	public function execute() {
+		// 检查要查询的订单号
+		if(!$this->getTransactionId() && !$this->getOutTradeNo()) {
+			$this->throws(1000112, '请设置微信或者我司的订单号');
+		}
+		// 订单退款号检查
+		if(!$this->getOutRefundNo()) {
+			$this->throws(1000113, '请设置退款订单号');
+		}
+		// 总金额检查
+		if(!$this->getTotalFee()) {
+			$this->throws(1000114, '请设置总金额');
+		}
+		// 退款金额检查
+		if(!$this->getRefundFee()) {
+			$this->throws(1000115, '请设置退款金额');
+		}
+		// 操作人员检查
+		if(!$this->getOpUserId()) {
+			$this->throws(1000116, '请设置操作人员信息');
+		}
+	
+		// 拼接公共参数
+		$refund = $this->toArray();
+		$refund['appid'] = $this->getAppid();
+		$refund['mch_id'] = $this->getMchid();
+		$refund['nonce_str'] = $this->strShuffle();
+		$refund['sign'] = $this->sign($refund);
+	
+		// xml编码
+		$refund = $this->xmlEncode($refund);
 
-	/**
-	 * 封装get方法，防止notice报错
-	 * @param string $key 键名
-	 * @param string $default　默认值
-	 * @return string|number|null
-	 */
-	private function get($key, $default = NULL) {
-		return isset($this->refund[$key]) ? $this->refund[$key] : $default;
+		// 必须使用双向证书
+		$this->setUseCert();
+		$result = $this->post(self::REFUND_API, $refund);
+		$this->checkSignature($result);
+
+		return $this->xmlDecode($result);
 	}
+	
 }

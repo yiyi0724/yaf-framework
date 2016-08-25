@@ -5,9 +5,9 @@
  * @author enychen
  * @version 1.0
  */
-namespace File;
+namespace lock;
 
-class FileLock {
+class File {
 
 	/**
 	 * 锁文件目录
@@ -30,21 +30,7 @@ class FileLock {
 	private $errorCode = 0;
 	
 	private $errorMsg = NULL;
-	
-	/**
-	 * 用于设置成员属性($path)
-	 * @param  string $key 成员属性名(不区分大小写)
-	 * @param  mixed  $val 为成员属性设置的值
-	 * @return \File\FileLock 返回自己对象$this，可以用于连贯操作
-	 */
-	public function set($key, $val) {
-		$key = strtolower($key);
-		if(in_array($key, get_class_vars(get_class($this)))) {
-			$this->setOption($key, $val);
-		}
-		
-		return $this;
-	}
+
 	
 	/**
 	 * 为单个成员属性设置值

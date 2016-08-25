@@ -4,7 +4,7 @@
  * 微信SDK基类
  * @author enychen
  */
-namespace weixin;
+namespace wxsdk;
 
 abstract class Base {
 
@@ -12,7 +12,7 @@ abstract class Base {
 	 * 获取access_token的接口
 	 * @var string
 	 */
-	const ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
+	const ACCESS_TOKEN_API = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
 	
 	/**
 	 * 公众号appid
@@ -34,9 +34,27 @@ abstract class Base {
 
 	/**
 	 * 存储对象
-	 * @var \storage\Adapter
+	 * @var storage\Adapter
 	 */
 	protected $storage = NULL;
+
+	/**
+	 * 构造函数
+	 * @param string $appid 公众号唯一凭证，不传默认为：WEIXIN_APPID
+	 * @param string $appSecret 公众号唯一密钥，不传默认为：WEIXIN_APPSECRET
+	 */
+	public function __construct($appid = NULL, $appSecret = NULL) {
+		// 加载默认配置
+		require_once(sprintf("%s/Config.php", __DIR__));
+		// 设置必须参数
+		$this->setAppid($appid ? : WEIXIN_APPID);
+		$this->setAppSecret($appid ? $appSecret : WEIXIN_APPSECRET);
+		// 设置保存对象
+		$storageClass = sprintf("wxsdk\storage\%s", WEIXIN_STORAGE);
+		$this->setStorage(new $storageClass($this->getAppid()));
+		// 设置access_token
+		$this->getAppSecret() and $this->setAccessToken();
+	}
 
 	/**
 	 * 设置公众号appiid
@@ -76,17 +94,17 @@ abstract class Base {
 
 	/**
 	 * 设置存储对象
-	 * @param \storage\Adapter $storage 存储对象
+	 * @param \weixin\storage\Adapter $storage 存储对象
 	 * @return Base $this 返回当前对象进行连贯操作
 	 */
-	protected function setStorage(\storage\Adapter $storage) {
+	protected function setStorage(storage\Adapter $storage) {
 		$this->storage = $storage;
 		return $this;
 	}
 
 	/**
 	 * 获取存储对象
-	 * @return \storage\Adapter
+	 * @return \weixin\storage\Adapter
 	 */
 	public function getStorage() {
 		return $this->storage;
@@ -95,35 +113,23 @@ abstract class Base {
 	/**
 	 * 设置公众号的access_token
 	 * @return Base $this 返回当前对象进行连贯操作
+	 * @throws WxException
 	 */
 	protected function setAccessToken() {
-		if(!$this->accessToken) {
-			// 从文件获取
-			$filename = sprintf('%s%stmp%s%s', __DIR__, DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $this->getAppid());
-			$isExpire = TRUE;
-			if(is_file($filename)) {
-				$tmpInfo = json_encode(file_get_contents($filename));
-				if(!json_last_error() && $tmpInfo->expire > time()) {
-					$this->accessToken = $tmpInfo->access_token;
-					$isExpire = FALSE;
-				}
+		$cacheKey = sprintf("access.token.%s", $this->getAppid());
+		// 尝试从本地获取下
+		$accessToken = $this->getStorage()->get($cacheKey);
+		if(!$accessToken) {
+			// 请求access_token接口
+			$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_API, $this->getAppid(), $this->getAppSecret())));
+			// 请求如果有误
+			if(isset($result->errcode)) {
+				$this->throws(100991, "{$result->errmsg}({$result->errcode})");
 			}
-
-			// 文件也过期
-			if($isExpire) {
-				// 请求access_token接口
-				$result = json_decode($this->get(sprintf(self::ACCESS_TOKEN_URL, $this->getAppid(), $this->getAppSecret())));
-				// 请求如果有误
-				if(isset($result->errcode)) {
-					$this->throws(100001, "{$result->errmsg}({$result->errcode})");
-				}
-				
-				$tmpInfo = json_encode(array('access_token'=>$result->access_token, 'expire'=>strtotime("+1 hours")));
-				// 缓存access_token
-				$this->getStorage()->set($cacheKey, $result->access_token, $result->expires_in);
-				// 设置变量
-				$this->accessToken = $result->access_token;
-			}
+			// 缓存access_token
+			$this->getStorage()->setWithExpire($cacheKey, $result->access_token, 7000);
+			// 设置变量
+			$this->accessToken = $result->access_token;
 		}
 
 		return $this;
@@ -142,7 +148,7 @@ abstract class Base {
 	 * @param array $params 要发送的数组
 	 * @return string xml字符串
 	 */
-	protected function XmlEncode(array $params) {
+	protected function xmlEncode(array $params) {
 		$xml = "<xml>";
 		foreach($params as $key=>$value) {
 			$xml .= is_numeric($value) ? "<{$key}>{$value}</{$key}>" : "<{$key}><![CDATA[{$value}]]></{$key}>";
@@ -156,12 +162,13 @@ abstract class Base {
 	 * 将xml字符串转成数组
 	 * @param string $xml xml字符串
 	 * @return array 解析后的数组
+	 * @throws WxException
 	 */
 	protected function xmlDecode($xml) {
 		libxml_disable_entity_loader(true);
 		$result = @simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if(!$result) {
-			$this->throws(1990, 'XML数据无法解析');
+			$this->throws(100992, 'XML数据无法解析');
 		}
 		return json_decode(json_encode($result), TRUE);
 	}
@@ -223,13 +230,15 @@ abstract class Base {
 	 * @param string $timestamp 时间戳
 	 * @param string $nonce	 	随机数
 	 * @param string $token		在微信平台设定的token值
-	 * @return boolean
+	 * @return void
+	 * @throws WxException
 	 */
 	public function checkSignature($signature, $timestamp, $nonce, $token) {
 		$signArr = array($token, $timestamp, $nonce);
 		sort($signArr, SORT_STRING);
-		$signArr = sha1(implode($signArr));
-		return $signArr === $signature;
+		if(sha1(implode($signArr)) !== $signature) {
+			$this->throws(100993, '签名不正确');
+		}
 	}
 
 	/**
@@ -245,9 +254,9 @@ abstract class Base {
 	 * @param int $code 错误代码
 	 * @param string $message 错误信息
 	 * @return void
-	 * @throws \Exception
+	 * @throws WxException
 	 */
 	protected function throws($code, $message) {
-		throw new \Exception($message, $code);
+		throw new WxException($message, $code);
 	}
 }

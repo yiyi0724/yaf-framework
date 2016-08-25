@@ -4,24 +4,15 @@
  * 统一下单
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
-class UnifiedOrder {
-
-	/**
-	 * 订单信息
-	 * @var array
-	 */
-	private $order = array();
+class UnifiedOrder extends Base {
 
 	/**
-	 * 构造函数
-	 * @return void
+	 * 统一下单接口
+	 * @var string
 	 */
-	public function __construct() {
-		// 设置默认ip地址
-		$this->setSpbillCreateIp($_SERVER['REMOTE_ADDR']);
-	}
+	const UNIFIED_ORDER_API = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
 
 	/**
 	 * 设置订单号，必须
@@ -29,7 +20,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setOutTradeNo($outTradeNo) {
-		$this->order['out_trade_no'] = $outTradeNo;
+		$this->info['out_trade_no'] = $outTradeNo;
 		return $this;
 	}
 
@@ -38,16 +29,16 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getOutTradeNo() {
-		return $this->get('out_trade_no');
+		return $this->getInfo('out_trade_no');
 	}
 
 	/**
-	 * 设置价格，必须
-	 * @param number $totalFee 价格，单位：元（内部会把价格转成分）
+	 * 设置价格（内部会把价格转成分），必须
+	 * @param number $totalFee 价格，单位：元
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setTotalFee($totalFee) {
-		$this->order['total_fee'] = $totalFee * 100;
+		$this->info['total_fee'] = $totalFee * 100;
 		return $this;
 	}
 
@@ -56,7 +47,7 @@ class UnifiedOrder {
 	 * @return number
 	 */
 	public function getTotalFee() {
-		$totalFee = $this->get('total_fee', 0);
+		$totalFee = $this->getInfo('total_fee', 0);
 		return $totalFee/100;
 	}
 
@@ -66,7 +57,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setBody($body) {
-		$this->order['body'] = $body;
+		$this->info['body'] = $body;
 		return $this;
 	}
 
@@ -75,7 +66,7 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getBody() {
-		return $this->get('body');
+		return $this->getInfo('body');
 	}
 
 	/**
@@ -84,7 +75,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setTradeType($tradeType) {
-		$this->order['trade_type'] = strtoupper($tradeType);
+		$this->info['trade_type'] = strtoupper($tradeType);
 		return $this;
 	}
 
@@ -93,7 +84,7 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getTradeType() {
-		return $this->get('trade_type');
+		return $this->getInfo('trade_type');
 	}
 
 	/**
@@ -102,7 +93,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setSpbillCreateIp($ip) {
-		$this->order['spbill_create_ip'] = $ip;
+		$this->info['spbill_create_ip'] = $ip;
 		return $this;
 	}
 
@@ -111,25 +102,25 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getSpbillCreateIp() {
-		return $this->get('spbill_create_ip');
+		return $this->getInfo('spbill_create_ip');
 	}
 
 	/**
-	 * 模式二支付必须，模式一支付可选，按需
+	 * 设置回调地址，按需
 	 * @param string $notifyUrl, 操作成功后微信回调我司的URL地址
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setNotifyUrl($notifyUrl) {
-		$this->order['notify_url'] = $notifyUrl;
+		$this->info['notify_url'] = $notifyUrl;
 		return $this;
 	}
 
 	/**
-	 * 获取回调参数
+	 * 获取回调地址
 	 * @return string
 	 */
 	public function getNotifyUrl() {
-		return $this->get('notify_url');
+		return $this->getInfo('notify_url');
 	}
 
 	/**
@@ -138,7 +129,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setOpenid($openId) {
-		$this->order['openid'] = $openId;
+		$this->info['openid'] = $openId;
 		return $this;
 	}
 
@@ -147,7 +138,7 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getOpenid() {
-		return $this->get('openid');
+		return $this->getInfo('openid');
 	}
 
 	/**
@@ -156,7 +147,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setProductId($productId) {
-		$this->order['product_id'] = $productId;
+		$this->info['product_id'] = $productId;
 		return $this;
 	}
 
@@ -165,7 +156,7 @@ class UnifiedOrder {
 	 * @return number|string
 	 */
 	public function getProductId() {
-		return $this->get('product_id');
+		return $this->getInfo('product_id');
 	}
 
 	/**
@@ -174,7 +165,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setFeeType($feeType) {
-		$this->order['fee_type'] = $feeType;
+		$this->info['fee_type'] = $feeType;
 		return $this;
 	}
 
@@ -183,7 +174,7 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getFeeType() {
-		return $this->get('fee_type');
+		return $this->getInfo('fee_type');
 	}
 
 	/**
@@ -192,7 +183,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setDeviceInfo($deviceInfo) {
-		$this->order['device_info'] = $deviceInfo;
+		$this->info['device_info'] = $deviceInfo;
 		return $this;
 	}
 
@@ -201,16 +192,15 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getDeviceInfo() {
-		return $this->get('device_info');
+		return $this->getInfo('device_info');
 	}
 
 	/**
 	 * 设置不使用信用卡支付, 可选
-	 * @param string $limitPay 只有一个值，no_credit
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
-	public function setLimitPay($limitPay = 'no_credit') {
-		$this->order['limit_pay'] = $limitPay;
+	public function setNoCredit() {
+		$this->info['limit_pay'] = 'no_credit';
 		return $this;
 	}
 
@@ -218,8 +208,8 @@ class UnifiedOrder {
 	 * 获取不使用信用卡支付
 	 * @return string|null
 	 */
-	public function getLimitPay() {
-		return $this->get('limit_pay');
+	public function getNoCredit() {
+		return $this->getInfo('limit_pay');
 	}
 
 	/**
@@ -228,7 +218,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setGoodsTag($goodsTag) {
-		$this->order['goods_tag'] = $goodsTag;
+		$this->info['goods_tag'] = $goodsTag;
 		return $this;
 	}
 
@@ -237,7 +227,7 @@ class UnifiedOrder {
 	 * @return number|string
 	 */
 	public function getGoodsTag() {
-		return $this->get('goods_tag');
+		return $this->getInfo('goods_tag');
 	}
 
 	/**
@@ -246,7 +236,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setTimeStart($timeStart) {
-		$this->order['time_start'] = $timeStart;
+		$this->info['time_start'] = $timeStart;
 		return $this;
 	}
 
@@ -255,7 +245,7 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getTimeStart() {
-		return $this->get('time_start');
+		return $this->getInfo('time_start');
 	}
 
 	/**
@@ -264,7 +254,7 @@ class UnifiedOrder {
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setTimeExpire($timeExpire) {
-		$this->order['time_expire'] = $timeExpire;
+		$this->info['time_expire'] = $timeExpire;
 		return $this;
 	}
 
@@ -273,16 +263,16 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getTimeExpire() {
-		return $this->get('time_expire');
+		return $this->getInfo('time_expire');
 	}
 
 	/**
 	 * 设置商品名称明细列表, 可选
-	 * @param string $timeExpire 交易截止时间
+	 * @param string $detail 交易截止时间
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setDetail($detail) {
-		$this->order['detail'] = $detail;
+		$this->info['detail'] = $detail;
 		return $this;
 	}
 
@@ -291,16 +281,16 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getDetail() {
-		return $this->get('detail');
+		return $this->getInfo('detail');
 	}
 
 	/**
 	 * 设置附加数据，在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据, 可选
-	 * @param string $timeExpire 交易截止时间
+	 * @param string $attach 交易截止时间
 	 * @return UnifiedOrder $this 返回当前对象进行连贯操作
 	 */
 	public function setAttach($attach) {
-		$this->order['attach'] = $attach;
+		$this->info['attach'] = $attach;
 		return $this;
 	}
 
@@ -309,24 +299,119 @@ class UnifiedOrder {
 	 * @return string
 	 */
 	public function getAttach() {
-		return $this->get('attach');
+		return $this->getInfo('attach');
 	}
 
 	/**
-	 * 将设置过的属性封装到数组
-	 * @return array
+	 * jsapi支付
+	 * @return string 支付封装的json字符串
+	 * @throws \wxsdk\WxException
 	 */
-	public function toArray() {
-		return $this->order;
+	public function jsapi() {
+		// 必须的业务参数检查
+		if(!$this->getOpenid()) {
+			$this->throws(1000110, '请设置openid');
+		}
+
+		// 设置参数信息
+		$this->setTradeType('JSAPI');
+		$this->setDeviceInfo('WEB');
+
+		// 执行公共调用
+		$result = $this->executeHaveNotify($unifiedOrderObject);
+
+		// 支付信息
+		$jsapi['appId'] = $this->getAppid();
+		$jsapi['nonceStr'] = $this->strShuffle();
+		$jsapi['signType'] = 'MD5';
+		$jsapi['package'] = "prepay_id={$result['prepay_id']}";
+		$jsapi['paySign'] = $this->sign($jsPays);
+
+		return json_encode($jsapi);
 	}
 
 	/**
-	 * 封装get方法，防止notice报错
-	 * @param string $key 键名
-	 * @param string $default　默认值
-	 * @return string|number|null
+	 * 扫码支付
+	 * @return string 二维码参数值
+	 * @throws \wxsdk\WxException
 	 */
-	private function get($key, $default = NULL) {
-		return isset($this->order[$key]) ? $this->order[$key] : $default;
+	public function native() {
+		// 必须的业务参数检查
+		if($this->getProductId()) {
+			$this->throws(1000111, '请设置product_id');
+		}
+		
+		// 设置参数信息
+		$this->setTradeType('NATIVE');
+
+		// 执行公共调用
+		$result = $this->executeHaveNotify($unifiedOrderObject);
+
+		return $result['code_url'];
+	}
+
+	/**
+	 * app支付
+	 * @return array 针对app调用封装好的参数列表
+	 * @throw \wxsdk\WxException
+	 */
+	public function app() {
+		// 设置参数信息
+		$this->setTradeType('APP');
+
+		// 执行公共调用
+		$result = $this->executeHaveNotify($unifiedOrderObject);
+
+		// 封装返回数据
+		$app['appid'] = $this->getAppid();
+		$app['partnerid'] = $this->getMchid();
+		$app['prepayid'] = $result['prepay_id'];
+		$app['noncestr'] = $this->strShuffle();
+		$app['package'] = 'Sign=WXPay';
+		$app['timestamp'] = time();
+		$app['sign'] = $this->sign($result);
+		return $app;
+	}
+
+	/**
+	 * 统一下单，使用回调地址
+	 * @return array https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
+	 * @throws \wxsdk\WxException
+	 */
+	protected function executeHaveNotify() {
+		// 必传参数检查
+		if(!$this->getOutTradeNo()) {
+			$this->throws(100015, '请设置订单号');
+		}
+		if(!$this->getTotalFee()) {
+			$this->throws(100016, '请设置价格');
+		}
+		if(!$this->getBody()) {
+			$this->throws(100017, '请设置商品描述信息');
+		}
+		if(!in_array($this->getTradeType(), array('JSAPI', 'NATIVE', 'APP', 'WAP'))) {
+			$this->throws(100018, "请设置交易类型");
+		}
+		if(!$this->getNotifyUrl()) {
+			$this->throws(100019, "请设通知地址");
+		}
+
+		// 支付参数整合
+		$order = $this->toArray();
+		$order['appid'] = $this->getAppid();
+		$order['mch_id'] = $this->getMchid();
+		$order['nonce_str'] = $this->strShuffle();
+		$order['sign'] = $this->sign($order);
+
+		// xml编码
+		$order = $this->xmlEncode($order);
+
+		// curl微信生成订单
+		$result = $this->post(self::UNIFIED_ORDER_API, $order);
+		
+		// 回传参数检查
+		$this->checkSignature($result);
+
+		return $this->xmlDecode($result);
 	}
 }

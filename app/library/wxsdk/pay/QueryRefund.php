@@ -4,15 +4,15 @@
  * 微信订单查询
  * @author enychen
  */
-namespace weixin\pay;
+namespace wxsdk\pay;
 
-class Query {
+class QueryRefund extends Base {
 
 	/**
-	 * 查询数组
-	 * @var array
+	 * 退款订单查询接口
+	 * @var string
 	 */
-	private $query = array();
+	const QUERY_REFUND_API = 'https://api.mch.weixin.qq.com/pay/refundquery';
 
 	/**
 	 * 设置我司订单号
@@ -20,34 +20,34 @@ class Query {
 	 * @return Query $this 返回当前对象进行连贯操作
 	 */
 	public function setOutTradeNo($outTradeNo) {
-		$this->query['out_trade_no'] = $outTradeNo;
+		$this->info['out_trade_no'] = $outTradeNo;
 		return $this;
 	}
-
+	
 	/**
 	 * 获取我司订单号
 	 * @return string
 	 */
 	public function getOutTradeNo() {
-		return $this->get('out_trade_no');
+		return $this->getInfo('out_trade_no');
 	}
-
+	
 	/**
 	 * 设置微信订单号，优先使用
-	 * @param string $outTradeNo 订单号
+	 * @param string $transactionId 订单号
 	 * @return Query $this 返回当前对象进行连贯操作
 	 */
 	public function setTransactionId($transactionId) {
-		$this->query['transaction_id'] = $transactionId;
+		$this->info['transaction_id'] = $transactionId;
 		return $this;
 	}
-
+	
 	/**
 	 * 获取微信订单号
 	 * @return string
 	 */
 	public function getTransactionId() {
-		return $this->get('transaction_id');
+		return $this->getInfo('transaction_id');
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Query {
 	 * @return Query $this 返回当前对象进行连贯操作
 	 */
 	public function setOutRefundNo($outRefundNo) {
-		$this->query['out_refund_no'] = $outRefundNo;
+		$this->info['out_refund_no'] = $outRefundNo;
 		return $this;
 	}
 
@@ -65,7 +65,7 @@ class Query {
 	 * @return string
 	 */
 	public function getOutRefundNo() {
-		return $this->get('out_refund_no');
+		return $this->getInfo('out_refund_no');
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Query {
 	 * @return Query $this 返回当前对象进行连贯操作
 	 */
 	public function setRefundId($refundId) {
-		$this->query['refund_id'] = $refundId;
+		$this->info['refund_id'] = $refundId;
 	}
 
 	/**
@@ -82,24 +82,30 @@ class Query {
 	 * @return string
 	 */
 	public function getRefundId() {
-		return $this->get('refund_id');
+		return $this->getInfo('refund_id');
 	}
 
 	/**
-	 * 将设置过的属性封装到数组
-	 * @return array
+	 * 执行微信退款订单查询
+	 * @return array https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_5
 	 */
-	public function toArray() {
-		return $this->query;
-	}
-	
-	/**
-	 * 封装get方法，防止notice报错
-	 * @param string $key 键名
-	 * @param string $default　默认值
-	 * @return string|number|null
-	 */
-	private function get($key, $default = NULL) {
-		return isset($this->query[$key]) ? $this->query[$key] : $default;
+	public function execute() {
+		// 必须参数检查
+		$queryRefund = $this->toArray();
+		if(!$queryRefund) {
+			$this->throws(1000119, '请设置订单号');
+		}
+		// 数据参数准备
+		$queryRefund['appid'] = $this->getAppid();
+		$queryRefund['mch_id'] = $this->getMchid();
+		$queryRefund['nonce_str'] = $this->strShuffle();
+		$queryRefund['sign'] = $this->sign($query);
+		$query = $this->xmlEncode($query);
+
+		// 执行curl
+		$result = $this->post(self::QUERY_REFUND_API, $query);
+		$this->checkSignature($result);
+
+		return $this->xmlDecode($result);
 	}
 }
