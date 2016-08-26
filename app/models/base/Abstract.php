@@ -8,6 +8,7 @@ namespace base;
 
 use \database\PDO;
 use \Yaf\Config\Ini;
+use \network\Pagitor;
 
 abstract class AbstractModel {
 
@@ -429,12 +430,12 @@ abstract class AbstractModel {
 	/**
 	 * 分页获取信息
 	 * @param int $page 当前页
-	 * @param int $number 每页几条
+	 * @param int $number 每页几条，默认每页15条
 	 * @return array 分页信息
 	 */
 	public function pagitor($page = 1, $number = 15) {
-		// 保留头部查询信息
-		$fields = $this->sql['field'];
+		// 保留字段查询信息
+		$field = $this->sql['field'];
 
 		// 获取分页数量
 		$this->field('COUNT(*)');
@@ -442,10 +443,10 @@ abstract class AbstractModel {
 
 		// 获取本页数据
 		$this->limit(abs($page - 1) * $number, $number);
-		$lists = $this->field($fields)->select()->fetchAll();
+		$lists = $this->field($field)->select()->fetchAll();
 
 		// 输出分页
-		$pagitorLib = new \network\Pagitor($page, $total);
+		$pagitorLib = new Pagitor($page, $total, $number);
 		$pagitor = $pagitorLib->showCenter();
 		$pagitor['lists'] = $lists;
 
