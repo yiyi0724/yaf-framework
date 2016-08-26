@@ -446,7 +446,6 @@ abstract class AbstractModel {
 
 		// 输出分页
 		$pagitorLib = new \network\Pagitor($page, $total);
-		$pagitorLib->setPerNumber($number);
 		$pagitor = $pagitorLib->showCenter();
 		$pagitor['lists'] = $lists;
 
