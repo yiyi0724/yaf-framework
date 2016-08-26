@@ -5,7 +5,7 @@
  */
 namespace alisdk\pay;
 
-class Wap extends Alipay {
+class Wap extends Base {
 
 	/**
 	 * 构造函数

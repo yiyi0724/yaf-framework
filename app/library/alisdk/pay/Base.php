@@ -5,7 +5,7 @@
  */
 namespace alisdk\pay;
 
-class Alipay {
+class Base {
 
 	/**
 	 * 正式上线api支付接口
