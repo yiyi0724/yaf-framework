@@ -99,7 +99,7 @@ class PDO {
 			$this->stmt = $this->pdo->prepare($sql);
 			$this->bindValue($params);
 			$this->stmt->execute();
-			$this->stmt->setFetchMode(\PDO::FETCH_OBJ);
+			$this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
 		} catch(\PDOException $e) {
 			$this->getIsDebug() and $this->debug($sql, $params);
 			throw $e;
@@ -205,7 +205,7 @@ class PDO {
 	 * @return array
 	 */
 	public function fetchAll() {
-		return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+		return $this->stmt->fetchAll();
 	}
 
 	/**
@@ -213,7 +213,7 @@ class PDO {
 	 * @return array
 	 */
 	public function fetchRow() {
-		return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+		return $this->stmt->fetch();
 	}
 
 	/**
@@ -221,6 +221,6 @@ class PDO {
 	 * @return string
 	 */
 	public function fetchOne() {
-		return $this->stmt->fetchColumn(\PDO::FETCH_ASSOC);
+		return $this->stmt->fetchColumn();
 	}
 }

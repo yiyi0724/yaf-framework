@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<form>
+	<input name="page" from="get" type="number" require="0" error="页码有误" default="1" min="1" />
+</form>

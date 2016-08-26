@@ -307,24 +307,6 @@ abstract class AbstractModel {
 	}
 
 	/**
-	 * 执行查询,返回对象进行fetch操作
-	 * @param boolean $clear 是否清空条件信息，默认是
-	 * @return AbstractModel $this 返回当前对象进行连贯操作
-	 */
-	public final function select($clear = TRUE) {
-		// 局部释放变量
-		extract($this->sql);
-		// 拼接sql语句
-		$sql = "SELECT {$field} FROM {$this->getTable()} {$join} {$where} {$group} {$having} {$order} {$limit} {$lock}";
-		// 执行sql语句
-		$this->query($sql, $values);
-		// 清空数据
-		$clear and $this->resetSql();
-		// 返回数据库操作对象
-		return $this;
-	}
-
-	/**
 	 * 执行更新
 	 * @param array $update 键值对数组
 	 * @return int 影响的行数
@@ -353,6 +335,24 @@ abstract class AbstractModel {
 		$this->resetSql();
 		// 返回当前对象
 		return $this->getAffectRowCount();
+	}
+
+	/**
+	 * 执行查询,返回对象进行fetch操作
+	 * @param boolean $clear 是否清空条件信息，默认是
+	 * @return AbstractModel $this 返回当前对象进行连贯操作
+	 */
+	public final function select($clear = TRUE) {
+		// 局部释放变量
+		extract($this->sql);
+		// 拼接sql语句
+		$sql = "SELECT {$field} FROM {$this->getTable()} {$join} {$where} {$group} {$having} {$order} {$limit} {$lock}";
+		// 执行sql语句
+		$this->query($sql, $values);
+		// 清空数据
+		$clear and $this->resetSql();
+		// 返回数据库操作对象
+		return $this;
 	}
 
 	/**
@@ -430,22 +430,25 @@ abstract class AbstractModel {
 	 * 分页获取信息
 	 * @param int $page 当前页
 	 * @param int $number 每页几条
-	 * @param int @button 按钮个数
 	 * @return array 分页信息
 	 */
-	public function pagitor($page = 1, $number = 15, $button = 6) {
-		// 获取本页数据
-		$this->limit(abs($page - 1) * $number, $number);
-		$pagitor['list'] = $this->select(FALSE)->fetchAll();
+	public function pagitor($page = 1, $number = 15) {
+		// 保留头部查询信息
+		$fields = $this->sql['field'];
 
 		// 获取分页数量
 		$this->field('COUNT(*)');
-		$total = $this->select()->fetchOne();
+		$total = $this->select(FALSE)->fetchOne();
+
+		// 获取本页数据
+		$this->limit(abs($page - 1) * $number, $number);
+		$lists = $this->field($fields)->select()->fetchAll();
 
 		// 输出分页
 		$pagitorLib = new \network\Pagitor($page, $total);
 		$pagitorLib->setPerNumber($number);
 		$pagitor = $pagitorLib->showCenter();
+		$pagitor['lists'] = $lists;
 
 		return $pagitor;
 	}

@@ -1,0 +1,22 @@
+<?php $this->commonLayout('header');?>
+<?php $this->component('table')?>
+<?php $this->component('alert')?>
+<script>
+
+$.ajax({
+	url : '/system/admin/lists',
+	type : 'get',
+	success : function(json) {
+		if(!json.status) {
+			alertTip.show('获取失败', json.message, null);
+		} else {
+			console.log(json);
+			tableComponent.initTitles('UID', '称谓').initLists(json.data).initTotalCount(10).initTotalPage(1);
+		}
+	}
+})
+
+
+
+</script>
+<?php $this->commonLayout('footer');?>
