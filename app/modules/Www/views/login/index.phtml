@@ -1,4 +1,6 @@
-<?php $this->commonLayout('head', array('styles'=>array('login.css')))?>
+<?php 
+	$this->setMain('index')->setStyles('login.css')->setTitle('后台管理系统-请登录');
+?>
 <body class="page-body login-page login-form-fall loaded login-form-fall-init">
 	<div class="login-container">
 		<div class="login-header login-caret">
@@ -38,4 +40,3 @@
 	</div>
 	<?php $this->component('alert')?>
 </body>
-<?php $this->commonLayout('foot', array('scripts'=>array('modules/www/login/index.js')))?>

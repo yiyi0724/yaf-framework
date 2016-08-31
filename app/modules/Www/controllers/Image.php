@@ -10,12 +10,6 @@ use \services\common\Captcha as CaptchaService;
 class ImageController extends \base\BaseController {
 
 	/**
-	 * 使用全局模板
-	 * @var string
-	 */
-	protected $useMain = FALSE;
-
-	/**
 	 * 输出验证码图片
 	 * @return void
 	 */

@@ -19,12 +19,6 @@ use \traits\ForbiddenException;
 abstract class BaseController extends Controller_Abstract {
 
 	/**
-	 * 使用全局模板
-	 * @var string
-	 */
-	protected $useMain = TRUE;
-
-	/**
 	 * 全局初始化
 	 * @return void
 	 */
@@ -39,7 +33,6 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	protected function initResponse() {
 		Registry::set('view', $this->getView());
-		Registry::set('useMain', $this->useMain);
 	}
 
 	/**
@@ -63,6 +56,7 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	protected final function disView() {
 		Application::app()->getDispatcher()->disableView();
+		$this->getView()->disableView();
 	}
 
 	/**

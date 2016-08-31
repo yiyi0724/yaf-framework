@@ -12,12 +12,6 @@ use \services\common\Security as SecurityService;
 class LoginController extends \base\AdminController {
 
 	/**
-	 * 使用全局模板
-	 * @var string
-	 */
-	protected $useMain = FALSE;
-
-	/**
 	 * 登录页面
 	 */
 	public function indexAction() {

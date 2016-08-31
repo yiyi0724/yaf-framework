@@ -28,7 +28,8 @@ class HandlerPlugin extends Plugin_Abstract {
 	 * @param Response_Abstract $response
 	 */
 	public function dispatchLoopShutdown(Request_Abstract $request, Response_Abstract $response) {
-		$this->response($response);
+		// 组装完整的模板
+		Registry::get('view')->buildResponse($response->getBody());
 	}
 
 	/**
@@ -55,18 +56,6 @@ class HandlerPlugin extends Plugin_Abstract {
 		// 自定义常量定义
 		foreach(new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON) as $key=>$value) {
 			define(strtoupper($key), $value);
-		}
-	}
-
-	/**
-	 * 最终响应
-	 */
-	private function response($response) {
-		if(Registry::get('useMain')) {
-			$view = Registry::get('view');
-			$view->assign('body', $response->getBody());
-			$view->main('main');
-			exit;
 		}
 	}
 }

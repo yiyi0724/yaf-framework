@@ -16,6 +16,8 @@ class Response implements View_Interface {
 	 */
 	protected $engine = NULL;
 
+	protected $disView = FALSE;
+
 	/**
 	 * 构造函数
 	 */
@@ -87,7 +89,31 @@ class Response implements View_Interface {
 		$this->getEngine()->getScriptPath();
 	}
 
-	public function main() {
-		return $this->getEngine()->commonLayout('main');
+	/**
+	 * 设置启用视图状态
+	 * @return void
+	 */
+	public function setDisView() {
+		$this->disView = TRUE;
+	}
+
+	/**
+	 * 获取视图状态
+	 * @return boolean
+	 */
+	public function getDisView() {
+		return $this->disView;
+	}
+
+	/**
+	 * 组装
+	 */
+	public function buildResponse($body) {
+		if(!$this->getDisView()) {
+			$this->assign('body', $body);
+			$engine = $this->getEngine();
+			$engine->setScriptPath(sprintf('%smain', COMMON_VIEW_PATH));
+			echo $engine->render("{$engine->getMain()}.phtml");
+		}
 	}
 }
