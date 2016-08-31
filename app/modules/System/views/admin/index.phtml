@@ -1,22 +1,39 @@
-<?php $this->commonLayout('header');?>
-<?php $this->component('table')?>
-<?php $this->component('alert')?>
-<script>
-
-$.ajax({
-	url : '/system/admin/lists',
-	type : 'get',
-	success : function(json) {
-		if(!json.status) {
-			alertTip.show('获取失败', json.message, null);
-		} else {
-			console.log(json);
-			tableComponent.initTitles('UID', '称谓').initLists(json.data).initTotalCount(10).initTotalPage(1);
-		}
-	}
-})
-
-
-
-</script>
-<?php $this->commonLayout('footer');?>
+<div class="dataTables_wrapper">
+	<table id="dataTable-user"
+		class="table table-condensed table-bordered table-hover">
+		<thead>
+			<tr>
+				<th class="text-center">ID</th>
+				<th class="text-center">账号</th>
+				<th class="text-center">昵称</th>
+				<th class="text-center">状态</th>
+				<th class="text-center">添加时间</th>
+				<th class="text-center">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td v-for="value in list" class="text-center">{{{ value }}}</td>
+			</tr>			
+		</tbody>
+	</table>
+	<div class="row">
+		<div class="col-xs-6 col-left">
+			<div class="dataTables_info">
+				<span>{{ pagitor.count }}</span> 条, 共 <span>{{ pagitor.pageTotal }}</span> 页
+			</div>
+		</div>
+		<div class="col-xs-6 col-right">
+			<div class="dataTables_paginate paging_bootstrap">
+				<ul v-if="pagitor.pageTotal" class="pagination pagination-sm">
+					<li class="first"><a href="/admin/user/list/"> <i class="entypo-to-start"></i></a></li>
+					<li class="active"><a href="/admin/user/list/?page=1">1</a></li>
+					<li><a href="/admin/user/list/?page=2">2</a></li>
+					<li><a href="/admin/user/list/?page=3">3</a></li>
+					<li><a href="/admin/user/list/?page=4">4</a></li>
+					<li class="last"><a href="/admin/user/list/?page=2105"> <i class="entypo-to-end"></i></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

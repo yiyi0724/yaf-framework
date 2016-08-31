@@ -30,7 +30,7 @@ class Menu extends Base {
 	 * @param array $id 选中的栏目列表
 	 * @return array
 	 */
-	private static function recursion(array $menus, $id = 0) {
+	protected static function recursion(array $menus, $id = 0) {
 		$tree = array();
 		foreach($menus as $item) {
 			if($item['parent'] == $id) {

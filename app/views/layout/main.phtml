@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<title><?php echo isset($title) ? $title : '后台管理系统';?></title>
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-core.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-theme.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-forms.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>entypo.css">
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>custom.css">
+<?php if(isset($styles)):foreach($styles as $style):?>
+<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE . $style; ?>">
+<?php endforeach;endif;?>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>jquery.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>vue.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>vue-router.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT?>custom.js"></script>
+<?php if(isset($scripts)):foreach($scripts as $script):?>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT.$script?>"></script>
+<?php endforeach;endif;?>
+</head>
+<body class="page-body loaded">
+	<div class="page-container">
+		<!-- 左侧导航栏 start -->
+		<div class="sidebar-menu" style="min-height: 139px;">
+			<header class="logo-env">
+				<div class="logo">
+					<a href="javascript:;"><img width="120" alt="Logo" src="<?php echo WEB_IMAGE;?>logo3.png"></a>
+				</div>
+			</header>
+			<div id="mainClass" class="main-class">
+				<?php foreach($menus as $menu):?>
+				<p <?php echo strcasecmp(MODULE_NAME, $menu['module']) ? NULL : 'class="curr"';?>>
+					<span><?php echo $menu['name'];?> </span>
+				</p>
+				<?php endforeach;?>
+			</div>
+			<?php foreach($menus as $menu):?>
+			<?php $isModule = !strcasecmp(MODULE_NAME, $menu['module']); ?>
+			<ul class="main-menu <?php echo $isModule ? 'block' : 'none';?>">
+				<?php if(isset($menu['children'])):foreach($menu['children'] as $value):?>
+				<?php $isController = !strcasecmp(CONTROLLER_NAME, $value['controller']); ?>
+				<li class="root-level <?php echo isset($value['children']) ? 'has-sub' : NULL;?> <?php echo $isModule && $isController ? 'active opened' : NULL;?>">
+					<a href="<?php echo $value['url'];?>"> <i class="<?php echo $value['icon']?>"></i><span><?php echo $value['name'];?></span></a>
+					<?php if(isset($value['children'])):?>
+					<ul <?php echo $isModule && $isController ? 'class="visible"' : NULL;?>>
+						<?php foreach($value['children'] as $last):?>
+						<?php $isAction = !strcasecmp($last['action'], ACTION_NAME)?>
+						<li class="<?php echo $isModule && $isController && $isAction ? 'active' : NULL;?>">
+							<a href="<?php echo $last['url']?>"> <span><?php echo $last['name'];?></span></a>
+						</li>
+						<?php endforeach;?>
+					</ul>
+					<?php endif;?>
+				</li>
+				<?php endforeach;endif;?>
+			</ul>
+			<?php endforeach;?>
+		</div>
+		<!-- 左侧导航栏 end -->
+		<!-- 右侧内容区域 start -->
+		<div class="main-content">
+			<!-- 上边管理员信息栏目 start -->
+			<div class="row">
+				<div class="col-md-6 col-sm-8 clearfix">
+					<ul class="user-info pull-left pull-none-xsm">
+						<li class="profile-info dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="javascirpt:;"> <img class="img-circle" width="44" alt="" src="<?php echo WEB_IMAGE;?>50.png"> <?php echo ADMIN_NAME?></a>
+							<ul class="dropdown-menu">
+								<li class="caret"></li>
+								<li>
+									<a href="#"> <i class="entypo-lock"></i> 修改密码</a>
+								</li>
+								<li>
+									<a href="#"> <i class="entypo-doc-text"></i> 日志</a>
+								</li>
+								<li>
+									<a href="/logout"> <i class="entypo-logout"></i> 退出</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- 上边管理员信息栏目 end -->
+			<!-- 内容主体区域 start -->
+			<?php echo $body; ?>
+			<!-- 内容主体区域 end -->
+		</div>
+		<!-- 右侧内容区域 end -->
+	</div>
+</body>
+<?php if(isset($scripts)):foreach($scripts as $script):?>
+<script type="text/javascript" src="<?php echo WEB_SCRIPT.$script?>"></script>
+<?php endforeach;endif;?>
+</html>

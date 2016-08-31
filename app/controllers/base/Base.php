@@ -6,6 +6,7 @@
  */
 namespace base;
 
+use \Yaf\Registry;
 use \traits\Request;
 use \Yaf\Application;
 use \traits\FormException;
@@ -16,7 +17,38 @@ use \traits\RedirectException;
 use \traits\ForbiddenException;
 
 abstract class BaseController extends Controller_Abstract {
-	
+
+	/**
+	 * 使用全局模板
+	 * @var string
+	 */
+	protected $useMain = TRUE;
+
+	/**
+	 * 全局初始化
+	 * @return void
+	 */
+	public final function init() {
+		$this->initResponse();
+		$this->initController();
+	}
+
+	/**
+	 * 响应输出初始化
+	 * @return void
+	 */
+	protected function initResponse() {
+		Registry::set('view', $this->getView());
+		Registry::set('useMain', $this->useMain);
+	}
+
+	/**
+	 * 控制器初始化
+	 * @return void
+	 */
+	protected function initController() {
+	}
+
 	/**
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
@@ -140,5 +172,15 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	public function throwRedirectException($code, $message) {
 		throw new RedirectException($message, $code);
+	}
+
+	/**
+	 * 获取完整url路径
+	 * @param string $encode
+	 * @return string
+	 */
+	protected function getFullUrl($encode = TRUE) {
+		$url = "http://{$_SERVER['SERVER_NAME']}{$_SERVER['REQUEST_URI']}";
+		return $encode ? urlencode($url) : $url;
 	}
 }

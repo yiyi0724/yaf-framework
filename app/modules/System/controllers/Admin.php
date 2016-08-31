@@ -12,21 +12,14 @@ class AdminController extends \base\AdminController {
 	 * 网站首页
 	 */
 	public function indexAction() {
-	}
-
-	/**
-	 * 获取管理员信息
-	 */
-	public function listsAction() {
 		$request = $this->getRequest();
-		$page = $request->get('page');
+		$page = $request->get('page', 1);
 		
 		$adminUserModel = new AdminUserModel();
-		$pagitor = $adminUserModel->field('id,username,nickname,mobile,status,addtime')->pagitor($page);
+		$pagitor = $adminUserModel->field('id,username,nickname,status,addtime')->order('addtime DESC')->pagitor($page);
 		foreach($pagitor['lists'] as &$list) {
 			$list['addtime'] = date('Y-m-d H:i:s', strtotime($list['addtime']));
 		}
-
-		$this->json(TRUE, '获取成功', 2001, $pagitor);
+		$this->assign('pagitor', $pagitor);
 	}
 }

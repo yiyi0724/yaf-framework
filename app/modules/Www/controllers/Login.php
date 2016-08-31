@@ -12,16 +12,17 @@ use \services\common\Security as SecurityService;
 class LoginController extends \base\AdminController {
 
 	/**
+	 * 使用全局模板
+	 * @var string
+	 */
+	protected $useMain = FALSE;
+
+	/**
 	 * 登录页面
-	 * @return void
 	 */
 	public function indexAction() {
-		if(defined('ADMIN_UID')) {
-			$this->redirect('/');
-		}
-		
-		$securityService = new SecurityService();
-		$securityService->set('login', uniqid());
+		// 已经登录
+		ADMIN_UID and $this->redirect('/');
 	}
 
 	/**
@@ -34,7 +35,7 @@ class LoginController extends \base\AdminController {
 		if(!$request->isPost() || !$request->isXmlHttpRequest()) {
 			$this->json(FALSE, '非法访问', 1101);
 		}
-		
+
 		// 保存验证码
 		if(!CaptchaService::compare('login', $request->get('captcha'))) {
 			$this->json(FALSE, '验证码有误', 1102);

@@ -7,20 +7,20 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="list in lists">
+			<tr v-for="list in pagitor.lists">
 				<td v-for="value in list" class="text-center">{{{ value }}}</td>
 			</tr>			
 		</tbody>
 	</table>
-	<div v-if="totalCount" class="row">
+	<div v-if="pagitor.count" class="row">
 		<div class="col-xs-6 col-left">
 			<div class="dataTables_info">
-				<span>{{ totalCount }}</span> 条, 共 <span>{{ totalPage }}</span> 页
+				<span>{{ pagitor.count }}</span> 条, 共 <span>{{ pagitor.pageTotal }}</span> 页
 			</div>
 		</div>
 		<div class="col-xs-6 col-right">
 			<div class="dataTables_paginate paging_bootstrap">
-				<ul v-if="totalPage" class="pagination pagination-sm">
+				<ul v-if="pagitor.pageTotal" class="pagination pagination-sm">
 					<li class="first"><a href="/admin/user/list/"> <i class="entypo-to-start"></i></a></li>
 					<li class="active"><a href="/admin/user/list/?page=1">1</a></li>
 					<li><a href="/admin/user/list/?page=2">2</a></li>
@@ -37,10 +37,7 @@ var tableComponent = new Vue({
 	el : '#vue-table',
 	data : {
 		titles : [],
-		lists : [],
-		pages : [],
-		totalCount : 0,
-		totalPage : 0
+		pagitor : {},
 	},
 	methods : {
 		initTitles : function() {
@@ -50,20 +47,8 @@ var tableComponent = new Vue({
 			}
 			return this;
 		},
-		initLists : function(data) {
-			this.lists = data;
-			return this;
-		},
-		initTotalCount : function(totalCount) {
-			this.totalCount = totalCount;
-			return this;
-		},
-		initTotalPage : function(totalPage) {
-			this.totalPage = totalPage;
-			return this;
-		},
-		initPages : function(pages) {
-			this.pages = pages;
+		initPagitor : function(pagitor) {
+			this.pagitor = pagitor;
 			return this;
 		}
 	}

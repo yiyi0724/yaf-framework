@@ -6,10 +6,10 @@
  */
 namespace services\common;
 
-use \services\base\Base;
+use \services\base\Base as BaseService;
 use \image\Captcha as CaptchaLib;
 
-class Captcha extends Base {
+class Captcha extends BaseService {
 
 	/**
 	 * 生成验证码图片并将验证码值保存到session

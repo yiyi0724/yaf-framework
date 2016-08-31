@@ -43,10 +43,12 @@ class Pagitor {
 	 * 构造函数
 	 * @param int $page 当前页数
 	 * @param int $total 总条数
+	 * @param int $preNumber 每页显示的条数，默认是10
 	 */
-	public function __construct($page, $total) {
+	public function __construct($page, $total, $preNumber = 10) {
 		$this->setPage($page);
 		$this->setTotal($total);
+		$this->setPerNumber($preNumber);
 	}
 
 	/**
@@ -130,7 +132,7 @@ class Pagitor {
 		$this->build['page'] = $this->getPage();
 		$this->build['url'] = str_replace($_SERVER['QUERY_STRING'], NULL, $_SERVER['REQUEST_URI']);
 		unset($_REQUEST['page']);
-		$this->build['url'] .= sprintf("%s%spage=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : NULL));
+		$this->build['url'] .= sprintf("%s%spage=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : '?'));
 		// 总共几条
 		$this->build['count'] = $this->getTotal();
 		// 每页显示的条数
@@ -140,7 +142,7 @@ class Pagitor {
 		// 一共几个按钮
 		$this->build['button'] = $this->getPerButton();
 		// 是否超过
-		$this->build['over'] = $this->build['page'] > $this->build['pageTotal'];
+		$this->build['over'] = $this->getPage() > $this->build['pageTotal'];
 
 		return $this;
 	}

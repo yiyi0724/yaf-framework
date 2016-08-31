@@ -4,6 +4,7 @@
  * 行为插件
  * @author enychen
  */
+use \Yaf\Registry;
 use \Yaf\Config\Ini;
 use \Yaf\Plugin_Abstract;
 use \Yaf\Request_Abstract;
@@ -19,6 +20,15 @@ class HandlerPlugin extends Plugin_Abstract {
 	 */
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		$this->initConst($request);
+	}
+
+	/**
+	 * 最终响应之前进行
+	 * @param Request_Abstract $request
+	 * @param Response_Abstract $response
+	 */
+	public function dispatchLoopShutdown(Request_Abstract $request, Response_Abstract $response) {
+		$this->response($response);
 	}
 
 	/**
@@ -45,6 +55,18 @@ class HandlerPlugin extends Plugin_Abstract {
 		// 自定义常量定义
 		foreach(new Ini(CONF_PATH . 'consts.ini', \YAF\ENVIRON) as $key=>$value) {
 			define(strtoupper($key), $value);
+		}
+	}
+
+	/**
+	 * 最终响应
+	 */
+	private function response($response) {
+		if(Registry::get('useMain')) {
+			$view = Registry::get('view');
+			$view->assign('body', $response->getBody());
+			$view->main('main');
+			exit;
 		}
 	}
 }

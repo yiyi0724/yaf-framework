@@ -15,26 +15,26 @@ use \admin\LoginlogModel as AdminLoginLogModel;
 class Login extends Base {
 
 	/**
-	 * 从cookie中进行登录
-	 * @static
-	 * @return boolean
+	 * 初始化常量
 	 */
-	public static function fromCookie() {
+	public static function initAdmin() {
 		$session = self::getSession();
-		// 初始化常量
 		defined('ADMIN_UID') or define('ADMIN_UID', intval($session->get('admin.uid')));
 		defined('ADMIN_NAME') or define('ADMIN_NAME', $session->get('admin.name'));
 		defined('ADMIN_ISEXPIRE') or define('ADMIN_ISEXPIRE', (time() - $session->get('admin.lasttime') >= 1800));
 		defined('ADMIN_IP_MATCH') or define('ADMIN_IP_MATCH', ($session->get('admin.ip') || IP::client() == $session->get('admin.ip')));
-
-		// 参数检查
+	}
+	/**
+	 * 从cookie中进行登录
+	 * @static
+	 * @return boolean
+	 */
+	public static function chekLogin() {
 		if(!ADMIN_UID || ADMIN_ISEXPIRE || !ADMIN_IP_MATCH) {
 			return FALSE;
 		}
 
-		// 更新时间
-		$session->set('admin.lasttime', time());
-	
+		self::getSession()->set('admin.lasttime', time());
 		return TRUE;
 	}
 
@@ -53,7 +53,7 @@ class Login extends Base {
 			return FALSE;
 		}
 		
-		self::record($admin['id'], $admin['nickname']);
+		self::record($admin['id'], $admin['nickname']); // 账号密码对了，那还要记录登录日志
 		return TRUE;
 	}
 

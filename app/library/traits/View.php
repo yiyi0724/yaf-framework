@@ -9,7 +9,7 @@ namespace traits;
 use \Yaf\View\Simple;
 
 class view extends Simple {
-
+	
 	/**
 	 * 加载公共layout模板
 	 * @param string $tpl 模板名称

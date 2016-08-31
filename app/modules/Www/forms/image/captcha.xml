@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<form>
+	<input name="channel" from="get" type="exists" require="1" range="login" error="渠道有误" />
+</form>

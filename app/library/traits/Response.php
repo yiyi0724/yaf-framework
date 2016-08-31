@@ -22,7 +22,7 @@ class Response implements View_Interface {
 	public function __construct() {
 		$this->setEngine(new View(NULL));
 	}
-
+	
 	/**
 	 * 设置视图响应对象
 	 * @param \traits\View $engine 视图引擎对象
@@ -85,5 +85,9 @@ class Response implements View_Interface {
 	 */
 	public function getScriptPath() {
 		$this->getEngine()->getScriptPath();
+	}
+
+	public function main() {
+		return $this->getEngine()->commonLayout('main');
 	}
 }
