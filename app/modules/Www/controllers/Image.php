@@ -5,16 +5,30 @@
  * @author enychen
  */
 
+use \image\Captcha as CaptchaLib;
 use \services\common\Captcha as CaptchaService;
 
 class ImageController extends \base\BaseController {
 
 	/**
+	 * 控制器初始化
+	 */
+	protected function initController() {
+		$this->disView();
+	}
+
+	/**
 	 * 输出验证码图片
-	 * @return void
 	 */
 	public function captchaAction() {
-		$this->disView();
-		CaptchaService::create($this->getRequest()->get('channel'));
+		// 获取渠道信息
+		$channel = $this->getRequest()->get('channel');
+
+		// 生成验证码
+		$captcha = new CaptchaLib();
+		$captcha->setCanvasBgColor(55, 62, 74)->show();
+
+		// 保存验证码
+		CaptchaService::save($channel, $captcha->getCode());
 	}
 }

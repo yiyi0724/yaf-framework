@@ -12,13 +12,11 @@ use \image\Captcha as CaptchaLib;
 class Captcha extends BaseService {
 
 	/**
-	 * 生成验证码图片并将验证码值保存到session
+	 * 保存验证码
 	 * @return boolean
 	 */
-	public static function create($key) {
-		$captcha = new CaptchaLib();
-		$captcha->setCanvasBgColor(55, 62, 74)->show();
-		return self::getSession()->set($key, $captcha->getCode());
+	public static function save($channel, $code) {
+		return self::getSession()->set($key, $code);
 	}
 
 	/**
