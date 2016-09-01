@@ -12,28 +12,19 @@
 			</tr>
 		</thead>
 		<tbody>
+			<?php foreach($pagitor['lists'] as $list):?>
 			<tr>
-				<td v-for="value in list" class="text-center">{{{ value }}}</td>
-			</tr>			
+				<td class="text-center"><?php echo $list['id'];?></td>
+				<td class="text-center"><?php echo $list['username'];?></td>
+				<td class="text-center"><?php echo $list['nickname'];?></td>
+				<td class="text-center"><i class="entypo-lock<?php echo $list['status'] == 'enable' ? '-open' : NULL ?>"></i></td>
+				<td class="text-center"><?php echo $this->formatDate($list['addtime']);?></td>
+				<td class="text-center">
+					<button class="btn btn-danger" data-id="<?php echo $list['id'];?>">修改</button>
+				</td>
+			</tr>
+			<?php endforeach;?>
 		</tbody>
 	</table>
-	<div class="row">
-		<div class="col-xs-6 col-left">
-			<div class="dataTables_info">
-				<span>{{ pagitor.count }}</span> 条, 共 <span>{{ pagitor.pageTotal }}</span> 页
-			</div>
-		</div>
-		<div class="col-xs-6 col-right">
-			<div class="dataTables_paginate paging_bootstrap">
-				<ul v-if="pagitor.pageTotal" class="pagination pagination-sm">
-					<li class="first"><a href="/admin/user/list/"> <i class="entypo-to-start"></i></a></li>
-					<li class="active"><a href="/admin/user/list/?page=1">1</a></li>
-					<li><a href="/admin/user/list/?page=2">2</a></li>
-					<li><a href="/admin/user/list/?page=3">3</a></li>
-					<li><a href="/admin/user/list/?page=4">4</a></li>
-					<li class="last"><a href="/admin/user/list/?page=2105"> <i class="entypo-to-end"></i></a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
+	<?php $this->component('page');?>
 </div>

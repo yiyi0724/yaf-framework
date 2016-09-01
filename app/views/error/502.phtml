@@ -1,4 +1,7 @@
-<?php $this->commonLayout('head', array('title'=>'服务器帅炸了〒▽〒'));?>
+<?php 
+	$this->setTemplate('empty')->setTitle('服务器帅炸了〒▽〒');
+?>
+
 <?php if(isset($error['env'])):?>
 <dl class="dl-horizontal">
   <dt>Error No:</dt>
@@ -14,4 +17,3 @@
 </dl>
 <?php endif;?>
 <h1 class="text-center"><?php echo $message;?></h1>
-<?php $this->commonLayout('foot')?>

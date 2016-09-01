@@ -56,7 +56,7 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	protected final function disView() {
 		Application::app()->getDispatcher()->disableView();
-		$this->getView()->disableView();
+		$this->getView()->setDisView();
 	}
 
 	/**

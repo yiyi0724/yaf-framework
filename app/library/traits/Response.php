@@ -106,14 +106,16 @@ class Response implements View_Interface {
 	}
 
 	/**
-	 * 组装
+	 * 组装最后的视图界面
+	 * @param Response_Abstract $response 响应对象
+	 * @return void
 	 */
-	public function buildResponse($body) {
+	public function buildResponse($response) {
 		if(!$this->getDisView()) {
-			$this->assign('body', $body);
+			$this->assign('body', $response->getBody());
 			$engine = $this->getEngine();
 			$engine->setScriptPath(sprintf('%smain', COMMON_VIEW_PATH));
-			echo $engine->render("{$engine->getMain()}.phtml");
+			$response->setBody($engine->render("{$engine->getTemplate()}.phtml"));
 		}
 	}
 }

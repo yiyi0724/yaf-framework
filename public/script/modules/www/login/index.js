@@ -36,6 +36,5 @@ var loginForm = new Vue({
 				}
 			})
 		}
-		
 	}
 });

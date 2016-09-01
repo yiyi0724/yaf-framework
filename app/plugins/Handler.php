@@ -24,12 +24,12 @@ class HandlerPlugin extends Plugin_Abstract {
 
 	/**
 	 * 最终响应之前进行
-	 * @param Request_Abstract $request
-	 * @param Response_Abstract $response
+	 * @param Request_Abstract $request 请求对象
+	 * @param Response_Abstract $response 响应对象
+	 * @return void
 	 */
 	public function dispatchLoopShutdown(Request_Abstract $request, Response_Abstract $response) {
-		// 组装完整的模板
-		Registry::get('view')->buildResponse($response->getBody());
+		Registry::get('view')->buildResponse($response);
 	}
 
 	/**

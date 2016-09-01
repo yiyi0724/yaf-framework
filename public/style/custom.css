@@ -22,3 +22,6 @@ i.disabled{color:#CCC}
 .block{display:block}
 .none{display:none}
 [v-cloak] { display: none }
+.margin-bottom-50 {
+	margin-bottom: 50px;
+}

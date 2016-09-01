@@ -1,4 +1,4 @@
-<?php if(isset($scripts)):foreach($scripts as $script):?>
+<?php foreach($this->getFootScripts() as $script):?>
 <script type="text/javascript" src="<?php echo WEB_SCRIPT.$script?>"></script>
-<?php endforeach;endif;?>
+<?php endforeach;?>
 </html>
