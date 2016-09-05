@@ -16,8 +16,6 @@ class Response implements View_Interface {
 	 */
 	protected $engine = NULL;
 
-	protected $disView = FALSE;
-
 	/**
 	 * 构造函数
 	 */
@@ -49,7 +47,9 @@ class Response implements View_Interface {
 	 * @return string
 	 */
 	public function render($tpl, $tpl_vars = NULL) {
-		return $this->getEngine()->render($tpl, $tpl_vars);
+		$this->assign('body', $this->getEngine()->render($tpl, $tpl_vars));
+		$this->getEngine()->setScriptPath(sprintf('%smain', COMMON_VIEW_PATH));
+		return $this->getEngine()->render("{$this->getEngine()->getTemplate()}.phtml");
 	}
 
 	/**
@@ -59,7 +59,9 @@ class Response implements View_Interface {
 	 * @return string
 	 */
 	public function display($tpl, $tpl_vars = NULL) {
-		return $this->getEngine()->display($tpl, $tpl_vars);
+		$this->assign('body', $this->getEngine()->display($tpl, $tpl_vars));
+		$this->getEngine()->setScriptPath(sprintf('%smain', COMMON_VIEW_PATH));
+		return $this->getEngine()->render("{$this->getEngine()->getTemplate()}.phtml");
 	}
 
 	/**
@@ -87,35 +89,5 @@ class Response implements View_Interface {
 	 */
 	public function getScriptPath() {
 		$this->getEngine()->getScriptPath();
-	}
-
-	/**
-	 * 设置启用视图状态
-	 * @return void
-	 */
-	public function setDisView() {
-		$this->disView = TRUE;
-	}
-
-	/**
-	 * 获取视图状态
-	 * @return boolean
-	 */
-	public function getDisView() {
-		return $this->disView;
-	}
-
-	/**
-	 * 组装最后的视图界面
-	 * @param Response_Abstract $response 响应对象
-	 * @return void
-	 */
-	public function buildResponse($response) {
-		if(!$this->getDisView()) {
-			$this->assign('body', $response->getBody());
-			$engine = $this->getEngine();
-			$engine->setScriptPath(sprintf('%smain', COMMON_VIEW_PATH));
-			$response->setBody($engine->render("{$engine->getTemplate()}.phtml"));
-		}
 	}
 }

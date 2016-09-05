@@ -7,23 +7,26 @@
 namespace services\admin;
 
 use \network\IP;
-use \services\base\Base;
+use \services\base\Base as BaseService;
 use \admin\UserModel as AdminUserModel;
 use \security\Encryption as EncryptionLib;
 use \admin\LoginlogModel as AdminLoginLogModel;
 
-class Login extends Base {
+class Login extends BaseService {
 
 	/**
-	 * 初始化常量
+	 * 初始化管理员常量
+	 * @static
+	 * @return void
 	 */
-	public static function initAdmin() {
+	public static function initAdminConst() {
 		$session = self::getSession();
 		defined('ADMIN_UID') or define('ADMIN_UID', intval($session->get('admin.uid')));
 		defined('ADMIN_NAME') or define('ADMIN_NAME', $session->get('admin.name'));
 		defined('ADMIN_ISEXPIRE') or define('ADMIN_ISEXPIRE', (time() - $session->get('admin.lasttime') >= 1800));
 		defined('ADMIN_IP_MATCH') or define('ADMIN_IP_MATCH', ($session->get('admin.ip') || IP::client() == $session->get('admin.ip')));
 	}
+
 	/**
 	 * 从cookie中进行登录
 	 * @static

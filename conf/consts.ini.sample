@@ -1,5 +1,4 @@
-[product]
-; 线上环境配置
+[product] ;线上环境配置
 
 ;网站信息
 web_domain 		= "http://www.enychen.com/"
@@ -8,9 +7,9 @@ web_script 		= "/script/"
 web_image 		= "/image/"
 
 
-[test:product]
-;测试环境配置
+
+[test:product] ;测试环境配置
 
 
-[develop:product]
-;开发环境配置
+
+[develop:product];开发环境配置

@@ -53,7 +53,7 @@ class ErrorController extends \base\BaseController {
 				break;
 			default:
 				$this->assign('error', $exception->getError());
-				$this->template('form');
+				$this->changeView('form');
 		}
 	}
 
@@ -69,7 +69,7 @@ class ErrorController extends \base\BaseController {
 				break;
 			default:
 				$this->assign('error', $exception->getMessage());
-				$this->template('notify');
+				$this->changeView('notify');
 		}
 	}
 
@@ -98,7 +98,7 @@ class ErrorController extends \base\BaseController {
 				header('HTTP/1.1 403 Forbidden');
 				exit;
 			default:
-				$this->template('403');
+				$this->changeView('403');
 		}
 	}
 
@@ -111,7 +111,7 @@ class ErrorController extends \base\BaseController {
 				header('HTTP/1.1 404 Not Found');
 				exit;
 			default:
-				$this->template('404');
+				$this->changeView('404');
 		}
 	}
 
@@ -144,7 +144,7 @@ class ErrorController extends \base\BaseController {
 			default:
 				$this->assign('message', $message);
 				$this->assign('error', $error);
-				$this->template('502');
+				$this->changeView('502');
 		}
 	}
 }

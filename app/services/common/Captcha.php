@@ -16,7 +16,7 @@ class Captcha extends BaseService {
 	 * @return boolean
 	 */
 	public static function save($channel, $code) {
-		return self::getSession()->set($key, $code);
+		return self::getSession()->set($channel, $code);
 	}
 
 	/**

@@ -19,30 +19,6 @@ use \traits\ForbiddenException;
 abstract class BaseController extends Controller_Abstract {
 
 	/**
-	 * 全局初始化
-	 * @return void
-	 */
-	public final function init() {
-		$this->initResponse();
-		$this->initController();
-	}
-
-	/**
-	 * 响应输出初始化
-	 * @return void
-	 */
-	protected function initResponse() {
-		Registry::set('view', $this->getView());
-	}
-
-	/**
-	 * 控制器初始化
-	 * @return void
-	 */
-	protected function initController() {
-	}
-
-	/**
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */
@@ -56,7 +32,6 @@ abstract class BaseController extends Controller_Abstract {
 	 */
 	protected final function disView() {
 		Application::app()->getDispatcher()->disableView();
-		$this->getView()->setDisView();
 	}
 
 	/**
@@ -74,8 +49,8 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param string $template 自定义模板
 	 * @return void
 	 */
-	protected final function template($template) {
-		$this->disView();
+	protected final function changeView($template) {
+		$this->disView(FALSE);
 		$this->display($template);
 	}
 
@@ -87,7 +62,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param int $code 提示码
 	 * @return void
 	 */
-	public final function json($status, $message, $code, $data = NULL) {
+	protected final function json($status, $message, $code, $data = NULL) {
 		$json['status'] = $status;
 		$json['message'] = $message;
 		$json['data'] = $data;
@@ -131,7 +106,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws ForbiddenException
 	 * @return void
 	 */
-	public function throwForbiddenException($code, $message) {
+	protected function throwForbiddenException($code, $message) {
 		throw new ForbiddenException($message, $code);
 	}
 
@@ -142,7 +117,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws NotFoundException
 	 * @return void
 	 */
-	public function throwNotFoundException($code, $message) {
+	protected function throwNotFoundException($code, $message) {
 		throw new NotFoundException($message, $code);
 	}
 	
@@ -153,7 +128,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws NotifyException
 	 * @return void
 	 */
-	public function throwNotifyException($code, $message) {
+	protected function throwNotifyException($code, $message) {
 		throw new NotifyException($message, $code);
 	}
 	
@@ -164,17 +139,17 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws RedirectException
 	 * @return void
 	 */
-	public function throwRedirectException($code, $message) {
+	protected function throwRedirectException($code, $message) {
 		throw new RedirectException($message, $code);
 	}
 
 	/**
 	 * 获取完整url路径
-	 * @param string $encode
+	 * @param string $encode 是否进行编码，默认编码
 	 * @return string
 	 */
 	protected function getFullUrl($encode = TRUE) {
-		$url = "http://{$_SERVER['SERVER_NAME']}{$_SERVER['REQUEST_URI']}";
+		$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['SERVER_NAME']}{$_SERVER['REQUEST_URI']}";
 		return $encode ? urlencode($url) : $url;
 	}
 }

@@ -21,9 +21,9 @@ abstract class AdminController extends BaseController {
 	 * 初始化
 	 * @return void
 	 */
-	protected function initController() {
+	public function init() {
 		// 初始化常量
-		AdminLoginService::initAdmin();
+		AdminLoginService::initAdminConst();
 
 		// 检查是否已经登录过
 		if(!AdminLoginService::chekLogin() && !in_array(CONTROLLER_NAME, self::$noCheck)) {

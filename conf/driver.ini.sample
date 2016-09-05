@@ -1,5 +1,4 @@
-[product]
-;线上环境配置
+[product] ;线上环境配置
 
 ;mysql数据库
 database.master.type = 'mysql'
@@ -19,9 +18,9 @@ redis.master.options.prefix =
 redis.master.options.read_timemout = -1
 
 
-[test:product]
-;测试环境配置
+
+[test:product] ;测试环境配置
 
 
-[develop:product]
-;开发环境配置
+
+[develop:product] ;开发环境配置
