@@ -6,7 +6,6 @@
  */
 namespace base;
 
-use \Yaf\Registry;
 use \traits\Request;
 use \Yaf\Application;
 use \traits\FormException;
@@ -22,8 +21,18 @@ abstract class BaseController extends Controller_Abstract {
 	 * 获取经过验证请求对象
 	 * @return \traits\Request 请求封装对象
 	 */
-	public function getRequest() {
+	public final function getRequest() {
 		return Request::getInstance();
+	}
+
+	/**
+	 * 视图参数绑定
+	 * @param string $key 键
+	 * @param mixed $value 值
+	 * @return void
+	 */
+	protected final function assign($key, $value) {
+		$this->getView()->assign($key, $value);
 	}
 
 	/**
@@ -35,22 +44,12 @@ abstract class BaseController extends Controller_Abstract {
 	}
 
 	/**
-	 * 参数绑定
-	 * @param string $key 键
-	 * @param mixed $value 值
-	 * @return void
-	 */
-	protected final function assign($key, $value) {
-		$this->getView()->assign($key, $value);
-	}
-
-	/**
 	 * 模板替换
-	 * @param string $template 自定义模板
+	 * @param string $template 目标模板
 	 * @return void
 	 */
 	protected final function changeView($template) {
-		$this->disView(FALSE);
+		$this->disView();
 		$this->display($template);
 	}
 
@@ -106,7 +105,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws ForbiddenException
 	 * @return void
 	 */
-	protected function throwForbiddenException($code, $message) {
+	protected final function throwForbiddenException($code, $message) {
 		throw new ForbiddenException($message, $code);
 	}
 
@@ -117,10 +116,10 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws NotFoundException
 	 * @return void
 	 */
-	protected function throwNotFoundException($code, $message) {
+	protected final function throwNotFoundException($code, $message) {
 		throw new NotFoundException($message, $code);
 	}
-	
+
 	/**
 	 * 抛出错误通知的异常
 	 * @param number $code 错误码
@@ -128,10 +127,10 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws NotifyException
 	 * @return void
 	 */
-	protected function throwNotifyException($code, $message) {
+	protected final function throwNotifyException($code, $message) {
 		throw new NotifyException($message, $code);
 	}
-	
+
 	/**
 	 * 抛出进行跳转的异常
 	 * @param number $code 错误码
@@ -139,8 +138,19 @@ abstract class BaseController extends Controller_Abstract {
 	 * @throws RedirectException
 	 * @return void
 	 */
-	protected function throwRedirectException($code, $message) {
+	protected final function throwRedirectException($code, $message) {
 		throw new RedirectException($message, $code);
+	}
+
+	/**
+	 * 抛出表单数据的异常
+	 * @param int $code 错误码
+	 * @param array $message 错误信息
+	 * @throws FormException
+	 * @return void
+	 */
+	protected final function throwFormException($code, array $message) {
+		throw new FormException($message, $code);
 	}
 
 	/**

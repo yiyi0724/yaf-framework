@@ -48,7 +48,7 @@ class Login extends BaseService {
 	 * @param string $password 原始密码
 	 * @return boolean 账号密码正确返回TRUE
 	 */
-	public static function fromAP($accout, $password) {
+	public static function useAccountAndPassword($accout, $password) {
 		$adminUserModel = new AdminUserModel();
 		$admin = $adminUserModel->where("username=:u", $accout)->limit(1)->select()->fetchRow();
 
@@ -56,8 +56,23 @@ class Login extends BaseService {
 			return FALSE;
 		}
 		
-		self::record($admin['id'], $admin['nickname']); // 账号密码对了，那还要记录登录日志
+		self::recordSession($admin['id'], $admin['nickname']);
 		return TRUE;
+	}
+
+	/**
+	 * 登录后进行session记录
+	 * @static
+	 * @param int $uid 管理员id
+	 * @param string $nickname 管理员昵称
+	 * @return void
+	 */
+	public static function recordSession($uid, $nickname) {
+		$session = self::getSession();
+		$session->set('admin.uid', $uid);
+		$session->set('admin.name', $nickname);
+		$session->set('admin.ip', IP::client());
+		$session->set('admin.lasttime', time());
 	}
 
 	/**
@@ -67,30 +82,23 @@ class Login extends BaseService {
 	 */
 	public static function clear() {
 		$session = self::getSession();
-		foreach(array('uid', 'name', 'lasttime', 'ip') as $key) {
-			$session->del("admin.{$key}");
-		}
+		$session->del('admin.uid');
+		$session->del('admin.name');
+		$session->del('admin.ip');
+		$session->del('admin.lasttime');
 	}
 
 	/**
-	 * 登录记录
+	 * 登录日志记录
 	 * @static
 	 * @param int $uid 管理员id
 	 * @param string $nickname 管理员昵称
 	 * @return void
 	 */
-	protected static function record($uid, $nickname) {
-		// session记录
-		$session = self::getSession();
-		$session->set('admin.uid', $uid);
-		$session->set('admin.name', $nickname);
-		$session->set('admin.ip', IP::client());
-		$session->set('admin.lasttime', time());
-
-		// 日志记录
+	public static function recordLog($uid, $nickname) {
 		$adminLoginlogModel = new AdminLoginLogModel();
 		if($loginlog = $adminLoginlogModel->where('uid=:uid and addtime=:time', $uid, date('Ymd'))->select()->fetchRow()) {
-			$adminLoginlogModel->where('id=:id', $loginlog['uid'])->update(array('count'=> $loginlog['count']+1));
+			$adminLoginlogModel->where('id=:id', $loginlog['uid'])->update(array('count'=> $loginlog['count']+1, 'ip'=>IP::client()));
 		} else {
 			$adminLoginlogModel->insert(array('uid'=>$uid, 'addtime'=>date('Ymd'), 'ip'=>IP::client(), 'count'=>1));
 		}

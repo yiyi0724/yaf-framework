@@ -27,19 +27,24 @@ class LoginController extends \base\AdminController {
 
 		// 访问路径检查
 		if(!$request->isPost() || !$request->isXmlHttpRequest()) {
-			$this->json(FALSE, '非法访问', 1101);
+			$this->throwForbiddenException(1101, '非法访问');
 		}
 
-		// 保存验证码
+		// 对比验证码
 		if(!CaptchaService::compare('login', $request->get('captcha'))) {
-			$this->json(FALSE, '验证码有误', 1102);
+			$this->throwNotifyException(1102, '验证码有误');
 		}
 
 		// 账号密码检查
-		if(!AdminLoginService::fromAP($request->get('account'), $request->get('password'))) {
-			$this->json(FALSE, '账号或密码有误', 1103);
+		$adminInfo = AdminLoginService::useAccountAndPassword($request->get('account'), $request->get('password'));
+		if(!$adminInfo) {
+			$this->throwNotifyException(1103, '账号或密码有误');
 		}
-		
+
+		// 日志记录
+		AdminLoginService::recordLog($adminInfo['uid'], $adminInfo['nickname']);
+
+		// 登录成功后返回
 		$this->json(TRUE, '登录成功', 1100);
 	}
 }

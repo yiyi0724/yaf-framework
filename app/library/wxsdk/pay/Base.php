@@ -52,8 +52,8 @@ class Base extends \wxsdk\Base {
 	 */
 	public function __construct($appid = NULL, $mchid = NULL, $key = NULL) {
 		parent::__construct($appid);
-		$this->setMchid($mchid ? : WEIXIN_PAY_MCH_ID);
-		$this->setKey($key ? : WEIXIN_PAY_KEY);
+		$this->setMchid($mchid ? : \wxsdk\Config::PAY_MCH_ID);
+		$this->setKey($key ? : \wxsdk\Config::PAY_KEY);
 	}
 
 	/**

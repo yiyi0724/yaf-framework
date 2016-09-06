@@ -93,13 +93,8 @@ class ErrorController extends \base\BaseController {
 	 * 禁止访问操作(403)
 	 */
 	private function showForbiddenException($exception) {
-		switch(TRUE) {
-			case IS_AJAX:
-				header('HTTP/1.1 403 Forbidden');
-				exit;
-			default:
-				$this->changeView('403');
-		}
+		header('HTTP/1.1 403 Forbidden');
+		exit;
 	}
 
 	/**

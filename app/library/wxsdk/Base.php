@@ -44,13 +44,11 @@ abstract class Base {
 	 * @param string $appSecret 公众号唯一密钥，不传默认为：WEIXIN_APPSECRET
 	 */
 	public function __construct($appid = NULL, $appSecret = NULL) {
-		// 加载默认配置
-		require_once(sprintf("%s/Config.php", __DIR__));
 		// 设置必须参数
-		$this->setAppid($appid ? : WEIXIN_APPID);
-		$this->setAppSecret($appid ? $appSecret : WEIXIN_APPSECRET);
+		$this->setAppid($appid ? : Config::APPID);
+		$this->setAppSecret($appid ? $appSecret : Config::APPSECRET);
 		// 设置保存对象
-		$storageClass = sprintf("wxsdk\storage\%s", WEIXIN_STORAGE);
+		$storageClass = sprintf("wxsdk\storage\%s", Config::STORAGE);
 		$this->setStorage(new $storageClass($this->getAppid()));
 		// 设置access_token
 		$this->getAppSecret() and $this->setAccessToken();
