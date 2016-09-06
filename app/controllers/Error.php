@@ -4,6 +4,8 @@
  * 错误异常处理控制器
  * @author enychen
  */
+use \network\Header as HeaderLib;
+
 class ErrorController extends \base\BaseController {
 
 	/**
@@ -93,7 +95,7 @@ class ErrorController extends \base\BaseController {
 	 * 禁止访问操作(403)
 	 */
 	private function showForbiddenException($exception) {
-		header('HTTP/1.1 403 Forbidden');
+		HeaderLib::forbidden();
 		exit;
 	}
 
@@ -103,7 +105,7 @@ class ErrorController extends \base\BaseController {
 	private function showNotFoundException($exception) {
 		switch(TRUE) {
 			case IS_AJAX:
-				header('HTTP/1.1 404 Not Found');
+				HeaderLib::notFound();
 				exit;
 			default:
 				$this->changeView('404');

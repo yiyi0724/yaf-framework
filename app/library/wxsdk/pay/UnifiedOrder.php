@@ -318,7 +318,7 @@ class UnifiedOrder extends Base {
 		$this->setDeviceInfo('WEB');
 
 		// 执行公共调用
-		$result = $this->executeHaveNotify($unifiedOrderObject);
+		$result = $this->executeHaveNotify();
 
 		// 支付信息
 		$jsapi['appId'] = $this->getAppid();
@@ -345,7 +345,7 @@ class UnifiedOrder extends Base {
 		$this->setTradeType('NATIVE');
 
 		// 执行公共调用
-		$result = $this->executeHaveNotify($unifiedOrderObject);
+		$result = $this->executeHaveNotify();
 
 		return $result['code_url'];
 	}
@@ -360,7 +360,7 @@ class UnifiedOrder extends Base {
 		$this->setTradeType('APP');
 
 		// 执行公共调用
-		$result = $this->executeHaveNotify($unifiedOrderObject);
+		$result = $this->executeHaveNotify();
 
 		// 封装返回数据
 		$app['appid'] = $this->getAppid();
@@ -375,7 +375,7 @@ class UnifiedOrder extends Base {
 
 	/**
 	 * 统一下单，使用回调地址
-	 * @return array https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
+	 * @return array 包含的key请参考：https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
 	 * @throws \wxsdk\WxException
 	 */
 	protected function executeHaveNotify() {

@@ -20,7 +20,7 @@ class Header {
 	/**
 	 * 跨域的访问控制可以跨域的域名
 	 * @static
-	 * @param string $domain 允许进行跨域的域名，多个域名用,隔开，必须设置完整到协议
+	 * @param string $domain 允许进行跨域的域名，多个域名用,隔开，必须设置完整到协议(http://或https://)
 	 * @return void
 	 */
 	public static function accessControlAllowOrigin($domain = '*') {
@@ -35,5 +35,23 @@ class Header {
 	 */
 	public static function accessControlAllowHeaders($headers) {
 		header("Access-Control-Allow-Headers: {$headers}");
+	}
+
+	/**
+	 * 输出403
+	 * @static
+	 * @return void
+	 */
+	public static function forbidden() {
+		header('HTTP/1.1 403 Forbidden');
+	}
+
+	/**
+	 * 输出404
+	 * @static
+	 * @return void
+	 */
+	public static function notFound() {
+		header('HTTP/1.1 404 Not Found');
 	}
 }

@@ -24,6 +24,11 @@ class Result extends Base {
 		$this->setData($this->xmlDecode($data));
 	}
 
+	/**
+	 * 设置通知数据
+	 * @param array $data 微信回调的数据
+	 * @return \wxsdk\pay\Result
+	 */
 	protected function setData($data) {
 		$this->data = $data;
 		return $this;
