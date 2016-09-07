@@ -42,7 +42,7 @@ class LoginController extends \base\AdminController {
 		}
 
 		// 日志记录
-		AdminLoginService::recordLog($adminInfo['uid'], $adminInfo['nickname']);
+		AdminLoginService::recordLog($adminInfo['id'], $adminInfo['nickname']);
 
 		// 登录成功后返回
 		$this->json(TRUE, '登录成功', 1100);

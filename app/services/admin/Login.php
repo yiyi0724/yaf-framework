@@ -42,22 +42,24 @@ class Login extends BaseService {
 	}
 
 	/**
-	 * 使用账号密码登录
+	 * 使用账号密码登录,登录成功后记录session
 	 * @static
 	 * @param string $account 账号
 	 * @param string $password 原始密码
-	 * @return boolean 账号密码正确返回TRUE
+	 * @return array 账号密码正确返回用户参数，否则返回空数组
 	 */
 	public static function useAccountAndPassword($accout, $password) {
+		// 数据库检查
 		$adminUserModel = new AdminUserModel();
 		$admin = $adminUserModel->where("username=:u", $accout)->limit(1)->select()->fetchRow();
-
 		if(!$admin || EncryptionLib::decrypt($admin['password'], PASSWORD_SECRET) != $password) {
-			return FALSE;
+			return array();
 		}
-		
+
+		// session记录
 		self::recordSession($admin['id'], $admin['nickname']);
-		return TRUE;
+
+		return $admin;
 	}
 
 	/**
