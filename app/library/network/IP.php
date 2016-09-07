@@ -40,7 +40,7 @@ class IP {
 	 * @return int|string
 	 */
 	public static function server($ip2long = TRUE) {
-		$ip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1';
+		$ip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '0.0.0.0';
 		return $ip2long ? sprintf("%u", ip2long($ip)) : $ip;
 	}
 }
