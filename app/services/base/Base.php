@@ -43,7 +43,7 @@ class Base {
 	 * @return mixed ini对象或者具体的值，找不到返回NULL
 	 */
 	public final static function getIni($ini, $key = NULL) {
-		if(!self::$inis[$ini]) {
+		if(empty(self::$inis[$ini])) {
 			self::$inis[$ini] = new Ini(sprintf("%s%s.ini", CONF_PATH, $ini), \YAF\ENVIRON);
 		}
 		return $key ? self::$inis[$ini]->get($key) : self::$inis[$ini];
@@ -64,7 +64,7 @@ class Base {
 	 * @return \storage\Redis redis的封装对象
 	 */
 	public final static function getRedis($db = 0, $adapter = 'master') {
-		$c = $this->getIni('driver', sprintf("redis.%s", $adapter));
+		$c = self::getIni('driver', sprintf("redis.%s", $adapter));
 		$redis = \storage\Redis::getInstance($c->host, $c->port, $c->auth, $c->timeout, $c->options->toArray());
 		$redis->select($db);
 		return $redis;

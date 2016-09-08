@@ -32,12 +32,15 @@ class Redis extends Adapter {
 	protected function __construct($host, $port, $timeout, $auth, array $options) {
 		// 创建redis对象
 		$this->redis = new \Redis();
+		
+		// 持久性连接
+		$this->redis->pconnect($host, $port, (float)$timeout);
+
 		// 选项设置
 		foreach($options as $key=>$option) {
 			$this->redis->setOption(constant("\Redis::OPT_" . strtoupper($key)), $option);
 		}
-		// 持久性连接
-		$this->redis->pconnect($host, $port, $timeout);
+		
 		// 密码验证
 		$auth and $this->redis->auth($auth);
 	}
