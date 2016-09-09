@@ -19,6 +19,7 @@ class HandlerPlugin extends Plugin_Abstract {
 	 */
 	public function preDispatch(Request_Abstract $request, Response_Abstract $response) {
 		$this->initConst($request);
+		$this->autoload();
 	}
 
 	/**
@@ -48,5 +49,18 @@ class HandlerPlugin extends Plugin_Abstract {
 				define(strtoupper($key), $value);
 			}
 		}
+	}
+
+	/**
+	 * 注册自动加载service方法
+	 * @return void
+	 */
+	private function autoload() {
+		// 自动加载service类
+		spl_autoload_register(function($class) {
+			if(substr($class, -7) == 'Service') {
+				require(sprintf("%sservices%s%s.php", APP_PATH, DS, str_replace('\\', '/', substr($class, 0, -7))));
+			}
+		});
 	}
 }

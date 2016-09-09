@@ -6,8 +6,9 @@
  */
 namespace base;
 
-use \services\common\Menu as MenuService;
-use \services\admin\Login as AdminLoginService;
+
+use \admin\MenuService as AdminMenuService;
+use \admin\LoginService as AdminLoginService;
 
 abstract class AdminController extends BaseController {
 	
@@ -32,6 +33,6 @@ abstract class AdminController extends BaseController {
 		}
 
 		// 读取侧边栏信息
-		$this->assign('menus', MenuService::getLists());
+		$this->assign('menus', AdminMenuService::getLists());
 	}
 }

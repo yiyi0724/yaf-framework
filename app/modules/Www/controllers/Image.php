@@ -5,8 +5,9 @@
  * @author enychen
  */
 
+use \image\CaptchaService;
 use \image\Captcha as CaptchaLib;
-use \services\common\Captcha as CaptchaService;
+
 
 class ImageController extends \base\BaseController {
 

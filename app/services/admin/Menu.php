@@ -4,11 +4,9 @@
  * 左侧栏目逻辑
  * @author enychen
  */
-namespace services\common;
+namespace admin;
 
-use \services\base\Base;
-
-class Menu extends Base {
+class MenuService {
 
 	/**
 	 * 获取左侧栏目列表，并以子孙树排列

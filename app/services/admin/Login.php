@@ -4,15 +4,15 @@
  * 管理员初始化
  * @author enychen
  */
-namespace services\admin;
+namespace admin;
 
 use \network\IP;
-use \services\base\Base as BaseService;
+use \storage\SessionService;
 use \admin\UserModel as AdminUserModel;
 use \security\Encryption as EncryptionLib;
 use \admin\LoginlogModel as AdminLoginLogModel;
 
-class Login extends BaseService {
+class LoginService {
 
 	/**
 	 * 初始化管理员常量
@@ -20,11 +20,14 @@ class Login extends BaseService {
 	 * @return void
 	 */
 	public static function initAdminConst() {
-		$session = self::getSession();
-		defined('ADMIN_UID') or define('ADMIN_UID', intval($session->get('admin.uid')));
-		defined('ADMIN_NAME') or define('ADMIN_NAME', $session->get('admin.name'));
-		defined('ADMIN_ISEXPIRE') or define('ADMIN_ISEXPIRE', (time() - $session->get('admin.lasttime') >= 1800));
-		defined('ADMIN_IP_MATCH') or define('ADMIN_IP_MATCH', ($session->get('admin.ip') || IP::client() == $session->get('admin.ip')));
+		// 初始化常量
+		defined('ADMIN_UID') or define('ADMIN_UID', intval(SessionService::get('admin.uid')));
+		defined('ADMIN_NAME') or define('ADMIN_NAME',SessionService::get('admin.name'));
+		defined('ADMIN_ISEXPIRE') or define('ADMIN_ISEXPIRE', (time() - SessionService::get('admin.lasttime') >= 1800));
+		defined('ADMIN_IP_MATCH') or define('ADMIN_IP_MATCH', (SessionService::get('admin.ip') || IP::client() == SessionService::get('admin.ip')));
+		
+		// 更新访问时间
+		SessionService::set('admin.lasttime', time());
 	}
 
 	/**
@@ -33,12 +36,7 @@ class Login extends BaseService {
 	 * @return boolean
 	 */
 	public static function chekLogin() {
-		if(!ADMIN_UID || ADMIN_ISEXPIRE || !ADMIN_IP_MATCH) {
-			return FALSE;
-		}
-
-		self::getSession()->set('admin.lasttime', time());
-		return TRUE;
+		return (!ADMIN_UID || ADMIN_ISEXPIRE || !ADMIN_IP_MATCH);
 	}
 
 	/**
