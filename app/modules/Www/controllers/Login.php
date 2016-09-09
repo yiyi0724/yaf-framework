@@ -5,9 +5,10 @@
  * @author enychen
  */
 
-use \services\common\Captcha as CaptchaService;
-use \services\admin\Login as AdminLoginService;
-use \services\common\Security as SecurityService;
+use \admin\LoginService;
+use \network\IP as IPLib;
+use \image\CaptchaService;
+use \security\ChannelService;
 
 class LoginController extends \base\AdminController {
 
@@ -24,6 +25,10 @@ class LoginController extends \base\AdminController {
 	 */
 	public function apiAction() {
 		$request = $this->getRequest();
+		$channelKey = sprintf('login.%s', IPLib::client());
+		
+		// 访问次数控制
+		ChannelService::incrChannel($channelKey);
 
 		// 访问路径检查
 		if(!$request->isPost() || !$request->isXmlHttpRequest()) {
@@ -35,14 +40,16 @@ class LoginController extends \base\AdminController {
 			$this->throwNotifyException(1102, '验证码有误');
 		}
 
+		// 访问次数检查
+		if(ChannelService::getChannelNumber($channelKey) > 7) {
+			$this->throwNotifyException(1104, '操作太频繁了，请休息15分钟');
+		}
+
 		// 账号密码检查
-		$adminInfo = AdminLoginService::useAccountAndPassword($request->get('account'), $request->get('password'));
+		$adminInfo = LoginService::accountAndPassword($request->get('account'), $request->get('password'));
 		if(!$adminInfo) {
 			$this->throwNotifyException(1103, '账号或密码有误');
 		}
-
-		// 日志记录
-		AdminLoginService::recordLog($adminInfo['id'], $adminInfo['nickname']);
 
 		// 登录成功后返回
 		$this->json(TRUE, '登录成功', 1100);

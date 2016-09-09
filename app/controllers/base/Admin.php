@@ -23,6 +23,17 @@ abstract class AdminController extends BaseController {
 	 * @return void
 	 */
 	public function init() {
+		// 初始化登录信息
+		$this->initLogin();
+		// 初始化侧边栏
+		$this->initMenu();
+	}
+
+	/**
+	 * 初始化登录信息
+	 * @return void
+	 */
+	protected function initLogin() {
 		// 初始化常量
 		AdminLoginService::initAdminConst();
 
@@ -32,7 +43,17 @@ abstract class AdminController extends BaseController {
 			$this->redirect('/login');
 		}
 
-		// 读取侧边栏信息
-		$this->assign('menus', AdminMenuService::getLists());
+		// 进行时间更新
+		AdminLoginService::update();
+	}
+
+	/**
+	 * 初始化左侧栏目
+	 * @return void
+	 */
+	protected function initMenu() {
+		if(!in_array(CONTROLLER_NAME, self::$noCheck)) {
+			$this->assign('menus', AdminMenuService::getLists());
+		}
 	}
 }

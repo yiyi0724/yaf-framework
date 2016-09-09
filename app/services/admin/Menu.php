@@ -6,6 +6,8 @@
  */
 namespace admin;
 
+use \admin\MenuModel as AdminMenuModel;
+
 class MenuService {
 
 	/**
@@ -14,7 +16,7 @@ class MenuService {
 	 * @return array
 	 */
 	public static function getLists() {
-		$adminMenuModel = new \admin\MenuModel();
+		$adminMenuModel = new AdminMenuModel();
 		$menus = $adminMenuModel->field('id,name,icon,parent,module,controller,action,url')
 			->where('is_column=:is', 1)->order('sort ASC')->select()->fetchAll();
 		$menus = self::recursion($menus);

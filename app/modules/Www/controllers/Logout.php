@@ -5,16 +5,15 @@
  * @author enychen
  */
 
-use \services\admin\Login as AdminLoginService;
+use \admin\LoginService;
 
 class LogoutController extends \base\AdminController {
 
 	/**
-	 * 登出方法
-	 * @return void
+	 * 登出
 	 */
 	public function indexAction() {
-		AdminLoginService::clear();
+		LoginService::clear();
 		$this->redirect('\login');
 	}
 }

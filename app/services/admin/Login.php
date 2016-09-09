@@ -6,11 +6,11 @@
  */
 namespace admin;
 
-use \network\IP;
-use \storage\SessionService;
+use \network\IP as IPLib;
 use \admin\UserModel as AdminUserModel;
 use \security\Encryption as EncryptionLib;
 use \admin\LoginlogModel as AdminLoginLogModel;
+use \storage\SessionService as StorageStorageSessionService;
 
 class LoginService {
 
@@ -20,14 +20,20 @@ class LoginService {
 	 * @return void
 	 */
 	public static function initAdminConst() {
-		// 初始化常量
-		defined('ADMIN_UID') or define('ADMIN_UID', intval(SessionService::get('admin.uid')));
-		defined('ADMIN_NAME') or define('ADMIN_NAME',SessionService::get('admin.name'));
-		defined('ADMIN_ISEXPIRE') or define('ADMIN_ISEXPIRE', (time() - SessionService::get('admin.lasttime') >= 1800));
-		defined('ADMIN_IP_MATCH') or define('ADMIN_IP_MATCH', (SessionService::get('admin.ip') || IP::client() == SessionService::get('admin.ip')));
-		
-		// 更新访问时间
-		SessionService::set('admin.lasttime', time());
+		defined('ADMIN_UID') or define('ADMIN_UID', intval(StorageStorageSessionService::get('admin.uid')));
+		defined('ADMIN_NAME') or define('ADMIN_NAME',StorageStorageSessionService::get('admin.name'));
+		defined('ADMIN_ISEXPIRE') or define('ADMIN_ISEXPIRE', (time() - StorageSessionService::get('admin.lasttime') >= 1800));
+		defined('ADMIN_IP_MATCH') or define('ADMIN_IP_MATCH', (StorageSessionService::get('admin.ip') 
+			|| IPLib::client() == StorageSessionService::get('admin.ip')));
+	}
+
+	/**
+	 * 更新参数
+	 * @static
+	 * @return void
+	 */
+	public static function update() {
+		StorageSessionService::set('admin.lasttime', time());
 	}
 
 	/**
@@ -46,7 +52,7 @@ class LoginService {
 	 * @param string $password 原始密码
 	 * @return array 账号密码正确返回用户参数，否则返回空数组
 	 */
-	public static function useAccountAndPassword($accout, $password) {
+	public static function accountAndPassword($accout, $password) {
 		// 数据库检查
 		$adminUserModel = new AdminUserModel();
 		$admin = $adminUserModel->where("username=:u", $accout)->limit(1)->select()->fetchRow();
@@ -55,24 +61,20 @@ class LoginService {
 		}
 
 		// session记录
-		self::recordSession($admin['id'], $admin['nickname']);
+		StorageSessionService::set('admin.uid', $admin['id']);
+		StorageSessionService::set('admin.name', $admin['nickname']);
+		StorageSessionService::set('admin.ip', IPLib::client());
+		StorageSessionService::set('admin.lasttime', time());
+
+		// 日志记录
+		$adminLoginlogModel = new AdminLoginLogModel();
+		if($loginlog = $adminLoginlogModel->where('uid=:uid and addtime=:time', $admin['id'], date('Ymd'))->select()->fetchRow()) {
+			$adminLoginlogModel->where('id=:id', $loginlog['uid'])->update(array('count'=> $loginlog['count']+1, 'ip'=>IPLib::client()));
+		} else {
+			$adminLoginlogModel->insert(array('uid'=>$admin['id'], 'addtime'=>date('Ymd'), 'ip'=>IPLib::client(), 'count'=>1));
+		}
 
 		return $admin;
-	}
-
-	/**
-	 * 登录后进行session记录
-	 * @static
-	 * @param int $uid 管理员id
-	 * @param string $nickname 管理员昵称
-	 * @return void
-	 */
-	public static function recordSession($uid, $nickname) {
-		$session = self::getSession();
-		$session->set('admin.uid', $uid);
-		$session->set('admin.name', $nickname);
-		$session->set('admin.ip', IP::client());
-		$session->set('admin.lasttime', time());
 	}
 
 	/**
@@ -81,26 +83,9 @@ class LoginService {
 	 * @return Info $this 返回当前对象进行连贯操作
 	 */
 	public static function clear() {
-		$session = self::getSession();
-		$session->del('admin.uid');
-		$session->del('admin.name');
-		$session->del('admin.ip');
-		$session->del('admin.lasttime');
-	}
-
-	/**
-	 * 登录日志记录
-	 * @static
-	 * @param int $uid 管理员id
-	 * @param string $nickname 管理员昵称
-	 * @return void
-	 */
-	public static function recordLog($uid, $nickname) {
-		$adminLoginlogModel = new AdminLoginLogModel();
-		if($loginlog = $adminLoginlogModel->where('uid=:uid and addtime=:time', $uid, date('Ymd'))->select()->fetchRow()) {
-			$adminLoginlogModel->where('id=:id', $loginlog['uid'])->update(array('count'=> $loginlog['count']+1, 'ip'=>IP::client()));
-		} else {
-			$adminLoginlogModel->insert(array('uid'=>$uid, 'addtime'=>date('Ymd'), 'ip'=>IP::client(), 'count'=>1));
-		}
+		StorageSessionService::del('admin.uid');
+		StorageSessionService::del('admin.name');
+		StorageSessionService::del('admin.ip');
+		StorageSessionService::del('admin.lasttime');
 	}
 }
