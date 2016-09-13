@@ -42,7 +42,7 @@ class LoginService {
 	 * @return boolean
 	 */
 	public static function chekLogin() {
-		return (!ADMIN_UID || ADMIN_ISEXPIRE || !ADMIN_IP_MATCH);
+		return (ADMIN_UID && ADMIN_ISEXPIRE && ADMIN_IP_MATCH);
 	}
 
 	/**
