@@ -1,0 +1,48 @@
+<?php
+    $this->display("elements/header.phtml", array(
+        'title'=> WEB_TITLE.$name.'游戏',
+        'addNav' => '1',
+        'addStyle' => array('h/category/detail.css')
+    ));
+?>
+<div class="container">
+    <div id="catelistScroll" class="mod-catelist">
+        <div class="inner">
+            <ul>
+            <?php foreach ($categoryArr as $category):?>
+                <li<?php echo $id == $category->getId() ? ' class="active"' : ''?>><a href="/category/detail/?id=<?php echo $category->getId(); ?>">
+                    <span class="ic-cate"><img src="<?php echo IMAGEURL.trim($category->getLogo(), '/');?>" alt=""/></span>
+                    <span class="txt"><?php echo $category->getName(); ?></span>
+                </a></li>
+            <?php endforeach;?>
+            </ul>
+        </div>
+    </div>
+    <?php if(isset($gameArr) && $gameArr): ?>
+    <div id="gameList" class="mod-gamelist">
+        <ul>
+        <?php foreach ($gameArr as $game):?>
+            <li class="j-link" data-gameid="<?php echo $game['id']?>">
+                <div class="pic"><img src="<?php echo IMAGEURL.$game['logo'];?>" alt="" /></div>
+                <div class="cont">
+                    <h3><?php echo $game['name']; ?><?php if($game['hasGift']):?><span class="gift">礼包</span><?php endif;?><?php if($game['is_recommend']):?><span class="hot">热门</span><?php endif;?>
+                    </h3>
+                    <p class="desc"><?php echo $game['intro']; ?></p>
+                </div>
+                <div class="button"><a class="btn-start" href="/<?php echo $game['id']; ?>.html">进入</a></div>
+            </li>
+        <?php endforeach;?>
+        </ul>
+        <?php if(count($gameArr) >=10): ?>
+        <div id="more" class="mod-more">点击加载更多</div>
+        <?php endif; ?>
+    </div>
+    <?php else: ?>
+        <?php $this->display("elements/default.phtml",array('defaultMsg'=>'还没有该系列游戏哦！')); ?>
+    <?php endif; ?>
+</div>
+<?php
+    $this->display("elements/footer.phtml", array(
+        'addScript' => array('h/category/detail.js')
+    ));
+?>

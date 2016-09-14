@@ -1,23 +1,19 @@
 <?php $this->component('head')?>
 <body>
 <div class="wrapper">
-    <?php if(isset($addNav) && $addNav):?>
+    <?php if($this->getValue('nav')):?>
     <nav class="mod-nav" id="scrollNav">
         <div class="wrap">
             <div class="inner">
-                <?php 
-                    $path = strval($_SERVER['REQUEST_URI']);
-                    $val = explode("/",$path)[1];
-                ?>
                 <ul>
                     <li><a class="nav-item" href="/"><span>首页</span></a></li>
-                    <li class="<?php echo ($val=='category')? 'active':'';?>"><a class="nav-item" href="/category/"><span>分类</span></a></li>
-                    <li class="<?php echo ($val=='gift')? 'active':'';?>"><a class="nav-item" href="/gift/"><span>礼包</span></a></li>
-                    <li class="<?php echo ($val=='smallgame')? 'active':'';?>"><a class="nav-item" href="/smallgame/"><span>小游戏</span></a></li>
-                    <li class="<?php echo ($val=='pay')? 'active':'';?>"><a class="nav-item" href="/pay/recharge/"><span>充值</span></a></li>
-                    <li class="<?php echo ($val=='notice')? 'active':'';?>"><a class="nav-item" href="/notice/"><span>活动</span></a></li>
-                    <li class="<?php echo ($val=='member')? 'active':'';?>"><a class="nav-item" href="/member/sign/"><span>签到</span></a></li>
-                    <li class="<?php echo ($val=='rank')? 'active':'';?>"><a class="nav-item" href="/rank/"><span>排行</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Category')? 'active':'';?>"><a class="nav-item" href="/category/"><span>分类</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Gift')? 'active':'';?>"><a class="nav-item" href="/gift/"><span>礼包</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Smallgame')? 'active':'';?>"><a class="nav-item" href="/sgame/"><span>小游戏</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Pay')? 'active':'';?>"><a class="nav-item" href="/pay/recharge/"><span>充值</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Notice')? 'active':'';?>"><a class="nav-item" href="/notice/"><span>活动</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Sign')? 'active':'';?>"><a class="nav-item" href="/member/sign/"><span>签到</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Rank')? 'active':'';?>"><a class="nav-item" href="/rank/"><span>排行</span></a></li>
                 </ul>
             </div> 
         </div> 
@@ -26,7 +22,7 @@
     <?php if(isset($addUsrNav) && $addUsrNav && !IS_APP): ?>
     <div class="user-header">
         <a class="back" href="<?php echo isset($_SERVER['HTTP_REFERER']) ? "javascript:history.go(-1);" : '/' ?>"></a>
-        <div class="logo"><a href="/"><img src="<?php echo IMAGEURL.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>
+        <div class="logo"><a href="/"><img src="<?php echo WEB_IMAGE.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>
     </div>
     <?php endif; ?>
 	<?php echo $body;?>
@@ -45,7 +41,7 @@
 	            'addScript':'<?php echo rtrim(WEB_SCRIPT,'/'); ?>'
 	        },
 	        map: [
-	            [ /^(.*?\/script\/(?:src|dist)\/.*?\/.*?\.js$)(?:.*)$/i, '$1?v=<?php echo $this->version;?>']
+	            [ /^(.*?\/script\/(?:src|dist)\/.*?\/.*?\.js$)(?:.*)$/i, '$1?v=<?php echo WEB_VERSION;?>']
 	        ],
 	        charset: 'utf-8'
 	    });

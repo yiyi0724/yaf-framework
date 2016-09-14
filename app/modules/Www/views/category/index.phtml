@@ -1,0 +1,17 @@
+<?php $this->setTitle('游老虎_游戏分类')->setStyles('h/category/index.css')->setValue('nav', 1); ?>
+<div class="container">
+	<?php if(isset($categoryArr) && $categoryArr):?>
+	<div class="mod-category">
+		<div class="bd">
+			<ul>
+			<?php foreach ($categoryArr as $category):?>
+				<li><a href="/category/detail/?id=<?php echo $category->getId(); ?>">
+					<img src="<?php echo WEB_IMAGE.trim($category->getBgpic(),'/');?>" alt="">
+					<span class="category-name"><?php echo $category->getName(); ?></span>
+				</a></li>
+			<?php endforeach;?>
+			</ul>
+		</div>
+	</div>
+   	<?php endif;?>
+</div>

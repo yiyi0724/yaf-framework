@@ -20,7 +20,7 @@ class Response implements View_Interface {
 	 * 构造函数
 	 */
 	public function __construct() {
-		$this->setEngine(new View(NULL));
+		$this->setEngine(new Template(NULL));
 	}
 	
 	/**
@@ -28,7 +28,7 @@ class Response implements View_Interface {
 	 * @param \traits\View $engine 视图引擎对象
 	 * @return void
 	 */
-	public function setEngine(\traits\View $engine) {
+	public function setEngine(\traits\Template $engine) {
 		$this->engine = $engine;
 	}
 
@@ -48,7 +48,7 @@ class Response implements View_Interface {
 	 */
 	public function render($tpl, $tpl_vars = NULL) {
 		$this->assign('body', $this->getEngine()->render($tpl, $tpl_vars));
-		$this->getEngine()->setScriptPath(sprintf('%smain', COMMON_VIEW_PATH));
+		$this->getEngine()->setScriptPath(sprintf('%slayout', COMMON_VIEW_PATH));
 		return $this->getEngine()->render("{$this->getEngine()->getTemplate()}.phtml");
 	}
 
@@ -60,7 +60,7 @@ class Response implements View_Interface {
 	 */
 	public function display($tpl, $tpl_vars = NULL) {
 		$this->assign('body', $this->getEngine()->display($tpl, $tpl_vars));
-		$this->getEngine()->setScriptPath(sprintf('%smain', COMMON_VIEW_PATH));
+		$this->getEngine()->setScriptPath(sprintf('%slayout', COMMON_VIEW_PATH));
 		return $this->getEngine()->render("{$this->getEngine()->getTemplate()}.phtml");
 	}
 

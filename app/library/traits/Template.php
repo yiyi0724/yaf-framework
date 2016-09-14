@@ -8,7 +8,7 @@ namespace traits;
 
 use \Yaf\View\Simple;
 
-class View extends Simple {
+class Template extends Simple {
 
 	/**
 	 * 通用模板名称
@@ -44,9 +44,21 @@ class View extends Simple {
 	protected $metas = array();
 
 	/**
+	 * 搜索引擎优化
+	 * @var string
+	 */
+	protected $canonical = NULL;
+
+	/**
+	 * 设置跨页面值
+	 * @var array
+	 */
+	protected $values = array();
+
+	/**
 	 * 设置通用模板名称
 	 * @param string $template 模板名称
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function setTemplate($template) {
 		$this->template = $template;
@@ -64,7 +76,7 @@ class View extends Simple {
 	/**
 	 * 设置标题名称
 	 * @param string $title 标题名称
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
@@ -82,7 +94,7 @@ class View extends Simple {
 	/**
 	 * 设置meta信息
 	 * @param array $metas meta头信息，key=>value的形式
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function setMetas(array $metas) {
 		$this->metas = array_merge($this->metas, $metas);
@@ -99,7 +111,7 @@ class View extends Simple {
 
 	/**
 	 * 设置css文件
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function setStyles() {
 		$this->styles = array_merge($this->styles, func_get_args());
@@ -116,7 +128,7 @@ class View extends Simple {
 
 	/**
 	 * 设置头部的js脚本文件
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function setHeadScripts() {
 		$this->scripts['head'] = array_merge($this->scripts['head'], func_get_args());
@@ -133,7 +145,7 @@ class View extends Simple {
 
 	/**
 	 * 设置尾部的js脚本文件
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function setFootScripts() {
 		$this->scripts['foot'] = array_merge($this->scripts['foot'], func_get_args());
@@ -149,10 +161,49 @@ class View extends Simple {
 	}
 
 	/**
+	 * 设置搜索引擎优化内容
+	 * @param string $canonical 引擎内容
+	 * @return \traits\Template
+	 */
+	public function setCanonical($canonical) {
+		$this->canonical = $canonical;
+		return $this;
+	}
+
+	/**
+	 * 获取搜索引擎优化内容
+	 * @return string
+	 */
+	public function getCanonical() {
+		return $this->canonical;
+	}
+
+	/**
+	 * 设置跨页面值
+	 * @param string $key 键
+	 * @param string $value 值
+	 * @return \traits\Template
+	 */
+	public function setValue($key, $value) {
+		$this->values[$key] = $value;
+		return $this;
+	}
+
+	/**
+	 * 获取跨页面值
+	 * @param string $key 键
+	 * @param mixed $default　找不到的返回默认值
+	 * @return mixed
+	 */
+	public function getValue($key, $default = NULL) {
+		return isset($this->values[$key]) ? $this->values[$key] : $default;
+	}
+
+	/**
 	 * 加载模块layout文件
 	 * @param string $tpl 模板名称
 	 * @param array $tpl_vars 视图数据
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function moduleComponent($tpl, array $tpl_vars = array()) {
 		$this->setScriptPath(sprintf('%slayout', MODULE_VIEW_PATH));
@@ -164,7 +215,7 @@ class View extends Simple {
 	 * 加载公共获取组件
 	 * @param string $tpl 模板名称
 	 * @param array $tpl_vars 视图数据
-	 * @return View $this 返回当前对象进行连贯操作
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function component($tpl, array $tpl_vars = array()) {
 		$this->setScriptPath(sprintf('%scomponent', COMMON_VIEW_PATH));
@@ -173,20 +224,21 @@ class View extends Simple {
 	}
 
 	/**
-	 * 简化isset($data) ? $data : NULL的作用
-	 * @param array $data 数组数据
-	 * @param array $key 要获取的key
-	 * @param mixed $default 如果不存在则输出
-	 * @return void
+	 * 格式化时间戳
+	 * @param string $timestamp YmdHis的格式化字符串
+	 * @param string $format 默认格式化字符串
+	 * ＠return string
 	 */
-	public function echoIsset($data, $key, $default = NULL) {
-		echo isset($data[$key]) ? $data[$key] : $default;
+	public function formatYmdHis($timestamp, $format = 'Y-m-d H:i:s') {
+		return date($format, strtotime($timestamp));
 	}
 
 	/**
-	 * 格式化时间戳
+	 * 将换行符转成<br/>
+	 * @param string $string 字符串内容
+	 * @return string
 	 */
-	public function formatDate($timestamp) {
-		return date('Y-m-d H:i:s', strtotime($timestamp));
+	public function WrapToBr($string) {
+		return str_replace(chr(10), '<br/>', $string);
 	}
 }
