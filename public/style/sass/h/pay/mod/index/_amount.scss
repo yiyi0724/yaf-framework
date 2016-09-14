@@ -1,0 +1,51 @@
+@charset "utf-8";
+
+.mod-amount{
+    .select{
+        padding-bottom: .12rem;
+        .bd{
+            padding: 0 .2rem;
+        }
+        ul{
+            @extend %fn-clear;
+            margin-right: -.64rem;
+        }
+        li{
+            @extend %fl;
+            width: 1.68rem;
+            height: 1.24rem;
+            margin-right: 0.64rem;
+            margin-bottom: .38rem;
+            a{
+                display: block;
+                height: 1.24rem;
+                background-color: #f8f8f8;
+                border: solid 1px #dfdfdf;
+                padding: 0 .05rem;
+                @include box-sizing(border-box);
+                @include border-radius(.06rem);
+                text-align: center;
+                line-height: 1.24rem;
+                &.active{
+                    background-color: #fff;
+                    border: solid 1px #f76260;
+                    color: #f76260;
+                }
+                &.inpt{
+                    overflow: hidden;
+                    background-color: #fff;
+                }
+            }
+            span{
+                vertical-align: baseline;
+                font-size: .4rem;
+            }
+            input{
+                display: block;
+                width: 100%;
+                line-height: 1.24rem;
+                color: #212121;
+            }
+        }
+    }
+}

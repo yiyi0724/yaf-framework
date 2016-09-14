@@ -1,27 +1,77 @@
+<?php $this->version='201609091725'?>
 <!DOCTYPE html>
 <html>
-	<head>
-	<title><?php echo $this->getTitle(); ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-	<?php foreach($this->getMetas() as $name=>$content):?>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <link rel="dns-prefetch" href="//static.youlaohu.com" />
+    <?php if(isset($canonical) && $canonical):?>
+    <link rel="canonical" href="<?php echo $canonical;?>"/>
+    <?php endif;?>
+    <title><?php echo $this->getTitle(); ?></title>
+    <?php foreach($this->getMetas() as $name=>$content):?>
 	<meta name="<?php echo $name;?>" content="<?php echo $content;?>">
 	<?php endforeach;?>
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-core.min.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-theme.min.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>neon-forms.min.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>entypo.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE; ?>custom.css">
 	<?php foreach($this->getStyles() as $style):?>
 	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE . $style; ?>">
 	<?php endforeach;?>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT?>jquery.js"></script>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT?>bootstrap.min.js"></script>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT?>vue.min.js"></script>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT?>custom.js"></script>
-	<?php foreach($this->getHeadScripts() as $script):?>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT.$script?>"></script>
-	<?php endforeach;?>
-	</head>
+    <link rel="shortcut icon" href="<?php echo WEB_IMAGE;?>public/favicon.ico">
+    <link href="<?php echo WEB_STYLE.'h/common/style.css?v='.$this->version; ?>" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript">
+        <?php
+            /**
+            *全局配置
+            */
+        ?>
+        var PageConfig = {
+            myUrl :"/member/",
+            imgUrl:'<?php echo WEB_IMAGE;?>'
+        };
+        (function(win){
+            var eventType = "resize";//"onorientationchange" in win ? "orientationchange" : "resize";//解决微信浏览器下旋转屏幕时宽度计算错误的问题,部分安卓机子也会出问题
+            var resizeFun = function(){
+                var htmlEle = win.document.documentElement;
+                var width = Math.min(htmlEle.clientWidth, 1080);
+                htmlEle.style.fontSize = width / 10.8 + "px";
+            };
+            resizeFun();
+            win.addEventListener(eventType, resizeFun, false);
+        })(window);
+    </script>
+</head>
+<body>
+<div class="wrapper">
+    <?php if(isset($addNav) && $addNav):?>
+    <nav class="mod-nav" id="scrollNav">
+        <div class="wrap">
+            <div class="inner">
+                <?php 
+                    $path = strval($_SERVER['REQUEST_URI']);
+                    $val = explode("/",$path)[1];
+                ?>
+                <ul>
+                    <li><a class="nav-item" href="/"><span>首页</span></a></li>
+                    <li class="<?php echo ($val=='category')? 'active':'';?>"><a class="nav-item" href="/category/"><span>分类</span></a></li>
+                    <li class="<?php echo ($val=='gift')? 'active':'';?>"><a class="nav-item" href="/gift/"><span>礼包</span></a></li>
+                    <li class="<?php echo ($val=='smallgame')? 'active':'';?>"><a class="nav-item" href="/smallgame/"><span>小游戏</span></a></li>
+                    <li class="<?php echo ($val=='pay')? 'active':'';?>"><a class="nav-item" href="/pay/recharge/"><span>充值</span></a></li>
+                    <li class="<?php echo ($val=='notice')? 'active':'';?>"><a class="nav-item" href="/notice/"><span>活动</span></a></li>
+                    <li class="<?php echo ($val=='member')? 'active':'';?>"><a class="nav-item" href="/member/sign/"><span>签到</span></a></li>
+                    <li class="<?php echo ($val=='rank')? 'active':'';?>"><a class="nav-item" href="/rank/"><span>排行</span></a></li>
+                </ul>
+            </div> 
+        </div> 
+    </nav>
+    <?php endif;?>
+    <?php if(isset($addUsrNav) && $addUsrNav && !IS_APP): ?>
+    <div class="user-header">
+        <a class="back" href="<?php echo isset($_SERVER['HTTP_REFERER']) ? "javascript:history.go(-1);" : '/' ?>"></a>
+        <div class="logo"><a href="/"><img src="<?php echo WEB_IMAGE.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>
+    </div>
+    <?php endif; ?>

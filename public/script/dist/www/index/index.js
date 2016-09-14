@@ -1,0 +1,1 @@
+define("www/index/index",[],function(n,e,i){});

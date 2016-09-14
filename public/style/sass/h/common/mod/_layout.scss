@@ -1,0 +1,142 @@
+@charset "utf-8";
+html {
+    font-size: 34.72px;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    color: #212121;
+    @media screen and (min-width: 1081px) {
+        font-size: 59.2593px!important;//屏幕宽度大于1080px一般是pc端，显示640px宽度
+    }
+}
+
+body {
+    width: 10.8rem;
+    min-width: 320px;
+    max-width: 1080px;
+    margin: 0 auto;
+    color: #212121;
+    background: $default-bg;
+    font-size: 0.28rem;
+    line-height: 1;
+    font-family: Arial, Helvetica, "Microsoft Yahei";
+}
+
+a {
+    color: #212121;
+    text-decoration: none;
+    outline: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+input,
+textarea {
+    @include box-sizing(border-box);
+    line-height: normal;
+    border: none;
+    outline: none;
+    @include border-radius(0);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); //去掉点击链接或者文本框对象的半透明覆盖层（ios）或者虚框（Android），慎用，可能会给安卓表单控件带来问题
+    -webkit-appearance: none;
+    font-family: Arial, Helvetica, "Microsoft Yahei";
+}
+
+input[placeholder] {
+    color: #dfdfdf;
+    font-family: "Microsoft Yahei";
+}
+
+input::-webkit-input-placeholder {
+    /* WebKit browsers */
+    color: #dfdfdf;
+    font-family: "Microsoft Yahei";
+}
+
+input:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: #dfdfdf;
+    font-family: "Microsoft Yahei";
+}
+
+input::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: #dfdfdf;
+    font-family: "Microsoft Yahei";
+}
+
+input:-ms-input-placeholder {
+    /* Internet Explorer 10+ */
+    color: #dfdfdf;
+    font-family: "Microsoft Yahei";
+}
+
+input:-ms-clear {
+    display: none; //消除 IE10 里面的那个叉号
+}
+
+.container {
+    @include default-width;
+}
+
+
+/* 表单提交禁用按钮 start*/
+
+input[type="submit"]:disabled {
+    background-color: #dfdfdf!important;
+    color: #fff!important;
+    cursor: default!important;
+    @include opacity(1);
+}
+
+.button-disabled {
+    background-color: #dfdfdf!important;
+    color: #fff!important;
+    cursor: default!important;
+    @include opacity(1);
+}
+
+
+/* 表单提交禁用按钮 end*/
+
+
+/*浮动*/
+
+.fl {
+    @extend %fl;
+}
+
+.fr {
+    @extend %fr;
+}
+
+
+/*清除浮动*/
+
+.clearfix {
+    @extend %fn-clear;
+}
+
+.hide {
+    display: none!important;
+}
+
+
+/* 清除输入框内容按钮 */
+
+.clear-input {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.48rem;
+    &:before {
+        content: '';
+        display: block;
+        width: 0.48rem;
+        height: 0.48rem;
+        background: inline-image('h/public/del.png') no-repeat center;
+        background-size: 100% 100%;
+    }
+}

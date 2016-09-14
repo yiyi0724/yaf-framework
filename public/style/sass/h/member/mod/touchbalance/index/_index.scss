@@ -1,0 +1,149 @@
+@charset "utf-8";
+@include bouncedelay;
+.user-header {
+    margin-bottom: 0;
+}
+
+.mod-balance {
+    @extend %fn-clear;
+    overflow: hidden;
+    .balance-info {
+        padding: .24rem .48rem;
+        background: #e84e40;
+    }
+    .balance-type {
+        font-size: 0;
+        text-align: right;
+        .type {
+            display: inline-block;
+            width: 1.9rem;
+            padding: .16rem 0;
+            margin-left: .24rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: solid 1px #fff;
+            @include border-radius(3px);
+            font-size: .36rem;
+            color: #fff;
+            text-align: center;
+            &.active {
+                background: #fff;
+                color: #e84e40;
+            }
+        }
+    }
+    .info {
+        margin-top: .48rem;
+        color: #fff;
+        font-size: .36rem;
+        .txt {
+            margin: .12rem 0 .24rem 0;
+        }
+        .coin {
+            padding-right: .24rem;
+            font-size: .96rem;
+            vertical-align: inherit;
+        }
+    }
+    .balance {
+        overflow: hidden;
+    }
+    .balance-list {
+        background: #fff;
+        ul {
+            overflow: hidden;
+            padding-left: .48rem;
+        }
+        li {
+            position: relative;
+            padding: .4rem 0;
+            padding-right: 4rem;
+            border-bottom: solid 1px #bdbdbd;
+            line-height: .7rem;
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+        p {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            &.title {
+                font-size: .42rem;
+                color: #212121;
+            }
+            &.time {
+                font-size: .36rem;
+                color: #bdbdbd;
+            }
+        }
+        .account {
+            position: absolute;
+            top: 50%;
+            right: .48rem;
+            height: .6rem;
+            margin-top: -0.3rem;
+            font-size: .6rem;
+            line-height: 1;
+        }
+        .income {
+            color: #259b24;
+        }
+        .expend {
+            color: #757575;
+        }
+    }
+}
+
+.mod-more {
+    margin: 0 .48rem;
+    padding: 0.45rem;
+    text-align: center;
+    border-top: solid 1px #e0e0e0;
+    font-size: 0.42rem;
+}
+
+.mod-loading {
+    margin: 0.3rem auto;
+    width: 0.85rem;
+    height: 0.85rem;
+    position: relative;
+    .conbox {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    .conbox2 {
+        @include transform(rotateZ(45deg));
+    }
+    .conbox3 {
+        @include transform(rotateZ(90deg));
+    }
+    i {
+        width: 0.15rem;
+        height: 0.15rem;
+        background-color: #888;
+        @include border-radius(100%);
+        position: absolute;
+        @include animation(bouncedelay 1.2s infinite ease-in-out);
+        @include animation-fill-mode(both);
+    }
+    .cir1 {
+        top: 0;
+        left: 0;
+    }
+    .cir2 {
+        top: 0;
+        right: 0;
+        @include animation-delay(-0.9s);
+    }
+    .cir3 {
+        right: 0;
+        bottom: 0;
+        @include animation-delay(-0.6s);
+    }
+    .cir4 {
+        left: 0;
+        bottom: 0;
+        @include animation-delay(-0.3s);
+    }
+}

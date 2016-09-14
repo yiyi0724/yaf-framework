@@ -4,7 +4,7 @@
  * 网站默认控制器
  * @author enychen
  */
-class IndexController extends \base\AdminController {
+class IndexController extends \base\LogicController {
 
 	/**
 	 * 网站首页

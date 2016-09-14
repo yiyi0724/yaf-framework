@@ -1,0 +1,64 @@
+@charset "utf-8";
+
+a,a:hover{
+    text-decoration: none;
+}
+/*浮动*/
+
+%fl {
+    float: left;
+    _display: inline;
+}
+
+%fr {
+    float: right;
+    _display: inline;
+}
+
+
+/*清除浮动*/
+
+%fn-clear {
+    zoom: 1;
+    &:before,
+    &:after {
+        content: "";
+        display: table;
+    }
+    &:after {
+        clear: both;
+        overflow: hidden;
+    }
+}
+
+
+/* css3 start */
+
+
+/* @mixin bounceIn {
+    @include keyframes (bounceIn) {
+        0% {
+            opacity: 0;
+            @include transform(scale(.5));
+        }
+        100% {
+            opacity: 1;
+            @include transform(scale(1));
+        }
+    }
+} */
+
+
+/* css3 end */
+
+
+/*行内块级元素*/
+
+%inline-block {
+    display: inline-block;
+    *zoom: 1;
+    *display: inline;
+}
+
+
+/*全局性的图标地址配置*/

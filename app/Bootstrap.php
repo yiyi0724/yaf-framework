@@ -4,7 +4,6 @@
  * 初始化自定义框架
  * @author enychen
  */
-use Yaf\Loader;
 use \traits\Route;
 use Yaf\Dispatcher;
 use Yaf\Config\Ini;
@@ -13,15 +12,6 @@ use \traits\Response;
 use Yaf\Bootstrap_Abstract;
 
 class Bootstrap extends Bootstrap_Abstract {
-
-	/**
-	 * 自定义逻辑加载类
-	 * @param Yaf\Dispatcher $dispatcher 分发对象
-	 * @return void
-	 */
-	public function _initLoader(Dispatcher $dispatcher) {
-		Loader::getInstance(rtrim(APP_PATH, DS))->registerLocalNamespace('services');
-	}
 
 	/**
 	 * 修改路由信息

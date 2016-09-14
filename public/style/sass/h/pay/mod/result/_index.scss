@@ -1,0 +1,41 @@
+@charset "utf-8";
+.mod-payresult {
+    padding-top: 1.05rem;
+    text-align: center;
+    .status {
+        margin-bottom: 1.05rem;
+    }
+    img {
+        display: block;
+        margin: 0 auto;
+        width: 2.88rem;
+        height: 2.88rem;
+    }
+    h2 {
+        margin-bottom: 0.32rem;
+        line-height: 0.72rem;
+        font-size: 0.6rem;
+        color: #212121;
+    }
+    .desc {
+        padding: 0 0.48rem;
+        font-size: 0.42rem;
+        line-height: 0.62rem;
+        color: #888;
+    }
+    .btn-wrap {
+        margin-top: 0.45rem;
+    }
+    .btn {
+        display: block;
+        margin: 0 0.48rem;
+        height: 1.24rem;
+        background-color: #04be02;
+        line-height: 1.24rem;
+        text-align: center;
+        text-decoration: none;
+        font-size: 0.6rem;
+        color: #fff;
+        @include border-radius(3px);
+    }
+}

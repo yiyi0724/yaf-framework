@@ -1,0 +1,1 @@
+define("h/app/help/problem",[],function(i,n,e){var a=$("#j-qa"),s=a.find("li");s.on("click",function(){var i=$(this);s.each(function(i,n){var e=$(this),a=e.find(".answer").attr("style")?1:0;a&&s.find(".answer").stop().slideUp()}),i.toggleClass("active"),i.find(".answer").stop().slideToggle()})});

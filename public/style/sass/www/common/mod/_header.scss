@@ -1,0 +1,169 @@
+@charset "utf-8";
+
+/*雪碧图 方式一*/
+
+
+/* @import "www/main/*.png";
+.save-icon {
+    @include main-sprite(save);
+}
+
+.search-icon {
+    @include main-sprite(search);
+} */
+
+
+/*雪碧图 方式二*/
+
+
+/* $icons: sprite-map("www/main/*.png");
+.icon-save {
+    background: sprite($icons, save);
+}
+
+.icon-search {
+    background: sprite($icons, search);
+} */
+
+
+/*雪碧图*/
+
+.header {
+    position: relative;
+    z-index: 3;
+    .inner {
+        @extend %fn-clear;
+        width: 1184px;
+        position: relative;
+        margin: 0 auto;
+    }
+}
+
+.topbar {
+    position: relative;
+    height: 40px;
+    line-height: 40px;
+    background: #f7f7f7;
+    color: #757575;
+    font-size: 14px;
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 3;
+    .line {
+        @extend %fl;
+        width: 0;
+        height: 10px;
+        font-size: 0;
+        border-left: 1px solid #bdbdbd;
+        overflow: hidden;
+        margin: 15px 10px;
+    }
+    .topbar-l,
+    .collect,
+    .mobile-view {
+        @extend %fl;
+    }
+    .topbar-r {
+        @extend %fr;
+        a {
+            color: #757575;
+        }
+        li {
+            @extend %fl;
+            position: relative;
+            &.save {
+                margin-right: 20px;
+            }
+        }
+        .icon-save {
+            @extend %inline-block;
+            margin-right: 10px;
+            width: 13px;
+            height: 14px;
+            overflow: hidden;
+            @include main-sprite(save);
+        }
+        .icon-user {
+            @extend %inline-block;
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            overflow: hidden;
+            @include main-sprite(user);
+        }
+    }
+}
+
+.header-bd {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    margin-bottom: 24px;
+    .logo,
+    .navbox {
+        @extend %fl;
+    }
+    .logo {
+        height: 63px;
+        width: 180px;
+        padding-top: 18px;
+    }
+    .navbox {
+        a {
+            @extend %fl;
+            display: block;
+            height: 77px;
+            color: #000;
+            font-size: 16px;
+            border-bottom: 4px solid #fff;
+            text-align: center;
+            margin-left: 5px;
+            &.active {
+                font-weight: bold;
+                border-bottom: 4px solid #ffcc01;
+            }
+            &:hover {
+                border-bottom: 4px solid #ffcc01;
+                text-decoration: none;
+            }
+        }
+        span {
+            padding: 0 20px;
+            display: block;
+            height: 77px;
+            line-height: 77px;
+            color: #000;
+            cursor: pointer;
+        }
+    }
+    .searchbox {
+        position: absolute;
+        right: 0;
+        top: 22px;
+        height: 36px;
+        border: 1px solid #e0e0e0;
+        @include border-radius(1px);
+        .search-input {
+            @extend %fl;
+            width: 150px;
+            height: 20px;
+            padding: 8px 10px;
+            line-height: 20px;
+            font-size: 12px;
+        }
+        .search-btn {
+            @extend %fl;
+            position: relative;
+            width: 37px;
+            height: 36px;
+            .save-icon {
+                position: absolute;
+                top: 9px;
+                right: 10px;
+                width: 17px;
+                height: 17px;
+                overflow: hidden;
+                @include main-sprite(search);
+            }
+        }
+    }
+}

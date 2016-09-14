@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+.default{
+    padding: .5rem 0;
+    background: #fff;
+    text-align: center;
+    .ic-default{
+        display: inline-block;
+        width: 2.38rem;
+        height: 1.74rem;
+        background: image-url('h/public/default.png') no-repeat center;
+        background-size: contain;
+    }
+    .msg{
+        margin-top: .48rem;
+        font-size: .48rem;
+        color: #bdbdbd;
+    }
+}

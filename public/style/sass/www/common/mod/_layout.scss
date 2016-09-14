@@ -1,0 +1,89 @@
+@charset "utf-8";
+
+/*全局样式*/
+
+html {
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    color: #000;
+    background: #fff;
+}
+
+body {
+    min-width: 1184px;
+    font-size: 14px;
+    font-family: "Arial", "Microsoft YaHei", "SimSun";
+    background: #f7f7f7;
+}
+
+a {
+    color: #333;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #df2e31;
+    text-decoration: underline;
+}
+
+input,
+textarea {
+    font-family: "Microsoft YaHei";
+    font-size: 14px;
+    border: none;
+    outline: none;
+}
+
+input:-ms-clear {
+    display: none; //消除 IE10 里面的那个叉号
+}
+
+
+/* 表单提交禁用按钮 start*/
+
+input[type="submit"]:disabled {
+    background-color: #b0afaf!important;
+    color: #fff!important;
+    cursor: default!important;
+    @include opacity(1);
+}
+
+.button-disabled {
+    background-color: #b0afaf!important;
+    color: #fff!important;
+    cursor: default!important;
+    @include opacity(1);
+    &:hover {
+        background-color: #b0afaf!important;
+    }
+}
+
+
+/* 表单提交禁用按钮 end*/
+
+
+/*浮动*/
+
+.fl {
+    @extend %fl;
+}
+
+.fr {
+    @extend %fr;
+}
+
+
+/*清除浮动*/
+
+.clearfix {
+    @extend %fn-clear;
+}
+
+.hide {
+    display: none!important;
+}
+
+.container {
+    width: 1200px;
+}

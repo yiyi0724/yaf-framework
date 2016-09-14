@@ -1,73 +1,62 @@
 <?php $this->component('head')?>
-<body class="page-body loaded">
-	<div class="page-container">
-		<!-- 左侧导航栏 start -->
-		<div class="sidebar-menu" style="min-height: 139px;">
-			<header class="logo-env">
-				<div class="logo">
-					<a href="javascript:;"><img width="120" alt="Logo" src="<?php echo WEB_IMAGE;?>logo3.png"></a>
-				</div>
-			</header>
-			<div id="mainClass" class="main-class">
-				<?php foreach($menus as $menu):?>
-				<p <?php echo strcasecmp(MODULE_NAME, $menu['module']) ? NULL : 'class="curr"';?>>
-					<span><?php echo $menu['name'];?> </span>
-				</p>
-				<?php endforeach;?>
-			</div>
-			<?php foreach($menus as $menu):?>
-			<?php $isModule = !strcasecmp(MODULE_NAME, $menu['module']); ?>
-			<ul class="main-menu <?php echo $isModule ? 'block' : 'none';?>">
-				<?php if(isset($menu['children'])):foreach($menu['children'] as $value):?>
-				<?php $isController = !strcasecmp(CONTROLLER_NAME, $value['controller']); ?>
-				<li class="root-level <?php echo isset($value['children']) ? 'has-sub' : NULL;?> <?php echo $isModule && $isController ? 'active opened' : NULL;?>">
-					<a href="<?php echo $value['url'];?>"> <i class="<?php echo $value['icon']?>"></i><span><?php echo $value['name'];?></span></a>
-					<?php if(isset($value['children'])):?>
-					<ul <?php echo $isModule && $isController ? 'class="visible"' : NULL;?>>
-						<?php foreach($value['children'] as $last):?>
-						<?php $isAction = !strcasecmp($last['action'], ACTION_NAME)?>
-						<li class="<?php echo $isModule && $isController && $isAction ? 'active' : NULL;?>">
-							<a href="<?php echo $last['url']?>"> <span><?php echo $last['name'];?></span></a>
-						</li>
-						<?php endforeach;?>
-					</ul>
-					<?php endif;?>
-				</li>
-				<?php endforeach;endif;?>
-			</ul>
-			<?php endforeach;?>
-		</div>
-		<!-- 左侧导航栏 end -->
-		<!-- 右侧内容区域 start -->
-		<div class="main-content">
-			<!-- 上边管理员信息栏目 start -->
-			<div class="row">
-				<div class="col-md-6 col-sm-8 clearfix margin-bottom-50">
-					<ul class="user-info pull-left pull-none-xsm">
-						<li class="profile-info dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="javascirpt:;"> <img class="img-circle" width="44" alt="" src="<?php echo WEB_IMAGE;?>50.png"> <?php echo ADMIN_NAME?></a>
-							<ul class="dropdown-menu">
-								<li class="caret"></li>
-								<li>
-									<a href="#"> <i class="entypo-lock"></i> 修改密码</a>
-								</li>
-								<li>
-									<a href="#"> <i class="entypo-doc-text"></i> 日志</a>
-								</li>
-								<li>
-									<a href="/logout"> <i class="entypo-logout"></i> 退出</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<!-- 上边管理员信息栏目 end -->
-			<!-- 内容主体区域 start -->
-			<?php echo $body; ?>
-			<!-- 内容主体区域 end -->
-		</div>
-		<!-- 右侧内容区域 end -->
-	</div>
+<body>
+<div class="wrapper">
+    <?php if(isset($addNav) && $addNav):?>
+    <nav class="mod-nav" id="scrollNav">
+        <div class="wrap">
+            <div class="inner">
+                <?php 
+                    $path = strval($_SERVER['REQUEST_URI']);
+                    $val = explode("/",$path)[1];
+                ?>
+                <ul>
+                    <li><a class="nav-item" href="/"><span>首页</span></a></li>
+                    <li class="<?php echo ($val=='category')? 'active':'';?>"><a class="nav-item" href="/category/"><span>分类</span></a></li>
+                    <li class="<?php echo ($val=='gift')? 'active':'';?>"><a class="nav-item" href="/gift/"><span>礼包</span></a></li>
+                    <li class="<?php echo ($val=='smallgame')? 'active':'';?>"><a class="nav-item" href="/smallgame/"><span>小游戏</span></a></li>
+                    <li class="<?php echo ($val=='pay')? 'active':'';?>"><a class="nav-item" href="/pay/recharge/"><span>充值</span></a></li>
+                    <li class="<?php echo ($val=='notice')? 'active':'';?>"><a class="nav-item" href="/notice/"><span>活动</span></a></li>
+                    <li class="<?php echo ($val=='member')? 'active':'';?>"><a class="nav-item" href="/member/sign/"><span>签到</span></a></li>
+                    <li class="<?php echo ($val=='rank')? 'active':'';?>"><a class="nav-item" href="/rank/"><span>排行</span></a></li>
+                </ul>
+            </div> 
+        </div> 
+    </nav>
+    <?php endif;?>
+    <?php if(isset($addUsrNav) && $addUsrNav && !IS_APP): ?>
+    <div class="user-header">
+        <a class="back" href="<?php echo isset($_SERVER['HTTP_REFERER']) ? "javascript:history.go(-1);" : '/' ?>"></a>
+        <div class="logo"><a href="/"><img src="<?php echo IMAGEURL.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>
+    </div>
+    <?php endif; ?>
+	<?php echo $body;?>
+	<script type="text/javascript" src="<?php echo WEB_SCRIPT.'lib/jquery-2.2.2.min.js';?>"></script>
+	<script type="text/javascript" src="<?php echo WEB_SCRIPT.'lib/sea.js';?>"></script>
+	<script type="text/javascript" src="<?php echo WEB_SCRIPT.'h/plugins/fastclick.js';?>"></script>
+	<script type="text/javascript">
+		$(function() {
+		  FastClick.attach(document.body);
+		});
+	</script>
+	<script>
+	    seajs.config({
+	        base:'<?php echo rtrim(WEB_SCRIPT,'/'); ?>',
+	        paths: {
+	            'addScript':'<?php echo rtrim(WEB_SCRIPT,'/'); ?>'
+	        },
+	        map: [
+	            [ /^(.*?\/script\/(?:src|dist)\/.*?\/.*?\.js$)(?:.*)$/i, '$1?v=<?php echo $this->version;?>']
+	        ],
+	        charset: 'utf-8'
+	    });
+	    seajs.use('addScript/h/common/common.js',function(){
+	        <?php if (isset($addScript) && $addScript): ?>
+		        <?php foreach ($addScript as $val): ?>
+		        seajs.use('addScript/<?php echo $val; ?>');
+		        <?php endforeach; ?>
+		    <?php endif; ?>
+	    });
+	</script>
+</div>
 </body>
 <?php $this->component('foot')?>

@@ -1,0 +1,292 @@
+@charset "utf-8";
+.container {
+    color: #212121;
+}
+
+.txt-red {
+    font-size: 0.42rem;
+    color: #f36c60;
+}
+
+.mod-pay {
+    .pay-item {
+        @extend %fn-clear;
+        position: relative;
+        width: 100%;
+        height: 1.42rem;
+        line-height: 1.48rem;
+        margin-bottom: 0.28rem;
+        font-size: 0.42rem;
+        background-color: #fff;
+    }
+    .pay-item-coin {
+        height: 2.16rem;
+        .desc {
+            position: absolute;
+            bottom: 0.5rem;
+            left: 1.45rem;
+            font-size: 0.42rem;
+            line-height: 1;
+            color: #ffa000;
+        }
+    }
+    .pay-icon {
+        @extend %fl;
+        margin: 0.48rem 0 0 0.48rem;
+        width: 0.47rem;
+        height: 0.47rem;
+        overflow: hidden;
+    }
+    .txt {
+        @extend %fl;
+        margin-left: 0.5rem;
+    }
+    .ui-checkbox {
+        @extend %fr;
+        margin: 0.4rem 0.5rem 0 0;
+        width: 0.63rem;
+        height: 0.63rem;
+        background: inline-image('h/pay/pay-checkbox.png') no-repeat center;
+        background-size: contain;
+        overflow: hidden;
+    }
+    .ui-checkbox-on {
+        background: inline-image('h/pay/pay-checkbox-on.png') no-repeat center;
+        background-size: contain;
+    }
+    .txt-red {
+        @extend %fr;
+        margin-right: 0.4rem;
+    }
+    .pay-alipay {
+        background: image-url("h/pay/pay-alipay.png") no-repeat center;
+        background-size: contain;
+    }
+    .pay-wechat {
+        background: image-url("h/pay/pay-wechat.png") no-repeat center;
+        background-size: contain;
+    }
+    .pay-balance {
+        background: image-url("h/pay/pay-balance.png") no-repeat center;
+        background-size: contain;
+    }
+    .pay-redpack {
+        background: image-url("h/pay/pay-redpack.png") no-repeat center;
+        background-size: contain;
+    }
+    .pay-item-disabled {
+        .txt,
+        .txt-red,
+        .desc {
+            color: #999!important;
+        }
+        .ui-checkbox {
+            background: image-url("h/pay/pay-checkbox-disabled.png") no-repeat center;
+            background-size: contain;
+        }
+        .pay-balance {
+            background: image-url("h/pay/pay-balance-disabled.png") no-repeat center;
+            background-size: contain;
+        }
+        .pay-redpack {
+            background: image-url("h/pay/pay-redpack-disabled.png") no-repeat center;
+            background-size: contain;
+        }
+    }
+}
+
+.mod-payinfo {
+    background-color: #fff;
+    padding: 0.5rem 0.5rem 0.3rem;
+    .hd {
+        font-size: 0.42rem;
+    }
+    .bd {
+        margin-top: 0.2rem;
+    }
+    ul {
+        @extend %fn-clear;
+    }
+    .payinfo-item {
+        @extend %fl;
+        padding: 0.2rem 0;
+        width: 50%;
+        color: #757575;
+        font-size: 0.42rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.mod-pay-footer {
+    position: relative;
+    height: 1.44rem;
+    width: 100%;
+    z-index: 999;
+    .inner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 10.8rem;
+        margin: 0 auto;
+        height: 1.44rem;
+        line-height: 1.44rem;
+        background-color: #fff;
+        font-size: 0.42rem;
+        overflow: hidden;
+        .payment {
+            margin: 0 2.76rem 0 0.5rem;
+        }
+        .needpay {
+            @extend %fr;
+            padding-right: 0.26rem;
+        }
+        .submit-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 2.76rem;
+            height: 1.44rem;
+            line-height: 1.44rem;
+            font-size: 0.48rem;
+            color: #fff;
+            background-color: #ffc107;
+            text-align: center;
+            font-family: 'Microsoft YaHei';
+        }
+    }
+}
+
+.mod-wx-code {
+    background-color: #fff;
+    text-align: center;
+    padding: 0 0.43rem;
+    .wxpay-code {
+        margin-bottom: 0.43rem;
+        width: 3.74rem;
+    }
+    .wxpay-tip {
+        width: 3.74rem;
+    }
+}
+
+.alipay-frame {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+}
+
+.cross-pay-code {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, .87);
+    text-align: center;
+    font-size: 0;
+    &:before {
+        content: "\200B";
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+    }
+    .inner {
+        padding-bottom: 0.35rem;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 0.42rem;
+        @include box-sizing(border-box);
+        width: 8.1rem;
+        background-color: #fff;
+        @include border-radius(5px);
+    }
+    .title {
+        position: relative;
+        color: #000;
+        padding: 0.55rem 0 0.8rem;
+        text-align: center;
+    }
+    .close {
+        position: absolute;
+        top: 0.42rem;
+        left: 0.48rem;
+        width: 0.65rem;
+        height: 0.65rem;
+        background: image-url("h/pay/icon-close.png") no-repeat center;
+        background-size: 100% 100%;
+    }
+    .code {
+        text-align: center;
+        img {
+            width: 6rem;
+            height: 6rem;
+        }
+    }
+    .tip {
+        padding: 0.6rem 0 0.1rem;
+        text-align: center;
+        line-height: 0.72rem;
+        color: #000;
+    }
+    .btn-wrap {
+        padding: 0 0.65rem;
+        .btn {
+            display: block;
+            width: 100%;
+            height: 1.1rem;
+            line-height: 1.1rem;
+            background: #2baf2b;
+            text-align: center;
+            font-size: 0.36rem;
+            color: #fff;
+            @include border-radius(4px);
+        }
+    }
+}
+
+.waiting-pay-result {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, .87);
+    text-align: center;
+    font-size: 0;
+    &:before {
+        content: "\200B";
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+    }
+    .inner {
+        padding: 0.5rem;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 0.42rem;
+        width: 6.48rem;
+        background-color: #fff;
+        @include box-sizing(border-box);
+        @include border-radius(5px);
+    }
+    p {
+        color: #757575;
+        img {
+            width: 0.8rem;
+            height: 0.8rem;
+        }
+    }
+    .pic {
+        padding: 0.05rem 0 0.55rem;
+    }
+    .tit {
+        color: #09bb07;
+        padding-bottom: 0.32rem;
+    }
+}

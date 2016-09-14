@@ -1,0 +1,20 @@
+@charset "utf-8";
+.btn-wrap {
+    margin-top: 0.4rem;
+    .btn {
+        display: block;
+        width: 100%;
+        height: 1.2rem;
+        line-height: 1.2rem;
+        text-align: center;
+        color: #994900;
+        font-size: 0.6rem;
+        background-color: #ffd03d;
+        @include border-radius(0.08rem);
+    }
+    .btn-reg {
+        margin-top: 0.4rem;
+        background-color: #66ccff;
+        color: #fff;
+    }
+}

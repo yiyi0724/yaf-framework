@@ -1,0 +1,195 @@
+@charset "utf-8";
+.mod-detail {
+    overflow: hidden;
+    .gift-detail {
+        overflow: hidden;
+        background: #fff;
+    }
+    .gift {
+        position: relative;
+        overflow: hidden;
+        min-height: 1.8rem;
+        margin: .48rem .48rem 0 .48rem;
+        .pic {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 1.8rem;
+            height: 1.8rem;
+            margin-top: -0.9rem;
+        }
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            @include border-radius(16.66%);
+        }
+        .detail {
+            padding-left: 2rem;
+        }
+        h2 {
+            line-height: 1.1rem;
+            text-align: justify;
+            font-size: .48rem;
+        }
+        .endtime {
+            font-size: .36rem;
+            line-height: .42rem;
+            color: #bdbdbd;
+        }
+    }
+    .button {
+        margin: .47rem 0;
+        padding: 0 .48rem;
+        text-align: center;
+        font-size: 0;
+        .btn {
+            display: inline-block;
+            width: 3.72rem;
+            padding: .29rem 0;
+            background: #fff;
+            border: solid 1px #bdbdbd;
+            @include border-radius(.04rem);
+            text-align: center;
+            font-size: .42rem;
+            &:first-child {
+                margin-right: .78rem;
+            }
+        }
+        .btn-get {
+            background: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-got {
+            background: #ebebeb;
+            color: #bdbdbd;
+        }
+    }
+    .count {
+        position: relative;
+        padding-bottom: .3rem;
+        border-bottom: solid .06rem #e0e0e0;
+        text-align: center;
+        font-size: .36rem;
+        .progressBar {
+            position: absolute;
+            bottom: -0.06rem;
+            left: 0;
+            height: .06rem;
+            background: #ffc107;
+        }
+    }
+    .gift-code {
+        padding: 0 .48rem;
+        text-align: center;
+        font-size: .42rem;
+        .code {
+            border: solid 1px #e0e0e0;
+            padding: .46rem 0;
+        }
+        .num {
+            color: #ffa000;
+        }
+        .txt {
+            padding: .52rem 0;
+        }
+    }
+    .cnt-gift,
+    .cnt-way {
+        .bd {
+            padding: .35rem .48rem;
+            line-height: .72rem;
+            color: #757575;
+            font-size: .42rem;
+            text-align: justify;
+        }
+    }
+    .cnt-gift {
+        h3 {
+            background: #fff image-url('h/gift/ic_gift.png') no-repeat 0 .22rem;
+            background-size: .48rem .51rem;
+        }
+    }
+    .cnt-way {
+        h3 {
+            background: #fff image-url('h/gift/ic_way.png') no-repeat 0 .22rem;
+            background-size: .48rem .51rem;
+        }
+    }
+    .cnt-giftlist {
+        h3 {
+            background: #fff image-url('h/gift/ic_giftlist.png') no-repeat 0 .24rem;
+            background-size: .49rem .51rem;
+        }
+    }
+    .giftlist {
+        overflow: hidden;
+        background: #fff;
+        li {
+            padding: 0 .48rem;
+            border-bottom: solid 1px #e0e0e0;
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+        a {
+            position: relative;
+            display: block;
+            padding: .42rem 0;
+        }
+        .cont {
+            padding-right: 2.2rem;
+            line-height: .72rem;
+        }
+        .title {
+            font-size: .48rem;
+            color: #000;
+        }
+        .txt {
+            font-size: .42rem;
+            color: #757575;
+        }
+        .gift-btn {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 2rem;
+            padding: .2rem 0;
+            margin-top: -0.42rem;
+            background: #ffc107;
+            border: solid 1px #ffc107;
+            @include border-radius(3px);
+            color: #3e2723;
+            text-align: center;
+            font-size: .42rem;
+            &.see{
+                background: #ebebeb;
+                border-color: #bdbdbd;
+            }
+            &.got{
+                background: #ebebeb;
+                border-color: #bdbdbd;
+                color: #bdbdbd;
+            }
+        }
+    }
+}
+
+.module {
+    overflow: hidden;
+    margin-top: .24rem;
+    background: #fff;
+    .hd {
+        padding: 0 .48rem;
+        border-bottom: solid 1px #e0e0e0;
+        h3 {
+            padding-left: .7rem;
+            line-height: 1.02rem;
+            color: #000;
+            font-size: .48rem;
+        }
+    }
+    .bd {
+        overflow: hidden;
+    }
+}

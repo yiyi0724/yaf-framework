@@ -1,0 +1,34 @@
+@charset "utf-8";
+.mod-help {
+    ul {
+        @extend %fn-clear;
+        padding-left: .48rem;
+        background: #fff;
+    }
+    li {
+        height: 1.4rem;
+        border-bottom: solid 1px #bdbdbd;
+        line-height: 1.4rem;
+        &:last-child {
+            border-bottom: none;
+        }
+        a {
+            position: relative;
+            display: block;
+            font-size: .42rem;
+            &:after {
+                content: " ";
+                position: absolute;
+                top: 50%;
+                right: .48rem;
+                width: 0.22rem;
+                height: 0.22rem;
+                margin-top: -0.11rem;
+                border: solid 1px #010101;
+                border-top: none;
+                border-left: none;
+                @include rotate(-45deg);
+            }
+        }
+    }
+}

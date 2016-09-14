@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<form>
-	<input name="account" from="post" type="mobile" require="1" error="请输入正确的手机号" />
-	<input name="password" from="post" type="password" require="1" error="密码有误" />
-	<input name="captcha" from="post" type="string" require="1" error="验证码有误" min="4" max="4" />
-</form>

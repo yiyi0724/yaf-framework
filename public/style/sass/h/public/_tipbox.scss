@@ -1,0 +1,51 @@
+@charset "utf-8";
+@include bounceIn;
+.mod-tip-box {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100001;
+    @extend %flex;
+    .tip-box-inner {
+        width: 3.5rem;
+        height: 3.5rem;
+        position: relative;
+        @include border-radius(0.15rem);
+        -webkit-animation-name: bounceIn;
+        animation-name: bounceIn;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        -webkit-animation-duration: .18s;
+        animation-duration: .18s;
+        text-align: center;
+        background: rgba(0, 0, 0, .5);
+        @extend %flex;
+    }
+    .tip-box-content {
+        display: block;
+    }
+    .icon {
+        display: inline-block;
+        width: 1.41rem;
+        height: 1.08rem;
+    }
+    .success {
+        background: image-url("h/public/tip-success-icon.png") no-repeat center;
+        background-size: 1.41rem 0.95rem;
+    }
+    .fail {
+        background: image-url("h/public/tip-fail-icon.png") no-repeat center;
+        background-size: 1.08rem 1.08rem;
+    }
+    .txt {
+        display: block;
+        margin-top: 0.3rem;
+        padding: 0 0.15rem;
+        font-size: 0.4rem;
+        color: #fff;
+        line-height: 0.44rem;
+        text-align: center;
+    }
+}

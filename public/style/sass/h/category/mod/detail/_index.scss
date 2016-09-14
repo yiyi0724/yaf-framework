@@ -1,0 +1,200 @@
+@charset "utf-8";
+@include bouncedelay;
+.mod-catelist {
+    height: 3.08rem;
+    margin-bottom: 0.24rem;
+    background: #fff;
+    overflow: hidden;
+    .inner {
+        padding-left: 0.38rem;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        -webkit-transform: translate3d(0, 0, 0);
+        &::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+        }
+    }
+    ul {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        @include box-sizing(content-box);
+    }
+    li {
+        width: 2.32rem;
+        height: 100%;
+        -webkit-flex-shrink: 0;
+        -ms-flex: 0 0 auto;
+        flex: none;
+        flex-shrink: 0;
+        @extend %flex;
+        &.active {
+            .ic-cate {
+                background: #ffc107;
+            }
+        }
+    }
+    a {
+        display: block;
+        padding: .48rem 0 .52rem 0;
+    }
+    .ic-cate {
+        display: block;
+        width: 1.44rem;
+        height: 1.44rem;
+        margin: 0 auto .22rem;
+        background: #e0e0e0;
+        @include border-radius(50%);
+    }
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        @include border-radius(50%);
+    }
+    .txt {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: .42rem;
+        text-align: center;
+    }
+}
+
+.mod-gamelist {
+    overflow: hidden;
+    padding: 0 .48rem;
+    background: #fff;
+    li {
+        position: relative;
+        border-bottom: solid 1px #e0e0e0;
+        display: block;
+        min-height: 1.8rem;
+        padding: .48rem 0;
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+    .pic {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 1.8rem;
+        height: 1.8rem;
+        margin-top: -0.9rem;
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            @include border-radius(16.66%);
+        }
+    }
+    .cont {
+        padding: 0 2.26rem 0 2.04rem;
+        h3 {
+            font-size: .6rem;
+            line-height: .7rem;
+            padding: 0.2rem 0;
+            span {
+                position: relative;
+                top: -0.05rem;
+                overflow: hidden;
+                display: inline-block;
+                padding: 0.08rem 0;
+                width: 0.9rem;
+                margin-left: 0.15rem;
+                color: #fff;
+                line-height: 1;
+                text-align: center;
+                font-size: 0.32rem;
+                vertical-align: middle;
+                @include border-radius(0.05rem);
+            }
+            .gift {
+                background: #5677fc;
+            }
+            .hot {
+                background: #e51c23;
+            }
+        }
+        .desc {
+            font-size: .42rem;
+            color: #757575;
+            line-height: .54rem;
+            text-align: justify;
+        }
+    }
+    .button {
+        position: absolute;
+        top: 50%;
+        right: 0;
+    }
+    .btn-start {
+        display: block;
+        width: 2.02rem;
+        padding: .23rem 0;
+        margin-top: -0.44rem;
+        @include border-radius(3px);
+        background: #ffc107;
+        color: #212121;
+        text-align: center;
+        font-size: .42rem;
+    }
+}
+
+.mod-more {
+    border-top: solid 1px #e0e0e0;
+    padding: 0.45rem;
+    text-align: center;
+    font-size: 0.42rem;
+}
+
+.mod-loading {
+    margin: 0.3rem auto;
+    width: 0.85rem;
+    height: 0.85rem;
+    position: relative;
+    .conbox {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    .conbox2 {
+        @include transform(rotateZ(45deg));
+    }
+    .conbox3 {
+        @include transform(rotateZ(90deg));
+    }
+    i {
+        width: 0.15rem;
+        height: 0.15rem;
+        background-color: #888;
+        @include border-radius(100%);
+        position: absolute;
+        @include animation(bouncedelay 1.2s infinite ease-in-out);
+        @include animation-fill-mode(both);
+    }
+    .cir1 {
+        top: 0;
+        left: 0;
+    }
+    .cir2 {
+        top: 0;
+        right: 0;
+        @include animation-delay(-0.9s);
+    }
+    .cir3 {
+        right: 0;
+        bottom: 0;
+        @include animation-delay(-0.6s);
+    }
+    .cir4 {
+        left: 0;
+        bottom: 0;
+        @include animation-delay(-0.3s);
+    }
+}

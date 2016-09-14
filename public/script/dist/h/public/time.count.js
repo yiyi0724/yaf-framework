@@ -1,0 +1,1 @@
+define("h/public/time.count",[],function(t,e,n){e.countdown=function(t,e,n){"number"!=typeof e&&(n=e,e=60),t.data("progress",!0).addClass("button-disabled"),n(--e);var a=setInterval(function(){--e<=0&&(t.data("progress",!1).removeClass("button-disabled"),clearInterval(a),a=null),n(e)},1e3);t.data("time",a)}});
