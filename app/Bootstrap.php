@@ -65,7 +65,7 @@ class Bootstrap extends Bootstrap_Abstract {
 			foreach($runtime->toArray() as $prefix=>$suffix) {
 				if(is_array($suffix)) {
 					foreach($suffix as $option=>$value) {
-						ini_set("{$prefix}.{$option}", $value);
+						ini_set(sprintf("%s.%s", $prefix, $option), $value);
 					}
 				} else {
 					ini_set($prefix, $suffix);
