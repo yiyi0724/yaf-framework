@@ -3,13 +3,14 @@
 /**
  * 判断类
  * @author enychen
+ * @version 1.0
  */
 namespace tool;
 
 class Is {
 
 	/**
-	 * 是否数字或者字符串
+	 * 是否数字或者数字字符串
 	 * @static
 	 * @param string $value 待检查的值
 	 * @param array $options 可选检查项目：min|最小值， max|最大值
@@ -79,11 +80,11 @@ class Is {
 	 * 是否是一个干净的字符串
 	 * @static
 	 * @param string $value 待检查的值
-	 * @param array $options 可选检查项目：min|最小长度， max|最大长度，xss|进行xss检查,默认是TRUE
+	 * @param array $options 可选检查项目：min|最小长度， max|最大长度，xss|是否进行xss检查,默认是TRUE
 	 * @return boolean 检查通过返回TRUE
 	 */
 	public static function string($value, array $options = array()) {
-		$flag = is_string($value) || is_numeric($value);
+		$flag = is_string($value);
 		if(empty($options['xss']) || $options['xss']) {
 			$pattern = '/(<script|<iframe|<link|<frameset|<vbscript|<meta|<form|<\?php|document.cookie|javascript:|vbscript)/i';
 			$flag = !preg_match($pattern, $value);
@@ -159,6 +160,9 @@ class Is {
 
 	/**
 	 * 是否符合用户名规则
+	 * 	(1) 必须以字母开头
+	 *  (2) 只能由字母数字_-组成
+	 *  (3) 长度在4-16之间
 	 * @static
 	 * @param string $value 待检查的值
 	 * @return boolean 检查通过返回TRUE
@@ -194,7 +198,7 @@ class Is {
 	}
 
 	/**
-	 * 是否是中文
+	 * 是否是纯中文
 	 * @static
 	 * @param string $value 待检查的值
 	 * @return boolean 检查通过返回TRUE
@@ -211,6 +215,15 @@ class Is {
 	 */
 	public static function domain($value) {
 		return (bool)(preg_match('/([a-z0-9]+\.)*([a-z0-9][a-z0-9\-]*)\.([a-z]{2,9})/i', $value));
+	}
+
+	/**
+	 * 是否是合法的jsonp请求方法
+	 * @static
+	 * @return boolean 是合法的jsonp返回TRUE，否则返回FALSE
+	 */
+	public static function jsonp($value) {
+		return (bool)(preg_match('/^[a-zA-Z_][a-zA-Z0-9_\.]*$/', $value));
 	}
 
 	/**

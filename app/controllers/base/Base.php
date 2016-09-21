@@ -44,7 +44,7 @@ abstract class BaseController extends Controller_Abstract {
 	}
 
 	/**
-	 * json输出
+	 * json或jsonp输出
 	 * @param boolean $status 结果状态
 	 * @param string $message 提示信息
 	 * @param array $data 数据信息
@@ -57,26 +57,12 @@ abstract class BaseController extends Controller_Abstract {
 		$json['data'] = $data;
 		$json['code'] = $code;
 		$json = json_encode($json);
-		header("Content-type: application/json; charset=UTF-8");
-		exit($json);
-	}
-
-	/**
-	 * jsonp输出
-	 * @param string $callback 回调函数
-	 * @param boolean $status 结果状态
-	 * @param string $message 提示信息
-	 * @param int $code 提示码
-	 * @param array $data 数据信息
-	 * @return void
-	 */
-	protected final function jsonp($callback, $status, $message, $code, $data = NULL) {
-		$json['status'] = $status;
-		$json['message'] = $message;
-		$json['data'] = $data;
-		$json['code'] = $code;
-		$json = json_encode($json);
-		exit("<script type='text/javascript'>{$callback}({$json})</script>");
+		if($callback = $this->getRequest()->get('callback')) {
+			exit("<script type='text/javascript'>{$callback}({$json})</script>");
+		} else {
+			header("Content-type: application/json; charset=UTF-8");
+			exit($json);
+		}
 	}
 
 	/**
@@ -149,7 +135,8 @@ abstract class BaseController extends Controller_Abstract {
 	 * @return string
 	 */
 	protected function getFullUrl($encode = TRUE) {
-		$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['SERVER_NAME']}{$_SERVER['REQUEST_URI']}";
+		$request = $this->getRequest();
+		$url = "{$request->getServer('REQUEST_SCHEME', 'http')}://{$request->getServer('SERVER_NAME')}{$request->getServer('REQUEST_URI')}";
 		return $encode ? urlencode($url) : $url;
 	}
 }

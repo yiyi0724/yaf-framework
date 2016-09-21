@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 登录后的控制器
+ * 基础逻辑控制器
  * @author enychen
  */
 namespace base;

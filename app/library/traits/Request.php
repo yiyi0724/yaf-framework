@@ -34,13 +34,12 @@ class Request {
 	 */
 	protected final function __construct() {
 		// PUT和DETELE方法支持
-		$putOrDelete = array();
-		if(IS_PUT || IS_DELETE) {
+		if(($putOrDelete = array()) || IS_PUT || IS_DELETE) {
 			parse_str(file_get_contents('php://input'), $putOrDelete);
 		}
 
 		// 输入数据源
-		$this->setYafRequest(Application::app()->getDispatcher()->getRequest());
+		$this->setYafRequest();
 		$params = array_merge($this->getYafRequest()->getParams(), $putOrDelete, $_REQUEST);
 
 		// 获取检查规则
@@ -120,6 +119,11 @@ class Request {
 	 */
 	public function get($key, $default = NULL) {
 		return isset($this->params[$key]) ? $this->params[$key] : $default;
+	}
+
+	public function getServer($key, $default = NULL) {
+		$result = $this->getServer($key);
+		return $result ? : $default;
 	}
 
 	/**
