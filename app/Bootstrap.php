@@ -3,6 +3,7 @@
 /**
  * 初始化自定义框架
  * @author enychen
+ * @version 1.0
  */
 use \traits\Route;
 use Yaf\Dispatcher;

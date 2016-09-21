@@ -3,6 +3,7 @@
 /**
  * 模板对象
  * @author enychen
+ * @version 1.0
  */
 namespace traits;
 
@@ -14,63 +15,63 @@ class Template extends Simple {
 	 * 通用模板名称
 	 * @var string
 	 */
-	protected $template = 'main';
+	protected $layout = 'default';
 
 	/**
 	 * 网站默认标题
 	 * @var string
 	 */
-	protected $title = 'eny.Inc';
+	protected $title = NULL;
 
 	/**
-	 * 附件的css文件
+	 * 附加的css文件
 	 * @var array
 	 */
 	protected $styles = array();
 
 	/**
-	 * 附件的js文件
+	 * 附加的js文件
 	 * @var array
 	 */
 	protected $scripts = array(
-		'head' => array(),
-		'foot' => array(),
+		'head'=>array(),
+		'foot'=>array(),
 	);
 
 	/**
-	 * 附件的meta信息
+	 * 附加的meta信息
 	 * @var array
 	 */
 	protected $metas = array();
 
 	/**
-	 * 搜索引擎优化
+	 * 其它标签
 	 * @var string
 	 */
-	protected $canonical = NULL;
+	protected $tabs = array();
 
 	/**
-	 * 设置跨页面值
+	 * 跨页面值
 	 * @var array
 	 */
 	protected $values = array();
 
 	/**
-	 * 设置通用模板名称
-	 * @param string $template 模板名称
+	 * 设置布局模板
+	 * @param string $layout 模板名称
 	 * @return Template $this 返回当前对象进行连贯操作
 	 */
-	public function setTemplate($template) {
-		$this->template = $template;
+	public function setLayout($layout) {
+		$this->layout = $layout;
 		return $this;
 	}
 
 	/**
-	 * 获取通用模板名称
+	 * 获取布局模板
 	 * @return string
 	 */
-	public function getTemplate() {
-		return $this->template;
+	public function getLayout() {
+		return $this->layout;
 	}
 
 	/**
@@ -106,7 +107,7 @@ class Template extends Simple {
 	 * @return array
 	 */
 	public function getMetas() {
-		return $this->metas;	
+		return $this->metas;
 	}
 
 	/**
@@ -161,28 +162,27 @@ class Template extends Simple {
 	}
 
 	/**
-	 * 设置搜索引擎优化内容
-	 * @param string $canonical 引擎内容
-	 * @return \traits\Template
+	 * 设置完整标签
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
-	public function setCanonical($canonical) {
-		$this->canonical = $canonical;
+	public function setTabs() {
+		$this->tabs = array_merge($this->tabs, func_get_args());
 		return $this;
 	}
 
 	/**
-	 * 获取搜索引擎优化内容
+	 * 获取完整标签
 	 * @return string
 	 */
-	public function getCanonical() {
-		return $this->canonical;
+	public function getTabs() {
+		return implode(PHP_EOL, $this->tabs);
 	}
 
 	/**
 	 * 设置跨页面值
 	 * @param string $key 键
 	 * @param string $value 值
-	 * @return \traits\Template
+	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function setValue($key, $value) {
 		$this->values[$key] = $value;
@@ -200,31 +200,31 @@ class Template extends Simple {
 	}
 
 	/**
-	 * 加载模块layout文件
+	 * 加载模块组件文件
 	 * @param string $tpl 模板名称
 	 * @param array $tpl_vars 视图数据
 	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function moduleComponent($tpl, array $tpl_vars = array()) {
 		$this->setScriptPath(sprintf('%slayout', MODULE_VIEW_PATH));
-		echo parent::render("{$tpl}.phtml", $tpl_vars);
+		parent::display("{$tpl}.phtml", $tpl_vars);
 		return $this;
 	}
 
 	/**
-	 * 加载公共获取组件
+	 * 加载公共组件文件
 	 * @param string $tpl 模板名称
 	 * @param array $tpl_vars 视图数据
 	 * @return Template $this 返回当前对象进行连贯操作
 	 */
 	public function component($tpl, array $tpl_vars = array()) {
 		$this->setScriptPath(sprintf('%scomponent', COMMON_VIEW_PATH));
-		echo parent::render("{$tpl}.phtml", $tpl_vars);
+		parent::display("{$tpl}.phtml", $tpl_vars);
 		return $this;
 	}
 
 	/**
-	 * 格式化时间戳
+	 * 格式化YmdHis的时间戳
 	 * @param string $timestamp YmdHis的格式化字符串
 	 * @param string $format 默认格式化字符串
 	 * ＠return string

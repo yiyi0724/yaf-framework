@@ -3,6 +3,7 @@
 /**
  * 以/模块/控制器/方法的路由调用方式
  * @author enychen
+ * @version 1.0
  */
 namespace traits;
 
@@ -29,7 +30,6 @@ class Route implements Route_Interface {
 
 	/**
 	 * 构造函数，获取所有模块信息并删除默认index模块
-	 * @return void
 	 */
 	public function __construct() {
 		$this->modules = Application::app()->getModules();
@@ -41,7 +41,7 @@ class Route implements Route_Interface {
 
 	/**
 	 * 路由调度
-	 * @param \Yaf\Request\Http $request http请求对象
+	 * @param \Yaf\Request_Abstract $request http请求对象
 	 * @return boolean TRUE表示和其他路由协议共存
 	 */
 	public function route($request) {
@@ -50,6 +50,7 @@ class Route implements Route_Interface {
 		$uri = explode('/', trim($request->getRequestUri(), '/'));
 		$module = strtolower($uri[0]);
 
+		// 分析url信息
 		if(in_array($module, $this->modules)) {
 			$this->route['module'] = $module;
 			array_splice($uri, 0, 1);
@@ -61,9 +62,10 @@ class Route implements Route_Interface {
 			$this->route['action'] = $uri[1];
 		}
 
+		// 修改调度信息
 		$request->setModuleName($this->route['module']);
-		$request->setControllerName(ucfirst($this->route['controller']));
-		$request->setActionName(ucfirst($this->route['action']));
+		$request->setControllerName($this->route['controller']);
+		$request->setActionName($this->route['action']);
 
 		return TRUE;
 	}

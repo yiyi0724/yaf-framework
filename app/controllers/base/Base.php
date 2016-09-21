@@ -44,16 +44,6 @@ abstract class BaseController extends Controller_Abstract {
 	}
 
 	/**
-	 * 模板替换
-	 * @param string $template 目标模板
-	 * @return void
-	 */
-	protected final function changeView($template) {
-		$this->disView();
-		$this->display($template);
-	}
-
-	/**
 	 * json输出
 	 * @param boolean $status 结果状态
 	 * @param string $message 提示信息

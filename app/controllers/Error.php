@@ -8,6 +8,11 @@ use \network\Header as HeaderLib;
 
 class ErrorController extends \base\BaseController {
 
+	public function init() {
+		// 使用默认模板
+		$this->getView()->setLayout('empty');
+	}
+
 	/**
 	 * 公共错误处理方法
 	 * @param \Exception $exception 异常对象
@@ -55,7 +60,7 @@ class ErrorController extends \base\BaseController {
 				break;
 			default:
 				$this->assign('error', $exception->getError());
-				$this->changeView('form');
+				$this->display('form');
 		}
 	}
 
@@ -71,7 +76,7 @@ class ErrorController extends \base\BaseController {
 				break;
 			default:
 				$this->assign('error', $exception->getMessage());
-				$this->changeView('notify');
+				$this->display('notify');
 		}
 	}
 
@@ -108,7 +113,7 @@ class ErrorController extends \base\BaseController {
 				HeaderLib::notFound();
 				exit;
 			default:
-				$this->changeView('404');
+				$this->display('404');
 		}
 	}
 
@@ -141,7 +146,7 @@ class ErrorController extends \base\BaseController {
 			default:
 				$this->assign('message', $message);
 				$this->assign('error', $error);
-				$this->changeView('502');
+				$this->display('502');
 		}
 	}
 }

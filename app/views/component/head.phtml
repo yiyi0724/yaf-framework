@@ -9,19 +9,19 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
     <meta name="wap-font-scale" content="no">
-    <link rel="dns-prefetch" href="//static.youlaohu.com" />
-    <?php if($canonical = $this->getCanonical()):?>
-    <link rel="canonical" href="<?php echo $canonical;?>"/>
-    <?php endif;?>
-    <title><?php echo $this->getTitle(); ?></title>
     <?php foreach($this->getMetas() as $name=>$content):?>
 	<meta name="<?php echo $name;?>" content="<?php echo $content;?>">
 	<?php endforeach;?>
+    <?php echo $this->getTabs();?>
+    <title><?php echo $this->getTitle(); ?></title>
 	<?php foreach($this->getStyles() as $style):?>
 	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE . $style; ?>">
 	<?php endforeach;?>
-    <link rel="shortcut icon" href="<?php echo WEB_IMAGE;?>public/favicon.ico">
-    <link href="<?php echo WEB_STYLE.'h/common/style.css?v='.WEB_VERSION; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo WEB_STYLE.'h/common/style.css?v='.WEB_VERSION; ?>" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="<?php echo WEB_IMAGE;?>public/favicon.ico">    
+    <?php foreach($this->getHeadScripts() as $script):?>
+	<script type="text/javascript" src="<?php echo WEB_SCRIPT.$script?>"></script>
+	<?php endforeach;?>
     <script type="text/javascript">
         var PageConfig = {
             myUrl :"/member/",
