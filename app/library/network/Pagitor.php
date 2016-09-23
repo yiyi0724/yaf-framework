@@ -3,41 +3,52 @@
 /**
  * 分页类
  * @author enychen
- * @version 1.0
  */
 namespace network;
 
 class Pagitor {
 
 	/**
+	 * 默认拼接的url地址
+	 * @var string
+	 */
+	protected $url = NULL;
+
+	/**
+	 * 原始参数
+	 * @var array
+	 */
+	protected $params;
+
+	/**
 	 * 当前第几页
 	 * @var int
 	 */
-	protected $page = 1;
+	protected $nowPage = 1;
+
+	/**
+	 * 总共条数
+	 * @var int
+	 */
+	protected $totalNumber = 0;
 
 	/**
 	 * 总共几页
 	 * @var int
 	 */
-	protected $total = 0;
+	protected $totalPage = 0;
 
 	/**
 	 * 每页几条
 	 * @var int
 	 */
-	protected $perNumber = 10;
+	protected $eachNumber = 10;
 
 	/**
 	 * 显示的按钮个数
 	 * @var int
 	 */
-	protected $perButton = 10;
-
-	/**
-	 * 建立分页必须的信息
-	 * @var array
-	 */
-	protected $build;
+	protected $buttonNUmber = 10;
 
 	/**
 	 * 构造函数
@@ -45,37 +56,38 @@ class Pagitor {
 	 * @param int $total 总条数
 	 * @param int $preNumber 每页显示的条数，默认是10
 	 */
-	public function __construct($page, $total, $preNumber = 10) {
-		$this->setPage($page);
-		$this->setTotal($total);
-		$this->setPerNumber($preNumber);
+	public function __construct($nowPage, $totalNumber) {
+		$this->setNowPage($page);
+		$this->setTotalNumber($totalNumber);
+		$this->setParams($_GET);
+		$this->setUrl();
 	}
 
 	/**
-	 * 设置当前第几页
-	 * @param int $page 当前页数
+	 * 设置当前页
+	 * @param int $page 当前页码
 	 * @return Page $this 返回当前对象进行连贯操作
 	 */
-	public function setPage($page) {
-		$this->page = $page;
+	protected function setNowPage($nowPage) {
+		$this->nowPage = $nowPage;
 		return $this;
 	}
-
+	
 	/**
-	 * 获取当前第几页
+	 * 获取当前页
 	 * @return int
 	 */
-	public function getPage() {
-		return $this->page;
+	public function getNowPage() {
+		return $this->nowPage;
 	}
 
 	/**
 	 * 设置总条数
-	 * @param int $total 总条数
+	 * @param int $totalNumber 总条数
 	 * @return Page $this 返回当前对象进行连贯操作
 	 */
-	public function setTotal($total) {
-		$this->total = $total;
+	protected function setTotalNumber($totalNumber) {
+		$this->totalNumber = $totalNumber;
 		return $this;
 	}
 
@@ -83,76 +95,142 @@ class Pagitor {
 	 * 获取总条数
 	 * @return int
 	 */
-	public function getTotal() {
-		return $this->total;
+	public function getTotalNumber() {
+		return $this->totalNumber;
 	}
 
 	/**
-	 * 设置每页条数
-	 * @param int $perNumber 每页几条
+	 * 设置原始参数
+	 * @param array $params $_GET | $_POST | $_REQUEST 或者其他自定义数组
 	 * @return Page $this 返回当前对象进行连贯操作
 	 */
-	public function setPerNumber($perNumber) {
-		$this->perNumber = $perNumber;
+	public function setParams(array $params) {
+		unset($params['page']);
+		$this->params = $params;
 		return $this;
 	}
 
 	/**
-	 * 获取每页条数
-	 * @return int
-	 */
-	public function getPerNumber() {
-		return $this->perNumber;
-	}
-
-	/**
-	 * 设置要显示的按钮个数
-	 * @param int $perButton 按钮个数
-	 * @return Page $this 返回当前对象进行连贯操作
-	 */
-	public function setPerButton($perButton) {
-		$this->perButton = $perButton;
-		return $this;
-	}
-
-	/**
-	 * 获取要显示的按钮个数
-	 * @return int
-	 */
-	public function getPerButton() {
-		return $this->perButton;
-	}
-
-	/**
-	 * 建立分页的信息
-	 * @return Page $this 返回当前对象进行连贯操作
-	 */
-	protected function setBuild() {
-		// 初始化参数
-		$this->build['page'] = $this->getPage();
-		$this->build['url'] = str_replace($_SERVER['QUERY_STRING'], NULL, $_SERVER['REQUEST_URI']);
-		unset($_REQUEST['page']);
-		$this->build['url'] .= sprintf("%s%spage=", http_build_query($_REQUEST), (count($_REQUEST) ? '&' : '?'));
-		// 总共几条
-		$this->build['count'] = $this->getTotal();
-		// 每页显示的条数
-		$this->build['limit'] = $this->getPerNumber();
-		// 一共有几页
-		$this->build['pageTotal'] = ceil($this->build['count'] / $this->build['limit']);
-		// 一共几个按钮
-		$this->build['button'] = $this->getPerButton();
-		// 是否超过
-		$this->build['over'] = $this->getPage() > $this->build['pageTotal'];
-
-		return $this;
-	}
-
-	/**
-	 * 获取分页的信息
+	 * 获取原始参数
 	 * @return array
 	 */
-	protected function getBuild() {
-		return $this->build;
+	public function getParams() {
+		return $this->params;
+	}
+
+	/**
+	 * 设置前缀url
+	 * @return Page $this 返回当前对象进行连贯操作
+	 */
+	protected function setUrl() {
+		$this->url = sprintf("%s?", str_replace("?{$_SERVER['QUERY_STRING']}", NULL, $_SERVER['REQUEST_URI']));
+		return $this;
+	}
+
+	/**
+	 * 获取前缀url
+	 * @return string
+	 */
+	protected function getUrl() {
+		return $this->url;
+	}
+
+	/**
+	 * 设置每页显示的条数
+	 * @param int $eachNumber 每页小时条数
+	 * @return Page $this 返回当前对象进行连贯操作
+	 */
+	public function setEachNumber($eachNumber) {
+		$this->eachNumber = $eachNumber;
+		return $this;
+	}
+	
+	/**
+	 * 获取每页显示的条数
+	 * @return int
+	 */
+	public function getEachNumber() {
+		return $this->eachNumber;
+	}	
+
+	/**
+	 * 设置按钮最大个数
+	 * @param int $buttonNUmber 按钮最大个数
+	 * @return Page $this 返回当前对象进行连贯操作
+	 */
+	public function setButtonNumber($buttonNUmber) {
+		$this->buttonNUmber = $buttonNUmber;
+		return $this;
+	}
+
+	/**
+	 * 获取按钮最大个数
+	 * @return int
+	 */
+	public function getButtonNumber() {
+		return $this->buttonNUmber;
+	}
+
+	/**
+	 * 设置总页数
+	 * @param int $totalPage 总页数
+	 * @return Page $this 返回当前对象进行连贯操作
+	 */
+	protected function setTotalPage($totalPage) {
+		$this->totalPage = $totalPage;
+		return $this;
+	}
+
+	/**
+	 * 获取总页数
+	 * @return int
+	 */
+	public function getTotalPage() {
+		return $this->totalPage;
+	}
+
+	/**
+	 * 进行分页前的计算
+	 * @return Page $this 返回当前对象进行连贯操作
+	 */
+	protected function calc() {
+		// 计算总页数
+		$this->setTotalPage(ceil($this->getTotalNumber()/$this->getEachNumber()));
+	}
+
+	/**
+	 * 组织页码的url地址
+	 * @param int $page 页码
+	 * @return string
+	 */
+	protected function buildHref($page) {
+		$params = $this->getParams();
+		$params['page'] = $params;
+		return sprintf("%s%s", $this->getUrl(), http_build_query($params));
+	}
+
+	/**
+	 * 设置首页按钮
+	 */
+	public function setFirst() {		
+	}
+
+	/**
+	 * 设置末页按钮
+	 */
+	public function setLast() {		
+	}
+
+	/**
+	 * 设置上一页按钮
+	 */
+	public function setPrev() {		
+	}
+
+	/**
+	 * 设置下一页按钮
+	 */
+	public function setNext() {		
 	}
 
 	/**
@@ -160,44 +238,12 @@ class Pagitor {
 	 * @return array 分页的信息
 	 */
 	public function showCenter() {
-		// 初始化参数
-		$build = $this->setBuild()->getBuild();
+	}
+
+	/**
+	 * 模式二：一排一排的翻页
+	 */
+	public function showFixed() {
 		
-		// 是否超过
-		if(!$build['over']) {
-			// 首页和上一页
-			if($build['page'] > 1) {
-				$build['first'] = 1;
-				$build['prev'] = $build['page'] - 1;
-			}
-			
-			// 中间的几页
-			$step = floor($build['button'] / 2);
-			switch(TRUE) {
-				case $build['page'] <= $step:
-					// 前几页
-					$build['start'] = 1;
-					$build['end'] = $build['start'] + $build['button'];
-					$build['end'] = $build['end'] > $build['pageTotal'] ? $build['pageTotal'] + 1 : $build['end'];
-					break;
-				case $build['page'] + $step > $build['pageTotal']:
-					// 超出末页
-					$build['start'] = $build['pageTotal'] - $build['button'] + 1;
-					$build['end'] = $build['pageTotal'] + 1;
-					break;
-				default:
-					// 默认算法
-					$build['start'] = $build['page'] - $step;
-					$build['end'] = ($build['button'] % 2 == 0) ? $build['page'] + $step : $build['page'] + $step + 1;
-			}
-			
-			// 下一页和末页
-			if($build['page'] < $build['pageTotal']) {
-				$build['next'] = $build['page'] + 1;
-				$build['last'] = $build['pageTotal'];
-			}
-		}
-		
-		return $build;
 	}
 }
