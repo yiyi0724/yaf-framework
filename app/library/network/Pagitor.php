@@ -230,7 +230,7 @@ class Pagitor {
 	/**
 	 * 设置下一页按钮
 	 */
-	public function setNext() {		
+	public function setNext() {
 	}
 
 	/**
