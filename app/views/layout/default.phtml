@@ -7,13 +7,13 @@
             <div class="inner">
                 <ul>
                     <li><a class="nav-item" href="/"><span>首页</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Category')? 'active':'';?>"><a class="nav-item" href="/category/"><span>分类</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Game' && ACTION_NAME=='category')? 'active':'';?>"><a class="nav-item" href="/category/"><span>分类</span></a></li>
                     <li class="<?php echo (CONTROLLER_NAME=='Gift')? 'active':'';?>"><a class="nav-item" href="/gift/"><span>礼包</span></a></li>
                     <li class="<?php echo (CONTROLLER_NAME=='Smallgame')? 'active':'';?>"><a class="nav-item" href="/sgame/"><span>小游戏</span></a></li>
                     <li class="<?php echo (CONTROLLER_NAME=='Recharge')? 'active':'';?>"><a class="nav-item" href="/pay/recharge/"><span>充值</span></a></li>
                     <li class="<?php echo (CONTROLLER_NAME=='Notice')? 'active':'';?>"><a class="nav-item" href="/notice/"><span>活动</span></a></li>
                     <li class="<?php echo (CONTROLLER_NAME=='Sign')? 'active':'';?>"><a class="nav-item" href="/member/sign/"><span>签到</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Rank')? 'active':'';?>"><a class="nav-item" href="/rank/"><span>排行</span></a></li>
+                    <li class="<?php echo (CONTROLLER_NAME=='Game' && ACTION_NAME=='rank')? 'active':'';?>"><a class="nav-item" href="/game/rank/"><span>排行</span></a></li>
                 </ul>
             </div> 
         </div> 
