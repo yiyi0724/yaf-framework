@@ -11,4 +11,34 @@ class HelpController extends \base\LogicController {
 	 */
 	public function indexAction() {
 	}
+
+    /**
+     * 系统消息
+     */
+	public function messageAction() {
+    }
+
+    /**
+     * 联系我们
+     */
+    public function contactAction() {
+    }
+
+    /**
+     * 商务合作
+     */
+    public function businessAction() {
+    }
+
+    /**
+     * 意见反馈
+     */
+    public function feedbackAction() {
+    }
+
+    /**
+     * 疑问列表
+     */
+    public function questionAction() {
+    }
 }

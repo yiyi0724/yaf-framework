@@ -1,9 +1,7 @@
 <?php
-    $this->display("elements/header.phtml", array(
-        'title'=> WEB_TITLE.'系统消息',
-        'addUsrNav' => '1',
-        'addStyle' => array('h/help/message.css')
-    ));
+    $this->setTitle('游老虎_系统消息')
+        ->setValue('usrNav', TRUE)
+        ->setStyles('h/help/message.css');
 ?>
 <div class="container">
 	<?php if(isset($lists) && $lists):?>
@@ -20,9 +18,6 @@
         </ul>
     </div>
     <?php else: ?>
-        <?php $this->display("elements/default.phtml",array('defaultMsg'=>'还没有消息哦！')); ?>
+        <?php $this->setValue('notify', '还没有消息哦！')->component('empty'); ?>
     <?php endif;?>
 </div>
-<?php
-    $this->display("elements/footer.phtml");
-?>

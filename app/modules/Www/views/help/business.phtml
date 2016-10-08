@@ -1,9 +1,7 @@
 <?php
-    $this->display("elements/header.phtml", array(
-        'title'=> WEB_TITLE.'商务合作',
-        'addUsrNav' => '1',
-        'addStyle' => array('h/help/business.css')
-    ));
+    $this->setTitle('游老虎_商务合作')
+        ->setValue('usrNav', TRUE)
+        ->setStyles('h/help/business.css');
 ?>
 <div class="container">
     <div class="mod-business">
@@ -34,6 +32,3 @@
         </dl>
     </div>
 </div>
-<?php
-    $this->display("elements/footer.phtml");
-?>

@@ -1,9 +1,8 @@
 <?php
-    $this->display("elements/header.phtml", array(
-        'title'=> '反馈给'.WEB_TITLE,
-        'addUsrNav' => '1',
-        'addStyle' => array('h/help/feedback.css')
-    ));
+    $this->setTitle('游老虎_反馈意见')
+        ->setValue('usrNav', TRUE)
+        ->setStyles('h/help/feedback.css')
+        ->setFootScripts('h/help/feedback.js');
 ?>
 <div class="container">
     <div class="mod-feedback">
@@ -24,8 +23,3 @@
         <div class="btn"><a id="submitBtn" class="submit-btn button-disabled" href="javascript:;" rel="nofollow">提交</a></div>
     </div>
 </div>
-<?php
-    $this->display("elements/footer.phtml", array(
-        'addScript' => array('h/help/feedback.js')
-    ));
-?>

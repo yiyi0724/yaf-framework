@@ -1,9 +1,7 @@
 <?php
-    $this->display("elements/header.phtml", array(
-        'title'=> '联系'.WEB_TITLE,
-        'addUsrNav' => '1',
-        'addStyle' => array('h/help/contact.css')
-    ));
+    $this->setTitle('游老虎_联系我们')
+        ->setValue('usrNav', TRUE)
+        ->setStyles('h/help/contact.css');
 ?>
 <div class="container">
     <div class="mod-contact">
@@ -23,6 +21,3 @@
         </ul>
     </div>
 </div>
-<?php
-    $this->display("elements/footer.phtml");
-?>

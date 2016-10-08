@@ -1,9 +1,8 @@
 <?php
-    $this->display("elements/header.phtml", array(
-        'title'=> WEB_TITLE.'帮助中心',
-        'addUsrNav' => '1',
-        'addStyle' => array('h/help/question.css')
-    ));
+    $this->setTitle('游老虎_常见问题')
+        ->setValue('usrNav', TRUE)
+        ->setStyles('h/help/question.css')
+        ->setFootScripts('h/help/question.js');
 ?>
 <div class="container">
 	<?php if($questions):?>
@@ -19,8 +18,3 @@
     </div>
     <?php endif;?>
 </div>
-<?php
-    $this->display("elements/footer.phtml", array(
-        'addScript' => array('h/help/question.js')
-    ));
-?>
