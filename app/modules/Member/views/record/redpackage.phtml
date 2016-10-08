@@ -1,9 +1,4 @@
-<?php
-    $this->display("elements/header.phtml", array(
-        'title'=> '我的红包-'.WEB_TITLE,
-        'addStyle' => array('h/member/redpackage/index.css')
-    ));
-?>
+<?php $this->setTitle('我的红包_游老虎')->setStyles('h/member/redpackage/index.css')->setFootScripts('h/member/redpackage/index.js'); ?>
 <div class="container">
 	<div class="mod-redpackage">
 		<div id="tabType" class="redpackage-type">
@@ -16,8 +11,3 @@
 		</div>
 	</div>
 </div>
-<?php
-    $this->display("elements/footer.phtml",array(
-    	'addScript' => array('h/member/redpackage/index.js')
-    ));
-?>

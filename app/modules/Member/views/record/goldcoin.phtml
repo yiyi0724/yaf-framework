@@ -1,9 +1,4 @@
-<?php
-    $this->display("elements/header.phtml", array(
-        'title'=> '我的金币明细-'.WEB_TITLE,
-        'addStyle' => array('h/member/touchbalance/index.css')
-    ));
-?>
+<?php $this->setTitle('我的金币明细_游老虎')->setStyles('h/member/touchbalance/index.css')->setFootScripts('h/member/touchbalance/index.js'); ?>
 <div class="container">
 	<div class="mod-balance">
 		<input id="normal" type="hidden" value="<?php echo number_format($normal);?>" />
@@ -29,8 +24,3 @@
 		
 	</div>
 </div>
-<?php
-    $this->display("elements/footer.phtml", array(
-    	'addScript' => array('h/member/touchbalance/index.js')
-    ));
-?>

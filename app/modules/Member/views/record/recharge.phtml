@@ -1,9 +1,4 @@
-<?php
-    $this->display("elements/header.phtml", array(
-        'title'=> '我的充值记录-'.WEB_TITLE,
-        'addStyle' => array('h/member/record/recharge.css')
-    ));
-?>
+<?php $this->setTitle('我的充值记录_游老虎')->setStyles('h/member/record/recharge.css')->setFootScripts('h/member/record/recharge.js'); ?>
 <div class="container">
     <?php if(isset($lists) && $lists):?>
     <div id="rechargeList" class="mod-recharge">
@@ -42,11 +37,6 @@
         <?php endif;?>
     </div>
     <?php else: ?>
-        <?php $this->display("elements/default.phtml",array('defaultMsg'=>'您还没有充值记录哦！')); ?>
+        <?php $this->setValue('notify', '您还没有充值记录哦！')->component('empty'); ?>
     <?php endif; ?>
 </div>
-<?php
-    $this->display("elements/footer.phtml", array(
-        'addScript' => array('h/member/record/recharge.js')
-    ));
-?>
