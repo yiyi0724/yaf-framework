@@ -5,7 +5,7 @@ web_domain = "http://www.enychen.com/"
 web_style = "/style/"
 web_script = "/script/"
 web_image = "/image/"
-
+web_version = 201610081507
 
 
 [test:product] ;测试环境配置

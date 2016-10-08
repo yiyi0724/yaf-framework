@@ -81,7 +81,7 @@ class Response implements View_Interface {
 	protected function decorate($body) {
 		$template = $this->getTemplate();
 		$template->setScriptPath(sprintf('%slayout', COMMON_VIEW_PATH));
-		return $template->render("{$template->getLayout()}.phtml");
+		return $template->render("{$template->getLayout()}.phtml", array('body'=>$body));
 	}
 
 	/**

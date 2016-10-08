@@ -1,0 +1,40 @@
+<?php $this->setTitle('游老虎_游戏礼包中心')->setStyles('h/gift/index.css')->setValue('nav', TRUE)->setFootScripts('h/gift/index.js'); ?>
+<div class="container">
+    <div class="mod-gift">
+        <?php if(isset($lists) && $lists): ?>
+        <div id="giftList" class="giftlist">
+            <ul>
+            <?php foreach ($lists as $list):?>
+                <li><a href="/gift/detail/?id=<?php echo $list['id']; ?>">
+                    <div class="pic"><img src="<?php echo IMAGEURL.$list['logo'];?>" alt=""></div>
+                    <div class="cont">
+                        <h3><?php echo $list['name']; ?></h3>
+                        <p class="progress">
+                            <span class="txt">剩余</span>
+                            <span class="progressBar">
+                                <i style="width: <?php echo (number_format($list['surplus']/$list['total'], 2)) * 100?>%;"></i>
+                                <em class="num"><?php echo (number_format($list['surplus']/$list['total'], 2)) * 100?>%</em>
+                            </span>
+                        </p>
+                    </div>
+                    <?php if(isset($list['code'])):?>
+                    <div class="button see">查看</div>
+                    <?php elseif($list['surplus'] <= 0):?>
+                    <div class="button got">已领光</div>
+                    <?php else:?>
+                    <div class="button">领取</div>
+                    <?php endif;?>
+                </a></li>
+            <?php endforeach;?>
+            </ul>
+            <?php if(count($lists) >=10): ?>
+            <div id="more" class="mod-more">点击加载更多</div>
+            <?php endif; ?>
+        </div>
+        <?php else: ?>
+            <?php $this->setValue('notify', '还没有礼包哦！')->component("empty"); ?>
+        <?php endif; ?>
+    </div>
+</div>
+<!-- 返回顶部 -->
+<div id="goTop" class="gotop" href="#"><span class="inner"></span></div>

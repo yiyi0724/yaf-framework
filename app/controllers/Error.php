@@ -9,8 +9,8 @@ use \network\Header as HeaderLib;
 class ErrorController extends \base\BaseController {
 
 	public function init() {
-		// 使用默认模板
-		$this->getView()->setLayout('empty');
+		// 使用默认空模板
+		$this->getView()->getTemplate()->setLayout('empty');
 	}
 
 	/**

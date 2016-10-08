@@ -1,0 +1,86 @@
+<?php
+    $this->display("elements/header.phtml", array(
+        'title' => $giftArr['name'],
+        'addNav' => '1',
+        'addStyle' => array('h/gift/detail.css')
+    ));
+?>
+<div class="container">
+    <div class="mod-detail">
+        <div id="gift" class="gift-detail">
+            <input id="gid" type="hidden" value="<?php echo $giftArr['id'];?>"/>
+            <div class="gift">
+                <div class="pic"><img src="<?php echo IMAGEURL.$giftArr['logo'];?>" alt=""></div>
+                <div class="detail">
+                    <h2><?php echo $giftArr['name']; ?></h2>
+                    <p class="endtime"><?php echo  $giftArr['endtime'] == '99999999235959' ? '永久礼包' : '结束时间：' . date("Y-m-d H:i:s", strtotime($giftArr['endtime']));?></p>
+                </div>
+            </div>
+            <div class="button">
+                <a class="btn" href="/<?php echo $giftArr['gid']; ?>.html">进入游戏</a>
+                <?php if(isset($giftArr['code'])): ?>
+                    <span class="btn btn-got">已领取</span>
+                <?php elseif($giftArr['surplus'] <= 0 || $giftArr['endtime'] < $time): ?>
+                    <span class="btn btn-got">已领光</span>
+                <?php else: ?>
+                    <a id="iReceiveBtn" data-isgot="0" class="btn btn-get" href="javascript:;">领取</a>   
+                <?php endif; ?>
+                
+            </div>
+            <?php if($giftArr['surplus'] > 0 && !isset($giftArr['code'])): //未领取 ?>
+            <div class="count">剩余：<?php echo $giftArr['surplus'].'/'.$giftArr['total'];?>
+                <span class="progressBar" style="width: <?php echo (number_format($giftArr['surplus']/$giftArr['total'], 2)) * 100?>%;"></span>
+            </div>
+            <?php elseif(isset($giftArr['code'])): //已领取 ?>
+            <div class="gift-code">
+                <p class="code">礼包码：<span class="num"><?php echo $giftArr['code']; ?></span></p>
+                <p class="txt">长按复制礼包码</p>
+            </div>
+            <?php endif; ?>
+        </div>
+        <?php if($giftArr['content']): ?>
+        <div class="module cnt-gift">
+            <div class="hd"><h3>礼包内容</h3></div>
+            <div class="bd"><?php echo str_replace("\r\n", '<br>', $giftArr['content']);?></div>
+        </div>
+        <?php endif; ?>
+        <?php if($giftArr['readme']): ?>
+        <div class="module cnt-way">
+            <div class="hd"><h3>使用方法</h3></div>
+            <div class="bd">
+                <?php echo str_replace("\r\n", '<br>', $giftArr['readme']); ?>
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php if(isset($lists) && $lists): ?>
+        <div class="module cnt-giftlist">
+            <div class="hd"><h3>相关礼包</h3></div>
+            <div class="bd">
+                <ul class="giftlist">
+                <?php foreach ($lists as $list):?>
+                    <li><a href="/gift/detail/?id=<?php echo $list['id'];?>">
+                        <div class="cont">
+                            <p class="title"><?php echo $list['name']; ?></p>
+                            <p class="txt">已领取<?php echo $list['total'] - $list['surplus'];?>个，剩余<?php echo $list['surplus'];?>个</p>
+                            <p class="txt"><?php echo $list['content'];?></p>
+                        </div>
+                        <?php if(isset($list['code'])):  ?>
+                        <div class="gift-btn see">查看</div>
+                        <?php elseif($list['surplus'] <= 0): ?>
+                        <div class="gift-btn got">已领光</div>
+                        <?php else: ?>
+                        <div class="gift-btn">领取</div>
+                        <?php endif; ?>
+                    </a></li>
+                <?php endforeach;?>
+                </ul>   
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php
+    $this->display("elements/footer.phtml", array(
+        'addScript' => array('h/gift/detail.js')
+    ));
+?>
