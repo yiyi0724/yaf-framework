@@ -24,7 +24,7 @@
             </ul>
         </div>
         <?php else:?>
-            <?php $this->setValue('您还没有收藏游戏哦！')->component('empty'); ?>
+            <?php $this->setValue('notify', '您还没有收藏游戏哦！')->component('empty'); ?>
         <?php endif;?>
     </div>
     <?php if($gameArr):?>
