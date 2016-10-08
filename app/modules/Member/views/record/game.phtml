@@ -1,0 +1,42 @@
+<?php $this->setTitle('我最近玩过的游戏_游老虎')->setStyles('h/member/record/game.css')->setFootScripts('h/member/record/game.js'); ?>
+<div class="container">
+    <div class="mod-list">
+        <div class="hd">最近在玩</div>
+        <?php if(isset($playArr) && $playArr): ?>
+        <div id="gameList" class="bd">
+            <ul>
+            <?php foreach($playArr as $play):?>
+                <li class="j-link" data-gameid="<?php echo $play['id']?>">
+                    <div class="pic"><img src="<?php echo IMAGEURL,$play['logo'];?>" alt=""></div>
+                    <div class="cont">
+                        <h3><?php echo $play['name'];?><?php if($play['hasGift']):?><span class="gift">礼包</span><?php endif;?><?php if($play['is_recommend']):?><span class="hot">热门</span><?php endif;?>
+                        </h3>
+                        <p class="description"><?php echo $play['intro']; ?></p>
+                    </div>
+                    <a href="/<?php echo $play['id'];?>.html" class="button"><span class="btn-start">进入</span></a>
+                </li>
+            <?php endforeach;?>
+            </ul>
+        </div>
+        <?php else:  ?>
+            <?php $this->setValue('notify', '您最近没有玩游戏哦！')->component('empty'); ?>
+        <?php endif; ?>
+    </div>
+    <?php if($gameArr):?>
+    <div class="mod-recommend">
+        <div class="hd">推荐游戏</div>
+        <div class="bd">
+            <ul>
+                <?php foreach($gameArr as $game):?>
+                <li>
+                    <a href="/<?php echo $game['id'];?>.html">
+                        <img src="<?php echo IMAGEURL,$game['logo'];?>" alt="">
+                        <span class="txt"><?php echo $game['name']?></span>
+                    </a>
+                </li>
+                <?php endforeach; ?> 
+            </ul>
+        </div>
+    </div>
+    <?php endif;?>
+</div>

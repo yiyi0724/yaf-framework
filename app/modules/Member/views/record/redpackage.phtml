@@ -1,0 +1,23 @@
+<?php
+    $this->display("elements/header.phtml", array(
+        'title'=> '我的红包-'.WEB_TITLE,
+        'addStyle' => array('h/member/redpackage/index.css')
+    ));
+?>
+<div class="container">
+	<div class="mod-redpackage">
+		<div id="tabType" class="redpackage-type">
+			<span class="type active" data-type="1">未使用</span>
+			<span class="type" data-type="2">已使用/已过期</span>
+		</div>
+		<div id="redpkList" class="redpackage">
+			<ul>
+			</ul>
+		</div>
+	</div>
+</div>
+<?php
+    $this->display("elements/footer.phtml",array(
+    	'addScript' => array('h/member/redpackage/index.js')
+    ));
+?>

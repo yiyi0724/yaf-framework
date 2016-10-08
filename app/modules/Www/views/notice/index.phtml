@@ -1,0 +1,27 @@
+<?php $this->setTitle('游老虎_活动公告')->setValue('nav', TRUE)->setStyles('h/notice/index.css')->setFootScripts('h/notice/index.js');?>
+<div class="container">
+	<div class="mod-notice">
+		<?php if(isset($lists) && $lists): ?>
+		<div id="noticeList" class="bd">
+			<ul>
+			<?php foreach ($lists as $list):?>
+			<?php $type = array(0=>'', 1=>'游戏活动', 2=>'游戏公告', 3=>'平台活动', 4=>'平台公告');?>
+				<li><a href="/notice/detail/?id=<?php echo $list['id']; ?>">
+					<div class="pic"><img src="<?php echo IMAGEURL.$list['thumb'];?>" alt=""><span class="txt txt-bg<?php echo $list['type'];?>"><?php echo $type[$list['type']]; ?></span></div>
+					<h3 class="tit"><?php echo $list['title']; ?></h3>
+					<p class="cont"><?php echo $list['description'];?></p>
+					<p class="time"><?php echo date("Y-m-d H:i", strtotime($list['addtime'])); ?></p>
+				</a></li>
+		    <?php endforeach;?>
+			</ul>
+			<?php if(count($lists) >=10): ?>
+            <div id="more" class="mod-more">点击加载更多</div>
+            <?php endif; ?>
+		</div>
+		<?php else: ?>
+			<?php $this->setValue('notify', '还没有活动哦！')->component("empty"); ?>
+		<?php endif; ?>
+	</div>
+</div>
+<!-- 返回顶部 -->
+<div id="goTop" class="gotop" href="#"><span class="inner"></span></div>

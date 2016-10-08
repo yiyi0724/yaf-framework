@@ -1,10 +1,10 @@
 [product] ;线上环境配置
 
 ;网站信息
-web_domain = "http://www.enychen.com/"
-web_style = "/style/"
-web_script = "/script/"
-web_image = "/image/"
+url_domain = "http://www.enychen.com/"
+url_style = "/style/"
+url_script = "/script/"
+url_image = "/image/"
 web_version = 201610081507
 
 

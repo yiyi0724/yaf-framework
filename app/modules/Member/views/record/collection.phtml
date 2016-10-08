@@ -1,0 +1,42 @@
+<?php $this->setTitle('我收藏的游戏_游老虎')->setStyles('h/member/collection/index.css')->setFootScripts('h/member/collection/index.js'); ?>
+<div class="container">
+    <div class="mod-list">
+        <div class="hd">我的收藏</div>
+        <?php if($collectionArr):?>
+        <div class="bd">
+            <ul id="collectList">
+            <?php foreach ($collectionArr as $collection):?>
+                <li>
+                    <div class="pic"><img src="<?php echo IMAGEURL.$collection['logo'];?>" alt=""></div>
+                    <div class="cont">
+                        <h3><?php echo $collection['name']; ?><?php if($collection['hasGift']):?><span class="gift">礼包</span><?php endif;?><?php if($collection['is_recommend']):?><span class="hot">热门</span><?php endif;?>
+                        </h3>
+                        <p class="description"><?php echo $collection['intro']; ?></p>
+                    </div>
+                    <div class="button"><a class="btn-start" href="/<?php echo $collection['id']; ?>.html">进入</a><a class="btn-del" href="javascript:;" rel="nofollow" data-id="<?php echo $collection['id'];?>">删除</a></div>
+                </li>
+            <?php endforeach;?>
+            </ul>
+        </div>
+        <?php else:?>
+            <?php $this->setValue('您还没有收藏游戏哦！')->component('empty'); ?>
+        <?php endif;?>
+    </div>
+    <?php if($gameArr):?>
+    <div class="mod-recommend">
+        <div class="hd">推荐游戏</div>
+        <div class="bd">
+            <ul>
+            <?php foreach ($gameArr as $game):?>
+                <li>
+                    <a href="/<?php echo $game['id']; ?>.html">
+                        <img src="<?php echo IMAGEURL.$game['logo'];?>" alt="">
+                        <span class="txt"><?php echo $game['name']; ?></span>
+                    </a>
+                </li>
+            <?php endforeach;?>
+            </ul>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>

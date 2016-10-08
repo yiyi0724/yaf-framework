@@ -15,17 +15,17 @@
     <?php echo $this->getTabs();?>
     <title><?php echo $this->getTitle(); ?></title>
 	<?php foreach($this->getStyles() as $style):?>
-	<link rel="stylesheet" type="text/css" href="<?php echo WEB_STYLE . $style; ?>">
+	<link rel="stylesheet" type="text/css" href="<?php echo URL_STYLE . $style; ?>">
 	<?php endforeach;?>
-	<link href="<?php echo WEB_STYLE.'h/common/style.css?v='.WEB_VERSION; ?>" rel="stylesheet" type="text/css"/>
-    <link rel="shortcut icon" href="<?php echo WEB_IMAGE;?>public/favicon.ico">    
+	<link href="<?php echo URL_STYLE.'h/common/style.css?v='.WEB_VERSION; ?>" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="<?php echo URL_IMAGE;?>public/favicon.ico">
     <?php foreach($this->getHeadScripts() as $script):?>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT.$script?>"></script>
+	<script type="text/javascript" src="<?php echo URL_SCRIPT.$script?>"></script>
 	<?php endforeach;?>
     <script type="text/javascript">
         var PageConfig = {
             myUrl :"/member/",
-            imgUrl:'<?php echo WEB_IMAGE;?>'
+            imgUrl:'<?php echo URL_IMAGE;?>'
         };
         (function(win){
             var eventType = "resize";//"onorientationchange" in win ? "orientationchange" : "resize";//解决微信浏览器下旋转屏幕时宽度计算错误的问题,部分安卓机子也会出问题

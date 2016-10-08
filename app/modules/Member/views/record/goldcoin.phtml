@@ -1,0 +1,36 @@
+<?php
+    $this->display("elements/header.phtml", array(
+        'title'=> '我的金币明细-'.WEB_TITLE,
+        'addStyle' => array('h/member/touchbalance/index.css')
+    ));
+?>
+<div class="container">
+	<div class="mod-balance">
+		<input id="normal" type="hidden" value="<?php echo number_format($normal);?>" />
+		<input id="income" type="hidden" value="<?php echo number_format($income);?>" />
+		<input id="payout" type="hidden" value="<?php echo number_format($payout);?>" />
+		<div class="balance-info">
+			<div class="balance-type">
+				<a class="type active" data-type="0" href="javascript:;">所有明细</a>
+				<a class="type" data-type="1" href="javascript:;">收入</a>
+				<a class="type" data-type="2" href="javascript:;">支出</a>
+			</div>
+			<div class="info">
+				<p id="title" class="title">余额</p>
+				<p class="txt"><span id="coin" class="coin"><?php echo number_format($normal);?></span>金币</p>
+			</div>
+		</div>
+		<div class="balance">
+	        <div id="balanceList" class="balance-list">
+	        	<ul>
+	        	</ul>
+	        </div>
+		</div>
+		
+	</div>
+</div>
+<?php
+    $this->display("elements/footer.phtml", array(
+    	'addScript' => array('h/member/touchbalance/index.js')
+    ));
+?>

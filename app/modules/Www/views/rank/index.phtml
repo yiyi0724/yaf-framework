@@ -1,0 +1,40 @@
+<?php $this->setTitle('游老虎_游戏排行')->setValue('nav', TRUE)->setStyles('h/rank/index.css')->setFootScripts('h/public/itemlink.js'); ?>
+<div class="container">
+	<div class="mod-rank">
+		<div class="rank-type">
+			<a class="type<?php echo $type == 1 ? ' active"' : ''?>" href="/rank/index/?type=1">热游排行 </a>
+			<a class="type<?php echo $type == 2 ? ' active"' : ''?>" href="/rank/index/?type=2">新游排行</a>
+		</div>
+		<?php if(isset($gameArr) && $gameArr): ?>
+		<div id="gameList" class="rank">
+		<!-- 
+			<div class="show-pic">
+				<img src="<?php //echo IMAGEURL.$carouselArr[0]['pic'];?>" alt="">
+			</div>
+			 -->
+			<ul class="ranklist">
+			<?php
+			    foreach ($gameArr as $key=>$game):
+			       if($type ==1){
+			       	$gameMapper = \Mapper\Platform\H5gameModel::getInstance();
+			       	$game = $gameMapper->find(array('id'=>$game->getGid()));
+			    }
+			?>
+				<li class="j-link" data-gameid="<?php echo $game->getId();?>">
+					<div class="pic">
+						<span class="num<?php echo $key + 1 <= 3? ' num-red':'';?>"><?php echo $key + 1; ?></span><img src="<?php echo IMAGEURL.$game->getLogo();?>" alt="">
+					</div>
+					<div class="cont">
+						<h3><?php echo $game->getName(); ?></h3>
+						<p class="description"><?php echo $game->getIntro(); ?></p>
+					</div>
+					<a href="/<?php echo $game->getId();?>.html" class="button"><span class="btn-start">进入</span></a>
+				</li>
+			<?php endforeach;?>
+			</ul>
+		</div>
+		<?php else: ?>
+			<?php $this->setValue('notify', '还没有排行哦！')->component("empty"); ?>
+		<?php endif; ?>
+	</div>
+</div>

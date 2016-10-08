@@ -6,7 +6,7 @@
 			<ul>
 			<?php foreach ($categoryArr as $category):?>
 				<li><a href="/category/detail/?id=<?php echo $category->getId(); ?>">
-					<img src="<?php echo WEB_IMAGE.trim($category->getBgpic(),'/');?>" alt="">
+					<img src="<?php echo URL_IMAGE.trim($category->getBgpic(),'/');?>" alt="">
 					<span class="category-name"><?php echo $category->getName(); ?></span>
 				</a></li>
 			<?php endforeach;?>

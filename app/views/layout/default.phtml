@@ -22,13 +22,13 @@
     <?php if(isset($addUsrNav) && $addUsrNav && !IS_APP): ?>
     <div class="user-header">
         <a class="back" href="<?php echo isset($_SERVER['HTTP_REFERER']) ? "javascript:history.go(-1);" : '/' ?>"></a>
-        <div class="logo"><a href="/"><img src="<?php echo WEB_IMAGE.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>
+        <div class="logo"><a href="/"><img src="<?php echo URL_IMAGE.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>
     </div>
     <?php endif; ?>
 	<?php echo $body;?>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT.'lib/jquery-2.2.2.min.js';?>"></script>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT.'lib/sea.js';?>"></script>
-	<script type="text/javascript" src="<?php echo WEB_SCRIPT.'h/plugins/fastclick.js';?>"></script>
+	<script type="text/javascript" src="<?php echo URL_SCRIPT.'lib/jquery-2.2.2.min.js';?>"></script>
+	<script type="text/javascript" src="<?php echo URL_SCRIPT.'lib/sea.js';?>"></script>
+	<script type="text/javascript" src="<?php echo URL_SCRIPT.'h/plugins/fastclick.js';?>"></script>
 	<script type="text/javascript">
 		$(function() {
 		  FastClick.attach(document.body);
@@ -36,9 +36,9 @@
 	</script>
 	<script>
 	    seajs.config({
-	        base:'<?php echo rtrim(WEB_SCRIPT,'/'); ?>',
+	        base:'<?php echo rtrim(URL_SCRIPT,'/'); ?>',
 	        paths: {
-	            'addScript':'<?php echo rtrim(WEB_SCRIPT,'/'); ?>'
+	            'addScript':'<?php echo rtrim(URL_SCRIPT,'/'); ?>'
 	        },
 	        map: [
 	            [ /^(.*?\/script\/(?:src|dist)\/.*?\/.*?\.js$)(?:.*)$/i, '$1?v=<?php echo WEB_VERSION;?>']
