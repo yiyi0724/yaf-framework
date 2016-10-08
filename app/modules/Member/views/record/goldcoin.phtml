@@ -1,4 +1,9 @@
-<?php $this->setTitle('我的金币明细_游老虎')->setStyles('h/member/touchbalance/index.css')->setFootScripts('h/member/touchbalance/index.js'); ?>
+<?php
+	$this->setTitle('我的金币明细_游老虎')
+		->setValue('usrNav', TRUE)
+		->setStyles('h/member/touchbalance/index.css')
+		->setFootScripts('h/member/touchbalance/index.js');
+?>
 <div class="container">
 	<div class="mod-balance">
 		<input id="normal" type="hidden" value="<?php echo number_format($normal);?>" />

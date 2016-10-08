@@ -1,0 +1,28 @@
+<?php
+    $this->display("elements/header.phtml", array(
+        'title'=> WEB_TITLE.'系统消息',
+        'addUsrNav' => '1',
+        'addStyle' => array('h/help/message.css')
+    ));
+?>
+<div class="container">
+	<?php if(isset($lists) && $lists):?>
+    <div class="mod-message">
+        <ul>
+        	<?php foreach($lists as $key=>$value):?>
+            <li class="item">
+            	<a href="/help/message/<?php echo $value['id']?>.html">
+                    <p class="datetime"><?php echo date('m-d', $value['uptime']);?></p>
+               		<p class="cont"><?php echo $value['title']?></p>
+            	</a>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php else: ?>
+        <?php $this->display("elements/default.phtml",array('defaultMsg'=>'还没有消息哦！')); ?>
+    <?php endif;?>
+</div>
+<?php
+    $this->display("elements/footer.phtml");
+?>

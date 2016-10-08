@@ -1,4 +1,9 @@
-<?php $this->setTitle('我收藏的游戏_游老虎')->setStyles('h/member/collection/index.css')->setFootScripts('h/member/collection/index.js'); ?>
+<?php
+    $this->setTitle('我收藏的游戏_游老虎')
+        ->setValue('usrNav', TRUE)
+        ->setStyles('h/member/collection/index.css')
+        ->setFootScripts('h/member/collection/index.js');
+?>
 <div class="container">
     <div class="mod-list">
         <div class="hd">我的收藏</div>
@@ -7,7 +12,7 @@
             <ul id="collectList">
             <?php foreach ($collectionArr as $collection):?>
                 <li>
-                    <div class="pic"><img src="<?php echo IMAGEURL.$collection['logo'];?>" alt=""></div>
+                    <div class="pic"><img src="<?php echo URL_IMAGE.$collection['logo'];?>" alt=""></div>
                     <div class="cont">
                         <h3><?php echo $collection['name']; ?><?php if($collection['hasGift']):?><span class="gift">礼包</span><?php endif;?><?php if($collection['is_recommend']):?><span class="hot">热门</span><?php endif;?>
                         </h3>
@@ -30,7 +35,7 @@
             <?php foreach ($gameArr as $game):?>
                 <li>
                     <a href="/<?php echo $game['id']; ?>.html">
-                        <img src="<?php echo IMAGEURL.$game['logo'];?>" alt="">
+                        <img src="<?php echo URL_IMAGE.$game['logo'];?>" alt="">
                         <span class="txt"><?php echo $game['name']; ?></span>
                     </a>
                 </li>

@@ -1,0 +1,26 @@
+<?php
+    $this->display("elements/header.phtml", array(
+        'title'=> WEB_TITLE.'帮助中心',
+        'addUsrNav' => '1',
+        'addStyle' => array('h/help/question.css')
+    ));
+?>
+<div class="container">
+	<?php if($questions):?>
+    <div class="mod-question">
+        <ul id="j-qa">
+        	<?php foreach($questions as $question):?>
+            <li>
+                <p class="question"><?php echo $question['question']; ?></p>
+                <div class="answer"><?php echo str_replace(chr(10), '<br/>', $question['answer']); ?></div>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php endif;?>
+</div>
+<?php
+    $this->display("elements/footer.phtml", array(
+        'addScript' => array('h/help/question.js')
+    ));
+?>

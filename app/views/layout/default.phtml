@@ -19,7 +19,7 @@
         </div> 
     </nav>
     <?php endif;?>
-    <?php if(isset($addUsrNav) && $addUsrNav && !IS_APP): ?>
+    <?php if($this->getValue('usrNav')): ?>
     <div class="user-header">
         <a class="back" href="<?php echo isset($_SERVER['HTTP_REFERER']) ? "javascript:history.go(-1);" : '/' ?>"></a>
         <div class="logo"><a href="/"><img src="<?php echo URL_IMAGE.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>

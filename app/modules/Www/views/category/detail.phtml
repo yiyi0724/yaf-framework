@@ -11,7 +11,7 @@
             <ul>
             <?php foreach ($categoryArr as $category):?>
                 <li<?php echo $id == $category->getId() ? ' class="active"' : ''?>><a href="/category/detail/?id=<?php echo $category->getId(); ?>">
-                    <span class="ic-cate"><img src="<?php echo IMAGEURL.trim($category->getLogo(), '/');?>" alt=""/></span>
+                    <span class="ic-cate"><img src="<?php echo URL_IMAGE.trim($category->getLogo(), '/');?>" alt=""/></span>
                     <span class="txt"><?php echo $category->getName(); ?></span>
                 </a></li>
             <?php endforeach;?>
@@ -23,7 +23,7 @@
         <ul>
         <?php foreach ($gameArr as $game):?>
             <li class="j-link" data-gameid="<?php echo $game['id']?>">
-                <div class="pic"><img src="<?php echo IMAGEURL.$game['logo'];?>" alt="" /></div>
+                <div class="pic"><img src="<?php echo URL_IMAGE.$game['logo'];?>" alt="" /></div>
                 <div class="cont">
                     <h3><?php echo $game['name']; ?><?php if($game['hasGift']):?><span class="gift">礼包</span><?php endif;?><?php if($game['is_recommend']):?><span class="hot">热门</span><?php endif;?>
                     </h3>

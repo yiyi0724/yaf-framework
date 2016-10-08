@@ -1,4 +1,9 @@
-<?php $this->setTitle('我的充值记录_游老虎')->setStyles('h/member/record/recharge.css')->setFootScripts('h/member/record/recharge.js'); ?>
+<?php
+    $this->setTitle('我的充值记录_游老虎')
+        ->setValue('usrNav', TRUE)
+        ->setStyles('h/member/record/recharge.css')
+        ->setFootScripts('h/member/record/recharge.js');
+?>
 <div class="container">
     <?php if(isset($lists) && $lists):?>
     <div id="rechargeList" class="mod-recharge">
@@ -10,7 +15,7 @@
                     <span class="order-number">订单号：<span class="num"><?php echo $list['id']; ?></span></span>
                 </div>
                 <div class="bd">
-                    <div class="pic"><img src="<?php echo IMAGEURL,$list['logo'];?>" alt=""></div>
+                    <div class="pic"><img src="<?php echo URL_IMAGE,$list['logo'];?>" alt=""></div>
                     <div class="cont">
                         <p class="title"><?php echo $list['name']?><?php echo $list['service'] ? "（{$list['service']}服）" : NULL; ?></p>
                         <p class="time"><?php echo $list['status'] == 2 ? date('Y-m-d H:i:s', strtotime($list['paytime'])) : date('Y-m-d H:i:s', strtotime($list['addtime'])); ?></p>

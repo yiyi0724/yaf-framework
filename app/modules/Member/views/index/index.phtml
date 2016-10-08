@@ -4,7 +4,7 @@
         <div class="user">
             <a href="<?php echo $this->UID ? '/member/info/index/' : '/login/' ?>">
                 <span class="avatar">
-                    <img onerror="this.src='<?php echo IMAGEURL.'h/member/default_avatar.png';?>';this.onerror=null" src="<?php echo isset($userArr) && $userArr ?  $userArr['avatarhd'] : IMAGEURL.'h/member/default_avatar.png';?>" alt="头像">
+                    <img onerror="this.src='<?php echo URL_IMAGE.'h/member/default_avatar.png';?>';this.onerror=null" src="<?php echo isset($userArr) && $userArr ?  $userArr['avatarhd'] : URL_IMAGE.'h/member/default_avatar.png';?>" alt="头像">
                 </span>
                 <span class="info">
                     <span class="name"><?php echo isset($userArr['nickname']) ? $userArr['nickname'] : '立即登录';?></span>

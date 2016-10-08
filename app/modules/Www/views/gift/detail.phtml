@@ -10,7 +10,7 @@
         <div id="gift" class="gift-detail">
             <input id="gid" type="hidden" value="<?php echo $giftArr['id'];?>"/>
             <div class="gift">
-                <div class="pic"><img src="<?php echo IMAGEURL.$giftArr['logo'];?>" alt=""></div>
+                <div class="pic"><img src="<?php echo URL_IMAGE.$giftArr['logo'];?>" alt=""></div>
                 <div class="detail">
                     <h2><?php echo $giftArr['name']; ?></h2>
                     <p class="endtime"><?php echo  $giftArr['endtime'] == '99999999235959' ? '永久礼包' : '结束时间：' . date("Y-m-d H:i:s", strtotime($giftArr['endtime']));?></p>
