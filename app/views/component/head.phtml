@@ -1,41 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="renderer" content="webkit">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="wap-font-scale" content="no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php foreach($this->getMetas() as $name=>$content):?>
 	<meta name="<?php echo $name;?>" content="<?php echo $content;?>">
 	<?php endforeach;?>
     <?php echo $this->getTabs();?>
     <title><?php echo $this->getTitle(); ?></title>
+    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/entypo.css' ?>">
+    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/bootstrap.min.css' ?>">
+    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/neon-core.min.css' ?>">
+    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/neon-theme.min.css' ?>">
+    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/neon-forms.min.css' ?>">
+    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/custom.css' ?>">
 	<?php foreach($this->getStyles() as $style):?>
 	<link rel="stylesheet" type="text/css" href="<?php echo URL_STYLE . $style; ?>">
 	<?php endforeach;?>
-	<link href="<?php echo URL_STYLE.'h/common/style.css?v='.WEB_VERSION; ?>" rel="stylesheet" type="text/css"/>
-    <link rel="shortcut icon" href="<?php echo URL_IMAGE;?>public/favicon.ico">
+	<link rel="shortcut icon" href="<?php echo URL_IMAGE;?>public/favicon.ico">
+    <script src="<?php echo URL_SCRIPT . 'public/jquery.js' ?>"></script>
     <?php foreach($this->getHeadScripts() as $script):?>
 	<script type="text/javascript" src="<?php echo URL_SCRIPT.$script?>"></script>
 	<?php endforeach;?>
-    <script type="text/javascript">
-        var PageConfig = {
-            myUrl :"/member/",
-            imgUrl:'<?php echo URL_IMAGE;?>'
-        };
-        (function(win){
-            var eventType = "resize";//"onorientationchange" in win ? "orientationchange" : "resize";//解决微信浏览器下旋转屏幕时宽度计算错误的问题,部分安卓机子也会出问题
-            var resizeFun = function(){
-                var htmlEle = win.document.documentElement;
-                var width = Math.min(htmlEle.clientWidth, 1080);
-                htmlEle.style.fontSize = width / 10.8 + "px";
-            };
-            resizeFun();
-            win.addEventListener(eventType, resizeFun, false);
-        })(window);
-    </script>
 </head>

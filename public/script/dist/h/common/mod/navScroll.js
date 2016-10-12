@@ -1,1 +1,0 @@
-define("h/common/mod/navScroll",[],function(t,e,l){var n=$("#scrollNav"),i=n.find(".active");if(n.length&&i.length){var f=n.find(".wrap"),c=n.find(".inner"),d=i.width(),r=parseInt(f.css("padding-left").replace(/px/g,""),10)||0,o=parseInt(i.offset().left-n.offset().left-d-r);o=0>o?0:o>c[0].scrollWidth-c[0].clientWidth?c[0].scrollWidth-c[0].clientWidth:o,c.scrollLeft(o)}});

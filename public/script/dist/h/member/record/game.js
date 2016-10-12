@@ -1,1 +1,0 @@
-define("h/member/record/game",[],function(e,i,a){$("#gameList").on("click",".j-link",function(){var e=$(this).attr("data-gameid"),i="/game/"+e+".html";window.location.href=i})});
