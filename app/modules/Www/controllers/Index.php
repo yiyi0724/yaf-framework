@@ -11,4 +11,8 @@ class IndexController extends \base\AdminController {
 	 */
 	public function indexAction() {
     }
+
+    public function tableAction() {
+
+    }
 }
