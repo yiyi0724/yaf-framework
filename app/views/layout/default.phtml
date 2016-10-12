@@ -1,58 +1,201 @@
-<?php $this->component('head')?>
-<body>
-<div class="wrapper">
-    <?php if($this->getValue('nav')):?>
-    <nav class="mod-nav" id="scrollNav">
-        <div class="wrap">
-            <div class="inner">
-                <ul>
-                    <li><a class="nav-item" href="/"><span>首页</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Game' && ACTION_NAME=='category')? 'active':'';?>"><a class="nav-item" href="/category/"><span>分类</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Gift')? 'active':'';?>"><a class="nav-item" href="/gift/"><span>礼包</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Smallgame')? 'active':'';?>"><a class="nav-item" href="/sgame/"><span>小游戏</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Recharge')? 'active':'';?>"><a class="nav-item" href="/pay/recharge/"><span>充值</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Notice')? 'active':'';?>"><a class="nav-item" href="/notice/"><span>活动</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Sign')? 'active':'';?>"><a class="nav-item" href="/member/sign/"><span>签到</span></a></li>
-                    <li class="<?php echo (CONTROLLER_NAME=='Game' && ACTION_NAME=='rank')? 'active':'';?>"><a class="nav-item" href="/game/rank/"><span>排行</span></a></li>
-                </ul>
-            </div> 
-        </div> 
-    </nav>
-    <?php endif;?>
-    <?php if($this->getValue('usrNav')): ?>
-    <div class="user-header">
-        <a class="back" href="<?php echo isset($_SERVER['HTTP_REFERER']) ? "javascript:history.go(-1);" : '/' ?>"></a>
-        <div class="logo"><a href="/"><img src="<?php echo URL_IMAGE.'h/public/'.(SHOW_QRCODE ? 'header-logo.png' : 'header-logo2.png');?>" alt="游老虎" /></a></div>
+<?php
+    $this->component('head')
+        ->setStyles()
+        ->setHeadScripts('public/index.js')
+        ->setFootScripts('public/public.js')
+?>
+
+<body class="page-body loaded" data-url="http://themes.laborator.co/neon">
+    <div class="page-container">
+        <div class="sidebar-menu" style="min-height: 950px;">
+            <header class="logo-env">
+                <div class="logo">
+                    <img src="<?php echo URL_IMAGE.'logo.png'?>" height="32" alt="">
+                </div>
+                <div class="sidebar-collapse">
+                    <a href="#" class="sidebar-collapse-icon with-animation">
+                        <i class="entypo-menu"></i>
+                    </a>
+                </div>
+                <div class="sidebar-mobile-menu visible-xs">
+                    <a href="#" class="with-animation">
+                        <i class="entypo-menu"></i>
+                    </a>
+                </div>
+            </header>
+            <ul id="main-menu" class="">
+                <li class="root-level active opened">
+                    <a href="/"><i class="entypo-index"></i><span>首页</span></a>
+                </li>
+                <li class="root-level has-sub">
+                    <a href="#"><i class="entypo-channelapply"></i><span>渠道管理</span></a>
+                    <ul>
+                        <li>
+                            <a href="#"><span>渠道列表</span></a>
+                        </li>
+                        <li>
+                            <a href="#"><span>分成设置</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="root-level">
+                    <a href="#"><i class="entypo-admin"></i><span>管理员管理</span></a>
+                </li>
+            </ul>
+        </div>
+        <div class="main-content" style="min-height: 950px;">
+            <div class="row">
+                <div class="col-md-6 col-sm-8 clearfix">
+                    <ul class="user-info pull-left pull-none-xsm">
+                        <li class="profile-info dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="<?php echo URL_IMAGE.'avatar.jpg'?>" alt="" class="img-circle" width="44">
+                                <span>超级管理员</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="caret"></li>
+                                <li>
+                                    <a href="#">
+                                        <i class="entypo-user"></i>编辑用户
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="entypo-mail"></i>消息管理
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-sm-4 clearfix hidden-xs">
+                    <ul class="list-inline links-list pull-right">
+                        <li>
+                            <a href="#sample-modal-message" data-toggle="modal">
+                                <i class="entypo-chat"></i>发送消息
+                            </a>
+                        </li>
+                        <li class="sep"></li>
+                        <li>
+                            <a href="#sample-modal-announcement" data-toggle="modal" class="addAnnouBtn">
+                                <i class="entypo-chat"></i>发布公告
+                            </a>
+                        </li>
+                        <li class="sep"></li>
+                        <li>
+                            <a href="/logout/">
+                                用户退出<i class="entypo-logout right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-12" id="today">
+
+                </div>
+            </div>
+        </div>
     </div>
-    <?php endif; ?>
-	<?php echo $body;?>
-	<script type="text/javascript" src="<?php echo URL_SCRIPT.'lib/jquery-2.2.2.min.js';?>"></script>
-	<script type="text/javascript" src="<?php echo URL_SCRIPT.'lib/sea.js';?>"></script>
-	<script type="text/javascript" src="<?php echo URL_SCRIPT.'h/plugins/fastclick.js';?>"></script>
-	<script type="text/javascript">
-		$(function() {
-		  FastClick.attach(document.body);
-		});
-	</script>
-	<script>
-	    seajs.config({
-	        base:'<?php echo rtrim(URL_SCRIPT,'/'); ?>',
-	        paths: {
-	            'addScript':'<?php echo rtrim(URL_SCRIPT,'/'); ?>'
-	        },
-	        map: [
-	            [ /^(.*?\/script\/(?:src|dist)\/.*?\/.*?\.js$)(?:.*)$/i, '$1?v=<?php echo WEB_VERSION;?>']
-	        ],
-	        charset: 'utf-8'
-	    });
-	    seajs.use('addScript/h/common/common.js',function(){
-	        <?php if (isset($addScript) && $addScript): ?>
-		        <?php foreach ($addScript as $val): ?>
-		        seajs.use('addScript/<?php echo $val; ?>');
-		        <?php endforeach; ?>
-		    <?php endif; ?>
-	    });
-	</script>
-</div>
+
+    <!-- 消息对话框 -->
+    <div class="modal fade" id="sample-modal-message">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">发送消息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group"><div class="help-block"></div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="add-field1" class="control-label">用户名</label>
+                                <input id="add-field1" type="text" class="form-control" name="target_id">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="add-field2" class="control-label">消息内容</label>
+                                <textarea id="add-field2" class="form-control autogrow" name="content" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 31px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 公告对话框 -->
+    <div class="modal fade" id="sample-modal-announcement">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">发布公告</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group"><div class="help-block"></div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="add-field2" class="control-label">发布&nbsp;: &nbsp;</label>
+                                <input id="announ-field3" type="radio" name="announ_release" value="0" checked="checked"> 否&nbsp; &nbsp;
+                                <input id="announ-field3" type="radio" name="announ_release" value="1"> 是
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="add-field2" class="control-label">目标&nbsp;: &nbsp;</label>
+                                <input id="announ-field3" type="radio" name="announ_release_to" value="0" checked="checked"> 所有&nbsp; &nbsp;
+                                <input id="announ-field3" type="radio" name="announ_release_to" value="1"> 渠道(c) &nbsp; &nbsp;
+                                <input id="announ-field3" type="radio" name="announ_release_to" value="2"> 厂商(f)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="add-field1" class="control-label">标题</label>
+                                <input id="announ-field1" type="text" class="form-control" name="announ_title">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="add-field2" class="control-label">内容</label>
+                                <textarea id="announ-field2" class="form-control" rows="10" name="announ_content"></textarea>
+                            </div>
+                            <span>链接格式：[显示名称](链接地址)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="announcement_id" value="0">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <?php $this->component('foot')?>

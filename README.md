@@ -4,11 +4,3 @@
 - 加入一些常用的类，大部分的类库都是我自己手写，难免存在bug，而且写的也不是很优秀
 - 框架目前还在完善当中
 
-## 内置类库使用说明
-   [点击这里查看:)](https://github.com/enychen/yaf-framework/tree/master/doc)
-   
-## 全局code
-
-
-991 表单数据有误
-
