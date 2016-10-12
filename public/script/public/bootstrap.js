@@ -983,8 +983,6 @@ if (typeof jQuery === "undefined") { throw new Error("Bootstrap requires jQuery"
     if (this.isShown && this.options.backdrop) {
       var doAnimate = $.support.transition && animate
 
-      console.log(this);
-
       this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
         .appendTo($('#layout'))
 
