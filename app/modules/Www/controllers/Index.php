@@ -10,5 +10,5 @@ class IndexController extends \base\LogicController {
 	 * 网站首页
 	 */
 	public function indexAction() {
-	}
+    }
 }
