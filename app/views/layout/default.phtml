@@ -5,12 +5,12 @@
         ->setFootScripts('public/public.js')
 ?>
 
-<body class="page-body loaded" data-url="http://themes.laborator.co/neon">
+<body class="page-body loaded">
     <div class="page-container">
-        <div class="sidebar-menu" style="min-height: 950px;">
+        <div class="sidebar-menu">
             <header class="logo-env">
                 <div class="logo">
-                    <img src="<?php echo URL_IMAGE.'logo.png'?>" height="32" alt="">
+                    <img src="<?php echo URL_IMAGE.'logo.png'?>" height="32">
                 </div>
                 <div class="sidebar-collapse">
                     <a href="#" class="sidebar-collapse-icon with-animation">
@@ -23,7 +23,7 @@
                     </a>
                 </div>
             </header>
-            <ul id="main-menu" class="">
+            <ul id="main-menu">
                 <li class="root-level active opened">
                     <a href="/"><i class="entypo-index"></i><span>首页</span></a>
                 </li>
@@ -43,7 +43,7 @@
                 </li>
             </ul>
         </div>
-        <div class="main-content" style="min-height: 950px;">
+        <div class="main-content">
             <div class="row">
                 <div class="col-md-6 col-sm-8 clearfix">
                     <ul class="user-info pull-left pull-none-xsm">
@@ -92,8 +92,8 @@
             </div>
             <hr>
             <div class="row">
-                <div class="col-md-12" id="today">
-
+                <div class="col-md-12">
+                    <?php echo $body; ?>
                 </div>
             </div>
         </div>
@@ -125,7 +125,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="add-field2" class="control-label">消息内容</label>
-                                <textarea id="add-field2" class="form-control autogrow" name="content" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 31px;"></textarea>
+                                <textarea id="add-field2" class="form-control autogrow" name="content"></textarea>
                             </div>
                         </div>
                     </div>
