@@ -7,4 +7,14 @@
 namespace base;
 
 abstract class AdminController extends BaseController {
+
+    public function init() {
+    }
+
+    /**
+     * 获取左侧菜单栏目
+     */
+    public function menus() {
+
+    }
 }
