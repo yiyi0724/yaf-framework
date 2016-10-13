@@ -24,23 +24,20 @@
                 </div>
             </header>
             <ul id="main-menu">
-                <li class="root-level active opened">
-                    <a href="/"><i class="entypo-index"></i><span>首页</span></a>
-                </li>
-                <li class="root-level has-sub">
-                    <a href="#"><i class="entypo-channelapply"></i><span>渠道管理</span></a>
+                <?php foreach($menus as $menu): ?>
+                <li class="root-level<?php echo $menu['children'] ? ' has-sub' : NULL; ?>">
+                    <a href="<?php echo $menu['url'] ?>"><i class="<?php echo $menu['icon'] ?>"></i><span><?php echo $menu['name'] ?></span></a>
+                    <?php if($menu['children']): ?>
                     <ul>
+                        <?php foreach($menu['children'] as $children): ?>
                         <li>
-                            <a href="#"><span>渠道列表</span></a>
+                            <a href="<?php echo $children['url'] ?>"><span><?php echo $children['name'] ?></span></a>
                         </li>
-                        <li>
-                            <a href="#"><span>分成设置</span></a>
-                        </li>
+                        <?php endforeach; ?>
                     </ul>
+                    <?php endif; ?>
                 </li>
-                <li class="root-level">
-                    <a href="#"><i class="entypo-admin"></i><span>管理员管理</span></a>
-                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
         <div class="main-content">

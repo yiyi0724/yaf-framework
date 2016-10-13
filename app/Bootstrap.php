@@ -5,6 +5,7 @@
  * @author enychen
  * @version 1.0
  */
+use Yaf\Registry;
 use \traits\Route;
 use Yaf\Dispatcher;
 use Yaf\Config\Ini;
@@ -64,4 +65,17 @@ class Bootstrap extends Bootstrap_Abstract {
 			}
 		}
 	}
+
+    /**
+     * 初始化其他配置
+     * @param Yaf\Dispatcher $dispatcher 分发对象
+     * @return void
+     */
+	public function _initConfig(Dispatcher $dispatcher) {
+	    foreach(array('driver') as $name) {
+	        $object = sprintf("%sIni", $name);
+            $$object = new Ini(sprintf("%s%s.ini", CONF_PATH, $name), \YAF\ENVIRON);
+            Registry::set($object, $$object);
+        }
+    }
 }

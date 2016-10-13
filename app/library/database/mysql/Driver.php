@@ -36,7 +36,7 @@ class Driver {
      * 模型对象池
      * @var array
      */
-    protected static $modelPools = array();
+    protected static $tablePools = array();
 
     /**
      * 禁止直接创建构造函数
@@ -98,11 +98,11 @@ class Driver {
      * @param string $table 表名
      * @return Model
      */
-    public function model($table) {
-        if(empty(self::$modelPools[$table])) {
-            self::$modelPools[$table] = new Model($this, $table);
+    public function table($table) {
+        if(empty(self::$tablePools[$table])) {
+            self::$tablePools[$table] = new Table($this, $table);
         }
-        return self::$modelPools[$table];
+        return self::$tablePools[$table];
     }
 
     /**

@@ -65,4 +65,15 @@
 			}
 		},'json');
 	});
+
+	// 展开栏目
+	$('#main-menu li').each(function() {
+		if(window.location.pathname == $(this).find('a').attr('href')) {
+			$(this).addClass('active');
+			var closest = $(this).closest('.root-level');
+			if(closest.hasClass('has-sub')) {
+				closest.addClass('opened');
+			}
+		}
+	})
 })();

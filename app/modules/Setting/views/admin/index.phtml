@@ -1,0 +1,342 @@
+<?php $this->setTitle('后台管理系统_首页') ?>
+<ol class="breadcrumb bc-3">
+    <li><a href="/"><i class="entypo-home"></i>首页</a></li>
+    <li class="active"><strong>渠道管理</strong></li>
+    <li><a href="#">渠道列表</a></li>
+</ol>
+
+<div class="dataTables_wrapper">
+    <div id="query" class="row" >
+        <div class="col"></div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label for="search-field1" class="control-label">用户名</label>
+                <input id="search-field1" type="text" class="form-control" name="mobile" value="">
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label for="search-field1" class="control-label">昵称</label>
+                <input id="search-field1" type="text" class="form-control" name="mobile" value="">
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label for="search-field4" class="control-label">状态</label>
+                <select id="search-field4" class="form-control" name="status">
+                    <option value="0" selected="selected">全部</option>
+                    <option value="1">正常</option>
+                    <option value="-1">禁用</option>
+                    <option value="-2">删除</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label for="search-field4" class="control-label">组别</label>
+                <select id="search-field4" class="form-control" name="type">
+                    <option value="">全部</option>
+                    <option value="1">微信公众号</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label class="control-label">&nbsp;</label>
+                <button id="search" type="button" class="form-control btn btn-primary btn-icon icon-left"><i class="entypo-search"></i>查询</button>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered datatable" id="table-1">
+        <thead>
+        <tr>
+            <th>编号</th>
+            <th>用户名</th>
+            <th>昵称</th>
+            <th>头像</th>
+            <th>手机号</th>
+            <th>状态</th>
+            <th>添加时间</th>
+            <th>组别</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $index = 0;?>
+        <?php foreach($adminLists as $key=>$list): ?>
+        <tr class="<?php echo $index % 2 ? 'odd' : 'even' ?>">
+            <td><?php echo $list['id']; ?></td>
+            <td><?php echo $list['username']; ?></td>
+            <td><?php echo $list['nickname']; ?></td>
+            <td><?php echo $list['avatar']; ?></td>
+            <td><?php echo $list['mobile']; ?></td>
+            <td><span class="badge <?php echo $list['status'] ? 'badge-success' : 'badge-secondary'; ?>"><i class="<?php echo $list['status'] ? 'entypo-check' : 'entypo-cancel'; ?>"></i></span></td>
+            <td><?php echo $this->formatYmdHis($list['addtime']); ?></td>
+            <td><?php echo $list['group_id']; ?></td>
+            <td>
+                <a href="#sample-modal-edit" class="btn btn-default btn-sm btn-icon icon-left" data-index="0" data-toggle="modal">
+                    <i class="entypo-pencil"></i>编辑
+                </a>
+            </td>
+        </tr>
+        <?php $index++;?>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="9">
+                    <a href="#sample-modal-ratio" class="btn btn-info btn-sm btn-icon icon-left"  data-index="0" data-toggle="modal">
+                        <i class="entypo-pencil"></i>增加
+                    </a>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- 编辑对话框 -->
+    <div class="modal fade" id="sample-modal-edit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">审核申请</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group"><div class="help-block"></div></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field1" class="control-label">UID</label>
+                                <input id="edit-field1" type="text" class="form-control" name="uid" value="65540" readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field2" class="control-label">渠道名</label>
+                                <input id="edit-field2" type="text" class="form-control" name="name" value="" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field3" class="control-label">标识符</label>
+                                <input id="edit-field3" type="text" class="form-control" name="channel_key" readonly="readonly"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field4" class="control-label">类型</label>
+                                <input id="edit-field4" type="text" class="form-control" name="typeName" readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field5" class="control-label">等级</label>
+                                <input id="edit-field5" type="text" class="form-control" name="leve" readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field5" class="control-label">联系人</label>
+                                <input id="edit-field5" type="text" class="form-control" name="contact_name" readonly="readonly"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field6" class="control-label">联系电话</label>
+                                <input id="edit-field6" type="text" class="form-control" name="contact_phone" readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field6" class="control-label">qq</label>
+                                <input id="edit-field6" type="text" class="form-control" name="qq" readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field6" class="control-label">添加时间</label>
+                                <input id="edit-field6" type="text" class="form-control" name="addtime" readonly="readonly"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field6" class="control-label">审核时间</label>
+                                <input id="edit-field6" type="text" class="form-control" name="auditing" readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field7" class="control-label">分成比</label>
+                                <input id="edit-field7" type="text" class="form-control" name="ratio"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field8" class="control-label">审核</label>
+                                <div class="checkbox checkbox-replace">
+                                    <select class="select form-control"  name="status">
+                                        <option value="pending">待审核</option>
+                                        <option value="pass">通过</option>
+                                        <option value="refuse">拒绝</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="edit-field10" class="control-label">说明</label>
+                                <textarea class="form-control" rows="6" name="remark"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field9" class="control-label">是否通过微信认证</label>
+                                <div class="checkbox checkbox-replace">
+                                    <input id="edit-field9" type="checkbox" name="auth"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-field9" class="control-label">禁用</label>
+                                <div class="checkbox checkbox-replace">
+                                    <input id="edit-field9" type="checkbox" name="disabled"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 设置对话框 -->
+<div class="modal fade" id="sample-modal-ratio">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">设置分成比</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group"><div class="help-block"></div></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="edit-field2" class="control-label">渠道名</label>
+                            <input id="edit-field2" type="text" class="form-control" name="name" value="" readonly="readonly" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="edit-field2" class="control-label">分成比(%)</label>
+                            <input id="edit-field2" type="text" class="form-control" name="ratio" value="" readonly="readonly" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="edit-field8" class="control-label">选择游戏</label>
+                            <div class="checkbox checkbox-replace">
+                                <select class="select form-control"  name="gameid">
+                                    <option value="2">暗黑之王</option>
+                                    <option value="3">大侠归来</option>
+                                    <option value="4">地下城勇士</option>
+                                    <option value="5">少女H计划</option>
+                                    <option value="6">测试我司公共接口</option>
+                                    <option value="8">愚公移山</option>
+                                    <option value="9">口袋妖怪联盟</option>
+                                    <option value="10">时光德州</option>
+                                    <option value="19">少女H计划</option>
+                                    <option value="20">口袋妖怪联盟</option>
+                                    <option value="21">时光德州</option>
+                                    <option value="22">少女H计划</option>
+                                    <option value="23">口袋妖怪联盟</option>
+                                    <option value="24">时光德州</option>
+                                    <option value="25">少女H计划</option>
+                                    <option value="26">口袋妖怪联盟</option>
+                                    <option value="27">时光德州</option>
+                                    <option value="28">少女H计划</option>
+                                    <option value="29">口袋妖怪联盟</option>
+                                    <option value="30">时光德州</option>
+                                    <option value="31">少女H计划</option>
+                                    <option value="32">口袋妖怪联盟</option>
+                                    <option value="33">时光德州</option>
+                                    <option value="34">少女H计划</option>
+                                    <option value="888">暗黑之王</option>
+                                    <option value="890">少女H计划</option>
+                                    <option value="892">西游神传</option>
+                                    <option value="896">愚公移山</option>
+                                    <option value="897">古龙群侠传</option>
+                                    <option value="898">天天花千骨</option>
+                                    <option value="899">大大大掌门</option>
+                                    <option value="900">大主宰</option>
+                                    <option value="901">传奇世界</option>
+                                    <option value="902">我欲封天web</option>
+                                    <option value="903">口袋妖怪联盟</option>
+                                    <option value="904">大侠归来</option>
+                                    <option value="905">秦时明月</option>
+                                    <option value="906">花千骨</option>
+                                    <option value="907">小小战争</option>
+                                    <option value="908">时光德州</option>
+                                    <option value="909">全民战神</option>
+                                    <option value="910">神战三国</option>
+                                    <option value="911">乱戳三国</option>
+                                    <option value="912">暴走大乱逗</option>
+                                    <option value="913">海岛船奇</option>
+                                    <option value="914">大坦克</option>
+                                    <option value="915">疯狂打怪兽</option>
+                                    <option value="916">全民穿越之宫</option>
+                                    <option value="917">朋友圈德州</option>
+                                    <option value="918">醉西游</option>
+                                    <option value="919">幻城</option>
+                                    <option value="920">迷你猎人</option>
+                                    <option value="921">三国纷争</option>
+                                    <option value="922">乱斗封神</option>
+                                    <option value="923">点兵三国志</option>
+                                    <option value="924">全民捕鱼赢话费</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="edit-field7" class="control-label">游戏分成比(%)</label>
+                            <input id="edit-field7" type="number" class="form-control" name="gameratio"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-info">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+

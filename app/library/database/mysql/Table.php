@@ -8,7 +8,7 @@
 namespace database\mysql;
 
 
-class Model {
+class Table {
 
     /**
      * 数据库驱动
@@ -328,5 +328,37 @@ class Model {
             'keys' => NULL,
             'values' => array()
         );
+    }
+
+    /**
+     * 开启事务
+     * @return boolean
+     */
+    public function beginTransaction() {
+        return $this->getDriver()->beginTransaction();
+    }
+
+    /**
+     * 判断是否在事务内
+     * @return boolean
+     */
+    public function inTransaction() {
+        return $this->getDriver()->inTransaction();
+    }
+
+    /**
+     * 提交事务
+     * @return boolean
+     */
+    public function commitTransaction() {
+        return $this->getDriver()->commitTransaction();
+    }
+
+    /**
+     * 回滚事务
+     * @return boolean
+     */
+    public function rollbackTransaction() {
+        return $this->getDriver()->rollbackTransaction();
     }
 }
