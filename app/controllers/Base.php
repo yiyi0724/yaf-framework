@@ -5,6 +5,7 @@
  * @author enychen
  */
 
+use \Tool\Is;
 use \Yaf\Session;
 use \Traits\Request;
 use \Yaf\Application;
@@ -52,14 +53,6 @@ abstract class BaseController extends Controller_Abstract {
     }
 
     /**
-     * 关闭模板
-     * @return void
-     */
-    public final function disView() {
-        Application::app()->getDispatcher()->disableView();
-    }
-
-    /**
      * json或jsonp输出
      * @param boolean $status 结果状态
      * @param string $message 提示信息
@@ -73,7 +66,7 @@ abstract class BaseController extends Controller_Abstract {
         $json['data'] = $data;
         $json['code'] = $code;
         $json = json_encode($json);
-        if (isset($_REQUEST['callback'])) {
+        if (isset($_REQUEST['callback']) && Is::jsonp($_REQUEST['callback'])) {
             exit("<script type='text/javascript'>{$_REQUEST['callback']}({$json})</script>");
         } else {
             header("Content-type: application/json; charset=UTF-8");
