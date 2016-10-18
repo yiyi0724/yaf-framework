@@ -2,8 +2,8 @@
 
 /**
  * PDO操作驱动
- * @author enychen
- * @version 1.0
+ * @author enyccc
+ * @version 1.0.0
  */
 namespace Driver;
 
