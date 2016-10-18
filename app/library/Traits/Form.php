@@ -7,7 +7,7 @@
 namespace Traits;
 
 use \Tool\Is;
-use \Exceptions\MultiException;
+use \Exceptions\Multi;
 
 class Form {
 
@@ -225,7 +225,7 @@ class Form {
 
 		// 数据有问题
 		if($errors = $this->getError()) {
-			throw new MultiException($errors);
+			throw new Multi($errors);
 		}
 	}
 }

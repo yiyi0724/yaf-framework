@@ -17,19 +17,19 @@ use \Yaf\Controller_Abstract;
 
 abstract class BaseController extends Controller_Abstract {
 
-	/**
-	 * 获取经过验证请求对象
-	 * @return \traits\Request 请求封装对象
-	 */
-	public final function getRequest() {
-		return Request::getInstance();
-	}
+    /**
+     * 获取经过验证请求对象
+     * @return \traits\Request 请求封装对象
+     */
+    public final function getRequest() {
+        return Request::getInstance();
+    }
 
     /**
      * 获取配置对象
      * @return \Yaf\Config_Abstract
      */
-	public final function getConfig() {
+    public final function getConfig() {
         return Application::app()->getConfig();
     }
 
@@ -41,118 +41,107 @@ abstract class BaseController extends Controller_Abstract {
         return Session::getInstance();
     }
 
-	/**
-	 * 视图参数绑定
-	 * @param string $key 键
-	 * @param mixed $value 值
-	 * @return void
-	 */
+    /**
+     * 视图参数绑定
+     * @param string $key 键
+     * @param mixed $value 值
+     * @return void
+     */
     public final function assign($key, $value) {
-		$this->getView()->assign($key, $value);
-	}
+        $this->getView()->assign($key, $value);
+    }
 
-	/**
-	 * 关闭模板
-	 * @return void
-	 */
+    /**
+     * 关闭模板
+     * @return void
+     */
     public final function disView() {
-		Application::app()->getDispatcher()->disableView();
-	}
+        Application::app()->getDispatcher()->disableView();
+    }
 
-	/**
-	 * json或jsonp输出
-	 * @param boolean $status 结果状态
-	 * @param string $message 提示信息
-	 * @param array $data 数据信息
-	 * @param int $code 提示码
-	 * @return void
-	 */
+    /**
+     * json或jsonp输出
+     * @param boolean $status 结果状态
+     * @param string $message 提示信息
+     * @param array $data 数据信息
+     * @param int $code 提示码
+     * @return void
+     */
     public final function json($status, $message, $code, $data = NULL) {
-		$json['status'] = $status;
-		$json['message'] = $message;
-		$json['data'] = $data;
-		$json['code'] = $code;
-		$json = json_encode($json);
-		if($callback = $this->getRequest()->get('callback')) {
-			exit("<script type='text/javascript'>{$callback}({$json})</script>");
-		} else {
-			header("Content-type: application/json; charset=UTF-8");
-			exit($json);
-		}
-	}
+        $json['status'] = $status;
+        $json['message'] = $message;
+        $json['data'] = $data;
+        $json['code'] = $code;
+        $json = json_encode($json);
+        if (isset($_REQUEST['callback'])) {
+            exit("<script type='text/javascript'>{$_REQUEST['callback']}({$json})</script>");
+        } else {
+            header("Content-type: application/json; charset=UTF-8");
+            exit($json);
+        }
+    }
 
-	/**
-	 * 输出调试信息
-	 * @param mixed $content 调试内容
-	 * @return void
-	 */
-	protected final function debug($content) {
-		exit(sprintf("<pre>%s</pre>", print_r($content, TRUE)));
-	}
+    /**
+     * 输出调试信息
+     * @param mixed $content 调试内容
+     * @return void
+     */
+    protected final function debug($content) {
+        exit(sprintf("<pre>%s</pre>", print_r($content, TRUE)));
+    }
 
-	/**
-	 * 抛出403的异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws Forbidden
-	 * @return void
-	 */
-	protected final function throwForbiddenException($code, $message) {
-		throw new Forbidden($message, $code);
-	}
+    /**
+     * 抛出403的异常
+     * @param number $code 错误码
+     * @param string $message 错误信息
+     * @throws Forbidden
+     * @return void
+     */
+    protected final function throwForbiddenException($code, $message) {
+        throw new Forbidden($message, $code);
+    }
 
-	/**
-	 * 抛出404异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws NotFound
-	 * @return void
-	 */
-	protected final function throwNotFoundException($code, $message) {
-		throw new NotFound($message, $code);
-	}
+    /**
+     * 抛出404异常
+     * @param number $code 错误码
+     * @param string $message 错误信息
+     * @throws NotFound
+     * @return void
+     */
+    protected final function throwNotFoundException($code, $message) {
+        throw new NotFound($message, $code);
+    }
 
-	/**
-	 * 抛出错误通知的异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws Notify
-	 * @return void
-	 */
-	protected final function throwNotifyException($code, $message) {
-		throw new Notify($message, $code);
-	}
+    /**
+     * 抛出错误通知的异常
+     * @param number $code 错误码
+     * @param string $message 错误信息
+     * @throws Notify
+     * @return void
+     */
+    protected final function throwNotifyException($code, $message) {
+        throw new Notify($message, $code);
+    }
 
-	/**
-	 * 抛出进行跳转的异常
-	 * @param number $code 错误码
-	 * @param string $message 错误信息
-	 * @throws Redirect
-	 * @return void
-	 */
-	protected final function throwRedirectException($code, $message) {
-		throw new Redirect($message, $code);
-	}
+    /**
+     * 抛出进行跳转的异常
+     * @param number $code 错误码
+     * @param string $message 错误信息
+     * @throws Redirect
+     * @return void
+     */
+    protected final function throwRedirectException($code, $message) {
+        throw new Redirect($message, $code);
+    }
 
-	/**
-	 * 抛出多条错误的异常
-	 * @param int $code 错误码
-	 * @param array $message 错误信息
-	 * @throws Multi
-	 * @return void
-	 */
-	protected final function throwMultiException($code, array $message) {
-		throw new Multi($message, $code);
-	}
-
-	/**
-	 * 获取完整url路径
-	 * @param string $encode 是否进行编码，默认编码
-	 * @return string
-	 */
-	protected function getFullUrl($encode = TRUE) {
-		$request = $this->getRequest();
-		$url = "{$request->getServer('REQUEST_SCHEME', 'http')}://{$request->getServer('SERVER_NAME')}{$request->getServer('REQUEST_URI')}";
-		return $encode ? urlencode($url) : $url;
-	}
+    /**
+     * 抛出多条错误的异常
+     * @param int $code 错误码
+     * @param array $message 错误信息
+     * @throws Multi
+     * @return void
+     */
+    protected final function throwMultiException($code, array $message) {
+        throw new Multi($message, $code);
+    }
 }

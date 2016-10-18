@@ -56,7 +56,7 @@ class ErrorController extends BaseController {
     private function showMultiException($exception) {
         switch (TRUE) {
             case IS_AJAX:
-                $this->json(FALSE, '表单数据有误', 991, $exception->getError());
+                $this->json(FALSE, '数据有误', 10000, $exception->getError());
                 break;
             default:
                 $this->assign('error', $exception->getError());

@@ -55,7 +55,7 @@ var neonLogin = neonLogin || {};
 									}, 400);
 								}else{
 									$(".login-page").removeClass('logging-in');
-									$(".form-login-error p").html(response.message)
+									$(".form-login-error p").html(response.message);
 									neonLogin.resetProgressBar(true);
 								}
 							}, 1000);

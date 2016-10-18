@@ -12,4 +12,13 @@ class AdminModel extends AbstractModel {
     public function getLists() {
         return $this->select()->fetchAll();
     }
+
+    /**
+     * 管理员加密密码
+     * @param string $password 原始密码
+     * @return string
+     */
+    public function enctypePassword($password) {
+        return md5(sha1(md5($password, TRUE)) + SECRET_PASSWORD);
+    }
 }
