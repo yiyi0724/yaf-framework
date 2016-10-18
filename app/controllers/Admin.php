@@ -44,6 +44,7 @@ abstract class AdminController extends BaseController {
         define('ADMIN_NAME', $session->get('admin.name'));
         define('ADMIN_IP', $session->get('admin.ip'));
         define('ADMIN_TIME', $session->get('admin.time'));
+        define('ADMIN_AVATAR', $session->get('admin.avatar'));
     }
 
     /**

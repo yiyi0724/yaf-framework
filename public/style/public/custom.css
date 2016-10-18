@@ -152,3 +152,4 @@ pre{
 .annou_btn:hover {color: #9f1818;}
 div.main-content, div.sidebar-menu { min-height: 950px; }
 textarea.autogrow { overflow: hidden; word-wrap: break-word; resize: horizontal; height: 31px; }
+.radius {border-radius: 100%}

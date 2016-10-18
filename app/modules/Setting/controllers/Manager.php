@@ -12,6 +12,7 @@ class ManagerController extends AdminController {
      */
     public function indexAction() {
         $adminModel = new \AdminModel();
-        $this->assign('adminLists', $adminModel->getLists());
+        $lists = $adminModel->format($adminModel->getLists());
+        $this->assign('adminLists', $lists);
     }
 }

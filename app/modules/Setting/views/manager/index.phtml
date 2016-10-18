@@ -68,10 +68,10 @@
             <td><?php echo $list['id']; ?></td>
             <td><?php echo $list['username']; ?></td>
             <td><?php echo $list['nickname']; ?></td>
-            <td><?php echo $list['avatar']; ?></td>
+            <td><img src="<?php echo URL_IMAGE.$list['avatar']; ?>" width="100" class="radius"></td>
             <td><?php echo $list['mobile']; ?></td>
             <td><span class="badge <?php echo $list['status'] ? 'badge-success' : 'badge-secondary'; ?>"><i class="<?php echo $list['status'] ? 'entypo-check' : 'entypo-cancel'; ?>"></i></span></td>
-            <td><?php echo $this->formatYmdHis($list['addtime']); ?></td>
+            <td><?php echo $list['addtime']; ?></td>
             <td><?php echo $list['group_id']; ?></td>
             <td>
                 <a href="#sample-modal-edit" class="btn btn-default btn-sm btn-icon icon-left" data-index="0" data-toggle="modal">

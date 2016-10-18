@@ -142,7 +142,7 @@ class Strings {
      * @param string $format 默认格式化字符串
      * @return false|string
      */
-    public function formatYmdHis($timestamp, $format = 'Y-m-d H:i:s') {
+    public static function formatYmdHis($timestamp, $format = 'Y-m-d H:i:s') {
         return date($format, strtotime($timestamp));
     }
 
@@ -152,7 +152,7 @@ class Strings {
      * @param string $string 字符串内容
      * @return string
      */
-    public function WrapToBr($string) {
+    public static function WrapToBr($string) {
         return str_replace(chr(10), '<br/>', $string);
     }
 }
