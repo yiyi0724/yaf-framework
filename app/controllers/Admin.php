@@ -33,8 +33,6 @@ abstract class AdminController extends BaseController {
         }
         // 更新上次访问时间
         $this->getSession()->set('admin.time', time());
-
-
     }
 
     /**
