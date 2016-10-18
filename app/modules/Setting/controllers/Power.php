@@ -5,7 +5,7 @@
  * Date: 16-10-13
  * Time: 下午2:30
  */
-class PowerController extends \base\AdminController {
+class PowerController extends AdminController {
 
     /**
      * 权限列表首页

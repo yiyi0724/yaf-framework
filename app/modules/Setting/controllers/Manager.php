@@ -5,7 +5,7 @@
  * Date: 16-10-13
  * Time: 下午2:30
  */
-class AdminController extends \base\AdminController {
+class ManagerController extends AdminController {
 
     /**
      * 管理员首页

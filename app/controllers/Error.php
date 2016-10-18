@@ -4,7 +4,7 @@
  * 错误异常处理控制器
  * @author enychen
  */
-use \network\Header;
+use \Network\Header;
 
 class ErrorController extends BaseController {
 

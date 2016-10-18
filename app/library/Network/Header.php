@@ -4,7 +4,7 @@
  * HTTP头信息汇总类
  * @author enychen
  */
-namespace network;
+namespace Network;
 
 class Header {
 

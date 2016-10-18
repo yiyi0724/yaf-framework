@@ -48,7 +48,7 @@ class Request {
 			// 读取xml文件
 			$simpleXMLElements = @simplexml_load_file($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 			if(!$simpleXMLElements) {
-				throw new \Exception("{$validFile}语法有误");
+				throw new \Exception("{$xml}语法有误");
 			}
 			// 进行表单检查
 			$fromTrait = new Form($params, $this->getYafRequest()->getMethod());

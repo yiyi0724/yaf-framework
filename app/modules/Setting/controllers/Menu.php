@@ -5,7 +5,7 @@
  * Date: 16-10-13
  * Time: 下午2:30
  */
-class MenuController extends \base\AdminController {
+class MenuController extends AdminController {
 
     /**
      * 栏目首页

@@ -5,7 +5,7 @@
  * @author enychen
  * @version 1.0
  */
-namespace network;
+namespace Network;
 
 class IP {
 
