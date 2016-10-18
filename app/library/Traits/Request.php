@@ -2,7 +2,8 @@
 
 /**
  * 自定义请求对象
- * @author enychen
+ * @author enyccc
+ * @version 1.0.0
  */
 namespace Traits;
 
@@ -30,7 +31,6 @@ class Request {
 
     /**
      * 禁止单例对象
-     * @return void
      */
     protected final function __construct() {
         // PUT和DETELE方法支持
@@ -43,8 +43,7 @@ class Request {
         $params = array_merge($this->getYafRequest()->getParams(), $putOrDelete, $_REQUEST);
 
         // 获取检查规则
-        $xml = sprintf('%sforms%s%s%s%s.xml', MODULE_PATH, DS,
-            strtolower(CONTROLLER_NAME), DS, strtolower(ACTION_NAME));
+        $xml = sprintf('%sforms%s%s%s%s.xml', MODULE_PATH, DS, strtolower(CONTROLLER_NAME), DS, strtolower(ACTION_NAME));
         if (is_file($xml)) {
             // 读取xml文件
             $simpleXMLElements = @simplexml_load_file($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -53,7 +52,7 @@ class Request {
             }
             // 进行表单检查
             $fromTrait = new Form($params, $this->getYafRequest()->getMethod());
-            $fromTrait->useXmlRule($simpleXMLElements)->fliter();
+            $fromTrait->useXmlRule($simpleXMLElements)->filter();
             $params = $fromTrait->getSuccess();
         }
 
@@ -116,17 +115,23 @@ class Request {
     /**
      * 获取参数
      * @param string $key 参数键
+     * @param mixed $default 找不到默认返回值
      * @return mixed
      */
     public function get($key, $default = NULL) {
         return isset($this->params[$key]) ? $this->params[$key] : $default;
     }
 
+    /**
+     * 获取server信息
+     * @param string $key 键名
+     * @param mixed $default 找不到默认返回值
+     * @return mixed
+     */
     public function getServer($key, $default = NULL) {
         $result = $this->getServer($key);
         return $result ?: $default;
     }
-
 
     /**
      * 获取完整url路径
@@ -134,8 +139,8 @@ class Request {
      * @return string
      */
     protected function getFullUrl($encode = TRUE) {
-        $request = $this->getRequest();
-        $url = "{$request->getServer('REQUEST_SCHEME', 'http')}://{$request->getServer('SERVER_NAME')}{$request->getServer('REQUEST_URI')}";
+        $url = "{$this->getServer('REQUEST_SCHEME', 'http')}://";
+        $url .= "{$this->getServer('SERVER_NAME')}{$this->getServer('REQUEST_URI')}";
         return $encode ? urlencode($url) : $url;
     }
 

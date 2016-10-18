@@ -267,8 +267,8 @@ class Is {
 	 * 是否来自微信app
 	 * @return boolean 是来自微信app返回TRUE，否则返回FALSE
 	 */
-	public static function fromWeixinApp() {
-		$useragent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : NULL;
+	public static function fromWchatApp() {
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : NULL;
 		return stripos($userAgent, 'micromessenger') !== FALSE;
 	}
 }
