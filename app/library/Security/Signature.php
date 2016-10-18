@@ -4,7 +4,7 @@
  * 生成签名串
  * @author enychen
  */
-namespace security;
+namespace Security;
 
 class Signature {
 

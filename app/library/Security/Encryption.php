@@ -4,7 +4,7 @@
  * 可逆加密/解密
  * @author enychen
  */
-namespace security;
+namespace Security;
 
 class Encryption {
 
