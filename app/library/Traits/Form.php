@@ -4,9 +4,9 @@
  * 表单检查类
  * @author enychen
  */
-namespace traits;
+namespace Traits;
 
-use \tool\Is;
+use \Tool\Is;
 
 class Form {
 

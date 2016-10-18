@@ -5,15 +5,15 @@
  * @author enychen
  * @version 1.0
  */
-namespace database\mysql;
+namespace Driver;
 
-class Driver {
+class PDO {
 
     /**
      * 对象池
      * @var array
      */
-    protected static $driverPools;
+    protected static $PDOPools;
     /**
      * pdo对象
      * @var \PDO
@@ -31,12 +31,6 @@ class Driver {
      * @var bool
      */
     protected $debug = FALSE;
-
-    /**
-     * 模型对象池
-     * @var array
-     */
-    protected static $tablePools = array();
 
     /**
      * 禁止直接创建构造函数
@@ -85,24 +79,12 @@ class Driver {
      * @param string $password 数据库连接密码
      * @return $this
      */
-    public static function getInstance($host, $port, $dbname, $charset, $username, $password) {
-        $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset={$charset}";
-        if (empty(self::$driverPools[$dsn])) {
-            self::$driverPools[$dsn] = new self($dsn, $username, $password);
+    public static function getInstance($type, $host, $port, $dbname, $charset, $username, $password) {
+        $dsn = "{$type}:host={$host};port={$port};dbname={$dbname};charset={$charset}";
+        if (empty(self::$PDOPools[$dsn])) {
+            self::$PDOPools[$dsn] = new self($dsn, $username, $password);
         }
-        return self::$driverPools[$dsn];
-    }
-
-    /**
-     * 获取模型
-     * @param string $table 表名
-     * @return Model
-     */
-    public function table($table) {
-        if(empty(self::$tablePools[$table])) {
-            self::$tablePools[$table] = new Table($this, $table);
-        }
-        return self::$tablePools[$table];
+        return self::$PDOPools[$dsn];
     }
 
     /**

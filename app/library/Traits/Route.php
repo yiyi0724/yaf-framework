@@ -5,7 +5,7 @@
  * @author enychen
  * @version 1.0
  */
-namespace traits;
+namespace Traits;
 
 use \Yaf\Application;
 use \Yaf\Route_Interface;

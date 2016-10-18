@@ -6,14 +6,14 @@
  */
 namespace base;
 
-use \traits\Request;
+use \Traits\Request;
 use \Yaf\Application;
-use \traits\FormException;
-use \traits\NotifyException;
+use \Traits\FormException;
+use \Traits\NotifyException;
 use \Yaf\Controller_Abstract;
-use \traits\NotFoundException;
-use \traits\RedirectException;
-use \traits\ForbiddenException;
+use \Traits\NotFoundException;
+use \Traits\RedirectException;
+use \Traits\ForbiddenException;
 
 abstract class BaseController extends Controller_Abstract {
 

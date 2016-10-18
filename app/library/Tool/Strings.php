@@ -4,7 +4,7 @@
  * 字符串操作封装
  * @author enychen
  */
-namespace tool;
+namespace Tool;
 
 class Strings {
 

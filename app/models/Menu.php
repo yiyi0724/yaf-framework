@@ -8,6 +8,8 @@
 
 class MenuModel extends AbstractModel {
 
+    protected $table = 'admin_menu';
+
     /**
      * 根据管理员权限获取栏目操作
      * @param string $rule 用户权限列表字符串,用,隔开
@@ -15,11 +17,10 @@ class MenuModel extends AbstractModel {
      */
     public function getLists($rule) {
         // 获取栏目信息
-        $table = $this->T('admin_menu');
         if($rule != '*') {
-            $table->where("id in({$rule})");
+            $this->where("id in({$rule})");
         }
-        $lists = $table->order('parent ASC, sort ASC')->select()->fetchAll();
+        $lists = $this->order('parent ASC, sort ASC')->select()->fetchAll();
 
         // 格式化栏目信息
         $menus = array();

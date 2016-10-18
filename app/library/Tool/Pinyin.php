@@ -1,6 +1,6 @@
 <?php
 
-namespace tool;
+namespace Tool;
 
 /**
  * PHP 汉字转拼音

@@ -7,7 +7,9 @@
  */
 class AdminModel extends AbstractModel {
 
+    protected $table = 'admin_user';
+
     public function getLists() {
-        return $this->T('admin_user')->select()->fetchAll();
+        return $this->select()->fetchAll();
     }
 }

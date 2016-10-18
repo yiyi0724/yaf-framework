@@ -4,7 +4,7 @@
  * 自定义请求对象
  * @author enychen
  */
-namespace traits;
+namespace Traits;
 
 use \Yaf\Application;
 
