@@ -10,6 +10,7 @@ class Strings {
 
     /**
      * 进行html编码
+     * @static
      * @param string $string 需要编码的字符串
      * @return string
      */
@@ -19,6 +20,7 @@ class Strings {
 
     /**
      * 进行html解码
+     * @static
      * @param string $string 需要解码的字符串
      * @return string
      */
@@ -27,8 +29,74 @@ class Strings {
     }
 
     /**
+     * 将数组或对象进行json编码
+     * @static
+     * @param array|object $data 数组或对象
+     * @return string
+     * @throws \Exception
+     */
+    public static function jsonEncode($data) {
+        $data = json_encode($data);
+        if (!$data) {
+            throw new \Exception('json encode error');
+        }
+        return $data;
+    }
+
+    /**
+     * 字符串进行json解码
+     * @static
+     * @param string $string json字符串
+     * @return \stdClass
+     * @throws \Exception
+     */
+    public static function jsonDecode($string) {
+        $result = json_decode($string);
+        if (json_last_error()) {
+            throw new \Exception(json_last_error_msg());
+        }
+        return $result;
+    }
+
+    /**
+     * 将数组编码成xml字符串
+     * @static
+     * @param array $data 键值对数组
+     * @return string
+     */
+    public static function xmlEncode(array $data) {
+        $xml = "<xml>";
+        foreach ($data as $key => $value) {
+            if(is_numeric($value)) {
+                $xml = "<{$key}>{$value}</{$key}>";
+            } else {
+                $xml = "<{$key}><![CDATA[{$value}]]></{$key}>";
+            }
+        }
+        $xml .= "</xml>";
+        return $xml;
+    }
+
+    /**
+     * 将xml字符串转成对象
+     * @static
+     * @param string $string xml字符串
+     * @return \stdClass
+     * @throws \Exception
+     */
+    public static function xmlDecode($string) {
+        libxml_disable_entity_loader(true);
+        $result = @simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA);
+        if (!$result) {
+            throw new \Exception('xml decode error');
+        }
+        return json_decode(json_encode($result));
+    }
+
+    /**
      * 模糊化电话号码
-     * @param string $phone 手机号码或者固定电话
+     * @static
+     * @param string $mobile 手机号码或者固定电话
      * @return string
      */
     public static function luzzyMobile($mobile) {
@@ -55,8 +123,9 @@ class Strings {
 
     /**
      * 格式化数字
-     * @param number $number 要格式化的数字
-     * @param number $decimals 要保留的小数位数
+     * @static
+     * @param int $number 要格式化的数字
+     * @param int $decimals 要保留的小数位数
      * @param string $decPoint 指定小数点显示的字符
      * @param string $thousandsSep 指定千位分隔符显示的字符
      * @return string
@@ -68,9 +137,10 @@ class Strings {
 
     /**
      * 格式化YmdHis的时间戳
+     * @static
      * @param string $timestamp YmdHis的格式化字符串
      * @param string $format 默认格式化字符串
-     * ＠return string
+     * @return false|string
      */
     public function formatYmdHis($timestamp, $format = 'Y-m-d H:i:s') {
         return date($format, strtotime($timestamp));
@@ -78,6 +148,7 @@ class Strings {
 
     /**
      * 将换行符转成<br/>
+     * @static
      * @param string $string 字符串内容
      * @return string
      */
