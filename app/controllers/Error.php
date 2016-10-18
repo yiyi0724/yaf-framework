@@ -8,6 +8,9 @@ use \Network\Header;
 
 class ErrorController extends BaseController {
 
+    /**
+     * 初始化控制器
+     */
     public function init() {
         // 使用默认空模板
         $this->getView()->getTemplate()->setLayout('empty');
@@ -16,7 +19,6 @@ class ErrorController extends BaseController {
     /**
      * 公共错误处理方法
      * @param \Exception $exception 异常对象
-     * @return void
      */
     public function errorAction($exception) {
         switch (get_class($exception)) {
@@ -141,7 +143,7 @@ class ErrorController extends BaseController {
 
         switch (TRUE) {
             case IS_AJAX:
-                $this->json(FALSE, $message, $error);
+                $this->json(FALSE, $message, 10001, $error);
                 break;
             default:
                 $this->assign('message', $message);
