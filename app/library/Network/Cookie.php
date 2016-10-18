@@ -2,9 +2,10 @@
 
 /**
  * cookie类
- * @author enychen
+ * @author enyccc
+ * @version 1.0.0
  */
-namespace network;
+namespace Network;
 
 class Cookie {
 
@@ -53,7 +54,7 @@ class Cookie {
 	/**
 	 * 设置cookie名称
 	 * @param string $name cookie名称
-	 * @return Cookie $this 返回当前对象进行连贯操作
+	 * @return $this
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -71,7 +72,7 @@ class Cookie {
 	/**
 	 * 设置cookie值
 	 * @param string $value cookie值
-	 * @return Cookie $this 返回当前对象进行连贯操作
+	 * @return $this
 	 */
 	public function setValue($value) {
 		$this->value = $value;
@@ -89,7 +90,7 @@ class Cookie {
 	/**
 	 * 设置过期时间
 	 * @param int $expire 过期时间
-	 * @return Cookie $this 返回当前对象进行连贯操作
+	 * @return $this
 	 */
 	public function setExpire($expire) {
 		$this->expire = $expire;
@@ -107,7 +108,7 @@ class Cookie {
 	/**
 	 * 设置所属目录
 	 * @param string $path 所属目录
-	 * @return Cookie $this 返回当前对象进行连贯操作
+	 * @return $this
 	 */
 	public function setPath($path) {
 		$this->path = $path;
@@ -122,11 +123,11 @@ class Cookie {
 		return $this->path;
 	}
 
-	/**
-	 * 设置所属域名
-	 * @param string $domain 所属域名
-	 * @param Cookie $this 返回当前对象进行连贯操作
-	 */
+    /**
+     * 设置所属域名
+     * @param string $domain 所属域名
+     * @return $this
+     */
 	public function setDomain($domain) {
 		$this->domain = $domain;
 		return $this;
@@ -143,7 +144,7 @@ class Cookie {
 	/**
 	 * 设置是否使用https
 	 * @param boolean $secure 是否使用https
-	 * @return Cookie $this 返回当前对象进行连贯操作
+	 * @return $this
 	 */
 	public function setSecure($secure) {
 		$this->secure = $secure;
@@ -161,7 +162,7 @@ class Cookie {
 	/**
 	 * 设置cookie是否只读
 	 * @param boolean $httpOnly 是否只读
-	 * @return Cookie $this 返回当前对象进行连贯操作
+	 * @return $this
 	 */
 	public function setHttpOnly($httpOnly) {
 		$this->httpOnly = $httpOnly;
@@ -191,22 +192,9 @@ class Cookie {
 	 * 增加cookie
 	 * @return boolean 设置成功返回TRUE，否则返回FALSE
 	 */
-	public function add() {
-		// 必备参数检查
-		if(!$this->getName()) {
-			$this->throws('请设置cookie名称');
-		}
-		if(!$this->getValue()) {
-			$this->throws('请设置cookie值');
-		}
-		if(!$this->getDomain()) {
-			$this->throws('请设置cookie域名');
-		}
-
+	public function add($name, $value) {
 		// 要设置的cookie信息
-		$name = $this->getName();
-		$value = $this->getValue();
-		$expire = time() + $this->getExpire();
+		$expire = time() + $expire;
 		$path = $this->getPath();
 		$domain = $this->getDomain();
 		$secure = isset($_SERVER['REQUEST_SCHEME']) && (!strcasecmp($_SERVER['REQUEST_SCHEME'], 'https'));

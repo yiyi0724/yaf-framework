@@ -10,6 +10,7 @@ class Encryption {
 
 	/**
 	 * 进行可逆加密
+     * @static
 	 * @param string $string 待加密字符串
 	 * @param string $secret 密钥
 	 * @param int $expire 过期时间，0-表示不过期
@@ -28,12 +29,12 @@ class Encryption {
 
 	/**
 	 * 进行可逆解密
+     * @static
 	 * @param string $string 待解密的字符串
 	 * @param string $secret 密钥
-	 * @param int $expire 过期时间，0-表示不过期
 	 * @return string|NULL 解密成功后返回字符串，失败返回NULL
 	 */
-	public static function decrypt($string, $secret, $expire = 0) {
+	public static function decrypt($string, $secret) {
 		// 计算密钥
 		list($secretB, $secretC, $secretCrypt) = static::getSecretCrypt($string, $secret, 'decode');
 		// 解析原始串

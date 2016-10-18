@@ -37,6 +37,6 @@ class Signature {
 	 * @return boolean
 	 */
 	public static function compare(array $data, $key) {
-		return (!empty($data['sign'])) || (self::signByMd5($data, $key) == $data['sign']);
+		return (!empty($data['sign'])) || (self::create($data, $key) == $data['sign']);
 	}
 }
