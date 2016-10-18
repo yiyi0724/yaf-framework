@@ -4,16 +4,16 @@
  * 所有模块控制基类的基类
  * @author enychen
  */
-namespace base;
 
+use \Yaf\Session;
 use \Traits\Request;
 use \Yaf\Application;
-use \Traits\FormException;
-use \Traits\NotifyException;
+use \Exceptions\Multi;
+use \Exceptions\Notify;
+use \Exceptions\NotFound;
+use \Exceptions\Redirect;
+use \Exceptions\Forbidden;
 use \Yaf\Controller_Abstract;
-use \Traits\NotFoundException;
-use \Traits\RedirectException;
-use \Traits\ForbiddenException;
 
 abstract class BaseController extends Controller_Abstract {
 
@@ -25,13 +25,29 @@ abstract class BaseController extends Controller_Abstract {
 		return Request::getInstance();
 	}
 
+    /**
+     * 获取配置对象
+     * @return \Yaf\Config_Abstract
+     */
+	public final function getConfig() {
+        return Application::app()->getConfig();
+    }
+
+    /**
+     * 获取session对象
+     * @return \Yaf\Session
+     */
+    public final function getSession() {
+        return Session::getInstance();
+    }
+
 	/**
 	 * 视图参数绑定
 	 * @param string $key 键
 	 * @param mixed $value 值
 	 * @return void
 	 */
-	protected final function assign($key, $value) {
+    public final function assign($key, $value) {
 		$this->getView()->assign($key, $value);
 	}
 
@@ -39,7 +55,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * 关闭模板
 	 * @return void
 	 */
-	protected final function disView() {
+    public final function disView() {
 		Application::app()->getDispatcher()->disableView();
 	}
 
@@ -51,7 +67,7 @@ abstract class BaseController extends Controller_Abstract {
 	 * @param int $code 提示码
 	 * @return void
 	 */
-	protected final function json($status, $message, $code, $data = NULL) {
+    public final function json($status, $message, $code, $data = NULL) {
 		$json['status'] = $status;
 		$json['message'] = $message;
 		$json['data'] = $data;
@@ -78,55 +94,55 @@ abstract class BaseController extends Controller_Abstract {
 	 * 抛出403的异常
 	 * @param number $code 错误码
 	 * @param string $message 错误信息
-	 * @throws ForbiddenException
+	 * @throws Forbidden
 	 * @return void
 	 */
 	protected final function throwForbiddenException($code, $message) {
-		throw new ForbiddenException($message, $code);
+		throw new Forbidden($message, $code);
 	}
 
 	/**
 	 * 抛出404异常
 	 * @param number $code 错误码
 	 * @param string $message 错误信息
-	 * @throws NotFoundException
+	 * @throws NotFound
 	 * @return void
 	 */
 	protected final function throwNotFoundException($code, $message) {
-		throw new NotFoundException($message, $code);
+		throw new NotFound($message, $code);
 	}
 
 	/**
 	 * 抛出错误通知的异常
 	 * @param number $code 错误码
 	 * @param string $message 错误信息
-	 * @throws NotifyException
+	 * @throws Notify
 	 * @return void
 	 */
 	protected final function throwNotifyException($code, $message) {
-		throw new NotifyException($message, $code);
+		throw new Notify($message, $code);
 	}
 
 	/**
 	 * 抛出进行跳转的异常
 	 * @param number $code 错误码
 	 * @param string $message 错误信息
-	 * @throws RedirectException
+	 * @throws Redirect
 	 * @return void
 	 */
 	protected final function throwRedirectException($code, $message) {
-		throw new RedirectException($message, $code);
+		throw new Redirect($message, $code);
 	}
 
 	/**
-	 * 抛出表单数据的异常
+	 * 抛出多条错误的异常
 	 * @param int $code 错误码
 	 * @param array $message 错误信息
-	 * @throws FormException
+	 * @throws Multi
 	 * @return void
 	 */
-	protected final function throwFormException($code, array $message) {
-		throw new FormException($message, $code);
+	protected final function throwMultiException($code, array $message) {
+		throw new Multi($message, $code);
 	}
 
 	/**

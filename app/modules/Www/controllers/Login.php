@@ -4,7 +4,7 @@
  * @author enychen
  */
 
-class LoginController extends \base\AdminController {
+class LoginController extends AdminController {
 
     /**
      * 登录首页

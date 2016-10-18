@@ -4,12 +4,12 @@
  * 登录后的控制器
  * @author enychen
  */
-namespace base;
-
-use EasyWeChat\Menu\Menu;
 
 abstract class AdminController extends BaseController {
 
+    /**
+     * 初始化内容
+     */
     public function init() {
         $this->menus();
     }

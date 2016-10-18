@@ -4,9 +4,9 @@
  * 错误异常处理控制器
  * @author enychen
  */
-use \network\Header as HeaderLib;
+use \network\Header;
 
-class ErrorController extends \base\BaseController {
+class ErrorController extends BaseController {
 
 	public function init() {
 		// 使用默认空模板
@@ -20,23 +20,23 @@ class ErrorController extends \base\BaseController {
 	 */
 	public function errorAction($exception) {
 		switch(get_class($exception)) {
-			case 'traits\FormException':
+			case 'Traits\FormException':
 				// 表单异常
 				$this->showFormException($exception);
 				break;
-			case 'traits\NotifyException':
+			case 'Exception\NotifyException':
 				// 通知错误
 				$this->showNotifyException($exception);
 				break;
-			case 'traits\RedirectException':
+			case 'Traits\RedirectException':
 				// 302页面跳转
 				$this->showRedirectException($exception);
 				break;
-			case 'traits\ForbiddenException':
+			case 'Traits\ForbiddenException':
 				// 403禁止访问
 				$this->showForbiddenException($exception);
 				break;
-			case 'traits\NotFoundException':
+			case 'Traits\NotFoundException':
 			case 'Yaf\Exception\LoadFailed\Action':
 			case 'Yaf\Exception\LoadFailed\Controller':
 				// 404找不到资源
@@ -100,7 +100,7 @@ class ErrorController extends \base\BaseController {
 	 * 禁止访问操作(403)
 	 */
 	private function showForbiddenException($exception) {
-		HeaderLib::forbidden();
+        Header::forbidden();
 		exit;
 	}
 
@@ -110,7 +110,7 @@ class ErrorController extends \base\BaseController {
 	private function showNotFoundException($exception) {
 		switch(TRUE) {
 			case IS_AJAX:
-				HeaderLib::notFound();
+                Header::notFound();
 				exit;
 			default:
 				$this->display('404');

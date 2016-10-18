@@ -1,13 +1,13 @@
 <?php
 
 /**
- * 表单异常
+ * 多条错误异常
  * @author enychen
  * @version 1.0
  */
-namespace Traits;
+namespace Exceptions;
 
-class FormException extends \Exception {
+class MultiExceptionException extends \Exception {
 
 	/**
 	 * 表单异常

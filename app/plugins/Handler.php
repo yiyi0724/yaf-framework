@@ -2,7 +2,7 @@
 
 /**
  * 行为插件
- * @author enychen
+ * @author enyccc
  * @version 1.0
  */
 use \Yaf\Config\Ini;
