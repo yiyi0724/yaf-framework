@@ -7,5 +7,5 @@
  */
 namespace Exceptions;
 
-class RedirectException extends \Exception {
+class Redirect extends \Exception {
 }

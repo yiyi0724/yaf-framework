@@ -7,5 +7,5 @@
  */
 namespace Exceptions;
 
-class NotifyException extends \Exception {
+class Notify extends \Exception {
 }

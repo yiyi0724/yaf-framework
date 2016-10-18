@@ -7,5 +7,5 @@
  */
 namespace Exceptions;
 
-class NotFoundException extends \Exception {
+class NotFound extends \Exception {
 }

@@ -7,7 +7,7 @@
  */
 namespace Exceptions;
 
-class MultiExceptionException extends \Exception {
+class Multi extends \Exception {
 
 	/**
 	 * 表单异常
