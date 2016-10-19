@@ -56,7 +56,7 @@ class LoginController extends AdminController {
         $session->set('admin.ip', IP::client());
         $session->set('admin.time', time());
         $session->set('admin.avatar', $adminArr['avatar']);
-        $session->set('admin.rules', implode(',', $rules));
+        $session->set('admin.rules', $rules);
 
         // 登录成功返回
         $this->json(TRUE, '登录成功', 20010);

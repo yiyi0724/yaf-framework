@@ -13,6 +13,5 @@ class IndexController extends AdminController {
     }
 
     public function tableAction() {
-
     }
 }

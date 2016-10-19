@@ -28,9 +28,10 @@ abstract class AdminController extends BaseController {
             case (!ADMIN_UID):
             case (ADMIN_IP != IP::client()):
             case (ADMIN_TIME + 1800 < time()):
-                $this->redirect('/login/');
+                $this->redirect('/logout/');
                 break;
         }
+
         // 更新上次访问时间
         $this->getSession()->set('admin.time', time());
     }
@@ -39,15 +40,15 @@ abstract class AdminController extends BaseController {
      * 检查用户访问权限
      */
     public function powerInit() {
-        // 检查用户权限
+        // 获取当前栏目的id
         $menuModel = new \MenuModel();
         $menuId = $menuModel->field('id')->where('module=:m and controller=:c and action=:a',
             strtolower(MODULE_NAME),strtolower(CONTROLLER_NAME), strtolower(ACTION_NAME))
-            ->select()->fetchRow();
+            ->select()->fetchOne();
 
-        // 权限不足
+        // 匹配用户权限
         if(ADMIN_RULES != '*' && !in_array($menuId, explode(',', ADMIN_RULES))) {
-            $this->redirect('/');
+            $this->redirect('/logout/');
         }
     }
 
