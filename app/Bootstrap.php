@@ -29,7 +29,7 @@ class Bootstrap extends Bootstrap_Abstract {
         // 自定义路由协议
         $router->addRoute('enyRouter', new Route());
         // 路由重写正则
-        $router->addConfig(new Ini(sprintf("%sroute.ini", CONF_PATH)));
+        $router->addConfig(new Ini(sprintf("%sroute.ini")));
     }
 
     /**
@@ -75,7 +75,7 @@ class Bootstrap extends Bootstrap_Abstract {
      * @return void
      */
     public function _initDriver(Dispatcher $dispatcher) {
-        if ($drivers = Application::app()->getConfig()->get('driver')) {
+        if ($drivers = new Ini(sprintf("%sdriver.ini", CONF_PATH), \Yaf\ENVIRON)) {
             // 注册数据库
             foreach ($drivers->get('database') as $name => $driver) {
                 $database = PDOLib::getInstance($driver->type, $driver->host, $driver->port,
