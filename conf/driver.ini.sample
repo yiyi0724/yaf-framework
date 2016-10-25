@@ -1,5 +1,3 @@
-[product] ;线上环境配置
-
 ;mysql数据库
 database.master.type = 'mysql'
 database.master.host = '127.0.0.1'
@@ -16,11 +14,3 @@ redis.master.auth =
 redis.master.db = 0
 redis.master.timeout = 30
 redis.master.options.prefix =
-
-
-
-[test:product] ;测试环境配置
-
-
-
-[develop:product] ;开发环境配置

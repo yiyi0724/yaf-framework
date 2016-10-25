@@ -75,7 +75,7 @@ class Bootstrap extends Bootstrap_Abstract {
      * @return void
      */
     public function _initDriver(Dispatcher $dispatcher) {
-        if ($drivers = new Ini(sprintf("%sdriver.ini", CONF_PATH), \Yaf\ENVIRON)) {
+        if ($drivers = new Ini(sprintf("%sdriver.ini", CONF_PATH))) {
             // 注册数据库
             foreach ($drivers->get('database') as $name => $driver) {
                 $database = PDOLib::getInstance($driver->type, $driver->host, $driver->port,
