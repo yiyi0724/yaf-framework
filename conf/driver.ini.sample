@@ -1,34 +1,16 @@
 ;mysql数据库-yyouxi
 database.platform.type = 'mysql'
-database.platform.host = 'db.gitxm.com'
+database.platform.host = ''
 database.platform.port = '3306'
-database.platform.dbname = 'yyouxi'
+database.platform.dbname = ''
 database.platform.charset = 'utf8'
-database.platform.username = 'youxidever'
-database.platform.password = '3Hx62V1FauKXkJGWzJvi'
-
-;mysql数据库-yyouxi_my
-database.my.type = 'mysql'
-database.my.host = 'db.gitxm.com'
-database.my.port = '3306'
-database.my.dbname = 'yyouxi_my'
-database.my.charset = 'utf8'
-database.my.username = 'youxidever'
-database.my.password = '3Hx62V1FauKXkJGWzJvi'
-
-;mysql数据库-yyouxi_union
-database.my.type = 'mysql'
-database.my.host = 'db.gitxm.com'
-database.my.port = '3306'
-database.my.dbname = 'cp5755'
-database.my.charset = 'utf8'
-database.my.username = 'cp5755'
-database.my.password = 'cp5755'
+database.platform.username = ''
+database.platform.password = ''
 
 ;redis数据库
-redis.master.host = 'redis.gitxm.com'
+redis.master.host = ''
 redis.master.port = 6379
 redis.master.auth =
-redis.master.db = 7
+redis.master.db = 0
 redis.master.timeout = 30
-redis.master.options.prefix = youlaohu.com
+redis.master.options.prefix =

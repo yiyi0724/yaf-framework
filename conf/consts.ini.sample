@@ -1,7 +1,7 @@
 [product] ;线上环境配置
 
 ;网站信息
-url_domain = "http://www.enychen.com/"
+url_domain = "http://www.chenxiaobo.me/"
 url_style = "/style/"
 url_script = "/script/"
 url_image = "/image/"

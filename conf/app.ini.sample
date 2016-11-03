@@ -16,24 +16,6 @@ runtime.session.gc_maxlifetime = 1440
 runtime.session.cookie_lifetime = 0
 runtime.session.cookie_httponly = 1
 
-;mysql数据库
-driver.database.master.type = 'mysql'
-driver.database.master.host = '127.0.0.1'
-driver.database.master.port = '3306'
-driver.database.master.dbname = 'test'
-driver.database.master.charset = 'utf8'
-driver.database.master.username = 'root'
-driver.database.master.password = ''
-
-;redis数据库
-driver.redis.master.host = '127.0.0.1'
-driver.redis.master.port = 6379
-driver.redis.master.auth =
-driver.redis.master.db = 0
-driver.redis.master.timeout = 30
-driver.redis.master.options.prefix =
-driver.redis.master.options.read_timemout = -1
-
 
 
 [test:product] ;测试环境配置
