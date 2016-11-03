@@ -1,4 +1,0 @@
-<form>
-    <input from="post" name="username" type="mobile" require="1" error="账号或密码不正确" />
-    <input from="post" name="password" type="password" require="1" error="账号或密码不正确" />
-</form>

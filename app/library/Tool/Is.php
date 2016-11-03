@@ -32,7 +32,7 @@ class Is {
      * @internal param array $range 数组
      */
     public static function exists($value, array $options) {
-        return in_array($value, $options);
+        return in_array($value, $options['list']);
     }
 
     /**

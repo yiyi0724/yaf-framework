@@ -102,20 +102,14 @@ class Form {
 
             // 扩展整理
             $rule['options'] = array();
-            $options = array('min', 'max', 'regular', 'range', 'xss', 'exists');
+            $options = array('min', 'max', 'regular', 'list', 'xss');
             foreach ($options as $key) {
                 if (empty($rule[$key])) {
                     continue;
                 }
 
-                if ($key == 'exists') {
-                    $rule['options'] = explode(',', $rule[$key]);
-                    unset($rule[$key]);
-                    break;
-                } else {
-                    $rule['options'][$key] = $rule[$key];
-                    unset($rule[$key]);
-                }
+                $rule['options'][$key] = $key == 'list' ? explode(',', $rule[$key]) : $rule[$key];
+                unset($rule[$key]);
             }
         }
 
