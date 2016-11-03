@@ -1,4 +1,4 @@
-;mysql数据库-yyouxi
+;数据库配置
 database.platform.type = 'mysql'
 database.platform.host = ''
 database.platform.port = '3306'

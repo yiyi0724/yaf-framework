@@ -12,8 +12,6 @@ class ErrorController extends BaseController {
      * 初始化控制器
      */
     public function init() {
-        // 使用默认空模板
-        $this->getView()->getTemplate()->setLayout('empty');
     }
 
     /**
