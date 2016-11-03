@@ -5,16 +5,15 @@
  * @author enyccc
  * @version 1.0
  */
-use \Yaf\Session;
+use \Yaf\Loader;
+use \Driver\PDO;
 use \Yaf\Registry;
 use \Traits\Route;
 use \Yaf\Dispatcher;
 use \Yaf\Config\Ini;
 use \Yaf\Application;
 use \Traits\Response;
-use \Driver\PDO as PDOLib;
 use \Yaf\Bootstrap_Abstract;
-use \Driver\Redis as RedisLib;
 
 class Bootstrap extends Bootstrap_Abstract {
 
@@ -29,7 +28,7 @@ class Bootstrap extends Bootstrap_Abstract {
         // 自定义路由协议
         $router->addRoute('enyRouter', new Route());
         // 路由重写正则
-        $router->addConfig(new Ini(sprintf("%sroute.ini")));
+        $router->addConfig(new Ini(sprintf("%sroute.ini", CONF_PATH)));
     }
 
     /**
@@ -48,6 +47,15 @@ class Bootstrap extends Bootstrap_Abstract {
      */
     public function _initTemplate(Dispatcher $dispatcher) {
         $dispatcher->setView(new Response());
+    }
+
+    /**
+     * 自定义services层
+     * @param \Yaf\Dispatcher $dispatcher 分发对象
+     * @return void
+     */
+    public function _initLoader(Dispatcher $dispatcher) {
+        Loader::getInstance(rtrim(APP_PATH, '/'))->registerLocalNamespace('services');
     }
 
     /**
@@ -78,27 +86,26 @@ class Bootstrap extends Bootstrap_Abstract {
         if ($drivers = new Ini(sprintf("%sdriver.ini", CONF_PATH))) {
             // 注册数据库
             foreach ($drivers->get('database') as $name => $driver) {
-                $database = PDOLib::getInstance($driver->type, $driver->host, $driver->port,
-                    $driver->dbname, $driver->charset, $driver->username, $driver->password);
+                $database = PDO::getInstance($driver->type, $driver->host, $driver->port, $driver->dbname, $driver->charset, $driver->username, $driver->password);
                 \Yaf\ENVIRON != 'product' and $database->setDebug();
                 Registry::set("database.{$name}", $database);
             }
 
             // 注册redis
-            foreach ($drivers->get('redis') as $name => $driver) {
-                // 创建redis对象
-                $redis = new \Redis();
-                // 持久性连接
-                $redis->pconnect($driver->host, $driver->port, (float)$driver->timeout);
-                // 选项设置
-                foreach ($driver->options as $key => $option) {
-                    $redis->setOption(constant(sprintf("\\Redis::OPT_%s", strtoupper($key))), $option);
-                }
-                // 密码验证
-                $driver->auth and $redis->auth($driver->auth);
-                // 全局保存
-                Registry::set("redis.{$name}", $redis);
+            $driver = $drivers->get('redis');
+            // 创建redis对象
+            $redis = new \Redis();
+            // 持久性连接
+            $redis->pconnect($driver->host, $driver->port, (float)$driver->timeout);
+            // 选项设置
+            foreach ($driver->options as $key => $option) {
+                $redis->setOption(constant(sprintf("\\Redis::OPT_%s", strtoupper($key))), $option);
             }
+            // 密码验证
+            $driver->auth and $redis->auth($driver->auth);
+            $redis->select($driver->db);
+            // 全局保存
+            Registry::set("redis", $redis);
         }
     }
 }
