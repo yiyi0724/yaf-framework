@@ -7,11 +7,11 @@ application.modules = "Index,Www"
 
 ;修改php.ini的配置
 runtime.display_errors = 0
-runtime.'display_startup_errors = 0
+runtime.display_startup_errors = 0
 runtime.date.timezone = "PRC"
 runtime.session.save_handler = "redis"
 runtime.session.save_path = "tcp://127.0.0.1:6379?database=0&timeout=30&auth="
-runtime.session.cookie_domain = ".enychen.com"
+runtime.session.cookie_domain = ".chenxiao.me"
 runtime.session.gc_maxlifetime = 1440
 runtime.session.cookie_lifetime = 0
 runtime.session.cookie_httponly = 1

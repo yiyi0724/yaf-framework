@@ -2,12 +2,11 @@
 
 /**
  * 业务逻辑控制器
- * @author enychen
+ * @author enyccc
  */
 
 abstract class InitController extends BaseController {
 
     public function init() {
-        
     }
 }
