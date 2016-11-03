@@ -7,7 +7,7 @@
  */
 namespace My;
 
-class UidModel extends \AbstractModel {
+class UidModel extends \Base\AbstractModel {
 
     /**
      * 表名

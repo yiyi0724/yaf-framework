@@ -6,4 +6,8 @@
  */
 
 abstract class InitController extends BaseController {
+
+    public function init() {
+        
+    }
 }

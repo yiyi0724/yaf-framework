@@ -5,7 +5,6 @@
  * @author enyccc
  * @version 1.0
  */
-use \Yaf\Loader;
 use \Driver\PDO;
 use \Yaf\Registry;
 use \Traits\Route;
@@ -50,15 +49,6 @@ class Bootstrap extends Bootstrap_Abstract {
     }
 
     /**
-     * 自定义services层
-     * @param \Yaf\Dispatcher $dispatcher 分发对象
-     * @return void
-     */
-    public function _initLoader(Dispatcher $dispatcher) {
-        Loader::getInstance(rtrim(APP_PATH, '/'))->registerLocalNamespace('services');
-    }
-
-    /**
      * 修改php.ini的默认配置
      * @param Yaf\Dispatcher $dispatcher 分发对象
      * @return void
@@ -86,7 +76,8 @@ class Bootstrap extends Bootstrap_Abstract {
         if ($drivers = new Ini(sprintf("%sdriver.ini", CONF_PATH))) {
             // 注册数据库
             foreach ($drivers->get('database') as $name => $driver) {
-                $database = PDO::getInstance($driver->type, $driver->host, $driver->port, $driver->dbname, $driver->charset, $driver->username, $driver->password);
+                $database = PDO::getInstance($driver->type, $driver->host, $driver->port,
+                    $driver->dbname, $driver->charset, $driver->username, $driver->password);
                 \Yaf\ENVIRON != 'product' and $database->setDebug();
                 Registry::set("database.{$name}", $database);
             }
