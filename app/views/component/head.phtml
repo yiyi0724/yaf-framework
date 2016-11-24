@@ -9,17 +9,19 @@
 	<?php endforeach;?>
     <?php echo $this->getTabs();?>
     <title><?php echo $this->getTitle(); ?></title>
-    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/entypo.css' ?>">
-    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/bootstrap.min.css' ?>">
-    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/neon-core.min.css' ?>">
-    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/neon-theme.min.css' ?>">
-    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/neon-forms.min.css' ?>">
-    <link rel="stylesheet" href="<?php echo URL_STYLE . 'public/custom.css' ?>">
+    <link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/font-awesome.min.css">
+    <link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/entypo.css">
+    <link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/neon-core.min.css">
+    <link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/neon-theme.min.css">
+    <link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/neon-forms.min.css">
+    <link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/custom.css">
 	<?php foreach($this->getStyles() as $style):?>
 	<link rel="stylesheet" type="text/css" href="<?php echo URL_STYLE . $style; ?>">
 	<?php endforeach;?>
 	<link rel="shortcut icon" href="<?php echo URL_IMAGE;?>public/favicon.ico">
-    <script src="<?php echo URL_SCRIPT . 'public/jquery.js' ?>"></script>
+    <script src="<?php echo URL_SCRIPT; ?>public/jquery-1.8.3.min.js"></script>
+    <script src="<?php echo URL_SCRIPT; ?>public/bootstrap.js"></script>
     <?php foreach($this->getHeadScripts() as $script):?>
 	<script type="text/javascript" src="<?php echo URL_SCRIPT.$script?>"></script>
 	<?php endforeach;?>

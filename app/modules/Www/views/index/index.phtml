@@ -1,1 +1,372 @@
 <?php $this->setTitle('后台管理系统_首页'); ?>
+<body class="page-body">
+<div class="page-container">
+    <!-- 左侧菜单栏 开始 -->
+    <div class="sidebar-menu">
+        <header class="logo-env">
+            <div class="logo">
+                <a href="javascript:;">
+                    <img src="<?php ECHO URL_IMAGE; ?>logo2.png" class="img-logo">
+                </a>
+            </div>
+            <div class="sidebar-collapse">
+                <a href="javascript:;" class="sidebar-collapse-icon with-animation">
+                    <i class="entypo-menu"></i>
+                </a>
+            </div>
+            <div class="sidebar-mobile-menu visible-xs">
+                <a href="javascript:;" class="with-animation">
+                    <i class="entypo-menu"></i>
+                </a>
+            </div>
+        </header>
+        <ul id="main-menu">
+            <li class="root-level">
+                <a href="javascript:;"><i class="entypo-index"></i><span>首页</span></a>
+            </li>
+            <li class="root-level">
+                <a href="javascript:;"><i class="entypo-user"></i><span>用户管理</span></a>
+            </li>
+            <li class="root-level">
+                <a href="javascript:;"><i class="entypo-paylog"></i><span>财务管理</span></a>
+            </li>
+            <li class="root-level">
+                <a href="javascript:;"><i class="fa fa-weixin"></i><span>微信运营</span></a>
+                <ul>
+                    <li>
+                        <a href="javascript:;"><span>菜单管理</span></a>
+                    </li>
+                    <li>
+                        <a href="javascript:;"><span>推广管理</span></a>
+                    </li>
+                    <li>
+                        <a href="javascript:;"><span>素材管理</span></a>
+                    </li>
+                </ul>
+            </li>
+            <li class="root-level">
+                <a href="javascript:;"><i class="fa fa-weibo"></i><span>微博运营</span></a>
+            </li>
+            <li class="root-level">
+                <a href="javascript:;"><i class="entypo-rocket"></i><span>运营数据</span></a>
+            </li>
+            <li class="root-level">
+                <a href="javascript:;"><i class="entypo-cog"></i><span>系统设置</span></a>
+                <ul>
+                    <li class="active">
+                        <a href="javascript:;"><span>管理员</span></a>
+                    </li>
+                    <li>
+                        <a href="javascript:;"><span>关键词</span></a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- 左侧菜单栏 结束 -->
+    <!-- 右侧内容区域 开始 -->
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-6 col-sm-8 clearfix">
+                <ul class="user-info pull-left pull-none-xsm">
+                    <li class="profile-info dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="<?php echo URL_IMAGE; ?>avatar.jpg" alt="" class="img-circle img-avatar">
+                            <span>超级管理员</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="caret"></li>
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="entypo-user"></i>编辑资料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="entypo-mail"></i>消息管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6 col-sm-4 clearfix hidden-xs">
+                <ul class="list-inline links-list pull-right">
+                    <li>
+                        <a href="#sample-modal-message" data-toggle="modal">
+                            <i class="entypo-mail"></i>发送消息
+                        </a>
+                    </li>
+                    <li class="sep"></li>
+                    <li>
+                        <a href="#sample-modal-announcement" data-toggle="modal"
+                           class="addAnnouBtn">
+                            <i class="entypo-chat"></i>发布公告
+                        </a>
+                    </li>
+                    <li class="sep"></li>
+                    <li>
+                        <a href="/logout/">
+                            <i class="entypo-logout right"></i>注销登录
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-12">
+                <!-- 面包屑 开始 -->
+                <ol class="breadcrumb bc-3">
+                    <li><a href="javascript:;"><i class="entypo-home"></i>首页</a></li>
+                    <li class="active"><strong>栏目名称</strong></li>
+                </ol>
+                <!-- 面包屑 结束 -->
+                <!-- 主内容区域 开始 -->
+                <div class="form-search-area">
+                    <div id="query" class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon">手机</div>
+                                    <input id="search-field1" type="text" class="form-control" name="mobile" placeholder="请输入手机号">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon">ID</div>
+                                    <input class="form-control" type="email" placeholder="请输入ID">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon">状态</div>
+                                    <select name="auditing" class="form-control">
+                                        <option value="-1">全部</option>
+                                        <option value="0">审核中</option>
+                                        <option value="1">审核成功，等待填写发票号</option>
+                                        <option value="2">审核失败</option>
+                                        <option value="3">发票提交中</option>
+                                        <option value="4">已转账</option>
+                                        <option value="5">发票审核拒绝</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon">时间</div>
+                                    <input class="form-control datepicker" type="text" placeholder="请选择开始时间">
+                                    <div class="input-group-addon">到</div>
+                                    <input class="form-control datepicker" type="text" placeholder="请选择结束时间">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <button id="search" type="button" class="form-control btn btn-primary btn-icon icon-left">
+                                    <i class="entypo-search"></i>查询
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>手机</th>
+                        <th>总额</th>
+                        <th>添加时间</th>
+                        <th>发票号</th>
+                        <th>审核时间</th>
+                        <th>审核</th>
+                        <th>说明</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="odd">
+                        <td>1</td>
+                        <td>18759557749</td>
+                        <td>825</td>
+                        <td>2016-06-01</td>
+                        <td>845467</td>
+                        <td>2016-06-01</td>
+                        <td>已转账</td>
+                        <td>通过</td>
+                        <td>
+                            <a target="_blank" href="javascript:;" class="btn btn-info">审核</a>
+                        </td>
+                    </tr>
+                    <tr class="even">
+                        <td>1</td>
+                        <td>18759557749</td>
+                        <td>825</td>
+                        <td>2016-06-01</td>
+                        <td>845467</td>
+                        <td>2016-06-01</td>
+                        <td>已转账</td>
+                        <td>通过</td>
+                        <td>
+                            <a target="_blank" href="javascript:;" class="btn btn-info">审核</a>
+                        </td>
+                    </tr>
+                    <tr class="odd">
+                        <td>1</td>
+                        <td>18759557749</td>
+                        <td>825</td>
+                        <td>2016-06-01</td>
+                        <td>845467</td>
+                        <td>2016-06-01</td>
+                        <td>已转账</td>
+                        <td>通过</td>
+                        <td>
+                            <a target="_blank" href="javascript:;" class="btn btn-info">审核</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+                <nav>
+                    <ul class="pagination right">
+                        <li><a href="#">&laquo;</a></li>
+                        <li><a href="#">1</a></li>
+                        <li class="active"><span>2</span></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li><a href="#">&raquo;</a></li>
+                    </ul>
+                </nav>
+                <!-- 主内容区域 结束 -->
+            </div>
+        </div>
+    </div>
+    <!-- 右侧内容区域 结束 -->
+</div>
+<!-- 消息对话框 -->
+<div class="modal fade" id="sample-modal-message">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">发送消息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="help-block"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="add-field1" class="control-label">用户名</label>
+                            <input id="add-field1" type="text" class="form-control" name="target_id">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="add-field2" class="control-label">消息内容</label>
+                            <textarea id="add-field2" class="form-control autogrow" name="content"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-info">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 公告对话框 -->
+<div class="modal fade" id="sample-modal-announcement">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">发布公告</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="help-block"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="add-field2" class="control-label">发布&nbsp;: &nbsp;</label>
+                            <input id="announ-field3" type="radio" name="announ_release" value="0" checked="checked"> 否&nbsp;
+                            &nbsp;
+                            <input id="announ-field3" type="radio" name="announ_release" value="1"> 是
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="add-field2" class="control-label">目标&nbsp;: &nbsp;</label>
+                            <input id="announ-field3" type="radio" name="announ_release_to" value="0" checked="checked">
+                            所有&nbsp; &nbsp;
+                            <input id="announ-field3" type="radio" name="announ_release_to" value="1"> 渠道(c) &nbsp;
+                            &nbsp;
+                            <input id="announ-field3" type="radio" name="announ_release_to" value="2"> 厂商(f)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="add-field1" class="control-label">标题</label>
+                            <input id="announ-field1" type="text" class="form-control" name="announ_title">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="add-field2" class="control-label">内容</label>
+                            <textarea id="announ-field2" class="form-control" rows="10"
+                                      name="announ_content"></textarea>
+                        </div>
+                        <span>链接格式：[显示名称](链接地址)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" name="announcement_id" value="0">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-info">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!--  时间控件插件 开始 -->
+<link rel="stylesheet" href="<?php echo URL_STYLE; ?>public/bootstrap-datepicker.css">
+<script src="<?php echo URL_SCRIPT; ?>public/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    $('.datepicker').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',     // 日期格式，如果要获取时分秒，则写成yyyy-mm-dd hh:ii
+        weekStart: 1,                   // 一周的开始位置，1表示周一
+        autoclose: true,                // 选中后是否自动关闭
+        //todayBtn: 'linked',           // 是否显示今天按钮
+        todayHighlight: true,           // 今天日期高亮
+        minView:2                       // 只获取年月日，如果要获取时分秒，则去掉此参数
+    })
+</script>

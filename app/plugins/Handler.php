@@ -42,6 +42,6 @@ class HandlerPlugin extends Plugin_Abstract {
         }
     }
 
-    public function dispatchLoopShutdown() {
+    public function dispatchLoopShutdown(Request_Abstract $request, Response_Abstract $response) {
     }
 }

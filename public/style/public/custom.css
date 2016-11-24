@@ -1,0 +1,157 @@
+/**
+ *
+ * Apply Here your Custom CSS
+ *
+*/
+body, ul, li, ol, dl, caption, pre, p, blockquote, input, textarea {
+	font-size: 12px;
+	font-family: "Microsoft Yahei",Arial,Helvetica;
+}
+body{
+	color: #666;
+}
+ol,ul{
+	list-style:none;
+}
+pre{
+	width: 100%;
+	height: 100%;
+	background: none;
+    border: none;
+    overflow: hidden;
+    white-space: pre-wrap;	
+}
+
+.btn-sm, .btn-xs {
+    border: 0;
+}
+
+.add-type{
+	margin-top: 20px;
+}
+.category-picker{
+	background: #fff;
+	border: 1px solid #c8cdd7;
+	top:0px;
+	left:50%;
+	margin-left:-360px;
+	z-index: 9999;
+}
+.category-picker div{
+	padding:10px 5px 5px;
+	margin:0 5px 5px;
+	border-bottom:1px solid #e2e2e2;
+}
+.category-picker ul {
+	width:720px;
+	max-height:362px;
+	padding: 0;
+	overflow:auto;
+}
+.category-picker li {
+	float:left;
+	width:33.33%;
+	height:36px;
+	padding: 0 10px;
+	line-height: 36px;
+	font-size: 14px;
+	text-align: center;
+	overflow: hidden;
+	cursor: pointer;
+}
+.category-picker li.active {
+	background: #eee;
+}
+
+/* login */
+.login-page .login-form .form-group .btn-sms {
+    border: 1px solid #454a54;
+    background: none;
+    text-align: left;
+    padding: 11px 20px;
+    font-size: 14px;
+    -moz-transition: all 300ms ease-in-out;
+    -o-transition: all 300ms ease-in-out;
+    -webkit-transition: all 300ms ease-in-out;
+    transition: all 300ms ease-in-out;
+}
+.login-page .login-form .form-group .btn-sms:hover, .login-page .login-form .form-group .btn-sms:active {
+    background: #373e4a;
+}
+
+.entypo-index:before {
+	content: '\e821';
+}
+.entypo-game:before{
+	content: '\e8dd';
+}
+.entypo-user:before {
+	content: '\e80b';
+}
+.entypo-admin:before {
+	content: '\e80a';
+}
+.entypo-h5game:before{
+	content: '\e850';
+}
+.entypo-channelapply:before{
+	content: '\e840';
+}
+.entypo-earnings:before{
+	content:'\e8cf';	
+}
+.entypo-paylog:before{
+	content:'\e84c';
+}
+.entypo-h5recharge:before{
+	content:'\e86c';
+}
+.entypo-log:before{
+	content:'\e84b';
+}
+.entypo-order:before {
+	content: '\e849';
+}
+.entypo-banner:before{
+	content: '\e80d';
+}
+
+@media (min-width: 992px){
+	#query .col-md-1{
+		min-width: 8.33333333%;
+		width: auto;
+	}
+}
+
+/* Transfer Infomation Box */
+.transfer-info-parent {position: relative;}
+.transfer-info-box {position: absolute;left: 5px; top: 32px;color:#000;border: 1px solid #EAEAEA;padding: 5px 10px;background: #FFF;display: none;min-width: 210px;z-index: 9999;}
+.transfer-info-box ul, .transfer-info-box ul li {margin: 0; padding: 0;list-style: none;}
+
+
+/* Manage Game Link*/
+.gameLinkBox ul {margin: 0;padding: 0;}
+.gameLinkBox ul li {float: left;}
+.gameLinkBox ul li span {padding:8px 20px;display: inline-block;background:#EAEAEA;}
+.gameLinkBox ul li span.on {background:#eef2f5;}
+.gameLinkBox ul li span.on a,.gameLinkBox ul li span a:hover {color:#555;}
+.gameLinkIframeBox {display: none;position: absolute;width: 90%;height: 90%;left:20px;top:135px;}
+.gameLinkIframe {width: 100%;height: 100%;border: none;}
+.randStrBox {float: left;margin-left: 20px;}
+.randStrBox .rtext input {width: 330px;text-align: center;}
+.randStrBox .stext input {width: 30px;text-align: center;}
+
+/* payment */
+.page-body .pmcommon {width: 20%;padding:0 0 0 5px;margin:0;}
+.ichange_input {width: 98%;height: 25px;line-height: 25px;}
+.saveBtn, .cancelBtn {display: none;}
+.shwMsgBox {position: absolute; left: 0;top:0;border:1px solid #ebebeb;z-index: 99999;display: none;text-align: center;color:#333;background: #FFF;}
+
+/* announcement */
+.annou_btn {cursor: default;}
+.annou_btn:hover {color:#9f1818;}
+
+.img-logo{height:32px}
+.img-avatar{width:44px}
+
+.root-level ul a{padding-left:5em !important}
