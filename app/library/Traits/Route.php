@@ -46,7 +46,6 @@ class Route implements Route_Interface {
      */
     public function route($request) {
         // 解析url信息
-        $uri = $request->getRequestUri();
         $uri = explode('/', trim($request->getRequestUri(), '/'));
         $module = strtolower($uri[0]);
 

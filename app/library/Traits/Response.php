@@ -44,6 +44,14 @@ class Response implements View_Interface {
     }
 
     /**
+     * 关闭视图
+     * @return boolean
+     */
+    public function disableView() {
+        return Application::app()->getDispatcher()->disableView();
+    }
+
+    /**
      * 渲染视图
      * @param string $tpl 视图名称
      * @param array|null $tpl_vars 视图要绑定的信息
@@ -65,7 +73,7 @@ class Response implements View_Interface {
      */
     public function display($tpl, $tpl_vars = NULL) {
         // 关闭自动渲染模板
-        Application::app()->getDispatcher()->disableView();
+        $this->disableView();
         // 公共参数信息
         $template = $this->getTemplate();
         $body = $template->render($tpl, $tpl_vars);
